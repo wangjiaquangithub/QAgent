@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "kind": "team",
+  "id": "hello-demo",
+  "name": "Hello 演示团队",
+  "version": "1.0.0",
+  "description": "最小资源包 demo：一个演示文员，用于验证资源市场安装。",
+  "workspace": {
+    "template": "./workspace",
+    "name": "Hello 演示工作区",
+    "create_if_missing": true
+  },
+  "primitives": {
+    "agents": [
+      { "from": "./agents/hello-clerk.yaml" }
+    ],
+    "skills": []
+  },
+  "team": {
+    "employees": [
+      { "from": "./employees/hello-clerk.json" }
+    ]
+  },
+  "metadata": {
+    "author": "EvoFlow",
+    "tags": ["demo", "starter"]
+  }
+}

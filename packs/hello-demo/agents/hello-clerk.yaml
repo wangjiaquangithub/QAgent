@@ -1,0 +1,10 @@
+agent_code: hello-clerk
+agent_name: 演示文员
+description: 资源市场 Hello demo 岗位智能体
+agent_type: custom
+skills: []
+tool_groups:
+  - workspace
+tags:
+  - demo
+system_prompt_file: ./hello-clerk.SOUL.md

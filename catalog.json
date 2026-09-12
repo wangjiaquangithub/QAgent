@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "marketId": "evoflow-resource-market",
+  "updatedAt": "2026-09-09T00:00:00Z",
+  "packs": [
+    {
+      "id": "hello-demo",
+      "name": "Hello 演示团队",
+      "version": "1.0.0",
+      "kind": "team",
+      "description": "最小资源包 demo：一个演示文员岗位，用于验证资源市场安装链路。",
+      "tags": ["demo", "starter", "team"],
+      "author": "EvoFlow",
+      "path": "packs/hello-demo",
+      "updatedAt": "2026-09-09T00:00:00Z",
+      "license": "MIT",
+      "homepage": "https://github.com/wangjiaquangithub/QAgent"
+    }
+  ]
+}
