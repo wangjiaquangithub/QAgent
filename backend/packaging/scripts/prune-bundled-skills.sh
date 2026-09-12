@@ -63,7 +63,11 @@ while IFS= read -r -d '' nm; do
 done < <(find "${SKILLS_PUBLIC}" -type d -name node_modules -print0 2>/dev/null || true)
 
 # Brand gate
-mapfile -t BRAND_HITS < <(
+# Bash 3.2 (the macOS system shell) does not provide mapfile/readarray.
+BRAND_HITS=()
+while IFS= read -r line; do
+  BRAND_HITS+=("$line")
+done < <(
   find "${SKILLS_PUBLIC}" -type f \
     \( -name '*.md' -o -name '*.js' -o -name '*.ts' -o -name '*.tsx' -o -name '*.mjs' -o -name '*.cjs' -o -name '*.json' -o -name '*.yml' -o -name '*.yaml' -o -name '*.txt' \) \
     -print0 2>/dev/null |
