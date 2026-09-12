@@ -594,7 +594,7 @@ async def browse_workspace(
     path: str = Query(".", description="Relative path under root"),
     show_hidden: bool = Query(False, description="Include dotfiles"),
 ) -> WorkspaceBrowseResponse:
-    """List one directory level under a validated workspace root (for EvoPanel file tree)."""
+    """List one directory level under a validated workspace root (for QAgent file tree)."""
     require_workspace_root_access(request, root=root, thread_id=thread_id)
     root_s = _resolve_workspace_root(root, thread_id)
     try:
@@ -628,7 +628,7 @@ async def resolve_workspace_target(
     thread_id: str | None = Query(None, description="LangGraph thread id (virtual sandbox workspace)"),
     path: str = Query(..., description="Relative path under workspace"),
 ) -> ResolveWorkspaceTargetResponse:
-    """Resolve a workspace-relative path to an absolute host path (EvoPanel reveal in file manager)."""
+    """Resolve a workspace-relative path to an absolute host path (QAgent reveal in file manager)."""
     require_workspace_root_access(request, root=root, thread_id=thread_id)
     rel = _normalize_rel_path(path)
     if not rel:
@@ -660,7 +660,7 @@ async def serve_workspace_file(
     path: str = Query(..., description="Absolute or relative file path under workspace"),
     thread_id: str | None = Query(None),
 ) -> FileResponse:
-    """Serve a workspace binary (e.g. generated images) for EvoPanel inline preview."""
+    """Serve a workspace binary (e.g. generated images) for QAgent inline preview."""
     require_workspace_root_access(request, root=root, thread_id=thread_id)
     try:
         target = _resolve_workspace_file_target(root=root, thread_id=thread_id, rel=path)
@@ -678,7 +678,7 @@ async def read_workspace_file(
     thread_id: str | None = Query(None),
     path: str = Query(..., description="Relative file path under workspace root"),
 ) -> WorkspaceReadResponse:
-    """Read a text file under the workspace for EvoPanel preview (size-capped)."""
+    """Read a text file under the workspace for QAgent preview (size-capped)."""
     require_workspace_root_access(request, root=root, thread_id=thread_id)
     return _read_workspace_file_impl(root=root, thread_id=thread_id, rel=path)
 
@@ -700,7 +700,7 @@ async def read_workspace_file_post(
 async def delete_workspace_file(
     request: Request, body: WorkspaceDeleteFileRequest
 ) -> WorkspaceDeleteFileResponse:
-    """Delete one file under the workspace (EvoPanel context menu)."""
+    """Delete one file under the workspace (QAgent context menu)."""
     require_workspace_root_access(request, root=body.root, thread_id=body.thread_id)
     rel = _normalize_rel_path(body.path)
     if not rel:
@@ -740,7 +740,7 @@ async def delete_workspace_file(
 async def write_workspace_file(
     request: Request, body: WorkspaceWriteFileRequest
 ) -> WorkspaceWriteFileResponse:
-    """Write/create a file under the workspace (EvoPanel create file)."""
+    """Write/create a file under the workspace (QAgent create file)."""
     require_workspace_root_access(request, root=body.root, thread_id=body.thread_id)
     rel = _normalize_rel_path(body.path)
     if not rel:
@@ -778,7 +778,7 @@ async def write_workspace_file(
 async def create_workspace_dir(
     request: Request, body: WorkspaceMkdirRequest
 ) -> WorkspaceMkdirResponse:
-    """Create a directory under the workspace (EvoPanel create folder)."""
+    """Create a directory under the workspace (QAgent create folder)."""
     require_workspace_root_access(request, root=body.root, thread_id=body.thread_id)
     rel = _normalize_rel_path(body.path)
     if not rel:

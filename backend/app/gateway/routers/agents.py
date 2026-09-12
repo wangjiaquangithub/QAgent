@@ -1230,13 +1230,13 @@ _TOOL_UI_DISPLAY: dict[str, dict] = {
     "propose_goal": {
         "label": "目标方案",
         "icon": "🤝",
-        "description": "生成 EvoPanel 目标参数（任务目标、轮次、定时等），用户在对话区确认后写入目标面板并可启动",
+        "description": "生成 QAgent 目标参数（任务目标、轮次、定时等），用户在对话区确认后写入目标面板并可启动",
     },
     "panel_set": {
         "label": "右侧面板",
         "icon": "📺",
         "group": "hosted_panel",
-        "description": "打开/关闭 EvoPanel 右侧面板（资讯、网页内嵌、写入内容等）；与 mode_set 对话模式无关；Agent 模式系统必带（非角色可选）",
+        "description": "打开/关闭 QAgent 右侧面板（资讯、网页内嵌、写入内容等）；与 mode_set 对话模式无关；Agent 模式系统必带（非角色可选）",
     },
     "bash": {"label": "终端命令", "icon": "⌨️", "description": "沙箱内执行 shell 命令"},
     "ls": {"label": "列出目录", "icon": "📂", "description": "沙箱内列出目录（树形）"},

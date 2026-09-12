@@ -35,7 +35,7 @@ pip install hermes-agent[messaging]   # 额外带 qrcode
 
 ## 不是这些
 
-- **`evopanel-weixin`**：旧版 EvoPanel 文案里的「插件」名，当前实现是内置 Gateway + iLink，无需单独 npm/Python 插件。
+- **`evopanel-weixin`**：旧版 QAgent 文案里的「插件」名，当前实现是内置 Gateway + iLink，无需单独 npm/Python 插件。
 - **企微**：`WeCom` / `WECOM_*` 是另一套 WebSocket 协议（Hermes `wecom.py`），与本目录 `weixin.py` 无关。
 
 ## 连通性自检

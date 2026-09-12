@@ -47,7 +47,7 @@ async def attach_client_instance(client_instance_id: str) -> dict:
 
     reason = "client_restart" if prev else "client_attach"
     logger.info(
-        "EvoPanel client attach prev=%s next=%s reason=%s",
+        "QAgent client attach prev=%s next=%s reason=%s",
         prev or "(none)",
         cid,
         reason,
@@ -79,7 +79,7 @@ async def attach_client_instance(client_instance_id: str) -> dict:
     elif reason == "client_restart":
         cancel_skipped = True
         logger.info(
-            "EvoPanel client_restart: skipped panel run cancel (LangGraph continues; UI may stream-resume)"
+            "QAgent client_restart: skipped panel run cancel (LangGraph continues; UI may stream-resume)"
         )
 
     return {

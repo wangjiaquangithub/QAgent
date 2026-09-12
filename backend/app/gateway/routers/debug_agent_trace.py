@@ -1001,7 +1001,7 @@ def _build_end_to_end_timing(
     note_zh = (
         "end_to_end_timing：从用户发送（evf_user_input_ts_ms）到页面流结束（page_stream_end）的整段耗时。"
         "分段含客户端预检、Gateway POST→SSE 结束、pre_model 中间件明细（run_latency_trace）、首字时间戳。"
-        "page_round_trip_ms 最接近 EvoPanel 气泡从发送到 final 的体感。"
+        "page_round_trip_ms 最接近 QAgent 气泡从发送到 final 的体感。"
     )
     trace_id = _resolve_latest_trace_id(run_latency_rows, first_token_rows)
     post = _pick_latest_run_latency_row(run_latency_rows, "gateway_stream_post", trace_id=trace_id)
@@ -2038,7 +2038,7 @@ def _build_task_progress_snapshot_for_trace(thread_id: str) -> dict[str, Any]:
         for s in subs:
             st = str(s.get("status") or "").strip().lower() or "unknown"
             status_counts[st] = status_counts.get(st, 0) + 1
-        note_zh = "与 EvoPanel 侧边栏同源：当前项目存储中的主任务与子任务状态。若与「工具记录」里最后一次 supervisor 返回不一致，多为子任务已在后台完成但未再次调用 supervisor，日志仍停留在较早一轮的返回值。"
+        note_zh = "与 QAgent 侧边栏同源：当前项目存储中的主任务与子任务状态。若与「工具记录」里最后一次 supervisor 返回不一致，多为子任务已在后台完成但未再次调用 supervisor，日志仍停留在较早一轮的返回值。"
         out: dict[str, Any] = {"ok": True, "note_zh": note_zh, "subtask_status_counts": status_counts}
         out.update(snap)
         return out

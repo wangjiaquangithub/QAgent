@@ -58,7 +58,7 @@ class StartGoalRequest(BaseModel):
     user_id: str | None = Field(None, description="用户标识")
     use_frontend_chat: bool = Field(
         True,
-        description="Web 默认 True：首条由 EvoPanel chatSend 发出（与普通发消息同 SSE）；False 为后端直写+Goal 图 main_agent",
+        description="Web 默认 True：首条由 QAgent chatSend 发出（与普通发消息同 SSE）；False 为后端直写+Goal 图 main_agent",
     )
 
 
@@ -132,7 +132,7 @@ class GoalHistoryResponse(BaseModel):
 
 
 class GoalFeishuCompletionRequest(BaseModel):
-    """EvoPanel / 客户端：托管结束后汇报到飞书（使用网关当前默认 chat_id）。"""
+    """QAgent / 客户端：托管结束后汇报到飞书（使用网关当前默认 chat_id）。"""
 
     title: str = Field(default="目标结束汇报", max_length=200, description="卡片标题前缀")
     markdown: str = Field(..., min_length=1, max_length=49_000, description="Markdown 正文")

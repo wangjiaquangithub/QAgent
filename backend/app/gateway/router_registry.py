@@ -185,7 +185,7 @@ def register_extended_routers(app: FastAPI) -> None:
         _load_webui_enabled()
         mount_evopanel_static(app)
     except Exception:
-        logger.warning("Failed to mount EvoPanel static files", exc_info=True)
+        logger.warning("Failed to mount QAgent static files", exc_info=True)
 
     startup_mark("register_extended_routers.done", phase="routers", extra={"route_count": len(app.routes)})
 

@@ -102,7 +102,7 @@ def format_ask_clarification_payload_for_feishu(payload: Any) -> str | None:
 
     lines.append("")
     lines.append("---")
-    lines.append("在 **EvoPanel 桌面端** 该对话侧栏点选即可继续；也可在本群直接回复你的选择（助手会尽量理解）。")
+    lines.append("在 **QAgent 桌面端** 该对话侧栏点选即可继续；也可在本群直接回复你的选择（助手会尽量理解）。")
 
     body = "\n".join(lines).strip()
     return body or None

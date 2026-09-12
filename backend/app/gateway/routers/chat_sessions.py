@@ -1696,7 +1696,7 @@ async def bind_session_workspace(
     session_key: str,
     body: BindWorkspaceBody,
 ) -> WorkspaceHistoryResponse:
-    """Bind local workspace root for a chat session (EvoPanel sidebar). Required before terminal/read/write tools."""
+    """Bind local workspace root for a chat session (QAgent sidebar). Required before terminal/read/write tools."""
     key = _require_session_access(request, session_key)
     path = str(body.path or "").strip()
     if not key or not path:

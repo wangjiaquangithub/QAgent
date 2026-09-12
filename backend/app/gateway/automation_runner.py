@@ -424,7 +424,7 @@ async def _invoke_langgraph_for_automation(
     run_messages = _messages_from_run_result(result if isinstance(result, (dict, list)) else None)
     text = _extract_response_text(result) if isinstance(result, (dict, list)) else ""
     if not (text or "").strip():
-        text = "(模型未返回可读文本；可在 EvoPanel 打开 thread 查看状态)"
+        text = "(模型未返回可读文本；可在 QAgent 打开 thread 查看状态)"
 
     logger.info(
         "automation_runner: langgraph runs.wait done task_id=%s thread_id=%s chars=%d",
@@ -1338,7 +1338,7 @@ async def automation_tick() -> None:
             parts.append(f"{tid}(status={t.get('status')!r}, langgraph_run={lg}, once_fired={bool(t.get('once_fired'))})")
         tail = f" …+{len(all_loaded) - 30} more" if len(all_loaded) > 30 else ""
         logger.debug(
-            "automation_tick: %d TOML loaded but active_count=0 — no run, no LangGraph. Only status=active tasks are scheduled. In EvoPanel click Resume or edit TOML. Detail: %s%s",
+            "automation_tick: %d TOML loaded but active_count=0 — no run, no LangGraph. Only status=active tasks are scheduled. In QAgent click Resume or edit TOML. Detail: %s%s",
             len(all_loaded),
             "; ".join(parts),
             tail,

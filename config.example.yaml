@@ -25,7 +25,7 @@ log_level: info
 # ============================================================================
 # Track LLM token usage per model call (input/output/total tokens)
 # Logs at info level via TokenUsageMiddleware; also helps persist AIMessage usage into checkpoints.
-# EvoPanel 历史/累计用量依赖 ui_messages 中的 usage_metadata；关闭后若模型仍上报用量，界面也可能显示。
+# QAgent 历史/累计用量依赖 ui_messages 中的 usage_metadata；关闭后若模型仍上报用量，界面也可能显示。
 token_usage:
   enabled: true
 
@@ -33,7 +33,7 @@ token_usage:
 # Models (chat LLMs) — SQLite only, not in config.yaml
 # ============================================================================
 # Chat models and primary_model live in evoflow.db (evoflow_models / evoflow_app_settings).
-# Manage them via EvoPanel → Settings → Models, or Gateway API GET/POST/PUT/DELETE /api/models.
+# Manage them via QAgent → Settings → Models, or Gateway API GET/POST/PUT/DELETE /api/models.
 # Any ``models:`` / ``primary_model:`` keys left in config.yaml are ignored at startup.
 # Legacy one-time YAML import (manual): evoflow.persistence.bootstrap.sync_models_from_yaml_to_db
 
@@ -55,7 +55,7 @@ tool_groups:
 # ============================================================================
 # Configure available tools for the agent to use
 
-# Default web search: preference is set in EvoPanel Settings → 联网搜索
+# Default web search: preference is set in QAgent Settings → 联网搜索
 # (SQLite evoflow_app_settings key web.search). config.yaml web.backend is ignored for search.
 web:
   # extract_backend still optional for web_fetch; search preferredBackend is DB-only
@@ -735,7 +735,7 @@ data_retention:
 #     #    Scan QR; credentials save under ``$EVOFLOW_HOME/weixin/accounts/<account_id>.json``
 #     #    (or ``backend/.evo-flow/weixin/accounts/`` if EVOFLOW_HOME unset).
 #     # 2) Set ``enabled: true`` here (token/account_id optional if that file exists).
-#     # 3) EvoPanel 桌面版：IM Channels → 微信 →「微信扫码绑定」（与飞书相同 begin / poll / apply 流程）。
+#     # 3) QAgent 桌面版：IM Channels → 微信 →「微信扫码绑定」（与飞书相同 begin / poll / apply 流程）。
 #     # 可选环境变量：仅当需要 IPv4-only workaround 时设 ``EVOFLOW_ILINK_IPV4_ONLY=1``（默认双栈）。
 #     # Optional overrides: account_id, token, base_url, cdn_base_url, group_policy, allowed_users, …
 #     # See ``WeixinChannel`` docstring in ``backend/app/channels/weixin.py``.

@@ -1139,7 +1139,7 @@ class FeishuChannel(Channel):
                 if not self._running:
                     break
                 logger.warning(
-                    "Feishu WebSocket unavailable (%s); gateway and EvoPanel continue. Retrying in %.0fs.",
+                    "Feishu WebSocket unavailable (%s); gateway and QAgent continue. Retrying in %.0fs.",
                     exc,
                     delay_sec,
                 )
