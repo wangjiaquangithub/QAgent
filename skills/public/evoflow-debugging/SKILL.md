@@ -1,13 +1,13 @@
 ---
 name: evoflow-debugging
-description: EvoFlow 项目内 Bug / 行为不符 / 数据展示错误排查。先定验收与 ground truth，沿数据流找第一个错层，三条 Gate（真实证据、生产消费函数、最小复现）后再改代码。用户报功能异常、UI 与 API 不一致、测试失败、运维页数据不对时使用；深度方法论可读 superpowers-systematic-debugging。
+description: QAgent 项目内 Bug / 行为不符 / 数据展示错误排查。先定验收与 ground truth，沿数据流找第一个错层，三条 Gate（真实证据、生产消费函数、最小复现）后再改代码。用户报功能异常、UI 与 API 不一致、测试失败、运维页数据不对时使用；深度方法论可读 superpowers-systematic-debugging。
 ---
 
-# EvoFlow 问题排查
+# QAgent 问题排查
 
 适用：功能异常、UI 与预期不符、API 字段不对、测试失败、性能/回归等**需要找根因并修复**的任务。
 
-通用调试心法（四阶段、根因追踪等）可读 **superpowers-systematic-debugging**；本文聚焦 **EvoFlow 仓库 + 工具链**。
+通用调试心法（四阶段、根因追踪等）可读 **superpowers-systematic-debugging**；本文聚焦 **QAgent 仓库 + 工具链**。
 
 ## 0. 先定验收（动手改代码前必做）
 

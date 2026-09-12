@@ -1,6 +1,6 @@
-# EvoPanel 脚本使用指南
+# QAgent 脚本使用指南
 
-本文档说明 EvoPanel 项目的所有脚本使用方法。
+本文档说明 QAgent 项目的所有脚本使用方法。
 
 ## 📁 脚本位置
 
@@ -51,7 +51,7 @@ npm run build:clean
 **输出**:
 - Release 构建生成 NSIS 安装包
 - 位置: `src-tauri\target\release\bundle\nsis\`
-- 文件名: `EvoPanel_x.x.x_x64-setup.exe`
+- 文件名: `QAgent_x.x.x_x64-setup.exe`
 
 ---
 
@@ -130,7 +130,7 @@ npm run serve:win
 ```
 src-tauri/target/release/bundle/
 └── nsis/
-    └── EvoPanel_x.x.x_x64-setup.exe  ← 安装包
+    └── QAgent_x.x.x_x64-setup.exe  ← 安装包
 ```
 
 ### Debug 构建

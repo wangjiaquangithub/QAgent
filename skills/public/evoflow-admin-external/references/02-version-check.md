@@ -64,7 +64,7 @@ evoflow skills list --enabled-only
 
 ## 4. 升级策略
 
-EvoFlow 对同名技能安装会报「已存在」，不会自动按 semver 覆盖。升级建议：
+QAgent 对同名技能安装会报「已存在」，不会自动按 semver 覆盖。升级建议：
 
 1. 记下旧版 `VERSION`
 2. `evoflow skills delete evoflow-admin-external`（仅 custom 可删）

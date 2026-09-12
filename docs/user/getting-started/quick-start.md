@@ -73,4 +73,4 @@ QAgent 的 AI 默认只聊天、不碰文件。要让 AI 能读写代码、跑�
 - [[getting-started/first-task|完成第一个任务]] — 体验多步骤任务与子 Agent 委派
 - [[getting-started/installation|安装指南]] — 开发者自托管部署
 - [[guides/chat/plan-mode|Plan 模式]] — 先对齐方案再执行
-- [[guides/configuration/evopanel-guide|EvoPanel 指南]] — 面板入口总表
+- [[guides/configuration/evopanel-guide|QAgent 指南]] — 面板入口总表

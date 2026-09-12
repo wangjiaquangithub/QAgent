@@ -99,7 +99,7 @@ QAgent 是让 **Agent 把事做完** 的桌面/Web 产品：不只聊天，还�
 | 知识库 / 上传文档 | 文档型「知道」 | [知识库](../guides/configuration/knowledge-vault.md) [[guides/configuration/knowledge-vault|知识库]] · [上传文档](../guides/configuration/document-knowledge-base.md) [[guides/configuration/document-knowledge-base|上传文档]] |
 | 设置治理套件 | 安全中心 · 费用 · 代码索引 · 资源市场 · 多用户/SSO | [设置](../guides/configuration/settings.md) [[guides/configuration/settings|设置]] · [资源市场](../guides/configuration/resource-packs.md) [[guides/configuration/resource-packs|资源包与资源市场]] · [生态对照](../explanation/ecosystem-comparison.md) [[explanation/ecosystem-comparison|生态对照]] |
 
-面板入口总表：[EvoPanel 指南](../guides/configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|EvoPanel 指南]]。
+面板入口总表：[QAgent 指南](../guides/configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|QAgent 指南]]。
 
 ---
 
@@ -177,7 +177,7 @@ flowchart TD
 |------|------|
 | 安装与第一次对话 | [下载](downloads.md) [[downloads|下载]] · [快速上手](quick-start.md) [[quick-start|快速上手]] · [第一个任务](first-task.md) [[first-task|第一个任务]] |
 | 功能怎么点 | [操作指南总目录](../guides/README.md) [[guides/README|操作指南总目录]] |
-| 面板有哪些入口 | [EvoPanel 指南](../guides/configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|EvoPanel 指南]] |
+| 面板有哪些入口 | [QAgent 指南](../guides/configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|QAgent 指南]] |
 | 产品定义与能力清单 | [项目介绍](introduction.md) [[introduction|项目介绍]] |
 | 设计为什么这样 | [为什么是 QAgent](../explanation/why-evoflow.md) [[explanation/why-evoflow|为什么是 QAgent]] |
 | 踩坑 | [FAQ](../guides/faq.md) [[guides/faq|FAQ]] |

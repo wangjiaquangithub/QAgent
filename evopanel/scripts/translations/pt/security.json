@@ -1,6 +1,6 @@
 {
   "title": "Segurança",
-  "desc": "Gerenciar configurações de segurança do EvoPanel",
+  "desc": "Gerenciar configurações de segurança do QAgent",
   "toolPermissions": "Permissões de ferramentas",
   "savePermissions": "Salvar permissões",
   "permSaved": "Permissões salvas",

@@ -1,6 +1,6 @@
 ﻿{
   "title": "Dashboard",
-  "desc": "EvoPanel-Statusübersicht",
+  "desc": "QAgent-Statusübersicht",
   "gateway": "Gateway",
   "notStarted": "Nicht gestartet",
   "versionLabel": "Version",

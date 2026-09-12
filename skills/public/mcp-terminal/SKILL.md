@@ -15,7 +15,7 @@ metadata:
 ---
 
 > **⚠️ 已废弃（2026-08）**  
-> EvoFlow 已与 原生运行时：**MCP 工具是原生 function 工具**，名称为 ``mcp__<服务器>__<工具>``，由 Agent 直接调用。  
+> QAgent 已与 原生运行时：**MCP 工具是原生 function 工具**，名称为 ``mcp__<服务器>__<工具>``，由 Agent 直接调用。  
 > **不要**再为本技能启用 terminal JSON-RPC 路径；飞书等请配 MCP 连接器并在角色「能力 → MCP 模块」勾选。  
 > 本技能仅保留供离线脚本/debug，新任务勿加载。
 

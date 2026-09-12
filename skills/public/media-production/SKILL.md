@@ -183,7 +183,7 @@ python skills/public/media-production/scripts/subtitle_burn.py \
 
 ```
 镜头缓慢推近屏幕；输入框发出蓝紫粒子向外扩散。
-口播：「智能，如流而动。EvoFlow，一句话唤醒你的 AI 创作团队。」
+口播：「智能，如流而动。QAgent，一句话唤醒你的 AI 创作团队。」
 ```
 
 ---

@@ -1,8 +1,8 @@
 # 安装与下载（治理技能包）
 
-> **还没有 EvoFlow / `evoflow` 命令？** 先做完 [`00a-desktop-setup.md`](00a-desktop-setup.md)（下载桌面端 → 配模型 → 检测 CLI），再回到本页装技能包。
+> **还没有 QAgent / `evoflow` 命令？** 先做完 [`00a-desktop-setup.md`](00a-desktop-setup.md)（下载桌面端 → 配模型 → 检测 CLI），再回到本页装技能包。
 
-本技能按 EvoFlow **官方技能包格式**分发：
+本技能按 QAgent **官方技能包格式**分发：
 
 ```text
 evoflow-admin-external-1.0.0.zip   ← 推荐（Gateway / CLI 安装认 .zip）
@@ -16,7 +16,7 @@ evoflow-admin-external-1.0.0.zip   ← 推荐（Gateway / CLI 安装认 .zip）
     └── scripts/
 ```
 
-`.skill` 与 `.zip` **内容相同**（均为 ZIP）；当前 EvoFlow 安装器对本地上传/路径安装以 **`.zip` 为准**。若只拿到 `.skill`，可改名为 `.zip` 再装。
+`.skill` 与 `.zip` **内容相同**（均为 ZIP）；当前 QAgent 安装器对本地上传/路径安装以 **`.zip` 为准**。若只拿到 `.skill`，可改名为 `.zip` 再装。
 
 ---
 
@@ -38,7 +38,7 @@ evoflow-admin-external-1.0.0.zip   ← 推荐（Gateway / CLI 安装认 .zip）
 Work Body / runtime 可被提示：
 
 ```text
-从官网 /skills/downloads/evoflow-admin-external-1.0.3.zip 下载，校验 SHA256 后安装到 EvoFlow。
+从官网 /skills/downloads/evoflow-admin-external-1.0.3.zip 下载，校验 SHA256 后安装到 QAgent。
 ```
 
 ### B. 从本仓库源码目录使用（开发者）
@@ -61,7 +61,7 @@ python skills/public/evoflow-admin-external/scripts/package_release.py
 
 ---
 
-## 2. 安装到 EvoFlow（装完 Agent 才能「用技能」）
+## 2. 安装到 QAgent（装完 Agent 才能「用技能」）
 
 ### 方式 1：CLI（适合 runtime / 脚本）
 
@@ -108,11 +108,11 @@ curl -s -X POST "$EVOFLOW_GATEWAY_URL/api/skills/install-local" \
 
 ## 3. 给 外部 Agent / CLI 宿主
 
-这些环境**不一定**走 EvoFlow 安装器，但仍应使用**同一份目录内容**（官方 SKILL.md 约定）：
+这些环境**不一定**走 QAgent 安装器，但仍应使用**同一份目录内容**（官方 SKILL.md 约定）：
 
 | 产品 | 建议 |
 |------|------|
-| **EvoFlow 本机 + 外部 Agent 调 CLI** | 先按 §2 装进 `skills/custom/`，再用 shell 跑 `evoflow` |
+| **QAgent 本机 + 外部 Agent 调 CLI** | 先按 §2 装进 `skills/custom/`，再用 shell 跑 `evoflow` |
 | **runtime / Claude Code skills 目录** | 将解压后的 `evoflow-admin-external/` **整夹复制**到该产品的 skills 目录（勿软链） |
 | **Work Body** | 配置技能包下载 URL → 拉取 zip → 解压到其约定 skills 路径；执行说明以本包 `references/` 为准 |
 

@@ -18,7 +18,7 @@ Where to ask for help with QAgent.
 
 1. Search existing issues and discussions.
 2. Read [Quick Start](docs/user/getting-started/quick-start.md) and [FAQ](docs/user/guides/faq.md).
-3. Note your OS, QAgent / EvoPanel version, and steps to reproduce.
+3. Note your OS, QAgent / QAgent version, and steps to reproduce.
 4. Redact API keys, tokens, and private paths.
 
 Discussion category guidance (Q&A / Ideas / RFC / Show and tell): [docs/contribute/discussions-and-good-first-issues.md](docs/contribute/discussions-and-good-first-issues.md).

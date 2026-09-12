@@ -1,6 +1,6 @@
 # android-agent Skill
 
-让 EvoFlow 里的 AI Agent 通过命令行直接控制 Android 设备。
+让 QAgent 里的 AI Agent 通过命令行直接控制 Android 设备。
 
 ## 三级能力，按需启用
 
@@ -8,7 +8,7 @@
 |------|------|------|
 | **🟢 基础** | Python 3.8+ + adb | 设备列表、点击、输入、滑动、截图、按键、启动应用、已装应用列表 |
 | **🟡 增强** | + android-agent 后端 (:5055) | UI 元素解析（含坐标/可点击性）、LLM 可读屏幕树、OCR、截图标注、设备健康检查 |
-| **🔵 可选** | + MCP 注册到 EvoFlow | 模型通过 MCP 工具发现路径调用（需要 EvoFlow 后端） |
+| **🔵 可选** | + MCP 注册到 QAgent | 模型通过 MCP 工具发现路径调用（需要 QAgent 后端） |
 
 脚本 **自动检测** 后端是否可用，有后端走 REST API（增强），没有走 ADB 直连（基础）。输出中 `_mode` 字段标明当前模式。
 
@@ -21,7 +21,7 @@ python scripts/check_env.py
 # 1. 把整个 android-agent/ 目录放到技能目录，直接用
 python scripts/android_ctl.py devices
 
-# 2. 在 EvoFlow 面板里对模型说："列出 Android 设备" / "截屏看看手机" / "点击屏幕上的按钮"
+# 2. 在 QAgent 面板里对模型说："列出 Android 设备" / "截屏看看手机" / "点击屏幕上的按钮"
 ```
 
 **不需要安装任何 Python 包**，脚本仅依赖 Python 标准库（`subprocess` + `urllib`）。
@@ -66,19 +66,19 @@ python scripts/android_ctl.py <command> [args...]
 
 ## 安装方式
 
-### 安装到 EvoFlow（推荐）
+### 安装到 QAgent（推荐）
 
 ```bash
-# 复制到 EvoFlow 技能目录
+# 复制到 QAgent 技能目录
 cp -r android-agent/ ~/.evoflow/skills/public/android-agent/
 
-# 重启 EvoFlow 或刷新技能列表
+# 重启 QAgent 或刷新技能列表
 # 在面板里对模型说："列出 Android 设备"
 ```
 
 Windows 目标路径示例：`%USERPROFILE%\.evoflow\skills\public\android-agent\`
 
-不会用命令行：解压后拖进 EvoFlow，让 AI 按 `使用说明-从零开始.md` 帮你安装。
+不会用命令行：解压后拖进 QAgent，让 AI 按 `使用说明-从零开始.md` 帮你安装。
 
 ### 独立使用（不需要 AI，只测脚本）
 
@@ -112,16 +112,16 @@ python -m gitd.app
 
 脚本会自动检测后端并切换到增强模式，无需额外配置。
 
-## 可选：MCP 配置（EvoFlow 专用）
+## 可选：MCP 配置（QAgent 专用）
 
-如果想让 EvoFlow 模型通过 MCP 工具发现路径调用（而非 terminal + 脚本），参考 `mcp/mcp-config.example.json`：
+如果想让 QAgent 模型通过 MCP 工具发现路径调用（而非 terminal + 脚本），参考 `mcp/mcp-config.example.json`：
 
 ```bash
 # 1. 启动 android-agent MCP server（HTTP 模式）
 cd android-agent
 python -m gitd.mcp_server --http --port 8002
 
-# 2. 在 EvoFlow 中注册
+# 2. 在 QAgent 中注册
 # UI: 设置 -> MCP -> 添加 -> 名称: android-agent, URL: http://127.0.0.1:8002/mcp, Transport: http
 # 或 API:
 curl -X PUT http://127.0.0.1:8070/api/config/mcp-servers/android-agent \
@@ -134,7 +134,7 @@ curl -X PUT http://127.0.0.1:8070/api/agents/main \
   -d '{"mcp_servers":["android-agent"]}'
 ```
 
-> **注意**：MCP 方式依赖 EvoFlow 的 ContextVar 传播，可能需要重启后端才能生效。日常使用推荐 terminal + 脚本方式，更简单稳定。
+> **注意**：MCP 方式依赖 QAgent 的 ContextVar 传播，可能需要重启后端才能生效。日常使用推荐 terminal + 脚本方式，更简单稳定。
 
 ## 环境变量
 

@@ -1,6 +1,6 @@
 {
   "title": "Sicherheit",
-  "desc": "EvoPanel-Sicherheitseinstellungen verwalten",
+  "desc": "QAgent-Sicherheitseinstellungen verwalten",
   "toolPermissions": "Werkzeug-Berechtigungen",
   "savePermissions": "Berechtigungen speichern",
   "permSaved": "Berechtigungen gespeichert",

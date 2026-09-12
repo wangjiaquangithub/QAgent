@@ -1,6 +1,6 @@
 ﻿{
   "title": "Panel",
-  "desc": "Resumen del estado de EvoPanel",
+  "desc": "Resumen del estado de QAgent",
   "gateway": "Gateway",
   "notStarted": "No iniciado",
   "versionLabel": "Versión",

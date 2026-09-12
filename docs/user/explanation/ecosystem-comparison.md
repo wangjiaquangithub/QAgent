@@ -14,7 +14,7 @@
 | **Codex** | OpenAI Codex（CLI / Agent tooling） | [openai/codex](https://github.com/openai/codex) | 本地编码 Agent 循环、沙箱与 CLI UX 参考 |
 | **小龙虾** | OpenClaw | [openclaw/openclaw](https://github.com/openclaw/openclaw) | 多渠道个人助手 + 技能包装参考 |
 | **DF** | DeerFlow | [bytedance/deer-flow](https://github.com/bytedance/deer-flow) | QAgent 早期工程基线之一（MIT 致谢，见 [NOTICE](../../../NOTICE)） |
-| **当前活动项目** | **QAgent**（桌面 EvoPanel + Gateway + Harness） | 本仓库 | 面向长任务的 **Agent Runtime + 控制平面**产品 |
+| **当前活动项目** | **QAgent**（桌面 QAgent + Gateway + Harness） | 本仓库 | 面向长任务的 **Agent Runtime + 控制平面**产品 |
 
 **关系一句话（务必读）**
 
@@ -147,7 +147,7 @@ DeerFlow 公开定位是 **super agent harness**：Lead 编排子代理、技能
 | 维度 | DeerFlow | QAgent | 差异要点 |
 |------|----------|---------|----------|
 | 主叙事 | Harness / 研究与通用长程 Agent | **Runtime + 控制平面产品** | DF 偏「装好就能编排 Agent」；QAgent 偏「装好就能管任务、岗位、验收、费用与安全」 |
-| 产品壳 | Web / 自托管为主 | **桌面 EvoPanel 一等** | 开箱路径不同 |
+| 产品壳 | Web / 自托管为主 | **桌面 QAgent 一等** | 开箱路径不同 |
 | 任务生命周期 | 线程 / 子代理 / 技能为主 | **Plan → Teams → 任务中心 → 验收** 产品化 | QAgent 把「可修订计划 + 看板」做成主路径 |
 | 组织形态 | Agent / 子代理 | **智能体员工、关键审批、汇报、小Q 前台** | DF 不主打「编内值班岗 + 闸门」 |
 | 流程沉淀 | 技能与配置 | **应用中心多节点工作流发布再跑** | 个人固定业务工作流产品化 |

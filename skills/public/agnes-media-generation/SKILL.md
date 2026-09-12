@@ -3,7 +3,7 @@ name: agnes-media-generation
 description: |
   Agnes AI 生图/改图/生视频。用户指定 Agnes、agnes-ai.com 时使用。
   ⏰ 触发：「用 Agnes 生图/生视频」「agnes-ai 画图」等。
-  凭据 vendor id：`agnes`（EvoFlow 设置 → 创意媒体）。
+  凭据 vendor id：`agnes`（QAgent 设置 → 创意媒体）。
 ---
 
 # Agnes AI 媒体生成

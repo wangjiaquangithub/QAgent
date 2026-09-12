@@ -1,7 +1,7 @@
 {
   "title": "Configuração inicial",
-  "desc": "Instalar e configurar EvoPanel",
-  "headerTitle": "Bem-vindo ao EvoPanel",
+  "desc": "Instalar e configurar QAgent",
+  "headerTitle": "Bem-vindo ao QAgent",
   "recheck": "Verificar novamente",
   "stepNode": "Ambiente Node.js",
   "installed": "Instalado",
@@ -18,6 +18,6 @@
   "messageChannels": "Canais",
   "enterPanel": "Entrar no painel",
   "installBtn": "Instalação rápida",
-  "installEvoPanel": "Instalar EvoPanel",
+  "installQAgent": "Instalar QAgent",
   "installComplete": "Instalação concluída"
 }

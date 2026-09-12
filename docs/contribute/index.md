@@ -22,6 +22,6 @@
 1. **文档** — `docs/user/` 错别字、缺步骤、断链  
 2. **Skill** — `skills/public/<name>/SKILL.md`  
 3. **Bug fix** — 有复现、有测试更佳  
-4. **渠道 / Runtime / Gateway / EvoPanel** — 大改先 [RFC](rfc.md)，再实现  
+4. **渠道 / Runtime / Gateway / QAgent** — 大改先 [RFC](rfc.md)，再实现  
 
 日常问答用 [Discussions](https://github.com/wangjiaquangithub/QAgent/discussions)；可复现缺陷用 Issue。

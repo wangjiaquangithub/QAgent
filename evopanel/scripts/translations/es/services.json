@@ -1,6 +1,6 @@
 ﻿{
   "title": "Gestión de servicios",
-  "desc": "Iniciar, detener y monitorear servicios EvoPanel",
+  "desc": "Iniciar, detener y monitorear servicios QAgent",
   "gatewayTitle": "Servicio Gateway",
   "guardianTitle": "Servicio Guardian",
   "status": "Estado",

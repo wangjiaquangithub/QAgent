@@ -14,7 +14,7 @@ Interactive browser control uses the unified **`browser`** tool (recommended) or
 3. Run actions on one session:
 
 ```
-browser(action='open', url='https://example.com')   # opens live view in EvoPanel browser side panel
+browser(action='open', url='https://example.com')   # opens live view in QAgent browser side panel
 browser(action='snapshot')
 browser(action='click', ref='@e2')
 browser(action='fill', ref='@e3', text='search text')
@@ -132,4 +132,4 @@ view_image(image_path="/mnt/user-data/outputs/page.png")
 - Prefer **`snapshot -c`** over screenshot unless pixels are required.
 - After **`screenshot`**, always follow with **`view_image`** if you need to understand the image yourself.
 - Call `close` when done to free the browser.
-- Do not use `agent-browser chat` unless the user explicitly wants the standalone AI mode (separate from EvoFlow's model).
+- Do not use `agent-browser chat` unless the user explicitly wants the standalone AI mode (separate from QAgent's model).

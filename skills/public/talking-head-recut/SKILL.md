@@ -56,7 +56,7 @@ Required:
 
 - `ffmpeg` / `ffprobe` (system)
 - `<SKILL_DIR>/assets/fonts/*.woff2` (bundled)
-- GSAP (`gsap.min.js`): **not redistributed by EvoFlow**. Download under your own GreenSock license
+- GSAP (`gsap.min.js`): **not redistributed by QAgent**. Download under your own GreenSock license
   into `$WORK_DIR/public/vendor/` in Step 9 (example CDN fetch below), or load from CDN in HTML.
 
 Transcription needs no key — `hyperframes transcribe` runs Whisper locally (Step 4).
@@ -973,7 +973,7 @@ ffmpeg -y -i "$VIDEO_PATH" -c:v libx264 -crf 18 -g 30 -keyint_min 30 \
       <!-- ...one "card-host clip" per card with inline bounds matching resolveZoneBounds(card.zone)... -->
 
       <script src="vendor/gsap.min.js"></script>
-      <!-- or: <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script> — GSAP not vendored in EvoFlow -->
+      <!-- or: <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script> — GSAP not vendored in QAgent -->
       <script>
         (function () {
           // count-up formatter helper

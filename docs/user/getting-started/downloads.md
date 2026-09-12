@@ -38,4 +38,4 @@
 - [[getting-started/quick-start|5 分钟快速上手]] — 安装后开始体验
 - [[getting-started/installation|安装指南]] — 开发者自托管部署
 - [[tutorials/configure-models|配置模型]] — 配置 API 密钥与模型
-- [[guides/configuration/evopanel-guide|EvoPanel 指南]] — 桌面端各面板入口
+- [[guides/configuration/evopanel-guide|QAgent 桌面端使用指南]] — 桌面端各面板入口

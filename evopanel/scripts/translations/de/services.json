@@ -1,6 +1,6 @@
 ﻿{
   "title": "Dienstverwaltung",
-  "desc": "EvoPanel-Dienste starten, stoppen und überwachen",
+  "desc": "QAgent-Dienste starten, stoppen und überwachen",
   "gatewayTitle": "Gateway-Dienst",
   "guardianTitle": "Guardian-Dienst",
   "status": "Status",

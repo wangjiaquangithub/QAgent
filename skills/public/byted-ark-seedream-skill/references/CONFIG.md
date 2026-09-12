@@ -34,7 +34,7 @@ Skill 先检测当前运行平台，然后从对应位置读取 API Key：
 
 | 平台 | 检测方法 | 字段名 | 说明 |
 |------|---------|--------|------|
-| **EvoFlow** | 检测 `~/.evoflow/` 目录存在 | `models.providers.*.apiKey` | 遍历所有 provider，找第一个有效 Key |
+| **QAgent** | 检测 `~/.evoflow/` 目录存在 | `models.providers.*.apiKey` | 遍历所有 provider，找第一个有效 Key |
 | **Hermes** | 检测 `~/.hermes/` 目录存在 | `model.api_key` | YAML 配置文件中的字段 |
 | **Claude Code** | 检测 `~/.claude/` 目录或环境变量存在 | `~/.claude/settings.json` 中的 `env.ANTHROPIC_AUTH_TOKEN`，或会话环境变量 `ANTHROPIC_AUTH_TOKEN` | 已有 token 时不自动覆盖 |
 

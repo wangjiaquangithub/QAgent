@@ -1,6 +1,6 @@
 ﻿{
   "title": "Tarefas agendadas",
-  "desc": "Gerenciar tarefas agendadas do EvoPanel",
+  "desc": "Gerenciar tarefas agendadas do QAgent",
   "addTask": "+ Adicionar tarefa",
   "noTasks": "Sem tarefas",
   "taskName": "Nome da tarefa",

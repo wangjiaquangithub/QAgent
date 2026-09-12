@@ -7,7 +7,7 @@
 | Gateway / 渠道 | `backend/app/` | [CONTRIBUTING](../../CONTRIBUTING.md) | `cd backend && uv run pytest`（相关用例） |
 | Agent Runtime / Harness | `backend/packages/harness/evoflow/` | [backend/AGENTS.md](../../backend/AGENTS.md) | 同上；改工具/记忆/沙箱必跑相关测试 |
 | 持久化 / 迁移 | `backend/packages/harness/evoflow/persistence/` | 同左 | 迁移与 schema 相关测试 |
-| EvoPanel 桌面端 | `evopanel/` | `evopanel/CONTRIBUTING.md` | `pnpm typecheck`；UI 逻辑加 `pnpm test` |
+| QAgent 桌面端 | `evopanel/` | `evopanel/CONTRIBUTING.md` | `pnpm typecheck`；UI 逻辑加 `pnpm test` |
 | 公开 Skills | `skills/public/` | [添加 Skill](add-skill.md) | 人工：面板加载技能；无密钥进仓 |
 | 用户文档 | `docs/user/`、`docs/index.md` | [文档首页](../index.md) | `make docs-build` |
 | 代码知识库 Wiki | `.codebasewiki/` | [代码知识库 Wiki](codebase-wiki.md) | `python .claude/skills/codebase-wiki/scripts/wiki_audit.py --config ./wiki-config.yaml`（本地有技能时） |

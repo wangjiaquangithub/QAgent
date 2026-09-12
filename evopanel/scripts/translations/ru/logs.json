@@ -1,6 +1,6 @@
 ﻿{
   "title": "Журналы",
-  "desc": "Просмотр журналов EvoPanel",
+  "desc": "Просмотр журналов QAgent",
   "tabGateway": "Gateway",
   "tabGatewayErr": "Ошибки Gateway",
   "tabGuardian": "Guardian",

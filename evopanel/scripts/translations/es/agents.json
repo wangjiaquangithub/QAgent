@@ -1,6 +1,6 @@
 {
   "title": "Gesti贸n de Agentes",
-  "desc": "Crear y gestionar EvoPanel Agents",
+  "desc": "Crear y gestionar QAgent Agents",
   "addAgent": "+ Nuevo Agent",
   "noAgents": "Sin Agentes",
   "loadFailed": "Error al cargar",

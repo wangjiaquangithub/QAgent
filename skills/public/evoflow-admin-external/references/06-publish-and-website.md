@@ -2,7 +2,7 @@
 
 本文给 Evovex / 官网 / Release 维护者，说明**如何把本包变成用户与 Agent 可下载的地址**。
 
-## 1. 官方包格式（与 EvoFlow 安装器对齐）
+## 1. 官方包格式（与 QAgent 安装器对齐）
 
 | 产物 | 说明 |
 |------|------|
@@ -51,7 +51,7 @@ https://<官网>/#skill-pack
 挂在官网按钮旁，供用户粘贴给 runtime / Work Body：
 
 ```text
-请安装 EvoFlow 外部治理技能包：
+请安装 QAgent 外部治理技能包：
 1. 下载 <ZIP_URL>
 2. 用 <SUMS_URL> 校验 SHA256
 3. 执行：evoflow skills install <本地zip路径>

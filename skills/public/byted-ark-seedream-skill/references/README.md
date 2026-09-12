@@ -5,7 +5,7 @@
 ## ✨ 核心特性
 
 - 🎨 **Agent Plan 专属架构**：使用 Agent Plan 统一 baseurl，与生图、语言模型使用相同地址
-- 🔑 **三层智能 API Key 检测**：自动识别 EvoFlow / Hermes / Claude Code 配置，无需单独配置
+- 🔑 **三层智能 API Key 检测**：自动识别 QAgent / Hermes / Claude Code 配置，无需单独配置
 - ⚡ **安全默认**：对话中发送的 API Key 默认仅本次临时使用，显式确认后才保存到平台配置
 - 🖼️ **6 种生成场景全覆盖**：文生图、连贯图生成、图生图、多参考融合等
 - 🌊 **流式输出**：生成一张返回一张，大幅降低首图可见时间
@@ -43,7 +43,7 @@ byted-ark-seedream-skill/
 | `ARK_SEEDREAM_SAVE_PATH` | 图片保存路径 | `~/Desktop/Seedream-Images` |
 
 > 💡 **环境变量仅用于兜底，一般不需要设置！**<br>
-> Skill 会自动从 EvoFlow / Hermes / Claude Code 的配置中读取 API Key。
+> Skill 会自动从 QAgent / Hermes / Claude Code 的配置中读取 API Key。
 
 ### 🔑 API Key 配置（三层优先级）
 
@@ -65,7 +65,7 @@ node scripts/generate.js --prompt "一只可爱的小猫" --api-key ark-xxx --sa
 #### 🥈 第二层（平台专属检测）：根据当前运行平台读取配置
 Skill 自动检测当前运行平台，并从对应位置读取：
 - **Claude Code**：`~/.claude/settings.json` 中的 `env.ANTHROPIC_AUTH_TOKEN`（或会话环境变量）
-- **EvoFlow**：`~/.evoflow/evoflow.json` 中的 `models.providers.*.apiKey`
+- **QAgent**：`~/.evoflow/evoflow.json` 中的 `models.providers.*.apiKey`
 - **Hermes**：`~/.hermes/config.yaml` 中的 `model.api_key`
 
 #### 🥉 第三层（通用兜底）：6 个通用环境变量
@@ -77,7 +77,7 @@ Skill 自动检测当前运行平台，并从对应位置读取：
 5. `api_key`
 6. `apiKey`
 
-> 💡 **安全原则**：只有当用户明确说「保存这个 Key / 以后都用这个 / 替换全局 Key」时，Agent 层才应追加 `--save-api-key` 参数，写入当前平台的 Agent Plan 标准配置（如 EvoFlow 的 `volcengine-plan`），保存后所有相关功能都可以直接复用，无需重复输入。
+> 💡 **安全原则**：只有当用户明确说「保存这个 Key / 以后都用这个 / 替换全局 Key」时，Agent 层才应追加 `--save-api-key` 参数，写入当前平台的 Agent Plan 标准配置（如 QAgent 的 `volcengine-plan`），保存后所有相关功能都可以直接复用，无需重复输入。
 > 
 > ⚠️ 不会默认读取通用的 `ARK_API_KEY` 环境变量，避免误用火山其他业务的 API Key。
 

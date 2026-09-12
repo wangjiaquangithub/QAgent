@@ -5,7 +5,7 @@
     "size":  311531994,
     "version":  "1.0.0",
     "releasedAt":  "2026-09-12",
-    "changelog":  "EvoFlow 1.0.0 首个公开源码可见版本：原生 Agent Teams、Plan/Goal、技能与 MCP、工作流与可观测；模型在「设置 → 模型」配置。",
+    "changelog":  "QAgent 1.0.0 首个公开源码可见版本：原生 Agent Teams、Plan/Goal、技能与 MCP、工作流与可观测；模型在「设置 → 模型」配置。",
     "updateKind":  "full",
     "hash":  "4574210a6955a6cae5a81409a22ee65600f22a8d10973cc2cde8b0b492e77434"
 }

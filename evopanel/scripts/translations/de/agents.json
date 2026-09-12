@@ -1,6 +1,6 @@
 {
   "title": "Agenten-Verwaltung",
-  "desc": "EvoPanel-Agenten erstellen und verwalten",
+  "desc": "QAgent-Agenten erstellen und verwalten",
   "addAgent": "+ Neuer Agent",
   "noAgents": "Keine Agenten",
   "loadFailed": "Laden fehlgeschlagen",

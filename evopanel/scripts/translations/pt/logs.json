@@ -1,6 +1,6 @@
 ﻿{
   "title": "Logs",
-  "desc": "Ver logs do serviço EvoPanel",
+  "desc": "Ver logs do serviço QAgent",
   "tabGateway": "Gateway",
   "tabGatewayErr": "Erros Gateway",
   "tabGuardian": "Guardian",

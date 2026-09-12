@@ -1,6 +1,6 @@
 ﻿{
   "title": "ëìë³´ë?,
-  "desc": "EvoPanel ì¤í ìí ê°ì",
+  "desc": "QAgent ì¤í ìí ê°ì",
   "gateway": "Gateway",
   "portDetect": "í¬í¸ ê°ì§",
   "notStarted": "ë¯¸ìì?,
@@ -18,7 +18,7 @@
   "basedOnProviders": "{count}ê°?íë¡ë°ì´ë?ê¸°ë°",
   "baseServices": "ê¸°ë³¸ ìë¹ì?,
   "controlUI": "Control UI",
-  "controlUIDesc": "EvoPanel ë¤ì´í°ë¸ í¨ë",
+  "controlUIDesc": "QAgent ë¤ì´í°ë¸ í¨ë",
   "controlUIClick": "ë¸ë¼ì°ì ìì ì´ê¸°",
   "controlUINotRunning": "Gateway ë¯¸ì¤í?,
   "restartGw": "Gateway ì¬ìì?,

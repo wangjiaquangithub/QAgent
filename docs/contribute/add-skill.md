@@ -37,7 +37,7 @@ skills/public/<skill-name>/
 ## 本地验证建议
 
 1. `make docker-start` 或桌面开发栈起来。  
-2. 在 EvoPanel 技能管理中确认技能出现在列表。  
+2. 在 QAgent 技能管理中确认技能出现在列表。  
 3. 用一条会触发该技能的真实提示跑一轮，确认步骤可执行。
 
 维护者会按「是否通用、是否可安全默认加载」决定是否合入 `skills/public/`。

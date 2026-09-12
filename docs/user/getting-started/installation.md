@@ -119,4 +119,4 @@ npm install -g pnpm
 - [[getting-started/downloads|下载与安装]] — 桌面客户端安装包说明
 - [[getting-started/quick-start|5 分钟快速上手]] — 安装后快速体验
 - [[tutorials/configure-models|配置模型]] — 配置 API 密钥与模型
-- [[guides/configuration/evopanel-guide|EvoPanel 指南]] — 桌面端各面板入口
+- [[guides/configuration/evopanel-guide|QAgent 指南]] — 桌面端各面板入口

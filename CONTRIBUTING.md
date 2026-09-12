@@ -70,7 +70,7 @@ Minimum by area:
 | --- | --- |
 | Backend format / lint | `cd backend && make format` (ruff) |
 | Backend unit tests | `cd backend && uv run pytest` |
-| EvoPanel | `cd evopanel && pnpm typecheck` (and `pnpm test` if you touched UI logic) |
+| QAgent | `cd evopanel && pnpm typecheck` (and `pnpm test` if you touched UI logic) |
 | Docs | `make docs-build` if you changed `docs/` or `mkdocs.yml` |
 
 CI workflows (must stay green on the PR):
@@ -143,7 +143,7 @@ cd backend && make dev
 # Terminal 2 — Gateway :8001
 cd backend && make gateway
 
-# Terminal 3 — EvoPanel (often :1420)
+# Terminal 3 — QAgent (often :1420)
 cd evopanel && pnpm dev
 
 # Terminal 4 — nginx
@@ -192,7 +192,7 @@ Chinese contributor guide: [docs/contribute/](docs/contribute/index.md) (repo ma
 ## Code style
 
 - **Python:** `ruff` via `cd backend && make format`
-- **TypeScript (EvoPanel):** `pnpm typecheck`; tests when UI logic changes
+- **TypeScript (QAgent):** `pnpm typecheck`; tests when UI logic changes
 - CI rejects unformatted Python
 
 ---

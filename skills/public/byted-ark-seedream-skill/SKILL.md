@@ -21,8 +21,8 @@ metadata:
 豆包 Seedream AI 图片生成 Skill - **火山方舟 Agent Plan 专属版本**。
 
 ✨ **核心优势：**
-- ✅ **EvoFlow**：**设置 → 环境变量** 填 `VOLCENGINE_API_KEY` / `ARK_API_KEY`；terminal 与脚本自动注入
-- ✅ **三层智能检测** - EvoFlow / Hermes / Claude Code 等平台配置自动读取
+- ✅ **QAgent**：**设置 → 环境变量** 填 `VOLCENGINE_API_KEY` / `ARK_API_KEY`；terminal 与脚本自动注入
+- ✅ **三层智能检测** - QAgent / Hermes / Claude Code 等平台配置自动读取
 - 🔑 **安全默认** - 用户在对话中直接发送 ark-xxx，默认仅本次临时使用，显式确认后才保存到平台配置
 - 📂 **智能路径降级** - 三级保存策略，桌面/服务器都兼容
 - ✅ **调用原生接口** - 与语言模型共用服务入口

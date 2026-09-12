@@ -1,8 +1,8 @@
 ﻿{
   "title": "ì´ê¸° ì¤ì ",
-  "desc": "EvoPanel ì¤ì¹ ë°?ì¤ì ",
-  "headerTitle": "EvoPanelì?ì¤ì  ê²ì íìí©ëë?,
-  "headerDesc": "EvoPanel AI Agent íë ììí¬ì ë°ì¤í¬í± ê´ë¦?í¨ë",
+  "desc": "QAgent ì¤ì¹ ë°?ì¤ì ",
+  "headerTitle": "QAgentì?ì¤ì  ê²ì íìí©ëë?,
+  "headerDesc": "QAgent AI Agent íë ììí¬ì ë°ì¤í¬í± ê´ë¦?í¨ë",
   "recheck": "ì¬ê°ì§",
   "stepNode": "Node.js íê²½",
   "installed": "ì¤ì¹ë?,
@@ -14,7 +14,7 @@
   "stepConfig": "ì¤ì  íì¼",
   "configMissing": "ì¤ì  íì¼ì?ì¡´ì¬íì§ ììµëë¤",
   "initConfigLabel": "ì¤ì  ìí´ë¦?ì´ê¸°í?,
-  "customDirTitle": "ì¬ì©ì?ì ì EvoPanel ì¤ì¹ ê²½ë¡",
+  "customDirTitle": "ì¬ì©ì?ì ì QAgent ì¤ì¹ ê²½ë¡",
   "saveBtn": "ì ì?,
   "resetDefaultBtn": "ê¸°ë³¸ê°ì¼ë¡?ë³µì",
   "aiAssistant": "AI ì´ìì¤í´í?,
@@ -28,6 +28,6 @@
   "messageChannels": "ì±ë",
   "enterPanel": "í¨ë ì§ì",
   "installBtn": "ìí´ë¦?ì¤ì¹",
-  "installEvoPanel": "EvoPanel ì¤ì¹",
+  "installQAgent": "QAgent ì¤ì¹",
   "installComplete": "ì¤ì¹ ìë£",
 }

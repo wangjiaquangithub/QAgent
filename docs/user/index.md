@@ -25,7 +25,7 @@
 | 完成第一个任务 | [第一个任务](getting-started/first-task.md) [[getting-started/first-task|第一个任务]] |
 | 手把手教程 | [教程 · 配置模型](tutorials/configure-models.md) [[tutorials/configure-models|教程 · 配置模型]] |
 | 按功能查操作 | [操作指南总目录](guides/README.md) [[guides/README|操作指南总目录]] |
-| 面板入口速查 | [EvoPanel 指南](guides/configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|EvoPanel 指南]] |
+| 面板入口速查 | [QAgent 指南](guides/configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|QAgent 指南]] |
 | 设计理念 | [为什么是 QAgent](explanation/why-evoflow.md) [[explanation/why-evoflow|为什么是 QAgent]] |
 | 踩坑 | [FAQ](guides/faq.md) [[guides/faq|FAQ]] |
 

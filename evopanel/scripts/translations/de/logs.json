@@ -1,6 +1,6 @@
 ﻿{
   "title": "Protokolle",
-  "desc": "EvoPanel-Protokolle anzeigen",
+  "desc": "QAgent-Protokolle anzeigen",
   "tabGateway": "Gateway",
   "tabGatewayErr": "Gateway-Fehler",
   "tabGuardian": "Guardian",

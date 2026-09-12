@@ -2,7 +2,7 @@
 
 > 尚无桌面端 / CLI？先 [`00a-desktop-setup.md`](00a-desktop-setup.md)。
 
-外部 Agent **先读本页再动手**。EvoFlow 里有多套「待办 / 员工 / 流程」，名字容易混。
+外部 Agent **先读本页再动手**。QAgent 里有多套「待办 / 员工 / 流程」，名字容易混。
 
 ## 1. 一张表定路由
 
@@ -55,7 +55,7 @@ workflow  = 面板 Apps（可发布、可重复跑的参数化流程）。
 | | 含义 | 外部 Agent 怎么动 |
 |--|------|-------------------|
 | **workflow / Apps** | 面板可发布应用 | CLI：`workflow list/get/run/status/stop`；创建发布：`POST /api/platform` `workflow.*` 或 `/api/apps` |
-| **Plan + supervisor** | 对话内长任务编排 | 主要在 EvoFlow 会话；外部可用 `tasks` 观察台账 |
+| **Plan + supervisor** | 对话内长任务编排 | 主要在 QAgent 会话；外部可用 `tasks` 观察台账 |
 | **LangGraph** | `lead_agent` / `goal_agent` 运行时 | `/api/langgraph`；**不要**当成 `workflow` CLI |
 
 ## 5. 决策小流程（给 Agent）

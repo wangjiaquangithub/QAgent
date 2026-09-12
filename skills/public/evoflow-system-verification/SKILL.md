@@ -1,7 +1,7 @@
 ---
 name: evoflow-system-verification
 description: >-
-  EvoFlow 全平台系统验证（真实串联案例「内容运营工作室一日」）：用 platform /
+  QAgent 全平台系统验证（真实串联案例「内容运营工作室一日」）：用 platform /
   HTTP /api/platform 的 verification.* 开轮、seed 待开始、按 ID 接力真实调用
   全部业务接口并 step 回填、conclude。凡 AI 运行（workflow.run / wake 派发等）须单独
   等待并审 progress/轨迹/提示词。覆盖 78 业务 API + verification 元接口；
@@ -9,7 +9,7 @@ description: >-
   内容运营验证时使用。详表同目录 scenario-full-chain.md。
 ---
 
-# EvoFlow 系统验证
+# QAgent 系统验证
 
 对话助手用内置工具 **`platform`**；脚本 / 外部 Agent用 **`POST http://127.0.0.1:8070/api/platform`**（同一套分发）。  
 **禁止**用临时文件/自建表代替 `verification.*` 记账。

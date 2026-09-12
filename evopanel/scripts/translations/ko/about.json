@@ -1,7 +1,7 @@
 {
   "title": "ì ë³´",
-  "desc": "EvoPanel ë²ì  ë°?íë¡ì í¸ ì ë³´",
-  "subtitle": "EvoPanel ë¹ì£¼ì?ê´ë¦?í¨ë",
+  "desc": "QAgent ë²ì  ë°?íë¡ì í¸ ì ë³´",
+  "subtitle": "QAgent ë¹ì£¼ì?ê´ë¦?í¨ë",
   "sectionCommunity": "ì»¤ë®¤ëí°",
   "sectionProjects": "ê´ë ?íë¡ì í¸",
   "sectionContribute": "ê¸°ì¬íê¸°",
@@ -13,7 +13,7 @@
   "notInstalled": "ë¯¸ì¤ì¹?,
   "recommendedStable": "ê¶ì¥ ìì  ë²ì : {ver}",
   "switchVersion": "ë²ì  ì í",
-  "installEvoPanel": "EvoPanel ì¤ì¹",
+  "installQAgent": "QAgent ì¤ì¹",
   "uninstall": "ì ê±°",
   "installPath": "ì¤ì¹ ê²½ë¡",
   "configExists": "ì¤ì  íì¼ ìì",
@@ -35,9 +35,9 @@
   "checkUpdateFailed": "ìë°ì´í¸ íì¸ ì¤í¨",
   "joinDiscord": "Discord ì°¸ì¬",
   "discordDesc": "êµ­ì  ì»¤ë®¤ëí°",
-  "communityWelcome": "EvoPanel ì»¤ë®¤ëí°ì?ì¤ì  ê²ì íìí©ëë? ë¬¸ì ê° ìì¼ë©?ì¸ì ë?í¼ëë°±í´ ì£¼ì¸ì? í¨ê» AI Agentë¥?ë?ì¢ê² ë§ë¤ì´ì.",
-  "communityWelcomeIntl": "Welcome to the EvoPanel community! Share ideas, get help, and build amazing AI agents together.",
-  "contributeDesc": "EvoPanelì ì¤íìì¤ íë¡ì í¸ìëë? Issueì PRì?íìí©ëë?",
+  "communityWelcome": "QAgent ì»¤ë®¤ëí°ì?ì¤ì  ê²ì íìí©ëë? ë¬¸ì ê° ìì¼ë©?ì¸ì ë?í¼ëë°±í´ ì£¼ì¸ì? í¨ê» AI Agentë¥?ë?ì¢ê² ë§ë¤ì´ì.",
+  "communityWelcomeIntl": "Welcome to the QAgent community! Share ideas, get help, and build amazing AI agents together.",
+  "contributeDesc": "QAgentì ì¤íìì¤ íë¡ì í¸ìëë? Issueì PRì?íìí©ëë?",
   "submitIssue": "Issue ì ì¶",
   "submitPR": "PR ì ì¶",
   "contributeGuide": "ê¸°ì¬ ê°ì´ë",

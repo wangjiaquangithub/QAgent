@@ -47,7 +47,7 @@ ls byted-ark-seedream-skill/
 
 | 平台 | 自动检测位置 |
 |------|-------------|
-| **EvoFlow** | `models.providers.*.apiKey` |
+| **QAgent** | `models.providers.*.apiKey` |
 | **Hermes** | `model.api_key` |
 | **Claude Code** | `ANTHROPIC_AUTH_TOKEN` 环境变量 |
 

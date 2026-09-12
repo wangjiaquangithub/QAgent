@@ -1,7 +1,7 @@
 {
   "title": "Thiáº¿t láº­p ban Äáº§u",
-  "desc": "CÃ i Äáº·t vÃ  cáº¥u hÃ¬nh EvoPanel",
-  "headerTitle": "ChÃ o má»«ng Äáº¿n EvoPanel",
+  "desc": "CÃ i Äáº·t vÃ  cáº¥u hÃ¬nh QAgent",
+  "headerTitle": "ChÃ o má»«ng Äáº¿n QAgent",
   "recheck": "Kiá»m tra láº¡i",
   "stepNode": "MÃ´i trÆ°á»ng Node.js",
   "installed": "ÄÃ£ cÃ i Äáº·t",
@@ -18,6 +18,6 @@
   "messageChannels": "KÃªnh",
   "enterPanel": "VÃ o panel",
   "installBtn": "CÃ i Äáº·t nhanh",
-  "installEvoPanel": "CÃ i Äáº·t EvoPanel",
+  "installQAgent": "CÃ i Äáº·t QAgent",
   "installComplete": "CÃ i Äáº·t hoÃ n táº¥t"
 }

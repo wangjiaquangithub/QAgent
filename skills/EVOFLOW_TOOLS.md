@@ -1,6 +1,6 @@
-# EvoFlow：技能目录与工具路径约定
+# QAgent：技能目录与工具路径约定
 
-技能文件安装在 **EvoFlow 程序目录**（如 `…/evoflow-gateway/skills/`），与用户选中的 **工作区** 不是同一棵树。请按下列写法，避免 `Path escapes the bound workspace`。
+技能文件安装在 **QAgent 程序目录**（如 `…/evoflow-gateway/skills/`），与用户选中的 **工作区** 不是同一棵树。请按下列写法，避免 `Path escapes the bound workspace`。
 
 ## 读文件 / 列目录
 
@@ -35,4 +35,4 @@ process_start(command="python -m pytest scripts/tests -q", workdir="skill:pptx",
 ## 写技能 `SKILL.md` 时
 
 - 命令示例保持 **相对路径**（假定 `workdir="skill:<本技能 name>"`）。
-- 在文首或「Resources / scripts」节可加一句：*EvoFlow 执行见 `skills/EVOFLOW_TOOLS.md`。*
+- 在文首或「Resources / scripts」节可加一句：*QAgent 执行见 `skills/EVOFLOW_TOOLS.md`。*

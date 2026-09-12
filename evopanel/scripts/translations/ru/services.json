@@ -1,6 +1,6 @@
 ﻿{
   "title": "Управление сервисами",
-  "desc": "Запуск, остановка и мониторинг сервисов EvoPanel",
+  "desc": "Запуск, остановка и мониторинг сервисов QAgent",
   "gatewayTitle": "Сервис Gateway",
   "guardianTitle": "Сервис Guardian",
   "status": "Статус",

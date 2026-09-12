@@ -1,6 +1,6 @@
 ﻿{
   "title": "Journaux",
-  "desc": "Voir les journaux EvoPanel",
+  "desc": "Voir les journaux QAgent",
   "tabGateway": "Gateway",
   "tabGatewayErr": "Erreurs Gateway",
   "tabGuardian": "Guardian",

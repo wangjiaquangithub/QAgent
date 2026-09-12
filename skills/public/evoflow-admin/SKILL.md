@@ -1,14 +1,14 @@
 ---
 name: evoflow-admin
-description: EvoFlow 系统治理 CLI — 复杂/脚本化治理时通过 terminal 跑 `evoflow`。日常对话优先用内置工具 `platform`（catalog→confirm→执行）。CLI 与 platform 域对齐：模型、联网搜索、技能、Agent、员工、工作流、用户事项、协作任务、审批、组织包、资产、知识库、MCP、记忆、经验库、会话、自动化、画像、日志诊断、系统验证。外部 Agent 用 evoflow-admin-external。
+description: QAgent 系统治理 CLI — 复杂/脚本化治理时通过 terminal 跑 `evoflow`。日常对话优先用内置工具 `platform`（catalog→confirm→执行）。CLI 与 platform 域对齐：模型、联网搜索、技能、Agent、员工、工作流、用户事项、协作任务、审批、组织包、资产、知识库、MCP、记忆、经验库、会话、自动化、画像、日志诊断、系统验证。外部 Agent 用 evoflow-admin-external。
 ---
 
-# EvoFlow Admin CLI
+# QAgent Admin CLI
 
 日常平台行政优先用内置工具 **`platform`**（先 `action=catalog`，写操作带 `confirm=true`）。  
 需要脚本化、批处理或 CLI 独有参数时，再走 **`terminal` + `evoflow`**（本技能）。已退役的分散工具（`create_agent`、`experience_*`、`remember` 等）不要再用。
 
-**runtime / Work Body / 无 EvoFlow 会话的 Agent**：安装独立发行包 **`evoflow-admin-external`**（GitHub Releases / 官网下载，或本地用 `package_release.py` 打出 zip），不要依赖本技能里的 `platform` / `terminal` 工具叙述，也不要用软链接代替整包拷贝。
+**runtime / Work Body / 无 QAgent 会话的 Agent**：安装独立发行包 **`evoflow-admin-external`**（GitHub Releases / 官网下载，或本地用 `package_release.py` 打出 zip），不要依赖本技能里的 `platform` / `terminal` 工具叙述，也不要用软链接代替整包拷贝。
 
 ## Platform ↔ CLI 对照（保持同步）
 

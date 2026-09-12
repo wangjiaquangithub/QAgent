@@ -9,9 +9,9 @@ version: 1.0.1
 
 A skill for creating new skills and iteratively improving them.
 
-## EvoFlow / EvoFlow authoring
+## QAgent / QAgent authoring
 
-When skills ship inside EvoFlow, agents read and run them via **`skill:<name>`** URIs—not install-dir absolute paths. Script examples must use **relative** commands with `workdir="skill:<name>"` and tools **`terminal`** / **`process_start`** (not `execute_command`). Authoring reference: `skills/EVOFLOW_TOOLS.md`; new skills from `init_skill.py` include a template section.
+When skills ship inside QAgent, agents read and run them via **`skill:<name>`** URIs—not install-dir absolute paths. Script examples must use **relative** commands with `workdir="skill:<name>"` and tools **`terminal`** / **`process_start`** (not `execute_command`). Authoring reference: `skills/EVOFLOW_TOOLS.md`; new skills from `init_skill.py` include a template section.
 
 At a high level, the process of creating a skill goes like this:
 

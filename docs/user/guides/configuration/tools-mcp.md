@@ -230,7 +230,7 @@ QAgent 把 MCP 工具**直接注册为 Agent 的 function 工具**，模型按�
 
 | 优先级 | 位置 | 用途 |
 |--------|------|------|
-| 1 | SQLite `evoflow_mcp_servers` | EvoPanel **连接器**、Gateway `PUT /api/mcp/config`、`evoflow mcp add/remove` |
+| 1 | SQLite `evoflow_mcp_servers` | QAgent **连接器**、Gateway `PUT /api/mcp/config`、`evoflow mcp add/remove` |
 | 2 | `~/.evoflow/mcp.json` | 首次导入 / 手工编辑（自动 sync 进 SQLite） |
 | 3 | 本机常见 IDE 的 `mcp.json`（若存在） | 空库时可选导入（兼容路径含 `~/.cursor/mcp.json` 等） |
 | 4 | 项目根 `extensions_config.json` | **仅引导种子**（旧安装兼容，非运行时主存储） |
@@ -334,7 +334,7 @@ JSON **格式**（上述文件/API 通用，键名支持 `mcpServers` 或 `mcp_s
 
 ### 运行时热重载
 
-通过 EvoPanel 保存、Gateway API 或 CLI 修改 MCP 后会 **reset 工具缓存** 并在后台重连（通常数秒内生效）。也可走 Gateway API：
+通过 QAgent 保存、Gateway API 或 CLI 修改 MCP 后会 **reset 工具缓存** 并在后台重连（通常数秒内生效）。也可走 Gateway API：
 
 ```bash
 # 整包替换（body 为 { "mcp_servers": { ... } } 或标准 mcpServers 对象）
@@ -409,7 +409,7 @@ stdio MCP 启动失败时，Gateway 启动日志会带具体报错（如 npx 找
 检查 `token_url`、`client_id`、`client_secret` 是否有效。日志会打印 OAuth 错误码（401 / 403 / invalid_grant 等）。
 
 **Q：修改 MCP 配置没生效？**
-确认已通过 EvoPanel / `PUT /api/mcp/config` / `evoflow mcp add` 写入 SQLite；看 Gateway 日志或 `evoflow mcp list` 的 `load_status`。改完仍异常时可重启 Gateway。
+确认已通过 QAgent / `PUT /api/mcp/config` / `evoflow mcp add` 写入 SQLite；看 Gateway 日志或 `evoflow mcp list` 的 `load_status`。改完仍异常时可重启 Gateway。
 
 **Q：Agent 工具白名单里要写 MCP 工具名吗？**
 一般不用 — 用「能力 → MCP 模块」勾选服务器即可。若硬编码 `tools` / `disallowed_tools`，须用标准名 ``mcp__<服务器>__<工具>``（不是旧的 ``server__tool``）。

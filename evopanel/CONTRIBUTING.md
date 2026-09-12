@@ -1,6 +1,6 @@
-# EvoPanel 贡献指南
+# QAgent 贡献指南
 
-EvoPanel 是 QAgent 的桌面/Web 管理面板（`evopanel/`）。  
+QAgent 是 QAgent 的桌面/Web 管理面板（`evopanel/`）。  
 仓库级流程（分支、CLA、PR、全仓 CI）以根目录 [CONTRIBUTING.md](../CONTRIBUTING.md) 为准；本文只写**面板相关**约定。
 
 > 官网：[www.www.quclouds.com](https://www.quclouds.com/) · 仓库：[Quclouds/QAgent](https://github.com/wangjiaquangithub/QAgent) · 许可：[PolyForm Noncommercial 1.0.0](../LICENSE)

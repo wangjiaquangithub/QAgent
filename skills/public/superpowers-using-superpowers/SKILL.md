@@ -7,19 +7,19 @@ description: Use when starting any conversation - establishes how to find and us
 If you were dispatched as a subagent to execute a specific task, skip this skill.
 </SUBAGENT-STOP>
 
-## EvoFlow integration (read first)
+## QAgent integration (read first)
 
-These skills are **Superpowers-derived** (MIT upstream), adapted for EvoFlow:
+These skills are **Superpowers-derived** (MIT upstream), adapted for QAgent:
 
-- **Skill IDs** in EvoFlow use the `superpowers-*` prefix (e.g. `superpowers-subagent-driven-development`). This maps from the Claude plugin namespace `superpowers:*` by replacing `:` with `-`.
+- **Skill IDs** in QAgent use the `superpowers-*` prefix (e.g. `superpowers-subagent-driven-development`). This maps from the Claude plugin namespace `superpowers:*` by replacing `:` with `-`.
 - **Structured artifacts**: write specs, plans, and execution notes under `docs/user/evoflow/runs/<run-id>/` so downstream automation, Supervisor replays, and later turns share one source of truth. Replace `<run-id>` with your task id, `thread_id`, or a dated slug. See `docs/user/evoflow/artifacts/README.md` in this repo.
-- **Precedence**: EvoFlow product rules win—Supervisor / Plan–Execute gates / `CLAUDE.md` / `AGENTS.md` override default skill behavior when they conflict.
+- **Precedence**: QAgent product rules win—Supervisor / Plan–Execute gates / `CLAUDE.md` / `AGENTS.md` override default skill behavior when they conflict.
 
 ## 中文摘要
 
 - 技能名均为 `superpowers-*` 前缀；与上游 `superpowers:` 命名对应为把冒号换成连字符。
 - 各阶段产出请落到 `docs/user/evoflow/runs/<run-id>/`，便于任务产品化与多轮引用；详见 `docs/user/evoflow/artifacts/README.md`。
-- 与 EvoFlow 全局配置冲突时，以产品侧与用户显式指令为准。
+- 与 QAgent 全局配置冲突时，以产品侧与用户显式指令为准。
 
 <EXTREMELY-IMPORTANT>
 If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
@@ -34,7 +34,7 @@ This is not negotiable. This is not optional. You cannot rationalize your way ou
 `superpowers-*` skills (Superpowers-derived) override default system prompt behavior, but **user instructions always take precedence**:
 
 1. **User's explicit instructions** (CLAUDE.md, GEMINI.md, AGENTS.md, direct requests) — highest priority
-2. **EvoFlow product configuration** (Supervisor, Plan/Execute gates, channel policies) — when applicable
+2. **QAgent product configuration** (Supervisor, Plan/Execute gates, channel policies) — when applicable
 3. **`superpowers-*` skills** — override default system behavior where they conflict with the default prompt only
 4. **Default system prompt** — lowest priority
 
@@ -50,7 +50,7 @@ If CLAUDE.md, GEMINI.md, or AGENTS.md says "don't use TDD" and a skill says "alw
 
 **In other environments:** Check your platform's documentation for how skills are loaded.
 
-**In EvoFlow / EvoFlow:** Skills are discovered from `skills/{public,custom}/` and injected into the agent system prompt when enabled. Use the Gateway skills API or desktop skill toggles to enable/disable. If your harness has no `Skill` tool, treat each `superpowers-*` block as a procedure to follow manually.
+**In QAgent / QAgent:** Skills are discovered from `skills/{public,custom}/` and injected into the agent system prompt when enabled. Use the Gateway skills API or desktop skill toggles to enable/disable. If your harness has no `Skill` tool, treat each `superpowers-*` block as a procedure to follow manually.
 
 ## Platform Adaptation
 

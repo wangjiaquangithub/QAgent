@@ -11,7 +11,7 @@ metadata:
 
 # Trello Skill
 
-Manage Trello boards, lists, and cards directly from EvoFlow.
+Manage Trello boards, lists, and cards directly from QAgent.
 
 ## Setup
 

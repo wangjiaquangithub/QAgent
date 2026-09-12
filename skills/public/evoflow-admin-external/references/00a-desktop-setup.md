@@ -1,6 +1,6 @@
-# EvoFlow 桌面端：下载 → 配置 → 检测 CLI
+# QAgent 桌面端：下载 → 配置 → 检测 CLI
 
-外部 Agent / 用户在装治理技能包之前，必须先有 **可运行的 EvoFlow + `evoflow` CLI**。本页按顺序做完即可。
+外部 Agent / 用户在装治理技能包之前，必须先有 **可运行的 QAgent + `evoflow` CLI**。本页按顺序做完即可。
 
 官网文档对照：[快速开始](/docs/getting-started) · 发行版：[GitHub Releases](https://github.com/wangjiaquangithub/EvoFlow/releases/latest)
 
@@ -36,7 +36,7 @@
 
 ## 2. 首次打开与配置模型
 
-1. 启动 **EvoFlow 桌面客户端**（会起 Gateway；派发员工 / 跑 App 需要它在跑）。
+1. 启动 **QAgent 桌面客户端**（会起 Gateway；派发员工 / 跑 App 需要它在跑）。
 2. **设置 → 模型**（或旧侧栏「配置 → 模型配置」）：
    - 添加服务商：名称、接口地址、API Key  
    - 测试连接（若界面有）  
@@ -115,7 +115,7 @@ CLI 冒烟通过后：
 ## 5. 给 runtime / Work Body 的最短指令
 
 ```text
-1. 从 https://github.com/wangjiaquangithub/EvoFlow/releases/latest 下载并安装 EvoFlow 桌面端（勾选 Add PATH，新开终端）
+1. 从 https://github.com/wangjiaquangithub/EvoFlow/releases/latest 下载并安装 QAgent 桌面端（勾选 Add PATH，新开终端）
 2. 打开客户端，在「设置 → 模型」配置主模型并确认能对话
 3. 运行：evoflow models list ；失败则用安装目录 binaries/.../evoflow.cmd
 4. 从官网 /#skill-pack 下载 evoflow-admin-external zip，evoflow skills install 后按包内 00/03/examples 管理平台

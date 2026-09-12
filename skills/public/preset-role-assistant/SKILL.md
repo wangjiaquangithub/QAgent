@@ -1,11 +1,11 @@
 ---
 name: preset-role-assistant
-description: EvoFlow「快速创建预设角色」专用流程。当用户要在对话里新建预设角色、子智能体、智能体人设、agent_code、系统提示词、SOUL、勾选工具或技能、或说「按文档快速创建角色」「帮我设计一个角色配置」时使用。与侧栏「角色管理」写入同一套 agents 数据。落盘走 platform / evoflow agents（create_agent 等分散工具已退役）。不要 undertrigger——用户明确要新建角色而你不按本 Skill 先盘点工具/技能再落盘，容易写出非法工具名或未启用技能。
+description: QAgent「快速创建预设角色」专用流程。当用户要在对话里新建预设角色、子智能体、智能体人设、agent_code、系统提示词、SOUL、勾选工具或技能、或说「按文档快速创建角色」「帮我设计一个角色配置」时使用。与侧栏「角色管理」写入同一套 agents 数据。落盘走 platform / evoflow agents（create_agent 等分散工具已退役）。不要 undertrigger——用户明确要新建角色而你不按本 Skill 先盘点工具/技能再落盘，容易写出非法工具名或未启用技能。
 ---
 
-# 预设角色助手（EvoFlow）
+# 预设角色助手（QAgent）
 
-在 EvoFlow 对话里创建角色时，**不要**调用已退役的 `create_agent` / `update_agent` / `list_agents` / `list_skills_catalog` / `list_assignable_tools`。统一走：
+在 QAgent 对话里创建角色时，**不要**调用已退役的 `create_agent` / `update_agent` / `list_agents` / `list_skills_catalog` / `list_assignable_tools`。统一走：
 
 1. 日常：内置工具 **`platform`**（`agents.*` / `skills.*`）
 2. 脚本或批处理：技能 **`evoflow-admin`** + **`terminal`** 跑 `evoflow agents …`

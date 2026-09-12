@@ -117,8 +117,8 @@
 | macOS (Apple Silicon) | `QAgent_x.x.x_aarch64.dmg` |
 | macOS (Intel) | `QAgent_x.x.x_x64.dmg` |
 | Windows | `QAgent_x.x.x_x64-setup.exe` |
-| Linux (AppImage) | `EvoPanel_x.x.x_amd64.AppImage` |
-| Linux (DEB) | `EvoPanel_x.x.x_amd64.deb` |
+| Linux (AppImage) | `QAgent_x.x.x_amd64.AppImage` |
+| Linux (DEB) | `QAgent_x.x.x_amd64.deb` |
 
 ### 首次使用
 

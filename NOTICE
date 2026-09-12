@@ -1,4 +1,4 @@
-EvoFlow
+QAgent
 =======
 
 Primary License
@@ -75,7 +75,7 @@ Optional runtime animation library (not vendored)
 Some video skills (talking-head-recut, music-to-video) may instruct users or
 templates to load GSAP (GreenSock) from a CDN or a locally fetched copy.
 GSAP is subject to GreenSock's own license (https://gsap.com/standard-license)
-and is **not** redistributed as part of EvoFlow. Obtain and use it under terms
+and is **not** redistributed as part of QAgent. Obtain and use it under terms
 that apply to you.
 
 CDPR / Cyberpunk fan-kit materials previously referenced by embedded-captions
@@ -86,7 +86,7 @@ Liquid glass theme (MIT)
 
 `evopanel/vendor/liquid-glass-theme/` contains build-input sources adapted from
 https://github.com/Rainpomelo/deepseek-harness-liquid-glass-theme (MIT).
-See that folder’s LICENSE. Runtime UI uses EvoFlow’s `evopanel/src/lib/liquid-glass/`
+See that folder’s LICENSE. Runtime UI uses QAgent’s `evopanel/src/lib/liquid-glass/`
 modules generated/adapted from those sources — not the upstream DeepSeek/DSH package
 identity.
 
@@ -94,9 +94,9 @@ identity.
 Projects referenced for design / architecture inspiration
 ---------------------------------------------------------
 
-EvoFlow is an independent product. During development we also studied (and in
+QAgent is an independent product. During development we also studied (and in
 places adapted ideas from) the following open-source agent projects. Linking
-them here is attribution and thanks — it does **not** mean EvoFlow is a fork
+them here is attribution and thanks — it does **not** mean QAgent is a fork
 of any of them, and it does **not** change this repository's primary license.
 
 * Hermes Agent (Nous Research)
@@ -129,9 +129,9 @@ wangjiaquan@quclouds.com or open a GitHub Issue; we will review and update this 
 Optional Runtime Dependencies (npm, not vendored)
 -------------------------------------------------
 
-EvoFlow may launch the following packages via ``npx`` when the user enables
+QAgent may launch the following packages via ``npx`` when the user enables
 Obsidian Knowledge Vault and clicks install/initialize. Source code of these
-packages is **not** distributed as part of EvoFlow; licenses are determined by
+packages is **not** distributed as part of QAgent; licenses are determined by
 their upstream repositories:
 
 * obsidian-hybrid-search@0.13.22
@@ -144,6 +144,6 @@ See docs/guides/integrations/obsidian-knowledge-vault.md.
 Trademarks
 ----------
 
-The names "EvoFlow", "EvoPanel", and "Quclouds", and associated logos are
+The names "QAgent" and "Quclouds", and associated logos are
 brand names of the copyright holder (王佳全 / Quclouds); they are not
 registered trademarks. Use of these names requires separate permission.

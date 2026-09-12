@@ -186,7 +186,7 @@ This report was compiled using:
 
 ---
 
-**Report Prepared By:** Github Deep Research by EvoFlow
+**Report Prepared By:** Github Deep Research by QAgent
 **Date:** {REPORT_DATE}
 **Report Version:** 1.0
 **Status:** Complete

@@ -83,5 +83,5 @@ python skills/public/wan-media-generation/scripts/wan_api.py video \
 
 - 图生图未传 `--reference-image-urls`
 - 视频未 `task-get` / `--poll` 就当作失败
-- Key 未在 EvoFlow **启用**
+- Key 未在 QAgent **启用**
 - 失败 **勿自动换** 其它厂商（须用户同意）

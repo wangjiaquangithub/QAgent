@@ -1,6 +1,6 @@
 ﻿{
   "title": "Registros",
-  "desc": "Ver registros del servicio EvoPanel",
+  "desc": "Ver registros del servicio QAgent",
   "tabGateway": "Gateway",
   "tabGatewayErr": "Errores Gateway",
   "tabGuardian": "Guardian",

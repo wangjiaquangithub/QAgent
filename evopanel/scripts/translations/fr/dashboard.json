@@ -1,6 +1,6 @@
 ﻿{
   "title": "Tableau de bord",
-  "desc": "Vue d'ensemble de l'état EvoPanel",
+  "desc": "Vue d'ensemble de l'état QAgent",
   "gateway": "Gateway",
   "notStarted": "Non démarré",
   "versionLabel": "Version",

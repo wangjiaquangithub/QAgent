@@ -1,6 +1,6 @@
 {
   "title": "Gestion des Agents",
-  "desc": "Cr茅er et g茅rer les Agents EvoPanel",
+  "desc": "Cr茅er et g茅rer les Agents QAgent",
   "addAgent": "+ Nouvel Agent",
   "noAgents": "Aucun Agent",
   "loadFailed": "脡chec du chargement",

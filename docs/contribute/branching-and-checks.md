@@ -42,7 +42,7 @@ make ci-local
 | 改动 | 命令 |
 |------|------|
 | Backend Python | `cd backend && make format` 且 `uv run pytest` |
-| EvoPanel | `cd evopanel && pnpm typecheck`（动 UI 逻辑再加 `pnpm test`） |
+| QAgent | `cd evopanel && pnpm typecheck`（动 UI 逻辑再加 `pnpm test`） |
 | 文档 / `mkdocs.yml` | `make docs-build` |
 
 ## CI（PR 必绿）

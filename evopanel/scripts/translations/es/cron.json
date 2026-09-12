@@ -1,6 +1,6 @@
 ﻿{
   "title": "Tareas programadas",
-  "desc": "Gestionar tareas programadas de EvoPanel",
+  "desc": "Gestionar tareas programadas de QAgent",
   "addTask": "+ Agregar tarea",
   "noTasks": "Sin tareas",
   "taskName": "Nombre de tarea",
