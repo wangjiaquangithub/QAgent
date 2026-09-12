@@ -107,25 +107,114 @@ fi
 
 # ── Cleanup trap ─────────────────────────────────────────────────────────────
 
+# Keep lifecycle state private to this invocation.  In particular, do not use
+# `pkill -f`: matching command text can kill an unrelated QAgent session (or a
+# shell merely running a diagnostic command containing that text).
+RUNTIME_DIR="${TMPDIR:-/tmp}/qagent-serve-$$"
+GATEWAY_STOP_FILE="$RUNTIME_DIR/gateway.stop"
+GATEWAY_CHILD_PID_FILE="$RUNTIME_DIR/gateway-child.pid"
+DAEMON_PID_FILE="${QAGENT_DAEMON_PID_FILE:-}"
+mkdir -p "$RUNTIME_DIR"
+printf '%s\n' "$REPO_ROOT" > "$RUNTIME_DIR/repo-root"
+printf '%s\n' "$$" > "$RUNTIME_DIR/owner.pid"
+if [ -n "$DAEMON_PID_FILE" ]; then
+    mkdir -p "$(dirname "$DAEMON_PID_FILE")"
+    printf '%s\n' "$$" > "$DAEMON_PID_FILE"
+fi
+
+# Add a process's descendants in child-first order.  This is deliberately based
+# on PIDs captured by this script, so cleanup cannot affect another checkout or
+# a separately started QAgent service.
+collect_descendants() {
+    local parent_pid="$1"
+    local child_pid
+
+    command -v pgrep >/dev/null 2>&1 || return 0
+    while IFS= read -r child_pid; do
+        [ -n "$child_pid" ] || continue
+        # Never signal this shell, even if a PID were unexpectedly reused.
+        [ "$child_pid" = "$$" ] && continue
+        collect_descendants "$child_pid"
+        PROCESS_TREE_PIDS+=("$child_pid")
+    done < <(pgrep -P "$parent_pid" 2>/dev/null || true)
+}
+
+terminate_process_tree() {
+    local root_pid="$1"
+    local pid attempt still_running
+
+    [ -n "$root_pid" ] || return 0
+    kill -0 "$root_pid" 2>/dev/null || return 0
+    [ "$root_pid" = "$$" ] && return 0
+
+    PROCESS_TREE_PIDS=()
+    collect_descendants "$root_pid"
+    PROCESS_TREE_PIDS+=("$root_pid")
+
+    for pid in "${PROCESS_TREE_PIDS[@]}"; do
+        kill -TERM "$pid" 2>/dev/null || true
+    done
+
+    # A reloader/worker occasionally ignores TERM while blocked.  Escalate only
+    # within this invocation's recorded process tree, never via a global match.
+    for attempt in 1 2 3 4 5 6 7 8 9 10; do
+        still_running=false
+        for pid in "${PROCESS_TREE_PIDS[@]}"; do
+            if kill -0 "$pid" 2>/dev/null; then
+                still_running=true
+                break
+            fi
+        done
+        "$still_running" || return 0
+        sleep 0.2
+    done
+
+    for pid in "${PROCESS_TREE_PIDS[@]}"; do
+        kill -KILL "$pid" 2>/dev/null || true
+    done
+}
+
+CLEANUP_STARTED=false
 cleanup() {
-    trap - INT TERM
+    local exit_code="${1:-0}"
+    local gateway_child_pid=""
+
+    "$CLEANUP_STARTED" && return
+    CLEANUP_STARTED=true
+    trap - EXIT INT TERM
+
     echo ""
     echo "Shutting down services..."
-    # The gateway runs under a small supervisor so a crashed/reloader-exited
-    # Uvicorn process does not leave the frontend permanently disconnected.
-    # Stop that supervisor first so it cannot respawn Uvicorn during cleanup.
-    if [ -n "${GATEWAY_SUPERVISOR_PID:-}" ]; then
-        kill "$GATEWAY_SUPERVISOR_PID" 2>/dev/null || true
-        wait "$GATEWAY_SUPERVISOR_PID" 2>/dev/null || true
+    # Tell the supervisor not to restart a child while its process tree is
+    # being terminated, then stop only the processes this script launched.
+    : > "$GATEWAY_STOP_FILE"
+    # The PID file also covers the narrow case where the supervisor itself has
+    # already died and its Gateway child was re-parented before cleanup runs.
+    if [ -r "$GATEWAY_CHILD_PID_FILE" ]; then
+        IFS= read -r gateway_child_pid < "$GATEWAY_CHILD_PID_FILE" || true
+        case "$gateway_child_pid" in
+            ''|*[!0-9]*) ;;
+            "$$") ;;
+            *) terminate_process_tree "$gateway_child_pid" ;;
+        esac
     fi
-    pkill -f "langgraph dev" 2>/dev/null || true
-    pkill -f "uvicorn app.gateway.app:app" 2>/dev/null || true
+    terminate_process_tree "${GATEWAY_SUPERVISOR_PID:-}"
+    terminate_process_tree "${LANGGRAPH_PID:-}"
+    if [ -n "$DAEMON_PID_FILE" ] && [ -r "$DAEMON_PID_FILE" ]; then
+        local recorded_daemon_pid=""
+        IFS= read -r recorded_daemon_pid < "$DAEMON_PID_FILE" || true
+        [ "$recorded_daemon_pid" = "$$" ] && rm -f "$DAEMON_PID_FILE"
+    fi
+    rm -rf "$RUNTIME_DIR"
+
     echo "Cleaning up sandbox containers..."
     ./scripts/cleanup-containers.sh evo-flow-sandbox 2>/dev/null || true
     echo "✓ All services stopped"
-    exit 0
+    exit "$exit_code"
 }
-trap cleanup INT TERM
+trap 'cleanup $?' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 # ── Start services ────────────────────────────────────────────────────────────
 
@@ -151,7 +240,13 @@ echo "Starting LangGraph server..."
 # Read log_level from config.yaml, fallback to env var, then to "info"
 CONFIG_LOG_LEVEL=$(grep -m1 '^log_level:' config.yaml 2>/dev/null | awk '{print $2}' | tr -d ' ')
 LANGGRAPH_LOG_LEVEL="${LANGGRAPH_LOG_LEVEL:-${CONFIG_LOG_LEVEL:-info}}"
-(cd backend && NO_COLOR=1 PYTHONUNBUFFERED=1 "$UV_BIN" run langgraph dev --no-browser --allow-blocking --n-jobs-per-worker "$N_JOBS_PER_WORKER" --server-log-level $LANGGRAPH_LOG_LEVEL $LANGGRAPH_EXTRA_FLAGS > "../logs/langgraph-${LOG_DATE}.log" 2>&1) &
+(
+    cd backend
+    exec env NO_COLOR=1 PYTHONUNBUFFERED=1 "$UV_BIN" run langgraph dev --no-browser --allow-blocking \
+        --n-jobs-per-worker "$N_JOBS_PER_WORKER" --server-log-level "$LANGGRAPH_LOG_LEVEL" \
+        $LANGGRAPH_EXTRA_FLAGS
+) > "logs/langgraph-${LOG_DATE}.log" 2>&1 &
+LANGGRAPH_PID=$!
 ./scripts/wait-for-port.sh 2024 240 "LangGraph" || {
     echo "  See logs/langgraph-${LOG_DATE}.log for details"
     tail -20 "../logs/langgraph-${LOG_DATE}.log"
@@ -159,7 +254,7 @@ LANGGRAPH_LOG_LEVEL="${LANGGRAPH_LOG_LEVEL:-${CONFIG_LOG_LEVEL:-info}}"
         echo ""
         echo "  Hint: This may be a configuration issue. Try running 'make config-upgrade' to update your config.yaml."
     fi
-    cleanup
+    cleanup 1
 }
 echo "✓ LangGraph server started on localhost:2024"
 
@@ -169,13 +264,28 @@ echo "Starting Gateway API..."
 # final `wait` then kept this script alive but left port 8012 unserved forever.
 run_gateway_supervisor() {
     local exit_code
-    while true; do
-        (cd backend && EVOFLOW_LANGGRAPH_URL="${EVOFLOW_LANGGRAPH_URL:-http://127.0.0.1:2024}" \
-          PYTHONUNBUFFERED=1 PYTHONPATH=. "$UV_BIN" run uvicorn app.gateway.app:app \
-          --host 0.0.0.0 --port "$GATEWAY_PORT" $GATEWAY_EXTRA_FLAGS) &
-        GATEWAY_CHILD_PID=$!
-        wait "$GATEWAY_CHILD_PID"
-        exit_code=$?
+    local gateway_child_pid
+
+    while [ ! -e "$GATEWAY_STOP_FILE" ]; do
+        (
+            cd backend
+            exec env EVOFLOW_LANGGRAPH_URL="${EVOFLOW_LANGGRAPH_URL:-http://127.0.0.1:2024}" \
+                PYTHONUNBUFFERED=1 PYTHONPATH=. "$UV_BIN" run uvicorn app.gateway.app:app \
+                --host 0.0.0.0 --port "$GATEWAY_PORT" $GATEWAY_EXTRA_FLAGS
+        ) &
+        gateway_child_pid=$!
+        printf '%s\n' "$gateway_child_pid" > "$GATEWAY_CHILD_PID_FILE"
+
+        # `set -e` would otherwise make a non-zero Uvicorn exit terminate this
+        # supervisor before it gets the chance to restart the Gateway.
+        if wait "$gateway_child_pid"; then
+            exit_code=0
+        else
+            exit_code=$?
+        fi
+        rm -f "$GATEWAY_CHILD_PID_FILE"
+
+        [ -e "$GATEWAY_STOP_FILE" ] && break
         echo "⚠ Gateway API exited (status ${exit_code}); restarting in 2 seconds..." >&2
         sleep 2
     done
@@ -190,7 +300,7 @@ GATEWAY_SUPERVISOR_PID=$!
     grep -E "Failed to load configuration|Environment variable .* not found|config\.yaml.*not found" "logs/gateway-${LOG_DATE}.log" 2>/dev/null | tail -5 || grep -E "Failed to load configuration|Environment variable .* not found|config\.yaml.*not found" logs/gateway.log 2>/dev/null | tail -5 || true
     echo ""
     echo "  Hint: Try running 'make config-upgrade' to update your config.yaml with the latest fields."
-    cleanup
+    cleanup 1
 }
 echo "✓ Gateway API started on localhost:$GATEWAY_PORT"
 

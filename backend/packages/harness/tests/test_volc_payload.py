@@ -54,3 +54,51 @@ def test_legacy_api_still_injects_budget_tokens() -> None:
     assert isinstance(thinking.get("budget_tokens"), int)
     assert thinking["budget_tokens"] > 0
     assert isinstance(out.get("max_tokens"), int)
+
+
+_ARK_CODING_V3 = "https://ark.cn-beijing.volces.com/api/coding/v3"
+
+
+def test_ark_coding_glm_5_3_flash_omits_disabled_thinking_controls() -> None:
+    """Ark Coding v3 rejects ``thinking.type=disabled`` for this model."""
+    payload = {
+        "model": "glm-5.3-flash",
+        "reasoning_effort": "minimal",
+        "extra_body": {
+            "thinking": {"type": "disabled"},
+            "reasoning": {"effort": "minimal"},
+            "custom_vendor_option": "preserved",
+        },
+    }
+
+    out = apply_volcengine_request_payload(payload, base_url=_ARK_CODING_V3)
+
+    assert out["extra_body"] == {"custom_vendor_option": "preserved"}
+    assert "thinking" not in out
+    assert "reasoning" not in out
+    assert "reasoning_effort" not in out
+
+
+def test_ark_coding_glm_5_3_flash_preserves_enabled_thinking() -> None:
+    payload = {
+        "model": "glm-5.3-flash",
+        "reasoning_effort": "high",
+        "extra_body": {"thinking": {"type": "enabled"}},
+    }
+
+    out = apply_volcengine_request_payload(payload, base_url=_ARK_CODING_V3)
+
+    assert out["extra_body"]["thinking"] == {"type": "enabled"}
+    assert out["extra_body"]["reasoning"] == {"effort": "high"}
+
+
+def test_other_volc_models_keep_explicit_disabled_thinking() -> None:
+    payload = {
+        "model": "glm-5.2",
+        "reasoning_effort": "minimal",
+        "extra_body": {"thinking": {"type": "disabled"}},
+    }
+
+    out = apply_volcengine_request_payload(payload, base_url=_ARK_CODING_V3)
+
+    assert out["extra_body"]["thinking"] == {"type": "disabled"}

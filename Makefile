@@ -149,21 +149,15 @@ endif
 dev-daemon:
 	@./scripts/start-daemon.sh
 
-# Stop all services
+# Stop services owned by this checkout. Foreground `make dev` sessions remain
+# controllable with Ctrl+C; daemon owners are located through serve.sh runtime state.
 stop:
-	@echo "Stopping all services..."
-	@-pkill -f "langgraph dev" 2>/dev/null || true
-	@-pkill -f "uvicorn app.gateway.app:app" 2>/dev/null || true
-	@-pkill -f "next dev" 2>/dev/null || true
-	@-pkill -f "next start" 2>/dev/null || true
-	@-pkill -f "next-server" 2>/dev/null || true
-	@-pkill -f "next-server" 2>/dev/null || true
+	@echo "Stopping QAgent services owned by this checkout..."
+	@./scripts/stop-services.sh
 	@-nginx -c $(PWD)/docker/nginx/nginx.local.conf -p $(PWD) -s quit 2>/dev/null || true
-	@sleep 1
-	@-pkill -9 nginx 2>/dev/null || true
 	@echo "Cleaning up sandbox containers..."
 	@-./scripts/cleanup-containers.sh evo-flow-sandbox 2>/dev/null || true
-	@echo "�?All services stopped"
+	@echo "✓ QAgent services stopped"
 
 # Clean up
 clean: stop

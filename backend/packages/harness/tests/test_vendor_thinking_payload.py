@@ -74,6 +74,31 @@ def test_volc_still_uses_reasoning_effort_object() -> None:
     assert "thinking" not in out
 
 
+def test_ark_coding_glm_5_3_flash_omits_disabled_controls_at_vendor_entrypoint() -> None:
+    """The public vendor normalizer must not send Ark's rejected disabled marker."""
+    model = SimpleNamespace(_evoflow_thinking_enabled=False, _evoflow_reasoning_effort="minimal")
+    payload = {
+        "model": "glm-5.3-flash",
+        "thinking": {"type": "disabled"},
+        "reasoning": {"effort": "minimal"},
+        "reasoning_effort": "minimal",
+        "extra_body": {
+            "thinking": {"type": "disabled"},
+            "reasoning": {"effort": "minimal"},
+            "custom_vendor_option": "preserved",
+        },
+    }
+
+    out = apply_vendor_thinking_request_payload(
+        payload,
+        base_url="https://ark.cn-beijing.volces.com/api/coding/v3",
+        model_instance=model,
+    )
+
+    assert out["extra_body"] == {"custom_vendor_option": "preserved"}
+    assert all(key not in out for key in ("thinking", "reasoning", "reasoning_effort"))
+
+
 def test_zhipu_model_without_thinking_capability_omits_thinking_fields() -> None:
     """Models that explicitly reject thinking must not receive disabled markers."""
     model = SimpleNamespace(

@@ -70,6 +70,29 @@ def _clean_thinking_type(thinking: dict[str, Any]) -> dict[str, Any]:
     return {"type": t or "enabled"}
 
 
+def _ark_coding_v3_glm_5_3_flash_omits_disabled_thinking(
+    payload: dict[str, Any],
+    *,
+    base_url: str | None,
+) -> bool:
+    """Whether this Ark endpoint rejects an explicit disabled-thinking marker.
+
+    Ark Coding v3 accepts ``thinking.type=enabled`` for GLM-5.3-Flash but
+    rejects ``thinking.type=disabled``.  Scope this compatibility exception
+    to the exact endpoint and model so other Volc models retain their native
+    disabled-thinking behavior.
+    """
+    parsed = urlparse(str(base_url or "").strip())
+    host = (parsed.hostname or "").lower()
+    path = parsed.path.rstrip("/").lower()
+    model = str(payload.get("model") or "").strip().lower()
+    return (
+        host == "ark.cn-beijing.volces.com"
+        and path == "/api/coding/v3"
+        and model == "glm-5.3-flash"
+    )
+
+
 def _should_use_volc_modern_chat_api(payload: dict[str, Any]) -> bool:
     """True when the payload targets Volc Chat API (Seed 2.x / GLM 5.2), not legacy ``budget_tokens``."""
     if _resolve_reasoning_effort(payload):
@@ -149,8 +172,21 @@ def normalize_volcengine_modern_chat_request(payload: dict[str, Any], *, base_ur
         return payload
 
     thinking = _clean_thinking_type(thinking_raw or {"type": "enabled"})
+    disabled = effort in ("minimal", "none") or thinking.get("type") == "disabled"
+    if disabled and _ark_coding_v3_glm_5_3_flash_omits_disabled_thinking(
+        payload,
+        base_url=base_url,
+    ):
+        # This endpoint treats an omitted control field as its compatible
+        # "thinking disabled" form; sending {"type": "disabled"} is a 400.
+        _merge_vendor_extra_body(
+            payload,
+            {"thinking": None, "reasoning": None, "reasoning_effort": None},
+        )
+        return payload
+
     vendor: dict[str, Any] = {}
-    if effort in ("minimal", "none") or thinking.get("type") == "disabled":
+    if disabled:
         vendor["thinking"] = {"type": "disabled"}
     else:
         vendor["thinking"] = thinking
