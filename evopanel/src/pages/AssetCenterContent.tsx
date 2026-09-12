@@ -389,15 +389,20 @@ export default function AssetCenterContent() {
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [page, setPage] = useState(1);
 
-  const [entities, setEntities] = useState<Entity[]>(() => [
-    { entityType: "user", entityId: "user", label: "我" },
-  ]);
+  const [entities, setEntities] = useState<Entity[]>(() => {
+    const user = { entityType: "user", entityId: "user", label: "我" };
+    // Preserve a deep-link target until /assets/init resolves, so the
+    // controlled entity selector remains valid during background discovery.
+    if (initEnt.entityType === user.entityType && initEnt.entityId === user.entityId) {
+      return [user];
+    }
+    return [user, { ...initEnt, label: initEnt.entityId }];
+  });
   const [entityType, setEntityType] = useState(initEnt.entityType);
   const [entityId, setEntityId] = useState(initEnt.entityId);
   const [vaultRoot, setVaultRoot] = useState("");
   // The user asset tree is usable without the expensive roster/vault discovery.
-  // Render its shell immediately and reconcile the complete entity list in backgound.
-  const [loading, setLoading] = useState(false);
+  // Render its shell immediately and reconcile the complete entity list in background.
   const [error, setError] = useState("");
 
   const [profileFields, setProfileFields] = useState<Record<string, string | null>>({});
@@ -670,12 +675,11 @@ export default function AssetCenterContent() {
   }, [entityType, activeTab, entities, isUserEntity]);
 
   useEffect(() => {
-    if (loading) return;
     void refreshTab();
-  }, [loading, entityType, entityId, activeTab, refreshTab]);
+  }, [entityType, entityId, activeTab, refreshTab]);
 
   useEffect(() => {
-    if (loading || activeTab === "profile" || activeTab === "export" || activeTab === "stats") return;
+    if (activeTab === "profile" || activeTab === "export" || activeTab === "stats") return;
     if (activeTab === "memory" && memoryKind === "graph") return;
     const pending = pendingOpenPath.current;
     if (pending) {
@@ -687,7 +691,7 @@ export default function AssetCenterContent() {
     if (selectedFile) return;
     const first = treeEntries.find((e) => e.kind !== "dir");
     if (first) void loadFile(first.path);
-  }, [treeEntries, selectedFile, activeTab, loading, loadFile, memoryKind]);
+  }, [treeEntries, selectedFile, activeTab, loadFile, memoryKind]);
 
   const graphScope = useMemo(
     () => graphScopeForEntity(entityType, entityId),
@@ -775,14 +779,6 @@ export default function AssetCenterContent() {
     setFileSearch("");
     setSkillSearch("");
     if (tab === "memory") setMemoryKind("facts");
-  }
-
-  if (loading) {
-    return (
-      <main className="assets-center-root relative flex h-full min-w-0 flex-1 items-center justify-center overflow-hidden bg-[var(--ac-bg)] text-[var(--ac-text-muted)]">
-        加载资产中心…
-      </main>
-    );
   }
 
   if (error && !entities.length) {
