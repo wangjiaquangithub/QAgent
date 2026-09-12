@@ -1,18 +1,17 @@
 /**
- * Shell aside account chip + popover (switch user / logout).
+ * Shell aside account chip + popover (profile / logout).
  * Renders in the left-bottom footer bar beside settings.
  */
 import { toast } from './toast.js'
 import {
   isJwtSession,
   logoutToLocalAdmin,
-  navigateSwitchUser,
   refreshMe,
   sessionHint,
   sessionLabel,
   userAvatarHtml,
 } from '../lib/account-session.js'
-import { getCurrentRoute, navigate } from '../router.js'
+import { navigate } from '../router.js'
 
 /** @type {HTMLElement | null} */
 let _mount = null
@@ -102,10 +101,6 @@ function render() {
             ${jwt ? '<span class="shell-account-pill shell-account-pill--online">已登录</span>' : '<span class="shell-account-pill shell-account-pill--local">本机</span>'}
           </div>
         </div>
-        <button type="button" class="shell-account-item" role="menuitem" data-act="switch">
-          <span class="shell-account-item-ic" aria-hidden="true">⇄</span>
-          切换用户
-        </button>
         ${
           jwt
             ? `<button type="button" class="shell-account-item" role="menuitem" data-act="logout">
@@ -132,7 +127,7 @@ function render() {
         }
         ${
           !jwt
-            ? `<div class="shell-account-note">本机默认免登为本地管理员。切换用户后，会话与数据按账号隔离。</div>`
+            ? `<div class="shell-account-note">本机部署使用本地管理员身份。</div>`
             : ''
         }
       </div>
@@ -160,11 +155,6 @@ function bind() {
       e.stopPropagation()
       const act = el.getAttribute('data-act')
       closeMenu()
-      if (act === 'switch') {
-        const route = getCurrentRoute() || '/chat'
-        navigateSwitchUser(route.split('?')[0] || '/chat')
-        return
-      }
       if (act === 'logout') {
         toast('已退出，恢复本机管理员', 'success')
         logoutToLocalAdmin()

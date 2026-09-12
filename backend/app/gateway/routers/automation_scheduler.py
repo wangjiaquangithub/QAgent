@@ -304,13 +304,13 @@ async def automation_schedule_preview(body: dict[str, Any] = Body(default_factor
 
 @router.get("/scheduler/status")
 async def automation_scheduler_status() -> dict:
-    """Return whether backend cron is enabled and last tick diagnostics (for EvoPanel / curl)."""
+    """Return whether backend cron is enabled and last tick diagnostics (for QAgent / curl)."""
     return get_automation_scheduler_status()
 
 
 @router.post("/scheduler/start")
 async def automation_scheduler_client_start(request: Request) -> dict[str, Any]:
-    """EvoPanel «启动调度» — reports task counts and live Gateway scheduler snapshot (same idea as dev-api ``automation_start``)."""
+    """QAgent «启动调度» — reports task counts and live Gateway scheduler snapshot (same idea as dev-api ``automation_start``)."""
     tasks = _list_all_automations(request)
     active = sum(1 for t in tasks if str(t.get("status") or "").lower() == "active")
     gateway_scheduler = get_automation_scheduler_status()
@@ -325,7 +325,7 @@ async def automation_scheduler_client_start(request: Request) -> dict[str, Any]:
 
 @router.post("/scheduler/stop")
 async def automation_scheduler_client_stop() -> dict[str, str]:
-    """EvoPanel «停止调度» — state only (backend loop is env-controlled); matches dev-api."""
+    """QAgent «停止调度» — state only (backend loop is env-controlled); matches dev-api."""
     return {"state": "stopped"}
 
 
@@ -653,7 +653,7 @@ async def automation_task_run_now(
 ) -> dict:
     """Run one automation immediately (same pipeline as cron: Feishu + optional LangGraph).
 
-    Does not require ``status=active`` (for EvoPanel「手动运行」). Requires ChannelService running
+    Does not require ``status=active`` (for QAgent「手动运行」). Requires ChannelService running
     for Feishu push / LangGraph-triggered notifications.
 
     Default ``run_async=True``: returns immediately and executes in the background, so a

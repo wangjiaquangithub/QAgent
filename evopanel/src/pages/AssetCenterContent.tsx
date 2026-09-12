@@ -42,6 +42,7 @@ import {
 import { api } from "../lib/tauri-api.js";
 import { toast } from "../components/toast.js";
 import { getCurrentRoute } from "../router.js";
+import { takeNavWarm } from "../lib/nav-panel-prefetch.js";
 
 /* ── Types ───────────────────────────────────────────────────────── */
 
@@ -388,11 +389,15 @@ export default function AssetCenterContent() {
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [page, setPage] = useState(1);
 
-  const [entities, setEntities] = useState<Entity[]>([]);
+  const [entities, setEntities] = useState<Entity[]>(() => [
+    { entityType: "user", entityId: "user", label: "我" },
+  ]);
   const [entityType, setEntityType] = useState(initEnt.entityType);
   const [entityId, setEntityId] = useState(initEnt.entityId);
   const [vaultRoot, setVaultRoot] = useState("");
-  const [loading, setLoading] = useState(true);
+  // The user asset tree is usable without the expensive roster/vault discovery.
+  // Render its shell immediately and reconcile the complete entity list in backgound.
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const [profileFields, setProfileFields] = useState<Record<string, string | null>>({});
@@ -585,9 +590,9 @@ export default function AssetCenterContent() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      setLoading(true);
       try {
-        const { takeNavWarm } = await import("../lib/nav-panel-prefetch.js");
+        // `/assets/init` can include filesystem, SQLite, role roster, and vault
+        // setup. None of that is needed to show the default user workspace.
         let data = takeNavWarm("assets:init") as Record<string, unknown> | null;
         if (!data) {
           data = (await api.assetsInit()) as Record<string, unknown>;
@@ -620,8 +625,8 @@ export default function AssetCenterContent() {
           setEntityType(list0[0].entityType);
           setEntityId(list0[0].entityId);
         }
-        // First paint with backend labels; enrich Chinese names in background.
-        setLoading(false);
+        // The shell was already painted with the default user entity; enrich
+        // backend labels in the background once discovery finishes.
         void Promise.all([
           api.listAgents().catch(() => []),
           // Same roster as 智能体员工: all non-archived roles (no status filter).
@@ -636,8 +641,8 @@ export default function AssetCenterContent() {
           setEntities(sanitizeEntitiesForUi(enrichEntityLabels(raw, agents, roles)));
         });
       } catch (e: unknown) {
+        // Keep the user workspace available even if optional discovery fails.
         if (!cancelled) setError(String((e as { message?: string })?.message || e));
-        if (!cancelled) setLoading(false);
       }
     })();
     return () => {

@@ -361,3 +361,77 @@ def test_plan_session_placeholder_never_unattended(sqlite_tmp: str) -> None:
 def test_inbox_never_unattended_even_with_run_mode():
     assert is_unattended_task({"status": "inbox", "run_mode": "unattended"}) is False
     assert is_unattended_task({"status": "pending", "run_mode": "unattended"}) is True
+
+
+def test_unattended_plan_failure_detector_recognizes_model_error(sqlite_tmp: str) -> None:
+    del sqlite_tmp
+    from app.gateway.unattended_task_pipeline import _unattended_plan_failure_reason
+
+    reason = _unattended_plan_failure_reason(
+        [
+            "messages",
+            {
+                "type": "AIMessageChunk",
+                "content": "模型请求失败：上游模型 API 返回错误。已记录调试信息。",
+            },
+        ]
+    )
+    assert reason == "模型请求失败：上游模型 API 返回错误。已记录调试信息。"
+    assert _unattended_plan_failure_reason({"content": "正常规划完成"}) is None
+
+
+def test_completed_unattended_plan_stream_without_bound_plan_fails_with_backoff(sqlite_tmp: str) -> None:
+    del sqlite_tmp
+    from app.gateway.unattended_task_pipeline import _on_unattended_plan_worker_complete
+
+    storage = get_project_storage()
+    task_id = _save_unattended_task(storage, status="planning")
+    asyncio.run(_on_unattended_plan_worker_complete(task_id, "模型请求失败：上游模型 API 返回错误。"))
+
+    loaded = storage.load_project(task_id)
+    assert loaded is not None
+    task = loaded["tasks"][0]
+    assert task["status"] == "failed"
+    assert task["unattended_stage"] == "failed"
+    assert task["error"] == "模型请求失败：上游模型 API 返回错误。"
+    assert task.get("failed_at")
+    assert task.get("unattended_next_retry_at")
+    assert task.get("unattended_plan_triggered_at") is None
+
+
+def test_completed_unattended_plan_stream_does_not_fail_bound_plan(sqlite_tmp: str) -> None:
+    del sqlite_tmp
+    from app.gateway.unattended_task_pipeline import _on_unattended_plan_worker_complete
+
+    storage = get_project_storage()
+    task_id = _save_unattended_task(storage, status="planning", plan=True)
+    asyncio.run(_on_unattended_plan_worker_complete(task_id, "模型请求失败：上游模型 API 返回错误。"))
+
+    loaded = storage.load_project(task_id)
+    assert loaded is not None
+    task = loaded["tasks"][0]
+    assert task["status"] == "planning"
+    assert task.get("error") is None
+
+
+def test_failed_unattended_task_requeues_only_after_backoff_and_clears_retry_time(
+    sqlite_tmp: str,
+) -> None:
+    del sqlite_tmp
+    storage = get_project_storage()
+    task_id = _save_unattended_task(
+        storage,
+        status="failed",
+        unattended_attempts=0,
+        unattended_next_retry_at="2000-01-01T00:00:00Z",
+    )
+
+    result = asyncio.run(advance_unattended_task(task_id))
+    assert result.get("action") == "requeued_for_retry"
+
+    loaded = storage.load_project(task_id)
+    assert loaded is not None
+    task = loaded["tasks"][0]
+    assert task["status"] == "pending"
+    assert task["unattended_attempts"] == 1
+    assert task.get("unattended_next_retry_at") is None

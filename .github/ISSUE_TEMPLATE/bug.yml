@@ -51,7 +51,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: QAgent / EvoPanel version
+      label: QAgent version
       description: From About / Releases tag, e.g. 1.0.0
     validations:
       required: true

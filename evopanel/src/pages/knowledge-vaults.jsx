@@ -19,6 +19,7 @@ import {
   listKnowledgeNotes,
 } from "../services/knowledge-vault-api.js";
 import { setKnowledgeVaultDetailShellMode } from "../router.js";
+import { takeNavWarm } from "../lib/nav-panel-prefetch.js";
 import { MarkdownDocumentView } from "../react/components/MarkdownDocumentView.js";
 import {
   KnowledgeForceGraph,
@@ -2304,6 +2305,8 @@ export default function KnowledgeVaultsPage() {
   const [listPageSize, setListPageSize] = useState(() => readStoredPageSize(VAULTS_PAGE_SIZE_KEY));
   const [infoOpen, setInfoOpen] = useState(false);
   const [testRetrievalOpen, setTestRetrievalOpen] = useState(false);
+  // Ignore late list/status responses after a refresh or unmount.
+  const loadVaultsRequestRef = useRef(0);
 
   const selectedVault = useMemo(
     () => vaults.find((item) => item.id === selectedVaultId) || vaults[0] || null,
@@ -2415,7 +2418,10 @@ export default function KnowledgeVaultsPage() {
   }, [note?.path, note?.content]);
 
   useEffect(() => {
-    loadVaults();
+    void loadVaults();
+    return () => {
+      loadVaultsRequestRef.current += 1;
+    };
   }, []);
 
   useEffect(() => {
@@ -2436,11 +2442,13 @@ export default function KnowledgeVaultsPage() {
   }, [pageView]);
 
   useEffect(() => {
-    if (!selectedVault?.id) return;
+    // The list has its own background status enrichment. Detail-only data should
+    // not start until the user actually opens a vault.
+    if (!selectedVault?.id || pageView !== "detail") return;
     setSelectedVaultId(selectedVault.id);
-    loadStatus(selectedVault.id);
-    loadBrowseNotes(selectedVault.id);
-  }, [selectedVault?.id]);
+    void loadStatus(selectedVault.id);
+    void loadBrowseNotes(selectedVault.id);
+  }, [selectedVault?.id, pageView]);
 
   // Poll while MCP is warming so the badge clears once the session is ready/failed.
   useEffect(() => {
@@ -2520,19 +2528,37 @@ export default function KnowledgeVaultsPage() {
   }
 
   async function loadVaults() {
+    const requestId = ++loadVaultsRequestRef.current;
+    const isCurrentRequest = () => loadVaultsRequestRef.current === requestId;
     setLoading(true);
     setLoadError(null);
     try {
-      const response = await listKnowledgeVaults();
+      // A nav-hover warm contains the same list response. It deliberately does
+      // not warm every status because status can touch Obsidian/MCP and disk.
+      const response = takeNavWarm("knowledge:vaults") || (await listKnowledgeVaults());
+      if (!isCurrentRequest()) return;
       const items = (response.items || response.vaults || response || []).map(normalizeVault);
-      if (items.length) {
-        setSelectedVaultId((current) => current || items[0].id);
+      const baseVaults = items.map((vault) =>
+        normalizeVault({
+          ...vault,
+          listSortAt: vault.lastIndexedAt || vault.createdAt || null,
+          listSortDocs: Number(vault.indexedNotes || 0),
+        }),
+      );
+
+      if (baseVaults.length) {
+        setSelectedVaultId((current) => current || baseVaults[0].id);
       }
-      // 关联智能体（员工岗位 knowledge_vault_ids）— parallel with status enrich
-      const rolesPromise = (async () => {
+      // Paint the list as soon as its lightweight response arrives. Roles and
+      // status probes are supplemental metadata and must not hold the page.
+      setVaults(baseVaults);
+      setLoading(false);
+
+      void (async () => {
         try {
           const { api } = await import("../lib/tauri-api.js");
           const rolesRes = await api.proactiveListRoles().catch(() => ({ roles: [] }));
+          if (!isCurrentRequest()) return;
           const map = new Map();
           for (const role of rolesRes?.roles || []) {
             const ids = role?.config?.knowledge_vault_ids || role?.knowledge_vault_ids || [];
@@ -2546,13 +2572,14 @@ export default function KnowledgeVaultsPage() {
           }
           setVaultAgentMap(map);
         } catch {
-          setVaultAgentMap(new Map());
+          if (isCurrentRequest()) setVaultAgentMap(new Map());
         }
       })();
 
-      // Enrich all statuses first, then paint once — avoids list reorder mid-load.
-      const enriched = await Promise.all(
-        items.map(async (vault) => {
+      // Keep one stable update after all background probes finish, rather than
+      // re-sorting the visible list after every individual response.
+      void Promise.all(
+        baseVaults.map(async (vault) => {
           try {
             const st = await getKnowledgeVaultStatus(vault.id);
             const lastIndexedAt =
@@ -2572,23 +2599,20 @@ export default function KnowledgeVaultsPage() {
               listSortDocs: Number(noteCount || 0),
             });
           } catch {
-            return normalizeVault({
-              ...vault,
-              listSortAt: vault.lastIndexedAt || vault.createdAt || null,
-              listSortDocs: Number(vault.indexedNotes || 0),
-            });
+            return vault;
           }
-        })
-      );
-      await rolesPromise;
-      setVaults(enriched);
+        }),
+      ).then((enriched) => {
+        if (isCurrentRequest()) setVaults(enriched);
+      });
     } catch (error) {
+      if (!isCurrentRequest()) return;
       const message = error.message || "加载 Vault 失败";
       setLoadError(message);
       setVaults([]);
       notify(message, "error");
     } finally {
-      setLoading(false);
+      if (isCurrentRequest()) setLoading(false);
     }
   }
 

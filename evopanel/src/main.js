@@ -623,9 +623,9 @@ async function ensureChatAppMounted() {
 async function boot() {
   bootMark('boot() enter')
   try {
-    const { consumeAccountSwitchFlag, refreshMe } = await import('./lib/account-session.js')
-    if (consumeAccountSwitchFlag()) {
-      bootMark('account switch caches cleared')
+    const { consumeAuthenticatedSessionFlag, refreshMe } = await import('./lib/account-session.js')
+    if (consumeAuthenticatedSessionFlag()) {
+      bootMark('post-authentication caches cleared')
     }
     // Warm identity early so chat send / shell chip don't race on null me.
     void refreshMe({ retries: 2 }).catch(() => {})

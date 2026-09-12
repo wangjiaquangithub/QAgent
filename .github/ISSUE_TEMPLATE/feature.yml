@@ -31,7 +31,7 @@ body:
       label: Area
       options:
         - Runtime / planning
-        - EvoPanel UI
+        - QAgent UI
         - Skills
         - MCP / tools
         - Channels (IM)

@@ -1,5 +1,5 @@
 /**
- * Current account session helpers (identity + WebUI JWT switch-user).
+ * Current account session helpers (identity + WebUI JWT authentication).
  */
 import { getMe } from './identity-api.js'
 import { clearAuthToken, getAuthToken, hasAuthToken } from './webui-remote.js'
@@ -91,14 +91,15 @@ export function clearAccountLocalState({ clearIndexedDb = true } = {}) {
 }
 
 /**
- * Call after a successful login / token swap (before reload).
+ * Call after successful authentication (before reload) to clear data that is
+ * not scoped by identity.
  * @param {string} [token]
  */
-export function prepareAccountSwitch(token) {
+export function prepareAuthenticatedSession(token) {
   clearAccountLocalState({ clearIndexedDb: true })
   if (token) {
     try {
-      sessionStorage.setItem('evopanel_account_switched', '1')
+      sessionStorage.setItem('evopanel_authenticated_session_ready', '1')
     } catch {
       /* ignore */
     }
@@ -147,19 +148,6 @@ export async function ensureMeReady() {
 
 export function isJwtSession() {
   return hasAuthToken() || Boolean(_meCache?.canLogout) || _meCache?.authSource === 'jwt'
-}
-
-/** Navigate to switch-user login (keeps local admin until new login succeeds). */
-export function navigateSwitchUser(redirect = '/chat') {
-  const q = new URLSearchParams({
-    switch: '1',
-    redirect: redirect.startsWith('/') ? redirect : `/${redirect}`,
-  })
-  window.location.hash = `/login?${q.toString()}`
-  // Same hash won't fire hashchange — force route reload
-  if ((window.location.hash.slice(1).split('?')[0] || '') === '/login') {
-    window.dispatchEvent(new HashChangeEvent('hashchange'))
-  }
 }
 
 /** Clear JWT and reload → localhost falls back to local admin. */
@@ -236,12 +224,12 @@ export function userAvatarHtml(me, opts = {}) {
   return `<span class="${cls} ${cls}--icon" aria-hidden="true">${userAvatarIconSvg(size)}</span>`
 }
 
-/** Boot hook: clear leftover caches after account switch reload. */
-export function consumeAccountSwitchFlag() {
+/** Boot hook: finalize post-authentication cache isolation after reload. */
+export function consumeAuthenticatedSessionFlag() {
   try {
-    if (sessionStorage.getItem('evopanel_account_switched') === '1') {
-      sessionStorage.removeItem('evopanel_account_switched')
-      // Token already saved; only wipe leftover chat caches (me will refresh).
+    if (sessionStorage.getItem('evopanel_authenticated_session_ready') === '1') {
+      sessionStorage.removeItem('evopanel_authenticated_session_ready')
+      // Token is already saved; only wipe leftover caches before identity refresh.
       clearAccountLocalState({ clearIndexedDb: true })
       return true
     }

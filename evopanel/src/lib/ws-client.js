@@ -600,7 +600,7 @@ async function _getGatewayBaseUrl() {
   return _cachedGwBaseUrl
 }
 
-/** 合并 WebUI JWT（切换用户 / SSO 后按登录身份访问 Gateway）。 */
+/** 合并 WebUI JWT（认证 / SSO 后按登录身份访问 Gateway）。 */
 function _authHeaders(options = {}) {
   try {
     // 动态 import 避免循环依赖（webui-remote.js 不依赖 ws-client）
@@ -5737,7 +5737,7 @@ export class WsClient {
     )
     // Inject current human identity for runtime attribution (transcript / usage / tools).
     // Do not fall back to sessionContext.created_by — that can be the previous user's
-    // restored local session after switch-user.
+    // Restored local session after authentication.
     // TTFT: never await ensureMeReady on the hot path — cache miss warms in background.
     try {
       let me = getCachedMe()

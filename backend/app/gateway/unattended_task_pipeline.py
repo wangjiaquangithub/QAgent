@@ -104,6 +104,74 @@ def _schedule_retry(task: dict[str, Any]) -> None:
     task["unattended_next_retry_at"] = (datetime.now(UTC) + timedelta(seconds=delay)).isoformat().replace("+00:00", "Z")
 
 
+def _iter_message_contents(data: Any):
+    """Yield text payloads carried in LangGraph-style SSE message objects."""
+    if isinstance(data, dict):
+        content = data.get("content")
+        if isinstance(content, str):
+            yield content
+        elif isinstance(content, (dict, list)):
+            yield from _iter_message_contents(content)
+        for key, value in data.items():
+            if key != "content" and isinstance(value, (dict, list)):
+                yield from _iter_message_contents(value)
+    elif isinstance(data, list):
+        for item in data:
+            yield from _iter_message_contents(item)
+
+
+def _unattended_plan_failure_reason(data: dict[str, Any] | list[Any]) -> str | None:
+    """Classify terminal model errors which LangGraph sends inside a 200 SSE stream."""
+    for content in _iter_message_contents(data):
+        text = content.strip()
+        if "模型请求失败：" in text:
+            return text[:500]
+    return None
+
+
+def _mark_unattended_plan_failed(task_id: str, reason: str) -> dict[str, Any] | None:
+    """Terminally fail a planning turn that ended without a bound plan.
+
+    This runs in a worker thread because project storage is synchronous.  A plan that
+    was successfully bound wins over any late error event from the stream.
+    """
+    failure_reason = str(reason or "Planning stream ended without a bound plan.").strip()[:500]
+
+    def _fail(task: dict[str, Any]) -> dict[str, Any] | None:
+        status = str(task.get("status") or "").strip().lower()
+        if (
+            not is_unattended_task(task)
+            or status != "planning"
+            or task_has_bound_plan(task)
+        ):
+            return None
+        task["status"] = "failed"
+        task["unattended_stage"] = "failed"
+        task["error"] = failure_reason
+        task["failed_at"] = utc_now_iso_z()
+        task["unattended_plan_triggered_at"] = None
+        if int(task.get("unattended_attempts") or 0) < task_queue_max_retries():
+            _schedule_retry(task)
+        else:
+            task["unattended_next_retry_at"] = None
+        return task
+
+    return _patch_task(task_id, _fail)
+
+
+async def _on_unattended_plan_worker_complete(task_id: str, failure_reason: str | None) -> None:
+    """Converge a completed unattended planning stream to either plan-bound or failed."""
+    reason = failure_reason or "Planning stream ended without a bound plan."
+    updated = await asyncio.to_thread(_mark_unattended_plan_failed, task_id, reason)
+    if updated is not None:
+        logger.warning(
+            "unattended_pipeline: planning worker failed task_id=%s reason=%s retry_at=%s",
+            task_id,
+            updated.get("error"),
+            updated.get("unattended_next_retry_at"),
+        )
+
+
 def _save_task_row(project: dict[str, Any], task_index: int, task: dict[str, Any]) -> bool:
     project["tasks"][task_index] = task
     project["updated_at"] = utc_now_iso_z()
@@ -257,6 +325,9 @@ async def _trigger_unattended_plan_run(task_id: str, thread_id: str, task: dict[
         request_method="POST",
         request_body=run_body,
         request_headers={"content-type": "application/json"},
+        manage_session_lifecycle=False,
+        completion_callback=lambda failure_reason: _on_unattended_plan_worker_complete(task_id, failure_reason),
+        failure_detector=_unattended_plan_failure_reason,
     )
     if is_new:
         await worker.start()
@@ -281,6 +352,9 @@ async def _trigger_unattended_plan_run(task_id: str, thread_id: str, task: dict[
         request_method="POST",
         request_body=run_body,
         request_headers={"content-type": "application/json"},
+        manage_session_lifecycle=False,
+        completion_callback=lambda failure_reason: _on_unattended_plan_worker_complete(task_id, failure_reason),
+        failure_detector=_unattended_plan_failure_reason,
     )
     await worker.start()
     logger.info("unattended_pipeline: plan worker restarted task_id=%s thread_id=%s", task_id, thread_id)
@@ -557,8 +631,8 @@ async def _advance_unattended_task_impl(task_id: str) -> dict[str, Any]:
                     t["plan_steps"] = []
                     t["plan_steps_json"] = None
                     t["unattended_plan_triggered_at"] = None
+                    t["unattended_next_retry_at"] = None
                     t["progress"] = 0
-                    _schedule_retry(t)
                     return t
 
                 _patch_task(task_id, _requeue)

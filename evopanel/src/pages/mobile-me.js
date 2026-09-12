@@ -6,7 +6,6 @@ import { navigate } from '../router.js'
 import {
   isJwtSession,
   logoutToLocalAdmin,
-  navigateSwitchUser,
   refreshMe,
   sessionHint,
   sessionLabel,
@@ -49,7 +48,6 @@ function accountCardHtml(me, gatewayBase = '') {
         </div>
       </div>
       <div class="mobile-me-account-actions">
-        <button type="button" class="mobile-me-account-btn" data-me-act="switch">切换用户</button>
         ${
           jwt
             ? '<button type="button" class="mobile-me-account-btn mobile-me-account-btn--ghost" data-me-act="logout">退出账号</button>'
@@ -94,10 +92,6 @@ export async function render() {
     const actBtn = e.target.closest('[data-me-act]')
     if (actBtn) {
       const act = actBtn.getAttribute('data-me-act')
-      if (act === 'switch') {
-        navigateSwitchUser('/me')
-        return
-      }
       if (act === 'logout') {
         logoutToLocalAdmin()
         return

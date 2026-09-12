@@ -15,10 +15,11 @@ Features:
 from __future__ import annotations
 
 import asyncio
+import inspect
 import json
 import logging
 import os
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Awaitable, Callable
 from typing import Any
 
 import httpx
@@ -28,6 +29,9 @@ from evoflow.agents.tool_approval_trace_log import log_tool_approval_trace
 from .persistent_writer import get_persistent_stream_writer, stream_storage
 
 logger = logging.getLogger(__name__)
+
+CompletionCallback = Callable[[str | None], Awaitable[None] | None]
+FailureDetector = Callable[[dict[str, Any] | list[Any]], str | None]
 
 LANGGRAPH_BASE_URL = os.getenv("EVOFLOW_LANGGRAPH_URL", "http://127.0.0.1:8070/api/langgraph").rstrip("/")
 
@@ -100,6 +104,9 @@ class StreamBackgroundWorker:
         request_method: str | None = None,
         request_body: bytes | None = None,
         request_headers: dict | None = None,
+        manage_session_lifecycle: bool = True,
+        completion_callback: CompletionCallback | None = None,
+        failure_detector: FailureDetector | None = None,
     ):
         """Initialize background worker.
 
@@ -111,6 +118,9 @@ class StreamBackgroundWorker:
             request_method: HTTP method for LangGraph request
             request_body: Request body to forward to LangGraph
             request_headers: Headers to forward to LangGraph
+            manage_session_lifecycle: Whether to update a user chat-session lifecycle.
+            completion_callback: Optional callback invoked once the stream terminates.
+            failure_detector: Optional detector for semantic failures carried in a 200 SSE stream.
         """
         self.thread_id = thread_id
         self.stream_source = stream_source
@@ -125,6 +135,10 @@ class StreamBackgroundWorker:
         self.request_method = request_method
         self.request_body = request_body
         self.request_headers = request_headers
+        self.manage_session_lifecycle = manage_session_lifecycle
+        self._completion_callback = completion_callback
+        self._failure_detector = failure_detector
+        self._failure_reason: str | None = None
 
         self._persist_buffer: list[dict[str, Any]] = []
         self._last_persist_flush = 0.0
@@ -204,6 +218,9 @@ class StreamBackgroundWorker:
         request_method: str = "POST",
         request_body: bytes | None = None,
         request_headers: dict | None = None,
+        manage_session_lifecycle: bool = True,
+        completion_callback: CompletionCallback | None = None,
+        failure_detector: FailureDetector | None = None,
     ) -> tuple[StreamBackgroundWorker, bool]:
         """Get existing worker or create a new one with lazy LangGraph connection.
 
@@ -237,6 +254,9 @@ class StreamBackgroundWorker:
                 request_method=request_method,
                 request_body=request_body,
                 request_headers=request_headers,
+                manage_session_lifecycle=manage_session_lifecycle,
+                completion_callback=completion_callback,
+                failure_detector=failure_detector,
             )
             cls._workers[thread_id] = worker
             return worker, True
@@ -258,12 +278,13 @@ class StreamBackgroundWorker:
     async def _stream_worker(self) -> None:
         """Core worker logic: read from stream and write to storage."""
         logger.info(f"🎬 _stream_worker STARTED for thread {self.thread_id}")
-        try:
-            from evoflow.session_execution.lifecycle import start_session_turn
+        if self.manage_session_lifecycle:
+            try:
+                from evoflow.session_execution.lifecycle import start_session_turn
 
-            start_session_turn(thread_id=self.thread_id, source="background_worker")
-        except Exception:
-            logger.debug("mark session run started failed thread_id=%s", self.thread_id, exc_info=True)
+                start_session_turn(thread_id=self.thread_id, source="background_worker")
+            except Exception:
+                logger.debug("mark session run started failed thread_id=%s", self.thread_id, exc_info=True)
 
         try:
             if PERSIST_LEAD_AGENT_CHUNKS:
@@ -303,6 +324,7 @@ class StreamBackgroundWorker:
                 logger.info("✅ Writer closed")
 
         except Exception as e:
+            self._set_failure_reason(f"{type(e).__name__}: {str(e)[:500]}")
             logger.exception(f"❌ Worker failed with error: {e}")
             # Broadcast error to SSE subscribers so frontend knows the stream died
             try:
@@ -315,16 +337,24 @@ class StreamBackgroundWorker:
                 logger.debug("Failed to broadcast worker error for thread_id=%s", self.thread_id, exc_info=True)
         finally:
             self._running = False
-            try:
-                from evoflow.session_execution.lifecycle import schedule_end_session_turn
+            if self.manage_session_lifecycle:
+                try:
+                    from evoflow.session_execution.lifecycle import schedule_end_session_turn
 
-                schedule_end_session_turn(thread_id=self.thread_id, reason="background_worker_end")
-            except Exception:
-                logger.debug(
-                    "schedule end_session_turn failed thread_id=%s",
-                    self.thread_id,
-                    exc_info=True,
-                )
+                    schedule_end_session_turn(thread_id=self.thread_id, reason="background_worker_end")
+                except Exception:
+                    logger.debug(
+                        "schedule end_session_turn failed thread_id=%s",
+                        self.thread_id,
+                        exc_info=True,
+                    )
+            if self._completion_callback is not None:
+                try:
+                    completed = self._completion_callback(self._failure_reason)
+                    if inspect.isawaitable(completed):
+                        await completed
+                except Exception:
+                    logger.exception("background worker completion callback failed thread_id=%s", self.thread_id)
             async with self.__class__._lock:
                 if self.thread_id in self.__class__._workers:
                     del self.__class__._workers[self.thread_id]
@@ -402,6 +432,9 @@ class StreamBackgroundWorker:
                         body_text = (await resp.aread()).decode("utf-8", errors="ignore")[:500]
                     except Exception:
                         pass
+                    self._set_failure_reason(
+                        f"LangGraph HTTP {resp.status_code}: {body_text[:300]}".rstrip()
+                    )
                     logger.warning(
                         "LangGraph stream error status=%s path=%s body=%s",
                         resp.status_code,
@@ -506,6 +539,7 @@ class StreamBackgroundWorker:
                                                 json.dumps(data_json, ensure_ascii=False),
                                             )
 
+                                        self._detect_semantic_failure(data_json)
                                         inferred_event_type = _infer_sse_event_name(event_type, data_json)
                                         await self._write_and_broadcast(data_json, inferred_event_type)
                                         write_count += 1
@@ -550,6 +584,21 @@ class StreamBackgroundWorker:
                             self.thread_id,
                             exc_info=True,
                         )
+
+    def _set_failure_reason(self, reason: str) -> None:
+        """Retain the first terminal failure reason for an optional caller callback."""
+        text = str(reason or "").strip()
+        if text and self._failure_reason is None:
+            self._failure_reason = text[:500]
+
+    def _detect_semantic_failure(self, data: dict[str, Any] | list[Any]) -> None:
+        """Allow specialized callers to classify errors embedded in successful SSE responses."""
+        if self._failure_detector is None or self._failure_reason is not None:
+            return
+        try:
+            self._set_failure_reason(self._failure_detector(data) or "")
+        except Exception:
+            logger.debug("stream failure detector failed thread_id=%s", self.thread_id, exc_info=True)
 
     def _flush_persist_buffer(self, *, force: bool = False) -> None:
         """Flush buffered chunks to disk (batched to avoid per-chunk IO)."""

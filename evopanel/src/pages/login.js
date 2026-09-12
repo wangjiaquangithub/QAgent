@@ -1,15 +1,14 @@
 /**
- * 登录页 — WebUI 远程访问 / 本机切换用户 / 企业 SSO 认证入口。
+ * 企业登录页 — 账号密码、二维码与企业 SSO 的统一认证入口。
  *
  * 当后端 WebUI 中间件检测到未认证的页面请求时，会 302 重定向到 /login。
  * QR 登录通过 /qr-login?token=xxx 自动提交。
  * OIDC 回调：`#/auth/callback?token=...&redirect=/chat`
- * 本机「切换用户」走同一页：`#/login?switch=1`
  *
  * 路由注册在 main.js: registerRoute('/login', ...) + registerRoute('/qr-login', ...)
  */
 import { version as APP_VERSION } from '../../package.json'
-import { prepareAccountSwitch } from '../lib/account-session.js'
+import { prepareAuthenticatedSession } from '../lib/account-session.js'
 import {
   buildOidcLoginUrl,
   getWebuiStatus,
@@ -21,10 +20,12 @@ import {
 /** @type {HTMLElement | null} */
 let _root = null
 
-const ENTERPRISE_MARK = `<svg class="webui-login-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-  <rect x="2" y="2" width="36" height="36" rx="4" stroke="currentColor" stroke-width="1.5"/>
-  <path d="M10 28V12h6.2c3.4 0 5.5 1.8 5.5 4.6 0 2.9-2.1 4.7-5.5 4.7H14.2V28H10zm4.2-10.2h1.8c1.5 0 2.4-.8 2.4-2s-.9-2-2.4-2h-1.8v4zM24.2 28l4.2-16h4.4L37 28h-4.1l-.7-2.8h-4.2L27.3 28h-3.1zm5.2-5.8h2.8l-1.4-5.4-1.4 5.4z" fill="currentColor"/>
-</svg>`
+const MISSION_CONTROL_MARK = `<svg class="webui-login-mark" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+  <circle cx="22" cy="22" r="17" stroke="currentColor" stroke-width="1.5" opacity=".42"/>
+  <path d="M28.2 29.1A10.2 10.2 0 1 1 31.1 22" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M27.8 27.7 35 35" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+  <circle cx="31.2" cy="21.8" r="2.7" fill="currentColor"/>
+</svg> `
 
 const QR_HINT_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><rect x="7" y="7" width="3" height="3" rx="0.5" fill="currentColor" stroke="none"/><rect x="14" y="7" width="3" height="3" rx="0.5" fill="currentColor" stroke="none"/><rect x="7" y="14" width="3" height="3" rx="0.5" fill="currentColor" stroke="none"/><path d="M14 14h3v3h-3z"/><path d="M14 17h3"/></svg>`
 
@@ -36,33 +37,31 @@ function parseLoginQuery() {
   return new URLSearchParams(queryStr || '')
 }
 
-function brandPanelHtml(switchMode) {
-  const kicker = switchMode ? '工作区身份切换' : '企业工作平台'
-  const lead = switchMode
-    ? '使用组织账号登录，会话、技能与工作目录将按身份隔离。'
-    : '统一入口接入组织协作、智能体与知识资产，安全可控。'
+function brandPanelHtml() {
+  const title = '让工作，持续向前。'
+  const lead = '把想法交给智能体，把注意力留给真正重要的工作。'
   return `
     <aside class="webui-login-brand-panel" aria-label="QAgent">
       <div class="webui-login-brand-inner">
         <div class="webui-login-brand-markrow">
-          ${ENTERPRISE_MARK}
+          ${MISSION_CONTROL_MARK}
+          <span class="webui-login-brand-word">QAgent</span>
+          <span class="webui-login-brand-system">MISSION CONTROL</span>
         </div>
-        <p class="webui-login-brand-kicker">${kicker}</p>
-        <h1 class="webui-login-brand-title">QAgent</h1>
-        <p class="webui-login-brand-lead">${lead}</p>
-        <ul class="webui-login-brand-points">
-          <li>组织账号与权限隔离</li>
-          <li>企业 SSO / 本机安全登录</li>
-          <li>会话与工作区按身份归属</li>
-        </ul>
+        <div class="webui-login-brand-copy">
+          <p class="webui-login-brand-kicker">AI WORKBENCH</p>
+          <h1 class="webui-login-brand-title">${title}</h1>
+          <p class="webui-login-brand-lead">${lead}</p>
+        </div>
       </div>
-      <p class="webui-login-brand-foot">QAgent Enterprise Access</p>
+      <div class="webui-login-brand-signal" aria-hidden="true">
+        <span>01</span><i></i><i></i><i></i><b>ONLINE</b>
+      </div>
     </aside>`
 }
 
 /**
  * @param {{
- *   switchMode: boolean,
  *   oidcEnabled?: boolean,
  *   oidcButtonLabel?: string,
  *   passwordLoginEnabled?: boolean,
@@ -74,7 +73,6 @@ function brandPanelHtml(switchMode) {
  */
 function loginPanelBody(opts) {
   const {
-    switchMode,
     oidcEnabled = false,
     oidcButtonLabel = '使用企业 SSO 登录',
     passwordLoginEnabled = true,
@@ -83,15 +81,13 @@ function loginPanelBody(opts) {
     statusBody = '',
   } = opts
 
-  const eyebrow = switchMode ? '切换用户' : '账户登录'
-  const title = switchMode ? '选择工作身份' : '登录组织账户'
-  const desc = switchMode
-    ? '输入已开通的用户名与密码，切换后立即按新身份隔离数据。'
-    : '请使用管理员分配的企业账号，或通过组织身份提供商登录。'
-  const usernameValue = switchMode ? '' : ''
-  const usernamePlaceholder = '组织用户名'
+  const eyebrow = 'WELCOME BACK'
+  const title = '欢迎回来'
+  const desc = '登录你的 QAgent 工作空间，继续推进正在进行的工作。'
+  const usernameValue = ''
+  const usernamePlaceholder = '输入用户名或邮箱'
   const showPassword = passwordLoginEnabled !== false
-  const showSso = Boolean(oidcEnabled) && !switchMode
+  const showSso = Boolean(oidcEnabled)
 
   if (statusTitle) {
     return `
@@ -114,31 +110,26 @@ function loginPanelBody(opts) {
   const passwordBlock = showPassword
     ? `<form id="login-form" class="webui-login-form">
         <label class="webui-login-field">
-          <span class="webui-login-label">用户名</span>
+          <span class="webui-login-label">用户名或邮箱</span>
           <input id="login-username" class="webui-login-input" type="text" placeholder="${usernamePlaceholder}" autocomplete="username" value="${usernameValue}" />
         </label>
         <label class="webui-login-field">
           <span class="webui-login-label">密码</span>
           <input id="login-password" class="webui-login-input" type="password" placeholder="请输入密码" autocomplete="current-password" />
         </label>
-        <button type="submit" id="login-submit" class="webui-login-submit">${switchMode ? '切换并进入' : '登录工作台'}</button>
+        <button type="submit" id="login-submit" class="webui-login-submit">进入工作空间</button>
       </form>`
     : ''
 
-  const footer = switchMode
+  const footer = showPassword
     ? `<footer class="webui-login-footer">
-        <span>账号由「设置 → 用户权限」创建。取消后仍保持当前身份。</span>
-      </footer>
-      <a href="#/chat" class="webui-login-link-btn webui-login-link-btn--ghost" id="login-cancel">取消，返回应用</a>`
-    : showPassword
-      ? `<footer class="webui-login-footer">
-          ${QR_HINT_ICON}
-          <span>也可在桌面端「设置 → 远程访问」生成二维码登录</span>
-        </footer>`
-      : `<footer class="webui-login-footer">
-          ${SHIELD_ICON}
-          <span>本组织已启用企业 SSO，请使用上方入口登录</span>
-        </footer>`
+        ${QR_HINT_ICON}
+        <span>也可在桌面端「设置 → 远程访问」使用二维码登录</span>
+      </footer>`
+    : `<footer class="webui-login-footer">
+        ${SHIELD_ICON}
+        <span>本组织已启用企业身份认证，请使用上方入口登录</span>
+      </footer>`
 
   return `
     <div class="webui-login-panel-head">
@@ -157,7 +148,7 @@ function loginHtml(opts) {
   return `
   <div class="webui-login-page">
     <div class="webui-login-layout">
-      ${brandPanelHtml(Boolean(opts.switchMode))}
+      ${brandPanelHtml()}
       <section class="webui-login-panel" aria-label="登录表单">
         ${loginPanelBody(opts)}
       </section>
@@ -167,7 +158,6 @@ function loginHtml(opts) {
 
 function qrLoginHtml() {
   return loginHtml({
-    switchMode: false,
     statusTitle: '二维码登录',
     statusBody: '正在核验企业访问凭证，请稍候。',
     statusSlot: `
@@ -185,7 +175,6 @@ function qrLoginHtml() {
 
 function authCallbackHtml() {
   return loginHtml({
-    switchMode: false,
     statusTitle: '正在完成登录',
     statusBody: '企业身份已确认，正在建立本地会话。',
     statusSlot: `
@@ -210,10 +199,10 @@ function showError(msg) {
 
 /**
  * @param {HTMLElement} root
- * @param {{ switchMode: boolean, redirect?: string }} opts
+ * @param {{ redirect?: string }} opts
  */
 function wireLoginEvents(root, opts) {
-  const { switchMode, redirect = '/chat' } = opts
+  const { redirect = '/chat' } = opts
 
   root.querySelector('#login-sso')?.addEventListener('click', async () => {
     try {
@@ -227,7 +216,7 @@ function wireLoginEvents(root, opts) {
   form?.addEventListener('submit', async (e) => {
     e.preventDefault()
     const usernameRaw = root.querySelector('#login-username')?.value?.trim() || ''
-    const username = usernameRaw || (switchMode ? '' : 'admin')
+    const username = usernameRaw
     const password = root.querySelector('#login-password')?.value || ''
     const submitBtn = root.querySelector('#login-submit')
 
@@ -243,13 +232,13 @@ function wireLoginEvents(root, opts) {
 
     if (submitBtn) {
       submitBtn.disabled = true
-      submitBtn.textContent = switchMode ? '切换中…' : '登录中…'
+      submitBtn.textContent = '正在进入…'
     }
     showError('')
 
     try {
       const resp = await login({ username, password })
-      prepareAccountSwitch(resp.token)
+      prepareAuthenticatedSession(resp.token)
       saveAuthToken(resp.token)
       const target = redirect.startsWith('/') ? redirect : `/${redirect}`
       window.location.hash = target
@@ -258,7 +247,7 @@ function wireLoginEvents(root, opts) {
       showError(err?.message || '登录失败，请检查用户名和密码')
       if (submitBtn) {
         submitBtn.disabled = false
-        submitBtn.textContent = switchMode ? '切换并进入' : '登录工作台'
+        submitBtn.textContent = '进入工作空间'
       }
     }
   })
@@ -271,7 +260,7 @@ async function handleQrLogin(root, token) {
 
   try {
     const resp = await qrLogin({ qr_token: token })
-    prepareAccountSwitch(resp.token)
+    prepareAuthenticatedSession(resp.token)
     saveAuthToken(resp.token)
     window.location.hash = '/chat'
     window.location.reload()
@@ -299,7 +288,7 @@ function handleAuthCallback(params) {
     return
   }
 
-  prepareAccountSwitch(token)
+  prepareAuthenticatedSession(token)
   saveAuthToken(token)
   const target = redirect.startsWith('/') ? redirect : `/${redirect}`
   window.location.hash = target
@@ -334,7 +323,6 @@ export function render(opts) {
   }
 
   const params = parseLoginQuery()
-  const switchMode = params.get('switch') === '1'
   const redirect = params.get('redirect') || '/chat'
   const error = params.get('error') || ''
 
@@ -357,26 +345,23 @@ export function render(opts) {
     }
   } else {
     page.innerHTML = loginHtml({
-      switchMode,
       redirect,
       error,
     })
-    wireLoginEvents(page, { switchMode, redirect })
+    wireLoginEvents(page, { redirect })
     void getWebuiStatus()
       .then((status) => {
         if (!page.isConnected) return
         page.innerHTML = loginHtml({
-          switchMode,
           redirect,
           error,
           oidcEnabled: Boolean(status?.oidc_enabled),
           oidcButtonLabel: status?.oidc_button_label || '使用企业 SSO 登录',
           passwordLoginEnabled: status?.password_login_enabled !== false,
         })
-        wireLoginEvents(page, { switchMode, redirect })
+        wireLoginEvents(page, { redirect })
         queueMicrotask(() => {
-          const focusId = switchMode ? '#login-username' : '#login-username'
-          page.querySelector(focusId)?.focus()
+          page.querySelector('#login-username')?.focus()
         })
       })
       .catch(() => {

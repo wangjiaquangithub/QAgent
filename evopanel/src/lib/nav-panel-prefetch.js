@@ -70,7 +70,7 @@ async function warmProactiveData() {
 
 async function warmKnowledgeData() {
   const { api } = await import('./tauri-api.js')
-  warmKey('knowledge:bases', () => api.listOwnedKnowledgeBases())
+  warmKey('knowledge:vaults', () => api.listKnowledgeVaults())
 }
 
 async function warmAssetsData() {

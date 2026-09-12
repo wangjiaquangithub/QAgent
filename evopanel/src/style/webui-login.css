@@ -1,211 +1,231 @@
-/* WebUI 企业登录页 — 商务分栏，非消费级紫渐变 */
-
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap');
+/* QAgent Mission Control 登录页：沉浸式工作台入口 */
 
 .webui-login-page {
-  --login-ink: #0c1a2a;
-  --login-ink-soft: #1a3348;
-  --login-slate: #5b6b7c;
-  --login-line: #d7dee6;
-  --login-paper: #f7f8fa;
-  --login-card: #ffffff;
-  --login-accent: #0f6e6a;
-  --login-accent-hover: #0c5a57;
-  --login-accent-soft: rgba(15, 110, 106, 0.12);
-  --login-danger: #b42318;
-  --login-danger-bg: #fef3f2;
-  --login-font: 'IBM Plex Sans', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-  --login-display: 'Source Serif 4', 'Songti SC', 'Noto Serif SC', Georgia, serif;
+  --login-ink: #f4f8fc;
+  --login-ink-soft: #dbe8f2;
+  --login-slate: #9fb2c7;
+  --login-muted: #71869d;
+  --login-line: rgba(169, 207, 229, 0.17);
+  --login-line-strong: rgba(169, 207, 229, 0.29);
+  --login-paper: rgba(5, 20, 35, 0.72);
+  --login-card: rgba(10, 29, 49, 0.8);
+  --login-accent: #58dfc5;
+  --login-accent-hover: #7ae8d2;
+  --login-accent-soft: rgba(88, 223, 197, 0.17);
+  --login-danger: #ffb5ab;
+  --login-danger-bg: rgba(126, 44, 44, 0.29);
+  --login-font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
   min-height: 100%;
   min-height: 100dvh;
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  font-family: var(--login-font);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 48px 24px;
   color: var(--login-ink);
-  background: var(--login-paper);
+  font-family: var(--login-font);
+  background:
+    radial-gradient(ellipse 68% 60% at 51% -14%, rgba(36, 145, 170, 0.25), transparent 67%),
+    radial-gradient(circle at 8% 91%, rgba(40, 165, 144, 0.14), transparent 29%),
+    radial-gradient(circle at 90% 79%, rgba(58, 106, 191, 0.15), transparent 27%),
+    linear-gradient(145deg, #040c17 0%, #071727 47%, #07121f 100%);
+}
+
+.webui-login-page *,
+.webui-login-page *::before,
+.webui-login-page *::after {
+  box-sizing: border-box;
+}
+
+.webui-login-page::before,
+.webui-login-page::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.webui-login-page::before {
+  width: min(78vw, 950px);
+  aspect-ratio: 1;
+  left: 50%;
+  top: 50%;
+  border: 1px solid rgba(127, 212, 220, 0.1);
+  border-radius: 50%;
+  box-shadow: 0 0 0 52px rgba(127, 212, 220, 0.025), 0 0 0 140px rgba(127, 212, 220, 0.018);
+  transform: translate(-50%, -47%);
+}
+
+.webui-login-page::after {
+  inset: 0;
+  opacity: 0.35;
+  background-image: radial-gradient(rgba(178, 224, 236, 0.55) 0.6px, transparent 0.7px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 64% 53% at 50% 42%, #000 0%, transparent 77%);
 }
 
 .webui-login-layout {
-  display: grid;
-  grid-template-columns: minmax(280px, 1.05fr) minmax(320px, 0.95fr);
-  width: 100%;
-  max-width: 1080px;
-  min-height: 100dvh;
-  margin: 0 auto;
+  position: relative;
+  width: min(100%, 472px);
+  z-index: 1;
 }
 
-/* —— 左侧品牌面 —— */
 .webui-login-brand-panel {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: clamp(32px, 6vh, 56px) clamp(28px, 4vw, 48px);
-  color: #e8eef4;
-  background:
-    linear-gradient(160deg, rgba(15, 110, 106, 0.18) 0%, transparent 42%),
-    linear-gradient(180deg, var(--login-ink) 0%, var(--login-ink-soft) 100%);
+  padding: 0 18px 25px;
   overflow: hidden;
-  animation: webui-login-brand-in 0.55s ease-out both;
-}
-
-.webui-login-brand-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(232, 238, 244, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(232, 238, 244, 0.05) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 80% 70% at 30% 40%, #000 20%, transparent 75%);
-  pointer-events: none;
-}
-
-.webui-login-brand-panel::after {
-  content: '';
-  position: absolute;
-  width: 280px;
-  height: 280px;
-  right: -80px;
-  bottom: -60px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(15, 110, 106, 0.35) 0%, transparent 70%);
-  pointer-events: none;
+  animation: webui-login-brand-in 0.6s cubic-bezier(.22, 1, .36, 1) both;
 }
 
 .webui-login-brand-inner {
   position: relative;
   z-index: 1;
-  max-width: 420px;
 }
 
 .webui-login-brand-markrow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 36px;
-}
-
-.webui-login-mark {
-  width: 40px;
-  height: 40px;
-  color: #9fd8d4;
-  flex-shrink: 0;
-}
-
-.webui-login-brand-word {
-  font-family: var(--login-display);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: #f4f7fa;
-}
-
-.webui-login-brand-kicker {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #9fd8d4;
-}
-
-.webui-login-brand-title {
-  margin: 0;
-  font-family: var(--login-display);
-  font-size: clamp(40px, 5.5vw, 56px);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: #ffffff;
-}
-
-.webui-login-brand-lead {
-  margin: 18px 0 0;
-  font-size: 15px;
-  line-height: 1.65;
-  color: rgba(232, 238, 244, 0.78);
-  max-width: 34ch;
-}
-
-.webui-login-brand-points {
-  margin: 28px 0 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
+  min-height: 44px;
   gap: 10px;
 }
 
-.webui-login-brand-points li {
-  position: relative;
-  padding-left: 18px;
-  font-size: 13px;
-  color: rgba(232, 238, 244, 0.72);
+.webui-login-mark {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  color: var(--login-accent);
+  filter: drop-shadow(0 0 14px rgba(88, 223, 197, 0.28));
 }
 
-.webui-login-brand-points li::before {
+.webui-login-brand-word {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #f8fbfd;
+}
+
+.webui-login-brand-system {
+  margin-left: auto;
+  padding: 5px 8px;
+  border: 1px solid rgba(140, 218, 210, 0.2);
+  border-radius: 999px;
+  color: #89b9be;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+}
+
+.webui-login-brand-copy {
+  margin-top: 31px;
+}
+
+.webui-login-brand-kicker,
+.webui-login-eyebrow {
+  margin: 0;
+  color: var(--login-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.webui-login-brand-title {
+  max-width: 12ch;
+  margin: 11px 0 0;
+  color: #f5f9fc;
+  font-size: clamp(29px, 4vw, 38px);
+  font-weight: 680;
+  letter-spacing: -0.055em;
+  line-height: 1.15;
+}
+
+.webui-login-brand-lead {
+  max-width: 33ch;
+  margin: 12px 0 0;
+  color: rgba(203, 220, 233, 0.76);
+  font-size: 14px;
+  line-height: 1.72;
+}
+
+.webui-login-brand-signal {
+  position: absolute;
+  right: 19px;
+  bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(158, 210, 216, 0.52);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.webui-login-brand-signal i {
+  display: block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--login-accent);
+  box-shadow: 0 0 8px rgba(88, 223, 197, 0.8);
+}
+
+.webui-login-brand-signal b {
+  margin-left: 5px;
+  color: rgba(150, 225, 208, 0.8);
+  font-weight: 700;
+}
+
+.webui-login-panel {
+  position: relative;
+  padding: clamp(27px, 5vw, 38px);
+  border: 1px solid var(--login-line);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(19, 43, 68, 0.86), rgba(7, 23, 40, 0.8));
+  box-shadow: 0 26px 80px rgba(0, 3, 10, 0.42), inset 0 1px rgba(235, 253, 255, 0.06);
+  backdrop-filter: blur(24px) saturate(125%);
+  -webkit-backdrop-filter: blur(24px) saturate(125%);
+  animation: webui-login-panel-in 0.65s cubic-bezier(.22, 1, .36, 1) 0.07s both;
+}
+
+.webui-login-panel::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 0.55em;
-  width: 8px;
-  height: 1.5px;
-  background: #9fd8d4;
-}
-
-.webui-login-brand-foot {
-  position: relative;
-  z-index: 1;
-  margin: 40px 0 0;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(232, 238, 244, 0.4);
-}
-
-/* —— 右侧表单 —— */
-.webui-login-panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: clamp(28px, 5vh, 48px) clamp(24px, 5vw, 56px);
-  background: var(--login-card);
-  border-left: 1px solid var(--login-line);
-  animation: webui-login-panel-in 0.5s ease-out 0.08s both;
+  left: 27px;
+  right: 27px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(115, 237, 214, 0.58), transparent);
 }
 
 .webui-login-panel-head {
-  margin-bottom: 28px;
+  margin-bottom: 27px;
 }
 
 .webui-login-eyebrow {
-  margin: 0 0 8px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--login-accent);
+  margin-bottom: 9px;
 }
 
 .webui-login-panel-title {
   margin: 0;
-  font-family: var(--login-display);
-  font-size: clamp(26px, 3vw, 32px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
   color: var(--login-ink);
+  font-size: clamp(26px, 4vw, 32px);
+  font-weight: 680;
+  letter-spacing: -0.045em;
   line-height: 1.2;
 }
 
 .webui-login-panel-desc {
+  max-width: 34ch;
   margin: 10px 0 0;
-  font-size: 14px;
-  line-height: 1.6;
   color: var(--login-slate);
-  max-width: 42ch;
+  font-size: 14px;
+  line-height: 1.7;
 }
 
 .webui-login-form {
@@ -217,196 +237,145 @@
 .webui-login-field {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 
 .webui-login-label {
-  font-size: 13px;
-  font-weight: 600;
   color: var(--login-ink-soft);
+  font-size: 13px;
+  font-weight: 580;
 }
 
 .webui-login-input {
   width: 100%;
-  padding: 12px 14px;
-  font-size: 15px;
-  font-family: inherit;
-  line-height: 1.4;
-  border: 1px solid var(--login-line);
-  border-radius: 6px;
+  height: 52px;
+  padding: 0 15px;
   outline: none;
-  background: var(--login-paper);
+  border: 1px solid var(--login-line);
+  border-radius: 12px;
   color: var(--login-ink);
-  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+  background: rgba(3, 15, 28, 0.46);
+  font: inherit;
+  font-size: 15px;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
 .webui-login-input::placeholder {
-  color: #9aa7b5;
+  color: #6f8599;
+}
+
+.webui-login-input:hover {
+  border-color: rgba(169, 207, 229, 0.29);
 }
 
 .webui-login-input:focus {
-  border-color: var(--login-accent);
-  box-shadow: 0 0 0 3px var(--login-accent-soft);
-  background: #fff;
+  border-color: rgba(88, 223, 197, 0.82);
+  background: rgba(3, 18, 30, 0.68);
+  box-shadow: 0 0 0 4px var(--login-accent-soft), inset 0 1px rgba(255, 255, 255, 0.04);
 }
 
-.webui-login-submit {
-  margin-top: 6px;
+.webui-login-submit,
+.webui-login-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
+  min-height: 52px;
+  margin-top: 6px;
   padding: 13px 16px;
-  font-size: 15px;
-  font-weight: 600;
-  font-family: inherit;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #fff;
+  border: 0;
+  border-radius: 12px;
+  color: #05201e;
   background: var(--login-accent);
-  transition: background 0.18s, transform 0.12s;
+  box-shadow: 0 10px 24px rgba(47, 207, 180, 0.2);
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 720;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
 }
 
-.webui-login-submit:hover:not(:disabled) {
+.webui-login-submit:hover:not(:disabled),
+.webui-login-link-btn:hover {
   background: var(--login-accent-hover);
+  box-shadow: 0 14px 30px rgba(47, 207, 180, 0.28);
+  transform: translateY(-1px);
 }
 
-.webui-login-submit:active:not(:disabled) {
-  transform: translateY(1px);
+.webui-login-submit:active:not(:disabled),
+.webui-login-link-btn:active {
+  transform: translateY(0);
 }
 
 .webui-login-submit:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
+  cursor: wait;
+  opacity: 0.64;
 }
 
 .webui-login-error {
-  margin-top: 14px;
-  padding: 10px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  line-height: 1.45;
+  margin-top: 15px;
+  padding: 11px 12px;
+  border: 1px solid rgba(255, 151, 141, 0.22);
+  border-radius: 12px;
   color: var(--login-danger);
   background: var(--login-danger-bg);
-  border: 1px solid rgba(180, 35, 24, 0.2);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
-.webui-login-error[hidden] {
+.webui-login-error[hidden],
+.webui-login-qr-error[hidden],
+.webui-login-qr-status[hidden] {
   display: none !important;
 }
 
 .webui-login-footer {
   display: flex;
   align-items: flex-start;
-  justify-content: flex-start;
   gap: 8px;
-  margin-top: 28px;
-  padding-top: 20px;
+  margin-top: 25px;
+  padding-top: 19px;
   border-top: 1px solid var(--login-line);
+  color: var(--login-muted);
   font-size: 12px;
-  color: var(--login-slate);
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 .webui-login-footer svg {
-  flex-shrink: 0;
   width: 16px;
   height: 16px;
+  flex: 0 0 auto;
   margin-top: 2px;
   color: var(--login-accent);
-  opacity: 0.85;
+  opacity: 0.75;
 }
 
 .webui-login-version {
-  margin-top: 18px;
+  margin-top: 17px;
+  color: rgba(155, 180, 200, 0.55);
   font-size: 11px;
-  letter-spacing: 0.04em;
-  color: #9aa7b5;
-}
-
-.webui-login-qr-status {
-  padding: 8px 0 4px;
-}
-
-.webui-login-spinner {
-  width: 36px;
-  height: 36px;
-  margin: 0 0 16px;
-  border: 2px solid var(--login-line);
-  border-top-color: var(--login-accent);
-  border-radius: 50%;
-  animation: webui-login-spin 0.75s linear infinite;
-}
-
-.webui-login-qr-text {
-  margin: 0;
-  font-size: 14px;
-  color: var(--login-slate);
-}
-
-.webui-login-qr-error {
-  margin-top: 8px;
-}
-
-.webui-login-qr-error-title {
-  margin: 0 0 8px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--login-danger);
-}
-
-.webui-login-qr-error-msg {
-  margin: 0 0 18px;
-  font-size: 13px;
-  color: var(--login-slate);
-}
-
-.webui-login-link-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 16px;
-  padding: 11px 20px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: inherit;
-  text-decoration: none;
-  color: #fff;
-  background: var(--login-accent);
-  transition: background 0.18s;
-}
-
-.webui-login-link-btn:hover {
-  background: var(--login-accent-hover);
-}
-
-.webui-login-link-btn--ghost {
-  width: 100%;
-  color: var(--login-ink-soft);
-  background: transparent;
-  border: 1px solid var(--login-line);
-}
-
-.webui-login-link-btn--ghost:hover {
-  background: var(--login-paper);
-  color: var(--login-ink);
+  letter-spacing: 0.06em;
 }
 
 .webui-login-sso {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 9px;
   width: 100%;
+  min-height: 52px;
   padding: 12px 16px;
-  border-radius: 6px;
   border: 1px solid var(--login-line);
-  background: var(--login-paper);
-  color: var(--login-ink);
-  font-size: 14px;
-  font-weight: 600;
-  font-family: inherit;
+  border-radius: 12px;
+  color: var(--login-ink-soft);
+  background: rgba(6, 21, 37, 0.35);
   cursor: pointer;
-  transition: border-color 0.18s, background 0.18s;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 620;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.16s ease;
 }
 
 .webui-login-sso svg {
@@ -416,16 +385,17 @@
 }
 
 .webui-login-sso:hover {
-  border-color: var(--login-accent);
-  background: #fff;
+  border-color: rgba(88, 223, 197, 0.46);
+  background: rgba(22, 62, 75, 0.45);
+  transform: translateY(-1px);
 }
 
 .webui-login-divider {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 18px 0 14px;
-  color: #9aa7b5;
+  margin: 20px 0 16px;
+  color: var(--login-muted);
   font-size: 12px;
 }
 
@@ -437,56 +407,131 @@
   background: var(--login-line);
 }
 
+.webui-login-qr-status {
+  padding: 5px 0 4px;
+}
+
+.webui-login-spinner {
+  width: 34px;
+  height: 34px;
+  margin: 0 0 16px;
+  border: 2px solid rgba(169, 207, 229, 0.17);
+  border-top-color: var(--login-accent);
+  border-radius: 50%;
+  animation: webui-login-spin 0.75s linear infinite;
+}
+
+.webui-login-qr-text {
+  margin: 0;
+  color: var(--login-slate);
+  font-size: 14px;
+}
+
+.webui-login-qr-error {
+  margin-top: 8px;
+}
+
+.webui-login-qr-error-title {
+  margin: 0 0 8px;
+  color: var(--login-danger);
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.webui-login-qr-error-msg {
+  margin: 0 0 18px;
+  color: var(--login-slate);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.webui-login-link-btn {
+  margin-top: 16px;
+}
+
+.webui-login-link-btn--ghost {
+  min-height: 46px;
+  margin-top: 17px;
+  color: var(--login-ink-soft);
+  border: 1px solid var(--login-line);
+  background: transparent;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.webui-login-link-btn--ghost:hover {
+  color: var(--login-ink);
+  border-color: var(--login-line-strong);
+  background: rgba(255, 255, 255, 0.045);
+  box-shadow: none;
+}
+
+.webui-login-submit:focus-visible,
+.webui-login-link-btn:focus-visible,
+.webui-login-sso:focus-visible {
+  outline: 3px solid var(--login-accent-soft);
+  outline-offset: 3px;
+}
+
 @keyframes webui-login-spin {
   to { transform: rotate(360deg); }
 }
 
 @keyframes webui-login-brand-in {
-  from { opacity: 0; transform: translateX(-12px); }
-  to { opacity: 1; transform: none; }
+  from { opacity: 0; transform: translateY(-9px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes webui-login-panel-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: none; }
+  from { opacity: 0; transform: translateY(14px) scale(0.986); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@media (max-width: 840px) {
-  .webui-login-layout {
-    grid-template-columns: 1fr;
-    max-width: 480px;
-    min-height: auto;
-    margin: 0;
-    width: 100%;
-  }
-
+@media (max-width: 600px) {
   .webui-login-page {
-    align-items: flex-start;
-    padding: 0;
+    place-items: start center;
+    padding: 28px 16px;
   }
 
   .webui-login-brand-panel {
-    min-height: auto;
-    padding: 28px 24px 32px;
+    padding: 0 5px 22px;
+  }
+
+  .webui-login-brand-copy {
+    margin-top: 25px;
   }
 
   .webui-login-brand-title {
-    font-size: 36px;
+    font-size: 30px;
   }
 
-  .webui-login-brand-points {
-    display: none;
+  .webui-login-brand-lead {
+    font-size: 13px;
   }
 
-  .webui-login-brand-foot {
+  .webui-login-brand-signal {
+    right: 5px;
+    bottom: 24px;
+  }
+
+  .webui-login-panel {
+    padding: 27px 22px;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .webui-login-page {
+    padding-inline: 12px;
+  }
+
+  .webui-login-brand-system {
     display: none;
   }
 
   .webui-login-panel {
-    border-left: none;
-    border-top: 1px solid var(--login-line);
-    padding: 28px 24px 36px;
-    min-height: 60dvh;
+    padding: 24px 18px;
   }
 }
 
@@ -495,5 +540,12 @@
   .webui-login-panel,
   .webui-login-spinner {
     animation: none;
+  }
+
+  .webui-login-submit,
+  .webui-login-link-btn,
+  .webui-login-sso,
+  .webui-login-input {
+    transition: none;
   }
 }

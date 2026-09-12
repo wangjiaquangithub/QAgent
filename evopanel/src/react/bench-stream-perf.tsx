@@ -51,7 +51,7 @@ function BenchStreamPerfApp() {
       }}
     >
       <div style={{ marginBottom: 12, opacity: 0.7, fontSize: 13 }}>
-        EvoPanel stream perf bench — {historyCount} history ({stubCount} stub + {richRows.length}{' '}
+        QAgent stream perf bench — {historyCount} history ({stubCount} stub + {richRows.length}{' '}
         MessageRow) + LiveStream, no API
       </div>
       {Array.from({ length: stubCount }, (_, i) => (

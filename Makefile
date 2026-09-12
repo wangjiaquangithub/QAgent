@@ -15,7 +15,7 @@ help:
 	@echo "  make config          - Generate local config files (aborts if config already exists)"
 	@echo "  make config-upgrade  - Merge new fields from config.example.yaml into config.yaml"
 	@echo "  make check           - Check if all required tools are installed"
-	@echo "  make install         - Install all dependencies (EvoPanel + backend)"
+	@echo "  make install         - Install all dependencies (QAgent + backend)"
 	@echo "  make setup-agent-browser - Install agent-browser CLI (Chromium on first browser use)"
 	@echo "  make setup-kb-mcp       - Install Obsidian Knowledge Vault MCP packages (OHS)"
 	@echo "  make setup-sandbox   - Pre-pull sandbox container image (recommended)"
@@ -62,7 +62,7 @@ check:
 install:
 	@echo "Installing backend dependencies..."
 	@cd backend && uv sync
-	@echo "Installing EvoPanel (desktop) dependencies..."
+	@echo "Installing QAgent (desktop) dependencies..."
 	@cd evopanel && pnpm install
 	@echo "�?All dependencies installed"
 	@echo ""
