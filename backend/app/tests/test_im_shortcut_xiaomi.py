@@ -1,4 +1,4 @@
-"""IM shortcut hint should not attach to 小V replies."""
+"""IM shortcut hint should not attach to 小Q replies."""
 
 from __future__ import annotations
 

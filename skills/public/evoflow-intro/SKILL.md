@@ -46,18 +46,18 @@ description: EvoFlow 产品与能力自介绍。当用户问「EvoFlow 是什么
 
 ## 对用户版「一句话介绍」（可直接复述）
 
-> EvoFlow 就像一个会动脑子的办事助手：你告诉它目标，它可以陪你聊天、改你电脑上的项目、做调研和文档、甚至组队做短视频；大事可以先商量计划再分工，累了还能放后台慢慢做，并记住你的偏好。更多介绍与下载见官网：**https://www.evovexai.com/**
+> EvoFlow 就像一个会动脑子的办事助手：你告诉它目标，它可以陪你聊天、改你电脑上的项目、做调研和文档、甚至组队做短视频；大事可以先商量计划再分工，累了还能放后台慢慢做，并记住你的偏好。更多介绍与下载见官网：**https://www.quclouds.com/**
 
 ## 官网与教程（对用户推荐时用）
 
 | 用途 | 链接 |
 |------|------|
-| **官网首页**（产品、下载、资讯） | https://www.evovexai.com/ |
-| **使用文档**（安装、聊天、目标、飞书等） | https://www.evovexai.com/docs/ |
-| **桌面端指南** | https://www.evovexai.com/docs/chat/EvoFlow |
-| **后台目标说明** | https://www.evovexai.com/docs/chat/goal |
+| **官网首页**（产品、下载、资讯） | https://www.quclouds.com/ |
+| **使用文档**（安装、聊天、目标、飞书等） | https://www.quclouds.com/docs/ |
+| **桌面端指南** | https://www.quclouds.com/docs/chat/EvoFlow |
+| **后台目标说明** | https://www.quclouds.com/docs/chat/goal |
 
-对用户只说「打开 **evovexai.com** 看教程」即可，不必一次甩满表；对方问「官网在哪」「文档在哪」再给对应一行链接。
+对用户只说「打开 **www.quclouds.com** 看教程」即可，不必一次甩满表；对方问「官网在哪」「文档在哪」再给对应一行链接。
 
 ## 我能帮你做哪些事（能力概览）
 
@@ -216,8 +216,8 @@ description: EvoFlow 产品与能力自介绍。当用户问「EvoFlow 是什么
 ## 1. 怎么开始用
 
 **怎么用**：
-- 从官网 **https://www.evovexai.com/** 获取产品与安装说明；也可从 [GitHub Releases](https://github.com/EvovexAI/EvoFlow/releases) 下载发行版
-- 启动后确认连接状态为已连接；详细步骤见 https://www.evovexai.com/docs/chat/EvoFlow
+- 从官网 **https://www.quclouds.com/** 获取产品与安装说明；也可从 [GitHub Releases](https://github.com/wangjiaquangithub/EvoFlow/releases) 下载发行版
+- 启动后确认连接状态为已连接；详细步骤见 https://www.quclouds.com/docs/chat/EvoFlow
 - 侧栏进入：AI 助手、Agent 管理、扩展（技能/MCP）、记忆、渠道、任务中心、目标等
 - 数据目录：`~/.evoflow/`（备份此目录可保留本地配置）
 
@@ -298,7 +298,7 @@ description: EvoFlow 产品与能力自介绍。当用户问「EvoFlow 是什么
 **怎么用（用户）**：
 - **EvoFlow 聊天输入栏 →「目标」入口**（不是记忆页）：配置参数、启动/停止
 - 助手返回目标方案时，聊天区出现**确认条**——确认后执行，或仅填入面板稍后再启
-- 结束后可向**飞书**等推送 Markdown 小结（需网关与渠道允许）；飞书发「开始」「确认」等可在桌面在线时触发应用方案（详见 https://www.evovexai.com/docs/chat/goal ）
+- 结束后可向**飞书**等推送 Markdown 小结（需网关与渠道允许）；飞书发「开始」「确认」等可在桌面在线时触发应用方案（详见 https://www.quclouds.com/docs/chat/goal ）
 
 ## 8. 模型（Models）
 
@@ -354,7 +354,7 @@ description: EvoFlow 产品与能力自介绍。当用户问「EvoFlow 是什么
    - 「这件事比较大，你先给我列个步骤计划，我同意你再开始做」
    - 「帮我查一下某某行业最近的趋势，整理成一份好读的报告」
    - 「以后每天早上 9 点把昨天的工作总结发到飞书」
-6. **进阶资料**（仅当用户追问「官网 / 文档在哪」）：优先给 **https://www.evovexai.com/** 与 **https://www.evovexai.com/docs/**；需要时再补桌面端、目标等子页面（见上文「官网与教程」表）。不要默认甩仓库内 `docs/` 路径。
+6. **进阶资料**（仅当用户追问「官网 / 文档在哪」）：优先给 **https://www.quclouds.com/** 与 **https://www.quclouds.com/docs/**；需要时再补桌面端、目标等子页面（见上文「官网与教程」表）。不要默认甩仓库内 `docs/` 路径。
 
 **反面示例（禁止这样对小白说）**  
 「请在 plan 场景启用 supervisor，经 PlanGuard 后 subagent 执行 workspace 下的 search_code_index。」  

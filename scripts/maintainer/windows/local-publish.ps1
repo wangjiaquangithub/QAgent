@@ -16,12 +16,12 @@
 #
 # Prerequisites:
 #   Copy local-publish.env.example -> local-publish.env next to this script (TOS_*, SSH path, etc.)
-#   -SyncPublic: SSH key (EVOFLOW_PUBLIC_REPO_SSH_KEY �?EvovexAI org only, not evolvear personal key)
+#   -SyncPublic: SSH key (EVOFLOW_PUBLIC_REPO_SSH_KEY �?Quclouds org only, not evolvear personal key)
 #   -FreshPublicHistory: with -SyncPublic, force one orphan commit on public main (clear old private-account history)
-#   EVOFLOW_PUBLIC_GIT_USER_NAME / EVOFLOW_PUBLIC_GIT_USER_EMAIL: author on public mirror commits (default EvovexAI noreply)
+#   EVOFLOW_PUBLIC_GIT_USER_NAME / EVOFLOW_PUBLIC_GIT_USER_EMAIL: author on public mirror commits (default Quclouds noreply)
 #   -DeployWebsiteTos: pnpm 10+, Node 22; TOS_* from env file
 #   -BuildDesktopInstaller: Node, Rust, uv; uses existing evopanel/node_modules (no npm ci unless -InstallNpmDeps). After NSIS build, only keeps installer/checksums for evopanel/package.json version (removes stale other-version files in bundle/nsis).
-#   -CreatePublicGhRelease: GitHub CLI gh or GITHUB_TOKEN; uses version from evopanel/package.json. Only creates a NEW public Release for that tag �?never deletes assets or overwrites body/title on an existing Release (bump version for each upload). After upload, prune-public-github-releases.ps1 keeps only the newest 2 semver releases on EvovexAI/EvoFlow (env EVOFLOW_PUBLIC_RELEASE_KEEP_COUNT, default 2). Optional -PublicReleaseBodyPath (UTF-8 Markdown) overrides scripts/maintainer/windows/public-release-body.txt for the release body; env EVOFLOW_PUBLIC_RELEASE_BODY (path) also works.
+#   -CreatePublicGhRelease: GitHub CLI gh or GITHUB_TOKEN; uses version from evopanel/package.json. Only creates a NEW public Release for that tag �?never deletes assets or overwrites body/title on an existing Release (bump version for each upload). After upload, prune-public-github-releases.ps1 keeps only the newest 2 semver releases on Quclouds/QAgent (env EVOFLOW_PUBLIC_RELEASE_KEEP_COUNT, default 2). Optional -PublicReleaseBodyPath (UTF-8 Markdown) overrides scripts/maintainer/windows/public-release-body.txt for the release body; env EVOFLOW_PUBLIC_RELEASE_BODY (path) also works.
 
 param(
     [switch] $SyncPublic,
@@ -33,7 +33,7 @@ param(
     [switch] $All,
     [switch] $InstallNpmDeps,
     # HTTPS avoids broken global `url.*.insteadof` rules that rewrite `git@github.com:` incorrectly on some machines.
-    [string] $PublicGitUrl = "https://github.com/EvovexAI/EvoFlow.git",
+    [string] $PublicGitUrl = "https://github.com/wangjiaquangithub/QAgent.git",
     [string] $SshKeyPath = "",
     # UTF-8 Markdown for -CreatePublicGhRelease (overrides public-release-body.txt). Env EVOFLOW_PUBLIC_RELEASE_BODY (path) also supported.
     [string] $PublicReleaseBodyPath = ""
@@ -76,22 +76,22 @@ if ($env:EVOFLOW_LOCAL_PUBLISH_ENV -and $env:EVOFLOW_LOCAL_PUBLISH_ENV.Trim().Le
 Import-LocalPublishDotEnv -LiteralPath $defaultEnvFile
 
 # Capture once: in some hosts GetTempPath() can later return empty; TEMP/TMP stay usable for staging uploads.
-$script:EvoFlowProcessTempRoot = [string][System.IO.Path]::GetTempPath()
-if ([string]::IsNullOrWhiteSpace($script:EvoFlowProcessTempRoot)) {
-    $script:EvoFlowProcessTempRoot = $env:TEMP
+$script:QAgentProcessTempRoot = [string][System.IO.Path]::GetTempPath()
+if ([string]::IsNullOrWhiteSpace($script:QAgentProcessTempRoot)) {
+    $script:QAgentProcessTempRoot = $env:TEMP
 }
-if ([string]::IsNullOrWhiteSpace($script:EvoFlowProcessTempRoot)) {
-    $script:EvoFlowProcessTempRoot = $env:TMP
+if ([string]::IsNullOrWhiteSpace($script:QAgentProcessTempRoot)) {
+    $script:QAgentProcessTempRoot = $env:TMP
 }
-if ([string]::IsNullOrWhiteSpace($script:EvoFlowProcessTempRoot) -and $env:USERPROFILE) {
-    $script:EvoFlowProcessTempRoot = [System.IO.Path]::Combine($env:USERPROFILE, "AppData", "Local", "Temp")
+if ([string]::IsNullOrWhiteSpace($script:QAgentProcessTempRoot) -and $env:USERPROFILE) {
+    $script:QAgentProcessTempRoot = [System.IO.Path]::Combine($env:USERPROFILE, "AppData", "Local", "Temp")
 }
 
 if ($All) {
     $SyncPublic = $true
     $DeployWebsiteTos = $true
     $BuildDesktopInstaller = $true
-    # Full local publish: also attach Windows installer to public GitHub Release (EvovexAI/EvoFlow).
+    # Full local publish: also attach Windows installer to public GitHub Release (Quclouds/QAgent).
     $CreatePublicGhRelease = $true
 }
 
@@ -99,11 +99,11 @@ if (-not ($SyncPublic -or $DeployWebsiteTos -or $BuildDesktopInstaller -or $Crea
     $helpText = @"
 No action selected. Pick one or more:
 
-  -SyncPublic              Clone public repo, copy whitelisted paths, push main (EvovexAI author only)
+  -SyncPublic              Clone public repo, copy whitelisted paths, push main (Quclouds author only)
   -FreshPublicHistory      With -SyncPublic: one orphan commit on public main (erase old private-account history)
   -DeployWebsiteTos       pnpm install + build:static + deploy-tos.mjs (set TOS_* in local-publish.env)
   -BuildDesktopInstaller  evopanel build:desktop:win + SHA256SUMS (skips npm ci if node_modules already OK; use -InstallNpmDeps to run npm ci)
-  -CreatePublicGhRelease  Create a NEW GitHub Release on EvovexAI/EvoFlow for evopanel/package.json version only (fails if that tag/release already exists; bump version then rebuild)
+  -CreatePublicGhRelease  Create a NEW GitHub Release on Quclouds/QAgent for evopanel/package.json version only (fails if that tag/release already exists; bump version then rebuild)
   -All                     BuildDesktopInstaller, then DeployWebsiteTos, SyncPublic, CreatePublicGhRelease (new public Release tag only)
 
   -InstallNpmDeps         With -BuildDesktopInstaller: run npm ci in evopanel first (clean install; slow on Windows)
@@ -190,11 +190,11 @@ function Remove-PublicRemoteTagsAndReleases {
         Authorization          = "Bearer $token"
         Accept                 = "application/vnd.github+json"
         "X-GitHub-Api-Version" = "2022-11-28"
-        "User-Agent"           = "EvoFlow-wipe-public-history"
+        "User-Agent"           = "QAgent-wipe-public-history"
     }
-    $base = "https://api.github.com/repos/EvovexAI/EvoFlow"
+    $base = "https://api.github.com/repos/Quclouds/QAgent"
 
-    Write-Host "Removing GitHub Releases on EvovexAI/EvoFlow..." -ForegroundColor Cyan
+    Write-Host "Removing GitHub Releases on Quclouds/QAgent..." -ForegroundColor Cyan
     $page = 1
     while ($true) {
         $releases = Invoke-RestMethod -Uri "$base/releases?per_page=100&page=$page" -Headers $headers -Method Get
@@ -323,11 +323,11 @@ function Invoke-SyncPublic {
         ".github/ISSUE_TEMPLATE", ".github/PULL_REQUEST_TEMPLATE.md", ".github/DISCUSSION_TEMPLATE"
     )
 
-    $publicGitName = "EvovexAI"
+    $publicGitName = "Quclouds"
     if ($env:EVOFLOW_PUBLIC_GIT_USER_NAME -and $env:EVOFLOW_PUBLIC_GIT_USER_NAME.Trim().Length -gt 0) {
         $publicGitName = $env:EVOFLOW_PUBLIC_GIT_USER_NAME.Trim()
     }
-    $publicGitEmail = "evovexai@users.noreply.github.com"
+    $publicGitEmail = "quclouds@users.noreply.github.com"
     if ($env:EVOFLOW_PUBLIC_GIT_USER_EMAIL -and $env:EVOFLOW_PUBLIC_GIT_USER_EMAIL.Trim().Length -gt 0) {
         $publicGitEmail = $env:EVOFLOW_PUBLIC_GIT_USER_EMAIL.Trim()
     }
@@ -599,14 +599,14 @@ function Invoke-CreatePublicGhReleaseViaToken {
     if ($null -eq $FilePaths) { throw "FilePaths parameter is null" }
     $fps = @($FilePaths | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
     if ($fps.Count -eq 0) { throw "FilePaths is empty after filtering null/whitespace entries" }
-    $owner = "EvovexAI"
-    $repo = "EvoFlow"
+    $owner = "Quclouds"
+    $repo = "QAgent"
     $api = "https://api.github.com/repos/$owner/$repo"
     $headers = @{
         Authorization          = "Bearer $Token"
         Accept                 = "application/vnd.github+json"
         "X-GitHub-Api-Version" = "2022-11-28"
-        "User-Agent"           = "EvoFlow-local-publish"
+        "User-Agent"           = "QAgent-local-publish"
     }
     $notes = Get-PublicEvoPanelReleaseMarkdown
     $rel = $null
@@ -627,7 +627,7 @@ function Invoke-CreatePublicGhReleaseViaToken {
     }
     $body = @{
         tag_name   = $Tag
-        name       = ("EvoFlow " + $Tag)
+        name       = ("QAgent " + $Tag)
         body       = $notes
         draft      = $false
         prerelease = $false
@@ -640,7 +640,7 @@ function Invoke-CreatePublicGhReleaseViaToken {
     $brace = $uploadBase.IndexOf('{')
     if ($brace -gt 0) { $uploadBase = $uploadBase.Substring(0, $brace) }
     # ????????????�?build ????�?.exe �?Defender/??/?????? InFile ??�?
-    $tmpBase = $script:EvoFlowProcessTempRoot
+    $tmpBase = $script:QAgentProcessTempRoot
     if ([string]::IsNullOrWhiteSpace($tmpBase)) {
         $tmpBase = [string][System.IO.Path]::GetTempPath()
     }
@@ -689,7 +689,7 @@ function Invoke-CreatePublicGhReleaseViaToken {
 }
 
 function Invoke-CreatePublicGhRelease {
-    Write-Host "`n=== CreatePublicGhRelease (EvovexAI/EvoFlow) ===" -ForegroundColor Cyan
+    Write-Host "`n=== CreatePublicGhRelease (Quclouds/QAgent) ===" -ForegroundColor Cyan
     $pkg = Get-Content (Join-Path $RepoRoot "evopanel/package.json") -Raw | ConvertFrom-Json
     $ver = "v$($pkg.version)"
     $pv = ([string]$pkg.version).Trim()
@@ -718,7 +718,7 @@ function Invoke-CreatePublicGhRelease {
     $ghExe = Get-GhExecutable
     if ($ghExe) {
         Write-Host "[CreatePublicGhRelease] Using: $ghExe" -ForegroundColor DarkGray
-        $argList = @("release", "create", $ver, "--repo", "EvovexAI/EvoFlow", "--notes-file", $nf) + @($paths.ToArray())
+        $argList = @("release", "create", $ver, "--repo", "Quclouds/QAgent", "--notes-file", $nf) + @($paths.ToArray())
         & $ghExe @argList
         if ($LASTEXITCODE -ne 0) {
             throw @"
@@ -744,7 +744,7 @@ gh release create failed (exit $LASTEXITCODE). If the release already exists for
     throw @"
 Neither GitHub CLI (gh) nor GITHUB_TOKEN/GH_TOKEN available.
   Install gh: https://cli.github.com/ (or add GitHub CLI to PATH), then: gh auth login
-  Or set GITHUB_TOKEN in scripts/maintainer/windows/local-publish.env (classic PAT: repo scope; fine-grained: Contents + Releases read/write for EvovexAI/EvoFlow).
+  Or set GITHUB_TOKEN in scripts/maintainer/windows/local-publish.env (classic PAT: repo scope; fine-grained: Contents + Releases read/write for Quclouds/QAgent).
 "@
 }
 

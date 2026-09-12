@@ -62,7 +62,7 @@ def mcp_remove_server(server_name: str) -> dict[str, Any]:
 
 
 def mcp_test_server(server_name: str) -> dict[str, Any]:
-    """Connect to one MCP server and list tools (EvoFlow diagnostic; runtime has no ``test``)."""
+    """Connect to one MCP server and list tools (QAgent diagnostic; runtime has no ``test``)."""
     name = str(server_name or "").strip()
     if not name:
         return {"ok": False, "error": "server name required"}

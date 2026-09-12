@@ -18,7 +18,7 @@ def warn_if_legacy_mcp_skill_binding_env() -> None:
     raw = os.environ.get(_LEGACY_SKILL_ENV, "").strip().lower()
     if raw and raw not in {"native", "tools", "direct"}:
         logger.warning(
-            "%s=%r is deprecated and ignored; EvoFlow uses native-style native MCP tool binding only.",
+            "%s=%r is deprecated and ignored; QAgent uses native-style native MCP tool binding only.",
             _LEGACY_SKILL_ENV,
             raw,
         )

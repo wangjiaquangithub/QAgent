@@ -125,7 +125,7 @@ def _get_work_dir(thread_id: str | None, project_path: str | None = None) -> str
 
 
 def _build_mcp_servers() -> dict[str, dict[str, Any]]:
-    """Build ACP ``mcpServers`` config from EvoFlow's enabled MCP servers."""
+    """Build ACP ``mcpServers`` config from QAgent's enabled MCP servers."""
     from evoflow.config.extensions_config import ExtensionsConfig
     from evoflow.mcp.client import build_servers_config
 
@@ -486,7 +486,7 @@ def build_invoke_acp_agent_tool(agents: dict[str, Any] | None = None) -> BaseToo
                     await conn.initialize(
                         protocol_version=PROTOCOL_VERSION,
                         client_capabilities=ClientCapabilities(),
-                        client_info=Implementation(name="evoflow", title="EvoFlow", version="1.0.0"),
+                        client_info=Implementation(name="evoflow", title="QAgent", version="1.0.0"),
                     )
                     session_kwargs: dict[str, Any] = {"cwd": physical_cwd, "mcp_servers": mcp_servers}
                     if agent_config.model:
@@ -508,7 +508,7 @@ def build_invoke_acp_agent_tool(agents: dict[str, Any] | None = None) -> BaseToo
                 await conn.initialize(
                     protocol_version=PROTOCOL_VERSION,
                     client_capabilities=ClientCapabilities(),
-                    client_info=Implementation(name="evoflow", title="EvoFlow", version="1.0.0"),
+                    client_info=Implementation(name="evoflow", title="QAgent", version="1.0.0"),
                 )
                 session_kwargs: dict[str, Any] = {"cwd": physical_cwd, "mcp_servers": mcp_servers}
                 if agent_config.model:

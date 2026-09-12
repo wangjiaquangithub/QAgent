@@ -1,6 +1,6 @@
 ﻿"""Run a command under OS sandbox helpers (or host passthrough).
 
-Helpers are EvoFlow-owned entrypoints (or thin wrappers built from Apache-2.0
+Helpers are QAgent-owned entrypoints (or thin wrappers built from Apache-2.0
 sandbox crates). runtime CLI is not a product dependency.
 """
 

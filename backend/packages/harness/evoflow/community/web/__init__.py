@@ -1,4 +1,4 @@
-"""Hermes-style pluggable web search backends for EvoFlow."""
+"""Hermes-style pluggable web search backends for QAgent."""
 
 from .provider import WebSearchProvider, get_provider_env
 from .registry import (

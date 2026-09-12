@@ -479,11 +479,11 @@ def _resolve_compaction_plan(
 
 
 def detect_user_language(messages: Sequence[BaseMessage]) -> Literal["zh", "en"]:
-    """Infer summary language from recent real user turns; default zh for EvoFlow.
+    """Infer summary language from recent real user turns; default zh for QAgent.
 
     Heuristic uses weighted comparison of CJK chars vs. English words (≥2 letters),
     so single-letter variable names and stray Chinese terms don't flip the result.
-    Default ``zh`` reflects EvoFlow's primary user base.
+    Default ``zh`` reflects QAgent's primary user base.
     """
     samples: list[str] = []
     for msg in reversed(list(messages)):

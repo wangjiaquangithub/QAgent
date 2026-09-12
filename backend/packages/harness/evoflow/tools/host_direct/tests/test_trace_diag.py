@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent))
 
-root = "D:\\example\\EvoFlow"
+root = "D:\\example\\QAgent"
 root_path = Path(root).resolve()
 
 from evoflow.code_index.deps import _resolve_py_module, extract_file_deps  # noqa: E402

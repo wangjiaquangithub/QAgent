@@ -1,14 +1,14 @@
 blank_issues_enabled: false
 contact_links:
   - name: Documentation
-    url: https://github.com/EvovexAI/EvoFlow/blob/main/docs/index.md
+    url: https://github.com/wangjiaquangithub/QAgent/blob/main/docs/index.md
     about: Quick links for install, Plan mode, skills, MCP, FAQ
   - name: Discussions
-    url: https://github.com/EvovexAI/EvoFlow/discussions
+    url: https://github.com/wangjiaquangithub/QAgent/discussions
     about: Questions, ideas, and show-and-tell (not bug trackers)
   - name: Security vulnerability
-    url: https://github.com/EvovexAI/EvoFlow/security/advisories/new
+    url: https://github.com/wangjiaquangithub/QAgent/security/advisories/new
     about: Private vulnerability reporting only — do not file a public issue
   - name: Support guide
-    url: https://github.com/EvovexAI/EvoFlow/blob/main/SUPPORT.md
+    url: https://github.com/wangjiaquangithub/QAgent/blob/main/SUPPORT.md
     about: Which channel to use for help

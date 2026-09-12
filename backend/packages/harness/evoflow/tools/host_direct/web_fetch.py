@@ -135,7 +135,7 @@ def web_fetch_hd(
         req = Request(
             url,
             headers={
-                "User-Agent": "Mozilla/5.0 (compatible; EvoFlow/1.0; ResearchTool)",
+                "User-Agent": "Mozilla/5.0 (compatible; QAgent/1.0; ResearchTool)",
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                 "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
             },

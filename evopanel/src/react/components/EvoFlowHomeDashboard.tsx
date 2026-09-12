@@ -266,7 +266,7 @@ function deltaClass(positive: boolean | null): string {
   return positive ? 'evo-home-kpi__delta is-up' : 'evo-home-kpi__delta is-down'
 }
 
-export function EvoFlowHomeDashboard({ onPrompt }: Props) {
+export function QAgentHomeDashboard({ onPrompt }: Props) {
   const [prefs, setPrefs] = useState<HomeWorkbenchPrefs>(() => loadHomeWorkbenchPrefs())
   const [prefsDraft, setPrefsDraft] = useState<HomeWorkbenchPrefs>(() => loadHomeWorkbenchPrefs())
   const data = useHomeDashboardData({ rangeDays: rangeDaysFromPrefs(prefs.defaultRange) })
@@ -806,7 +806,7 @@ export function EvoFlowHomeDashboard({ onPrompt }: Props) {
               工作台
             </div>
             <h1 className="evo-home-title">欢迎回来，今天想完成什么？</h1>
-            <p className="evo-home-subtitle">描述你的任务，EvoFlow 将为你规划并高效推进工作。</p>
+            <p className="evo-home-subtitle">描述你的任务，QAgent 将为你规划并高效推进工作。</p>
           </div>
           <button
             type="button"
@@ -1265,7 +1265,7 @@ export function EvoFlowHomeDashboard({ onPrompt }: Props) {
                   className="evo-home-btn evo-home-btn--ghost"
                   onClick={() => onPrompt?.(EVOFLOW_INTRO_SELF_PROMPT)}
                 >
-                  了解 EvoFlow
+                  了解 QAgent
                 </button>
               </div>
               <button
@@ -1280,7 +1280,7 @@ export function EvoFlowHomeDashboard({ onPrompt }: Props) {
               </button>
             </div>
             <p className="evo-home-composer__ai-tip">
-              各个功能还不熟悉也没关系：找「小秘书小V」或「EvoFlow」直接说就行，例如「帮我记一条待办」「雇佣一个智能体员工」。做完后到对应页面查看结果即可。
+              各个功能还不熟悉也没关系：找「小秘书小Q」或「QAgent」直接说就行，例如「帮我记一条待办」「雇佣一个智能体员工」。做完后到对应页面查看结果即可。
             </p>
           </section>
         ) : null}
@@ -1741,9 +1741,9 @@ export function EvoFlowHomeDashboard({ onPrompt }: Props) {
       }>
         <div className="evo-home-settings">
           <aside className="evo-home-settings__tip" aria-label="对话操作说明">
-            <p className="evo-home-settings__tip-title">各个功能还不熟悉？直接跟「小秘书小V」说</p>
+            <p className="evo-home-settings__tip-title">各个功能还不熟悉？直接跟「小秘书小Q」说</p>
             <p className="evo-home-settings__tip-desc">
-              想记待办、派任务、建工作流、雇智能体员工、建知识库等，都可以找「小秘书小V」或「EvoFlow」，用平常说话的方式告诉它。
+              想记待办、派任务、建工作流、雇智能体员工、建知识库等，都可以找「小秘书小Q」或「QAgent」，用平常说话的方式告诉它。
               不用先搞清楚每个功能在哪、怎么点；它会帮你在对应模块里完成，你再到页面里查看进度和结果即可。
             </p>
           </aside>
@@ -1864,4 +1864,4 @@ export function EvoFlowHomeDashboard({ onPrompt }: Props) {
   )
 }
 
-export default EvoFlowHomeDashboard
+export default QAgentHomeDashboard

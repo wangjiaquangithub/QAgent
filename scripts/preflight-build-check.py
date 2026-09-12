@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pre-flight build validation for EvoFlow desktop builds.
+"""Pre-flight build validation for QAgent desktop builds.
 
 Catches common issues before the expensive PyInstaller + Tauri build (60-90 min CI).
 Runs in < 10 seconds with only stdlib dependencies.

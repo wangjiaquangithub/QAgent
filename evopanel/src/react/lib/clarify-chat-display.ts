@@ -242,7 +242,7 @@ function formatAskClarificationInputForHosted(input: Record<string, unknown> | n
 }
 
 /**
- * 将 ask_clarification（工具调用，无扁平 assistant 正文）格式化为目标调度器可读的 EvoFlow 回复摘要。
+ * 将 ask_clarification（工具调用，无扁平 assistant 正文）格式化为目标调度器可读的 QAgent 回复摘要。
  */
 export function formatAskClarificationForHosted(
   tools: unknown[] | undefined,
@@ -278,5 +278,5 @@ export function formatAskClarificationForHosted(
 
   const body = [...new Set(chunks.map((c) => c.trim()).filter(Boolean))].join('\n\n')
   if (!body) return null
-  return `[EvoFlow 询问 — 等待用户在对话区提交选择]\n${body}`
+  return `[QAgent 询问 — 等待用户在对话区提交选择]\n${body}`
 }

@@ -25,7 +25,7 @@ class BaseExternalAgent(ABC):
     similar to how SubagentExecutor works for internal agents.
 
         Key differences from SubagentExecutor:
-        - SubagentExecutor: Runs Python agents inside EvoFlow process
+        - SubagentExecutor: Runs Python agents inside QAgent process
         - BaseExternalAgent: Controls external CLI/API processes (PTY/HTTP/WebSocket)
 
         Usage:
@@ -63,7 +63,7 @@ class BaseExternalAgent(ABC):
         """Launch the external agent.
 
         Args:
-            task_id: EvoFlow task identifier
+            task_id: QAgent task identifier
             prompt: Initial task description/prompt
             cwd: Working directory
 

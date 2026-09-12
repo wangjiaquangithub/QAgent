@@ -79,7 +79,7 @@ def test_normalize_task_handlers_rejects_comma_split_of_object_blob():
     """Malformed pseudo-JSON must not become N fake agent_code rows."""
     raw = (
         "[{agent_code:quality-inspector, content:审核 ContentOS 产品定位文档，"
-        "重点关注技术可行性（内置浏览器方案、平台 Cookie 拦截、EvoFlow）, "
+        "重点关注技术可行性（内置浏览器方案、平台 Cookie 拦截、QAgent）, "
         "outputs:[{type:file, key:report, "
         "value:docs/roles/product-manager/20260724-09/contentos-product-pos.md, "
         "label:ContentOS 产品定位文档}]}]"

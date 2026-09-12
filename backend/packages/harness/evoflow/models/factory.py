@@ -40,7 +40,7 @@ _VOLC_COMPLETION_RESERVE_MIN = 8192
 _VOLC_COMPLETION_RESERVE_DEFAULT = 16384
 _OPENAI_COMPAT_MAX_OUTPUT_TOKENS = 65536
 
-# EvoFlow-only config keys that must not reach LangChain / OpenAI SDK constructors.
+# QAgent-only config keys that must not reach LangChain / OpenAI SDK constructors.
 _PROVIDER_INTERNAL_KEYS = frozenset(
     {
         "credentials",
@@ -57,7 +57,7 @@ _PROVIDER_INTERNAL_KEYS = frozenset(
         "unavailable_reason",
         "unavailable_code",
         "unavailable_at",
-        # Agent Plan metadata (v124) — EvoFlow-only, not vendor HTTP params
+        # Agent Plan metadata (v124) — QAgent-only, not vendor HTTP params
         "plan_type",
         "plan_config",
     }
@@ -310,7 +310,7 @@ def _merge_extra_body_thinking(kwargs: dict[str, Any], model_settings: dict[str,
 
 def _omit_vendor_thinking_kwargs(model_settings_from_config: dict[str, Any], kwargs: dict[str, Any]) -> None:
     """Strip thinking-related kwargs so the vendor uses its native default policy."""
-    for key in ("reasoning_effort", "thinking"):
+    for key in ("reasoning_effort", "thinking", "reasoning"):
         kwargs.pop(key, None)
         model_settings_from_config.pop(key, None)
     for container in (model_settings_from_config, kwargs):
@@ -556,7 +556,7 @@ def _volc_uses_reasoning_effort_api(model_config: Any) -> bool:
 
 
 def _volc_vendor_reasoning_effort(effort: str | None, model_config: Any) -> str | None:
-    """Map EvoFlow effort labels to Volc Chat API values."""
+    """Map QAgent effort labels to Volc Chat API values."""
     norm = _normalize_reasoning_effort(effort)
     if not norm:
         return None
@@ -627,6 +627,11 @@ def _sanitize_zhipu_thinking_settings(
 ) -> None:
     """Zhipu: ``thinking.type`` + ``reasoning_effort`` (normalized at HTTP time)."""
     if not _is_zhipu_like_host(model_config):
+        return
+    # Some Zhipu models (for example glm-5.3-flash) reject any thinking field,
+    # including {"type": "disabled"}.  Omit these fields entirely.
+    if not bool(getattr(model_config, "supports_thinking", False)):
+        _omit_vendor_thinking_kwargs(model_settings, kwargs)
         return
     effort = (
         _volc_vendor_reasoning_effort(kwargs.get("_evoflow_reasoning_effort"), model_config)
@@ -929,6 +934,10 @@ def create_chat_model(
         auto_thinking_applied = _apply_vendor_auto_thinking(
             model_config, model_settings_from_config, kwargs, model_class
         )
+    if not model_config.supports_thinking:
+        # Do not pass stale/default thinking parameters to models which explicitly
+        # declare that the vendor does not support thinking at all.
+        _omit_vendor_thinking_kwargs(model_settings_from_config, kwargs)
     if thinking_enabled and has_thinking_settings and not auto_thinking_applied:
         if not model_config.supports_thinking:
             raise ValueError(f"Model {resolved} does not support thinking. Enable supports_thinking on the model in Settings → Models.") from None
@@ -936,7 +945,11 @@ def create_chat_model(
             model_settings_from_config.update(_strip_provider_internal_keys(effective_wte))
         _normalize_dashscope_thinking_vs_max_completion(model_settings_from_config, model_config)
     # Explicit off only when user/manual disabled — not for Auto (omit).
-    if not thinking_enabled and thinking_type_norm != "auto":
+    if (
+        not thinking_enabled
+        and thinking_type_norm != "auto"
+        and model_config.supports_thinking
+    ):
         if effective_wte.get("extra_body", {}).get("thinking", {}).get("type"):
             # OpenAI-compatible gateway: thinking is nested under extra_body
             kwargs.update({"extra_body": {"thinking": {"type": "disabled"}}})
@@ -1006,7 +1019,10 @@ def create_chat_model(
         # Use explicit reasoning_effort from frontend if provided (low/medium/high)
         explicit_effort = _normalize_reasoning_effort(kwargs.pop("reasoning_effort", None))
         if not thinking_enabled:
-            model_settings_from_config["reasoning_effort"] = "none"
+            if model_config.supports_thinking:
+                model_settings_from_config["reasoning_effort"] = "none"
+            else:
+                model_settings_from_config.pop("reasoning_effort", None)
         elif explicit_effort and explicit_effort in _VALID_REASONING_EFFORTS:
             model_settings_from_config["reasoning_effort"] = explicit_effort
         elif "reasoning_effort" not in model_settings_from_config:
@@ -1091,6 +1107,7 @@ def create_chat_model(
         setattr(model_instance, "_evoflow_vendor", vendor)
         setattr(model_instance, "_evoflow_invocation_kind", ik)
         setattr(model_instance, "_evoflow_thinking_enabled", evoflow_thinking_enabled)
+        setattr(model_instance, "_evoflow_supports_thinking", bool(model_config.supports_thinking))
         setattr(model_instance, "_evoflow_reasoning_effort", evoflow_reasoning_effort)
         setattr(model_instance, "_evoflow_thinking_type", evoflow_thinking_type)
         if evoflow_session_mode:

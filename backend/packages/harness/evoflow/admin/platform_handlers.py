@@ -277,7 +277,7 @@ def workflow_stop(args: dict[str, Any]) -> dict[str, Any]:
     run_id = _arg_str(args, "runId", "run_id")
     if not run_id:
         raise ValidationError("runId is required")
-    reason = _arg_str(args, "reason") or "小V按用户要求停止"
+    reason = _arg_str(args, "reason") or "小Q按用户要求停止"
     if _arg_bool(args, "pause", False):
         return {"ok": True, **apps_admin.pause_run(run_id, reason=reason)}
     return {"ok": True, **apps_admin.cancel_run(run_id, reason=reason)}
@@ -1591,7 +1591,7 @@ def diagnostics_run(args: dict[str, Any]) -> dict[str, Any]:
 
     # 生成可读报告
     report_lines = [
-        "## 🔍 EvoFlow 系统诊断报告",
+        "## 🔍 QAgent 系统诊断报告",
         f"- 诊断时间：{time.strftime('%Y-%m-%d %H:%M:%S')}",
         f"- 耗时：{elapsed}s",
         f"- 关注模块：{focus or '全量'}",

@@ -161,7 +161,7 @@ EMPLOYEE_CAPABILITIES: list[ArchCapability] = [
         "title": "多组织协同门禁",
         "dimension": "safety",
         "stage": "dispatch",
-        "description": "同组织平级/上下级可派发叫醒；跨组织禁止；真人用户与小V（系统前台）不限",
+        "description": "同组织平级/上下级可派发叫醒；跨组织禁止；真人用户与小Q（系统前台）不限",
         "case_ids": ["sc_employee_task_org_collab_gate"],
         "coverage": "implemented",
         "risk": "跨组织乱叫醒或同组织无法协作",

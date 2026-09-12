@@ -61,7 +61,7 @@ const DETAIL_SOURCE_CHANNEL_ZH = {
   proactive_dispatch: '跨岗/派发',
   employee_page: '员工页派发',
   chat_mention: '主聊天 @',
-  xiaomi: '小V催办',
+  xiaomi: '小Q催办',
   role: '岗位协作',
   manual: '手动',
 }

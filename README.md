@@ -1,18 +1,18 @@
 <div align="center">
 
-# EvoFlow
+# QAgent
 
 **面向长任务的原生 Agent Runtime 与控制平面。**
 
-由 [EvovexAI](https://www.evovexai.com) 打造：规划、拆解、执行、恢复与交付，多 Agent 协作全程可观测、可干预。
+由 [QClouds](https://www.quclouds.com) 打造：规划、拆解、执行、恢复与交付，多 Agent 协作全程可观测、可干预。
 
-[![Release](https://img.shields.io/github/v/release/EvovexAI/EvoFlow?style=flat-square&color=6366f1)](https://github.com/EvovexAI/EvoFlow/releases)
+[![Release](https://img.shields.io/github/v/release/wangjiaquangithub/QAgent?style=flat-square&color=6366f1)](https://github.com/wangjiaquangithub/QAgent/releases)
 [![License](https://img.shields.io/badge/许可证-源码可见·非商业-orange?style=flat-square)](LICENSE)
-[![Platform](https://img.shields.io/badge/平台-Windows%20%7C%20macOS%20%7C%20Linux-64748b?style=flat-square)](https://github.com/EvovexAI/EvoFlow/releases)
-[![Docs](https://img.shields.io/badge/文档-evovexai.com-6366f1?style=flat-square)](https://www.evovexai.com/docs/chat/evopanel)
-[![Contact](https://img.shields.io/badge/联系-cloud%40evovexai.com-64748b?style=flat-square&logo=gmail&logoColor=white)](mailto:cloud@evovexai.com)
+[![Platform](https://img.shields.io/badge/平台-Windows%20%7C%20macOS%20%7C%20Linux-64748b?style=flat-square)](https://github.com/wangjiaquangithub/QAgent/releases)
+[![Docs](https://img.shields.io/badge/文档-QAgent%20Docs-6366f1?style=flat-square)](https://github.com/wangjiaquangithub/QAgent)
+[![Contact](https://img.shields.io/badge/联系-wangjiaquan%40quclouds.com-64748b?style=flat-square&logo=gmail&logoColor=white)](mailto:wangjiaquan@quclouds.com)
 
-[下载](https://github.com/EvovexAI/EvoFlow/releases) · [快速开始](#快速开始) · [文档](docs/index.md) · [贡献](CONTRIBUTING.md) · [English](README.en.md)
+[下载](https://github.com/wangjiaquangithub/QAgent/releases) · [快速开始](#快速开始) · [文档](docs/index.md) · [贡献](CONTRIBUTING.md) · [English](README.en.md)
 
 </div>
 
@@ -20,9 +20,9 @@
 
 ## 简介
 
-EvoFlow 把长任务交给可协作的 Agent Teams：先澄清与规划，再在隔离上下文中执行工具与沙箱作业，失败可恢复，过程可验收。控制平面覆盖对话、Plan、Goal、任务中心、工作流与可观测性。
+QAgent 把长任务交给可协作的 Agent Teams：先澄清与规划，再在隔离上下文中执行工具与沙箱作业，失败可恢复，过程可验收。控制平面覆盖对话、Plan、Goal、任务中心、工作流与可观测性。
 
-延伸阅读：[为什么用 EvoFlow](docs/user/explanation/why-evoflow.md) · [生态对照（DF / 爱马仕 / Codex / 小龙虾）](docs/user/explanation/ecosystem-comparison.md) · [Agent 体系](docs/user/explanation/agent-system.md)
+延伸阅读：[为什么用 QAgent](docs/user/explanation/why-evoflow.md) · [生态对照（DF / 爱马仕 / Codex / 小龙虾）](docs/user/explanation/ecosystem-comparison.md) · [Agent 体系](docs/user/explanation/agent-system.md)
 
 ---
 
@@ -43,7 +43,7 @@ EvoFlow 把长任务交给可协作的 Agent Teams：先澄清与规划，再在
 
 ### 桌面安装包
 
-1. 从 [Releases](https://github.com/EvovexAI/EvoFlow/releases) 下载并安装。
+1. 从 [Releases](https://github.com/wangjiaquangithub/QAgent/releases) 下载并安装。
 2. 打开应用，在 **设置 → 模型** 添加服务商与 API Key，测试后设为主模型。
 3. 开始对话；复杂任务用 **Plan**，长任务用 **Goal**。
 
@@ -53,7 +53,7 @@ EvoFlow 把长任务交给可协作的 Agent Teams：先澄清与规划，再在
 尚未 Apple 公证。可执行：
 
 ```bash
-xattr -cr /Applications/EvoFlow.app
+xattr -cr /Applications/QAgent.app
 ```
 
 或在 **系统设置 → 隐私与安全性 → 仍要打开**。
@@ -66,8 +66,8 @@ xattr -cr /Applications/EvoFlow.app
 适合二次开发、贡献代码或自托管。
 
 ```bash
-git clone https://github.com/EvovexAI/EvoFlow.git
-cd EvoFlow
+git clone https://github.com/wangjiaquangithub/QAgent.git
+cd QAgent
 cp config.example.yaml config.yaml   # 沙箱 / 工具 / 渠道等；模型在启动后的界面配置
 ```
 
@@ -108,7 +108,7 @@ Windows：`.\scripts\windows\dev-stack-isolated.bat`
 
 ## 支持项目
 
-如果 EvoFlow 对你有帮助，欢迎支持项目的持续优化与迭代（含定制化等方向）。可以请作者喝杯咖啡，也欢迎有能力的老板多多资助——自愿支持，不影响使用与授权；打赏不构成商用许可。商业合作或定制请联系 [cloud@evovexai.com](mailto:cloud@evovexai.com)。
+如果 QAgent 对你有帮助，欢迎支持项目的持续优化与迭代（含定制化等方向）。可以请作者喝杯咖啡，也欢迎有能力的老板多多资助——自愿支持，不影响使用与授权；打赏不构成商用许可。商业合作或定制请联系 [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com)。
 
 <p align="center">
   <img src="docs/assets/sponsors/wechat.png" width="220" alt="微信支持二维码">
@@ -120,19 +120,19 @@ Windows：`.\scripts\windows\dev-stack-isolated.bat`
 
 ## 授权
 
-版权所有 © 2026 **景银泰（EvovexAI）**。[PolyForm Noncommercial License 1.0.0](LICENSE)：源码可见（source-available），允许个人学习、研究与非商业使用；**商业使用须书面授权**（[cloud@evovexai.com](mailto:cloud@evovexai.com)）。**本许可证并非 OSI「开源」许可证。**第三方组件见 [NOTICE](NOTICE)；作者与贡献者权利见 [AUTHORS.md](AUTHORS.md)、[CLA.md](CLA.md)。
+版权所有 © 2026 **王佳全（WangJiaquan）/ Quclouds**。[PolyForm Noncommercial License 1.0.0](LICENSE)：源码可见（source-available），允许个人学习、研究与非商业使用；**商业使用须书面授权**（[wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com)）。**本许可证并非 OSI「开源」许可证。**第三方组件见 [NOTICE](NOTICE)；作者与贡献者权利见 [AUTHORS.md](AUTHORS.md)、[CLA.md](CLA.md)。
 
 ---
 
 ## 致谢
 
-EvoFlow 是独立产品。开发中参考了 [DeerFlow](https://github.com/bytedance/deer-flow)、[Hermes Agent](https://github.com/NousResearch/hermes-agent)、[OpenClaw](https://github.com/openclaw/openclaw)、[OpenAI Codex](https://github.com/openai/codex)、[LangGraph](https://github.com/langchain-ai/langgraph) / [LangChain](https://github.com/langchain-ai/langchain)、[MCP](https://modelcontextprotocol.io)、[Tauri](https://tauri.app) 等项目的设计思路；完整版权与许可证说明见 [NOTICE](NOTICE)。
+QAgent 是独立产品。开发中参考了 [DeerFlow](https://github.com/bytedance/deer-flow)、[Hermes Agent](https://github.com/NousResearch/hermes-agent)、[OpenClaw](https://github.com/openclaw/openclaw)、[OpenAI Codex](https://github.com/openai/codex)、[LangGraph](https://github.com/langchain-ai/langgraph) / [LangChain](https://github.com/langchain-ai/langchain)、[MCP](https://modelcontextprotocol.io)、[Tauri](https://tauri.app) 等项目的设计思路；完整版权与许可证说明见 [NOTICE](NOTICE)。
 
 ---
 
 ## 联系
 
-[GitHub Issues](https://github.com/EvovexAI/EvoFlow/issues) · [Discussions](https://github.com/EvovexAI/EvoFlow/discussions) · [cloud@evovexai.com](mailto:cloud@evovexai.com) · [evovexai.com](https://www.evovexai.com)
+[GitHub Issues](https://github.com/wangjiaquangithub/QAgent/issues) · [Discussions](https://github.com/wangjiaquangithub/QAgent/discussions) · [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com) · [www.quclouds.com](https://www.quclouds.com)
 
 <p align="center">
   <img src="docs/assets/screenshots/wechat-group-qr.png" width="160" alt="微信社群二维码">
@@ -140,6 +140,6 @@ EvoFlow 是独立产品。开发中参考了 [DeerFlow](https://github.com/byted
 
 <div align="center">
 
-Built by **EvovexAI** · [English](README.en.md)
+Built by **QClouds** · [English](README.en.md)
 
 </div>

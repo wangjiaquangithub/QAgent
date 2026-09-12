@@ -88,7 +88,7 @@ describe('buildSemanticRunSteps', () => {
         id: '1',
         name: 'Read',
         status: 'ok',
-        input: { path: 'D:/dev/github/EvoFlow/evopanel/src/react/components/MessageRow.tsx' },
+        input: { path: 'D:/dev/github/QAgent/evopanel/src/react/components/MessageRow.tsx' },
       },
       {
         id: '2',

@@ -26,7 +26,7 @@ def playwright_browser_missing_hint(exc: BaseException) -> str | None:
     msg = f"{exc}".lower()
     if "executable doesn't exist" not in msg and "playwright install" not in msg:
         return None
-    return "Chromium 浏览器未安装。请在 EvoFlow 后端目录执行：`.venv\\Scripts\\python.exe -m playwright install chromium`（Windows）或 `python -m playwright install chromium`（约 300MB，需联网），完成后重试。"
+    return "Chromium 浏览器未安装。请在 QAgent 后端目录执行：`.venv\\Scripts\\python.exe -m playwright install chromium`（Windows）或 `python -m playwright install chromium`（约 300MB，需联网），完成后重试。"
 
 
 def init_playwright_worker_thread() -> None:

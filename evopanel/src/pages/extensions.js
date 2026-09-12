@@ -84,7 +84,7 @@ export async function render() {
     <div class="page-header ext-page-header">
       <div>
         <h1 class="page-title">扩展应用</h1>
-        <p class="page-desc">把网页应用挂进 EvoFlow：可以是线上网址，也可以是带清单的本地目录 / zip（源码工程需写明启动方式）。</p>
+        <p class="page-desc">把网页应用挂进 QAgent：可以是线上网址，也可以是带清单的本地目录 / zip（源码工程需写明启动方式）。</p>
       </div>
       <div class="ext-page-actions">
         <button type="button" class="btn btn-primary btn-sm" data-act="folder">安装本地扩展</button>

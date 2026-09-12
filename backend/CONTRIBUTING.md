@@ -1,6 +1,6 @@
 # Backend contributing
 
-This tree is part of the **EvoFlow** monorepo. Start with the root guides:
+This tree is part of the **QAgent** monorepo. Start with the root guides:
 
 - [../CONTRIBUTING.md](../CONTRIBUTING.md) — setup, branches, PR checklist
 - [../CLA.md](../CLA.md) — contributor license agreement
@@ -23,7 +23,7 @@ From the repo root (or this directory, depending on your venv layout):
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Config and secrets live under the user’s EvoFlow data dir (e.g. `~/.evoflow/`), not hard-coded in source.
+Config and secrets live under the user’s QAgent data dir (e.g. `~/.evoflow/`), not hard-coded in source.
 
 ## Pull requests
 

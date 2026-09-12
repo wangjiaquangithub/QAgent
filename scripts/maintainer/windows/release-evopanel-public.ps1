@@ -82,7 +82,7 @@ function Test-HasGhOrToken {
     elseif ($env:GH_TOKEN -and $env:GH_TOKEN.Trim().Length -gt 0) { $tok = $true }
     $gh = $null -ne (Get-Command "gh" -ErrorAction SilentlyContinue)
     if (-not $gh -and -not $tok) {
-        throw 'Need GitHub CLI (gh) logged in, or GITHUB_TOKEN / GH_TOKEN in scripts/maintainer/windows/local-publish.env (repo EvovexAI/EvoFlow: releases write).'
+        throw 'Need GitHub CLI (gh) logged in, or GITHUB_TOKEN / GH_TOKEN in scripts/maintainer/windows/local-publish.env (repo Quclouds/QAgent: releases write).'
     }
 }
 

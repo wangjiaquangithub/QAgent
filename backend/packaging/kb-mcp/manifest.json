@@ -5,6 +5,6 @@
   "write_sha256": "5db4343229085430ac3378badb9f45e25551131e90a504198671aaec0b0cc570",
   "installed_at": "2026-07-27T02:44:33Z",
   "node": "C:\\Program Files\\nodejs\\node.exe",
-  "installRoot": "D:\\dev\\github\\EvoFlow\\backend\\packaging\\kb-mcp",
+  "installRoot": "D:\\dev\\github\\QAgent\\backend\\packaging\\kb-mcp",
   "packaged": true
 }

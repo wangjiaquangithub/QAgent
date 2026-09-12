@@ -1,6 +1,6 @@
 {
   "identifier": "default",
-  "description": "EvoFlow 默认权限",
+  "description": "QAgent 默认权限",
   "windows": ["main"],
   "permissions": [
     "core:default",

@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 
 # Built-in worker ids (aligned with evoflow.subagents.builtins / agents_config materialize).
 BUILTIN_AGENT_UI_NAMES: dict[str, str] = {
-    "main": "EvoFlow",
-    "xiaomi": "小V",
+    "main": "QAgent",
+    "xiaomi": "小Q",
     "general-purpose": "通用助手",
     "code-agent": "代码助手",
     "bash": "终端执行",

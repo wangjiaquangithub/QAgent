@@ -1,5 +1,5 @@
 /**
- * WebGL runtime for EvoFlow liquid glass (ported from DSH glass-shader.ts, MIT)
+ * WebGL runtime for QAgent liquid glass (ported from DSH glass-shader.ts, MIT)
  * Blur passes inspired by liquid-glass-studio (MIT)
  */
 import { FS_SRC, VS_SRC } from './glass-shader-glsl.js'

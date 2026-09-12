@@ -37,9 +37,9 @@ class InboundMessage:
         text: The message text.
         msg_type: Whether this is a regular chat message or a command.
         thread_ts: Optional platform thread identifier (for threaded replies).
-        topic_id: Conversation topic identifier used to map to a EvoFlow thread.
+        topic_id: Conversation topic identifier used to map to a QAgent thread.
             Messages sharing the same ``topic_id`` within a ``chat_id`` will
-            reuse the same EvoFlow thread.  When ``None``, the store uses only
+            reuse the same QAgent thread.  When ``None``, the store uses only
             ``channel_name:chat_id`` (e.g. one continuous thread per Feishu chat
             or Telegram private chat).
         files: Optional list of file attachments (platform-specific dicts).
@@ -87,7 +87,7 @@ class OutboundMessage:
     Attributes:
         channel_name: Target channel name (used for routing).
         chat_id: Target chat/conversation identifier.
-        thread_id: EvoFlow thread ID that produced this response.
+        thread_id: QAgent thread ID that produced this response.
         text: The response text.
         artifacts: List of artifact paths produced by the agent.
         is_final: Whether this is the final message in the response stream.

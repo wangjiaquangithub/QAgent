@@ -1,18 +1,18 @@
 # IM 消息渠道配置
 
-> **比如你想让 EvoFlow 能接入飞书或 Telegram**：
+> **比如你想让 QAgent 能接入飞书或 Telegram**：
 >
 > 1. 在飞书开放平台创建机器人，拿到 App ID 和 Secret
-> 2. 在 EvoFlow「设置→IM 通信」里填上这些凭证
-> 3. 搞定——现在你在飞书群里 @机器人 就能用 EvoFlow 了
+> 2. 在 QAgent「设置→IM 通信」里填上这些凭证
+> 3. 搞定——现在你在飞书群里 @机器人 就能用 QAgent 了
 >
 > 支持飞书、钉钉、Telegram、Slack、Discord。所有渠道使用出站连接（WebSocket 或轮询），不需要公网 IP。
 
 ## 适用场景
-将 EvoFlow 接入即时通讯平台（飞书、钉钉、Telegram、Slack、Discord），让用户通过 IM 与 Agent 对话。
+将 QAgent 接入即时通讯平台（飞书、钉钉、Telegram、Slack、Discord），让用户通过 IM 与 Agent 对话。
 
 ## 前置条件
-- EvoFlow 已运行
+- QAgent 已运行
 - 已创建目标 IM 平台的应用/机器人，获取必要的凭证
 - 如 IM 渠道运行在 Docker 容器内，需使用容器 DNS 名称而非 localhost
 
@@ -183,7 +183,7 @@ curl -X PUT http://localhost:8001/api/channels/feishu/config \
 在渠道配置中设置 `allowed_users: ["user_id1", "user_id2"]`，空数组表示允许所有人。
 
 ## 相关文档
-- [EvoFlow 桌面端使用指南](../configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|EvoFlow 桌面端使用指南]]
+- [QAgent 桌面端使用指南](../configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|QAgent 桌面端使用指南]]
 - [飞书配置指南](feishu-integration.md) [[guides/integration/feishu-integration|飞书配置指南]]
 
 ---
@@ -191,6 +191,6 @@ curl -X PUT http://localhost:8001/api/channels/feishu/config \
 ## 相关阅读
 
 - [[guides/integration/feishu-integration|飞书配置指南]] — 飞书渠道详细配置
-- [[guides/configuration/evopanel-guide|EvoFlow 桌面端使用指南]] — 设置弹窗 IM 通信 Tab
+- [[guides/configuration/evopanel-guide|QAgent 桌面端使用指南]] — 设置弹窗 IM 通信 Tab
 - [[guides/configuration/smart-employees|智能体员工]] — IM 渠道审批推送
 - [[guides/configuration/settings|面板设置]] — 各渠道凭证管理

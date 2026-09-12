@@ -1,6 +1,6 @@
-# EvoFlow 文档中心
+# QAgent 文档中心
 
-> **从这开始就对了**——不管你是第一次听说 EvoFlow，还是已经装好了想查功能：
+> **从这开始就对了**——不管你是第一次听说 QAgent，还是已经装好了想查功能：
 >
 > - **第一次听说**：先看[项目介绍](getting-started/introduction.md) [[getting-started/introduction|项目介绍]]，了解它跟 ChatGPT 有什么区别
 > - **想试试**：去[下载安装](getting-started/downloads.md) [[getting-started/downloads|下载安装]]，5 分钟就能聊上
@@ -19,14 +19,14 @@
 | 你的目标 | 从这里开始 |
 |--------|-----------|
 | 我是谁、该用啥 | [产品总览](getting-started/product-overview.md) [[getting-started/product-overview|产品总览]] |
-| 第一次听说 EvoFlow | [项目介绍](getting-started/introduction.md) [[getting-started/introduction|项目介绍]] |
+| 第一次听说 QAgent | [项目介绍](getting-started/introduction.md) [[getting-started/introduction|项目介绍]] |
 | 下载安装 | [下载与安装](getting-started/downloads.md) [[getting-started/downloads|下载与安装]] |
 | 5 分钟上手 | [快速上手](getting-started/quick-start.md) [[getting-started/quick-start|快速上手]] |
 | 完成第一个任务 | [第一个任务](getting-started/first-task.md) [[getting-started/first-task|第一个任务]] |
 | 手把手教程 | [教程 · 配置模型](tutorials/configure-models.md) [[tutorials/configure-models|教程 · 配置模型]] |
 | 按功能查操作 | [操作指南总目录](guides/README.md) [[guides/README|操作指南总目录]] |
 | 面板入口速查 | [EvoPanel 指南](guides/configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|EvoPanel 指南]] |
-| 设计理念 | [为什么是 EvoFlow](explanation/why-evoflow.md) [[explanation/why-evoflow|为什么是 EvoFlow]] |
+| 设计理念 | [为什么是 QAgent](explanation/why-evoflow.md) [[explanation/why-evoflow|为什么是 QAgent]] |
 | 踩坑 | [FAQ](guides/faq.md) [[guides/faq|FAQ]] |
 
 ## 文档怎么分类

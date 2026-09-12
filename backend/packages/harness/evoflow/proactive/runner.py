@@ -190,7 +190,7 @@ from evoflow.proactive.schedule import (
 
 
 def _should_skip_xiaomi_idle_heartbeat(role: ProactiveRole) -> bool:
-    """Scheduled 小V only: skip LLM patrol when there is no board work."""
+    """Scheduled 小Q only: skip LLM patrol when there is no board work."""
     try:
         from evoflow.agents.xiaomi.duty import should_skip_xiaomi_idle_patrol
         from evoflow.agents.xiaomi.identity import is_xiaomi_agent
@@ -275,7 +275,7 @@ def validate_dispatch_org_relationship(
     Dispatch is **more permissive** than handlers handoff:
 
     - ``user`` / empty ``from_agent`` → always allowed (human dispatch).
-    - ``xiaomi`` (系统前台/小V) → same privilege as human: may wake any active
+    - ``xiaomi`` (系统前台/小Q) → same privilege as human: may wake any active
       employee regardless of reporting line or workspace org (she acts for the user).
     - Same role → not allowed (can't dispatch to self).
     - Target must exist in the roster and be active.
@@ -305,7 +305,7 @@ def validate_dispatch_org_relationship(
         def is_xiaomi_agent(_name: str | None) -> bool:  # type: ignore[misc]
             return False
 
-    # Human + 小V may not target themselves; other self-dispatch still blocked.
+    # Human + 小Q may not target themselves; other self-dispatch still blocked.
     if from_code and from_code.lower() != "user" and from_code == tgt_code:
         return "不能给自己派发任务"
     if is_xiaomi_agent(from_code) and is_xiaomi_agent(tgt_code):
@@ -319,7 +319,7 @@ def validate_dispatch_org_relationship(
     if str(target.status or "").strip().lower() == "archived":
         return f"目标岗位 `{tgt_code}` 已归档，无法派发"
 
-    # Human user or 小V（系统前台）：代表用户全局派活，不受组织上下级/平级限制。
+    # Human user or 小Q（系统前台）：代表用户全局派活，不受组织上下级/平级限制。
     if from_code.lower() in {"", "user"} or is_xiaomi_agent(from_code):
         return None
 
@@ -960,7 +960,7 @@ class ProactiveRunner:
                 idle_skipped.append(code)
                 next_duty = compute_next_duty_iso(role)
                 logger.info(
-                    "【值班跳过】原因=小V看板空闲(定时心跳不拉会话) | 谁=%s(%s) | 改约下次=%s",
+                    "【值班跳过】原因=小Q看板空闲(定时心跳不拉会话) | 谁=%s(%s) | 改约下次=%s",
                     str(role.role_name or "").strip() or code,
                     code,
                     next_duty or "—",
@@ -1529,7 +1529,7 @@ class ProactiveRunner:
         When ``role_lock_held`` is True the caller already reserved the busy slot
         (fire-and-forget dispatch); we only bind the current task.
 
-        ``scheduled=True`` is the heartbeat tick: 小V with an empty board skips
+        ``scheduled=True`` is the heartbeat tick: 小Q with an empty board skips
         the LLM round (no duty session). Manual heartbeat / dispatch keep running.
         """
         code = str(role.agent_code or "").strip()
@@ -1608,7 +1608,7 @@ class ProactiveRunner:
             except Exception:
                 logger.debug("proactive.runner: budget check failed (non-fatal)", exc_info=True)
 
-        # Scheduled 小V: empty board → do not open a duty session / LLM round.
+        # Scheduled 小Q: empty board → do not open a duty session / LLM round.
         if (
             scheduled
             and not str(extra_env_context or "").strip()

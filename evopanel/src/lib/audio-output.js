@@ -3,7 +3,7 @@
  * Detects virtual audio devices (Steam, NVIDIA, VB-Audio, etc.) and automatically
  * routes TTS to the best available real hardware device, preventing "plays but can't hear" bugs.
  *
- * Adapted from the legacy voice module audio-output.js, adapted for EvoFlow speech-client architecture.
+ * Adapted from the legacy voice module audio-output.js, adapted for QAgent speech-client architecture.
  */
 
 // ── Virtual device name patterns (Steam, NVIDIA, VB-Audio, Oculus, etc.) ──

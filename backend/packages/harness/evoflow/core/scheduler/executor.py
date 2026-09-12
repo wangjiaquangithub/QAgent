@@ -134,7 +134,7 @@ def _run_subagent_via_subprocess(prompt: str, task_id: str, trace_id: str, timeo
     env = os.environ.copy()
     harness_path = str(Path(__file__).parents[4])  # scheduler -> core -> evoflow -> packages -> harness
     backend_path = str(Path(__file__).parents[5])  # ... -> backend
-    project_root = str(Path(__file__).parents[6])  # ... -> EvoFlow root (for config.yaml)
+    project_root = str(Path(__file__).parents[6])  # ... -> QAgent root (for config.yaml)
     current_pypath = env.get("PYTHONPATH", "")
     env["PYTHONPATH"] = backend_path + os.pathsep + harness_path + os.pathsep + current_pypath
 

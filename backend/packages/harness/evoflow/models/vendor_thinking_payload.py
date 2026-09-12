@@ -139,12 +139,32 @@ def _apply_dashscope_thinking_payload(payload: dict[str, Any], *, model_instance
     return payload
 
 
+def _omit_thinking_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Remove thinking fields for models that reject the feature entirely."""
+    for key in ("thinking", "reasoning", "reasoning_effort"):
+        payload.pop(key, None)
+    extra = payload.get("extra_body")
+    if isinstance(extra, dict):
+        extra = dict(extra)
+        for key in ("thinking", "reasoning", "reasoning_effort"):
+            extra.pop(key, None)
+        if extra:
+            payload["extra_body"] = extra
+        else:
+            payload.pop("extra_body", None)
+    return payload
+
+
 def _apply_zhipu_thinking_payload(
     payload: dict[str, Any],
     *,
     model_instance: Any | None,
 ) -> dict[str, Any]:
     """智谱 OpenAI 兼容: ``extra_body.thinking`` + ``extra_body.reasoning_effort``."""
+    # Capability is explicit only on models created by the factory.  Preserve
+    # legacy behavior for external/manual model instances that lack this marker.
+    if model_instance is not None and getattr(model_instance, "_evoflow_supports_thinking", True) is False:
+        return _omit_thinking_payload(payload)
     effort = _runtime_effort(payload, model_instance)
     model_name = str(
         getattr(model_instance, "model_name", None)

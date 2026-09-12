@@ -31,7 +31,7 @@ describe('normalizeTaskHandlers', () => {
 
   it('repairs unquoted-key blob instead of comma-splitting into fake rows', () => {
     const raw =
-      '[{agent_code:quality-inspector, content:审核 ContentOS 产品定位文档，重点关注技术可行性（内置浏览器方案、平台 Cookie 拦截、EvoFlow）, outputs:[{type:file, key:report, value:docs/roles/product-manager/20260724-09/contentos-product-pos.md, label:ContentOS 产品定位文档}]}]'
+      '[{agent_code:quality-inspector, content:审核 ContentOS 产品定位文档，重点关注技术可行性（内置浏览器方案、平台 Cookie 拦截、QAgent）, outputs:[{type:file, key:report, value:docs/roles/product-manager/20260724-09/contentos-product-pos.md, label:ContentOS 产品定位文档}]}]'
     const items = normalizeTaskHandlers(raw)
     assert.equal(items.length, 1)
     assert.equal(items[0].agent_code, 'quality-inspector')

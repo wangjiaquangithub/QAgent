@@ -1,4 +1,4 @@
-# EvoFlow Development Environment
+# QAgent Development Environment
 # Usage: docker-compose -f docker-compose-dev.yaml up --build
 #
 # Services:

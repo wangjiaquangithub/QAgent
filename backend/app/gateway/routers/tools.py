@@ -383,7 +383,7 @@ async def openapi_spec(
             "title": "Haze-Ctrl Remote Capability API",
             "version": "v1",
             "description": (
-                "External access to EvoFlow platform capabilities. All "
+                "External access to QAgent platform capabilities. All "
                 "operations require Authorization: Bearer <access token>."
             ),
         },

@@ -31,7 +31,7 @@ from cryptography.hazmat.primitives.serialization import (
 BUILTIN_LICENSE_PUBLIC_KEY_B64 = "QaUE7y1r5i3GWeogHtJaBe3S_HPOpGq2wC3CggVdq9M"
 
 # HMAC key for EF3 short codes (HKDF from the vendor private key that matches the public above).
-# Open-source community sample keypair (rotated 2026-09-11). Commercial / EvovexAI production
+# Open-source community sample keypair (rotated 2026-09-11). Commercial / Quclouds production
 # builds MUST inject ops keys via EVOFLOW_LICENSE_PUBLIC_KEY / EVOFLOW_LICENSE_CODE_MAC and
 # never reuse keys that were committed historically (see SECURITY.md).
 BUILTIN_LICENSE_CODE_MAC_B64 = "k6imVyHO-9fk8fMWzzgX0KA-brTyg1A3Abwvca6owpc"

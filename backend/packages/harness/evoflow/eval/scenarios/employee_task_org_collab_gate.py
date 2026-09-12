@@ -124,7 +124,7 @@ def _run(home: Path) -> dict:
             "xiaomi_front_desk_can_dispatch",
             xiaomi_err is None,
             inputs={"from": "xiaomi", "to": _FOREIGN},
-            expected="小V系统前台不受组织互派限制",
+            expected="小Q系统前台不受组织互派限制",
             actual=xiaomi_err or "allowed",
             api="validate_dispatch_org_relationship",
         ),

@@ -366,7 +366,7 @@ export async function render() {
       /* ignore */
     }
   })
-  // 小V 右侧栏写操作后：实时刷新员工列表
+  // 小Q 右侧栏写操作后：实时刷新员工列表
   void import('../lib/page-live-refresh.js').then(({ subscribePageLiveRefresh }) => {
     const unsub = subscribePageLiveRefresh(
       () => {

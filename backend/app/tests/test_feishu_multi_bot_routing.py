@@ -93,8 +93,8 @@ def test_proactive_employee_im_identity_block():
         side_effect=_get_role,
     ):
         assert _proactive_employee_im_identity_block("main") == ""
-        assert "EvoFlow" in _primary_assistant_im_identity_block("main")
-        assert _display_agent_name("main", prompt_language="zh") == "EvoFlow"
+        assert "QAgent" in _primary_assistant_im_identity_block("main")
+        assert _display_agent_name("main", prompt_language="zh") == "QAgent"
         assert _display_agent_name("code-agent", prompt_language="zh") == "前端工程师"
 
 

@@ -1,40 +1,40 @@
-# EvoFlow 项目介绍
+# QAgent 项目介绍
 
-> **比如你可以用 EvoFlow 做这些事**：
+> **比如你可以用 QAgent 做这些事**：
 >
 > - **写一份竞品分析报告**：告诉 AI"帮我调研 3 家国产 AI Agent 平台，对比产品定位、定价、最近动态"——AI 会自动搜索、整理成表格文档，你等结果就行
 > - **重构一个代码模块**：说"把飞书渠道的消息格式化逻辑拆成独立模块，补单测，跑通过才算完"——AI 自己拆步骤、写代码、跑测试，你在旁边看着就行
 > - **7×24 盯服务器**：设个目标"每小时检查一次 3 个服务的健康状态，异常就推飞书群"，跑 7 天自动停，中间不用你管
 > - **定时出周报**：配个自动化，每周五下午 5 点自动汇总本周项目进展，生成 Markdown 推给你
 >
-> EvoFlow 跟传统 AI 聊天工具最大的区别是：**它不止聊天，而是真的帮你把事情做完**——从规划到执行到交付，全程可看可干预。
+> QAgent 跟传统 AI 聊天工具最大的区别是：**它不止聊天，而是真的帮你把事情做完**——从规划到执行到交付，全程可看可干预。
 >
-> 读完本文你会了解 EvoFlow 是什么、跟其他工具有什么区别。建议接着读[产品总览](product-overview.md) [[product-overview|产品总览]]看看具体功能怎么串，或者直接[下载与安装](downloads.md) [[downloads|下载与安装]]上手体验。
+> 读完本文你会了解 QAgent 是什么、跟其他工具有什么区别。建议接着读[产品总览](product-overview.md) [[product-overview|产品总览]]看看具体功能怎么串，或者直接[下载与安装](downloads.md) [[downloads|下载与安装]]上手体验。
 
-> EvoFlow 是 **EvovexAI** 旗下的**超级 Agent 编排框架**——采用 Supervisor 总控模式：用户给出目标后，系统基于 LangGraph 自主规划、调用工具、委派子 Agent、在隔离沙箱中执行，过程可观测、可干预，直至交付可验收的结果。
+> QAgent 是 **QClouds** 旗下的**超级 Agent 编排框架**——采用 Supervisor 总控模式：用户给出目标后，系统基于 LangGraph 自主规划、调用工具、委派子 Agent、在隔离沙箱中执行，过程可观测、可干预，直至交付可验收的结果。
 >
 > **Evovex** 迭代进化 重塑 AI 新范式。英文：*EvoVex, AI Evolve Beyond Complexity*。
 
 ## 1. 一句话定义
 
-EvoFlow 是基于 LangGraph 构建的 AI Agent 运行时。你给它一个目标，它会自主规划、调用工具、委派子 Agent、读写文件、执行命令——直到任务完成。
+QAgent 是基于 LangGraph 构建的 AI Agent 运行时。你给它一个目标，它会自主规划、调用工具、委派子 Agent、读写文件、执行命令——直到任务完成。
 
 ## 2. 与传统对话式 Agent 的差异
 
-| 维度 | 传统对话 Agent | EvoFlow |
+| 维度 | 传统对话 Agent | QAgent |
 |------|----------------|---------|
 | 任务长度 | 易因上下文漂移中断 | 任务状态持久化；目标/任务中心支持暂停恢复；编排任务可重试与局部调整 |
 | 调度方式 | 用户逐步追问 | 复杂任务由 Supervisor 澄清 → 规划 → 子任务拆解 → 分发 |
 | 执行环境 | 多在对话层模拟 | 独立沙箱（本地 / Docker / 可选 K8s）中真实读写与命令执行 |
 | 无人值守 | 需人工盯守 | 目标后台多轮执行、定时 Cron、结果推送 IM |
 | 能力扩展 | 固定工具集 | 50+ 个内置公开技能 + MCP；按场景渐进暴露工具以控制 Token |
-| 触达方式 | 单一 Web 聊天 | EvoFlow 桌面/Web + 飞书/微信/Telegram/Slack 等 IM |
+| 触达方式 | 单一 Web 聊天 | QAgent 桌面/Web + 飞书/微信/Telegram/Slack 等 IM |
 
 ## 3. 目标人群
 
-EvoFlow 面向**希望用 Agent 真正把事情做完、而不是只聊几句**的用户——任务往往跨多步、多工具、多轮执行，需要可规划、可观测、可恢复。
+QAgent 面向**希望用 Agent 真正把事情做完、而不是只聊几句**的用户——任务往往跨多步、多工具、多轮执行，需要可规划、可观测、可恢复。
 
-| 目标人群 | 典型身份 | 核心诉求 | EvoFlow 如何匹配 |
+| 目标人群 | 典型身份 | 核心诉求 | QAgent 如何匹配 |
 |----------|----------|----------|------------------|
 | **研发与构建者** | 独立开发者、全栈/后端工程师、技术负责人 | 从需求到可运行成果；少盯屏、少反复粘贴上下文 | 沙箱读写与命令执行、Claude Code 编码协同、Plan/子 Agent 分工、工作区场景 |
 | **知识工作者** | 研究员、分析师、咨询顾问、学生与终身学习者 | 检索—归纳—成稿链路长，怕中断、怕幻觉堆砌 | 联网与工作区场景、长任务编排、记忆沉淀、结构化输出与技能（如深度研究、文档处理） |
@@ -48,7 +48,7 @@ EvoFlow 面向**希望用 Agent 真正把事情做完、而不是只聊几句**�
 
 ## 4. 核心能力一览
 
-EvoFlow 的核心能力可归纳为以下几个维度。详细功能和操作指南见 [产品总览](product-overview.md) [[product-overview|产品总览]] 和各功能指南。
+QAgent 的核心能力可归纳为以下几个维度。详细功能和操作指南见 [产品总览](product-overview.md) [[product-overview|产品总览]] 和各功能指南。
 
 ### 长任务编排
 
@@ -80,7 +80,7 @@ EvoFlow 的核心能力可归纳为以下几个维度。详细功能和操作指
 
 ### 子任务工作流可视化
 
-Plan 确认执行后，Supervisor 将目标展开为**有向无环子任务图（DAG）**。EvoFlow **工作流 / 子任务面板**实时展示各步状态、依赖关系与进度百分比，便于介入、重试或局部重编排。
+Plan 确认执行后，Supervisor 将目标展开为**有向无环子任务图（DAG）**。QAgent **工作流 / 子任务面板**实时展示各步状态、依赖关系与进度百分比，便于介入、重试或局部重编排。
 
 ### 记忆与思维导图
 
@@ -104,7 +104,7 @@ Plan 确认执行后，Supervisor 将目标展开为**有向无环子任务图�
 
 ### 技能（Skills）
 
-技能是结构化的能力模块（`SKILL.md` 格式），让 Agent 能做特定类型的工作。EvoFlow 内置 50+ 个公开技能，覆盖内容创作、媒体处理、开发工具等领域。
+技能是结构化的能力模块（`SKILL.md` 格式），让 Agent 能做特定类型的工作。QAgent 内置 50+ 个公开技能，覆盖内容创作、媒体处理、开发工具等领域。
 
 ### 沙箱（Sandbox）
 
@@ -116,11 +116,11 @@ Plan 确认执行后，Supervisor 将目标展开为**有向无环子任务图�
 
 ## 6. 架构速览
 
-EvoFlow 由四层组成，从上到下依次是：
+QAgent 由四层组成，从上到下依次是：
 
 | 层 | 角色 | 面向用户 |
 |----|------|---------|
-| **EvoFlow 桌面/Web** | 产品 GUI，所有操作的入口 | 终端用户 |
+| **QAgent 桌面/Web** | 产品 GUI，所有操作的入口 | 终端用户 |
 | **Gateway API** | 模型、记忆、技能、自动化等业务的 REST 管理面 | 开发者/高级用户 |
 | **LangGraph 运行时** | Agent 主循环，负责对话执行和工具调度 | 开发者 |
 | **Harness 框架** | 可发布的 Agent 框架（工具、沙箱、记忆、子代理等） | 开发者 |
@@ -146,7 +146,7 @@ EvoFlow 由四层组成，从上到下依次是：
 
 ### 许可证
 
-版权所有 © 2026 景银泰（EvovexAI）。本项目以 [PolyForm Noncommercial License 1.0.0](https://github.com/EvovexAI/EvoFlow/blob/main/LICENSE) 发布（源码可见、source-available）：**允许学习与非商业使用；商业使用须取得作者书面授权**（[cloud@evovexai.com](mailto:cloud@evovexai.com)）。
+版权所有 © 2026 王佳全（WangJiaquan）/ Quclouds。本项目以 [PolyForm Noncommercial License 1.0.0](https://github.com/wangjiaquangithub/QAgent/blob/main/LICENSE) 发布（源码可见、source-available）：**允许学习与非商业使用；商业使用须取得作者书面授权**（[wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com)）。
 
 ## 8. 系统要求
 
@@ -156,7 +156,7 @@ EvoFlow 由四层组成，从上到下依次是：
 | 网络 | 可访问所选 LLM 服务商 API；IM 渠道需能访问对应平台 |
 | 密钥 | 至少一个模型提供商 API Key |
 
-获取桌面安装包：[GitHub Releases](https://github.com/EvovexAI/EvoFlow/releases)。
+获取桌面安装包：[GitHub Releases](https://github.com/wangjiaquangithub/QAgent/releases)。
 
 ## 9. 下一步
 
@@ -171,18 +171,18 @@ EvoFlow 由四层组成，从上到下依次是：
 
 | 渠道 | 说明 |
 |------|------|
-| [GitHub Issues](https://github.com/EvovexAI/EvoFlow/issues) | Bug 反馈、功能建议 |
-| [cloud@evovexai.com](mailto:cloud@evovexai.com) | 商务与合作咨询 |
+| [GitHub Issues](https://github.com/wangjiaquangithub/QAgent/issues) | Bug 反馈、功能建议 |
+| [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com) | 商务与合作咨询 |
 
 ---
 
 ## 相关阅读
 
 - [[getting-started/product-overview|产品总览]] — 功能地图与典型路径，了解各功能怎么串
-- [[explanation/why-evoflow|为什么是 EvoFlow]] — 设计理念与产品定位
+- [[explanation/why-evoflow|为什么是 QAgent]] — 设计理念与产品定位
 - [[guides/chat/plan-mode|Plan 模式]] — 先对齐方案再执行，适合复杂多步任务
 - [[guides/configuration/agent-management|智能体管理]] — 角色配置详解
 
 ---
 
-*EvovexAI · EvoFlow — 让复杂任务自动闭环到验收。*
+*QClouds · QAgent — 让复杂任务自动闭环到验收。*

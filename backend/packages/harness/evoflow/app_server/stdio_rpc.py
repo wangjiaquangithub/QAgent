@@ -113,7 +113,7 @@ class StdioAppServer:
                 {
                     "protocolVersion": PROTOCOL_VERSION,
                     "serverInfo": {"name": "evoflow-app-server", "version": "1"},
-                    "userAgent": f"EvoFlow-AppServer/{PROTOCOL_VERSION}",
+                    "userAgent": f"QAgent-AppServer/{PROTOCOL_VERSION}",
                     "capabilities": {
                         "turnStart": True,
                         "streamSse": True,

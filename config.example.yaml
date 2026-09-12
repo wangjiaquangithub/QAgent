@@ -1,4 +1,4 @@
-# Configuration for the EvoFlow application
+# Configuration for the QAgent application
 #
 # Guidelines:
 # - Copy this file to `config.yaml` and customize it for your environment
@@ -291,7 +291,7 @@ execution_security:
 
 # acp_agents:
 #   claude_code:
-#     # EvoFlow expects an ACP adapter here. The standard `claude` CLI does not
+#     # QAgent expects an ACP adapter here. The standard `claude` CLI does not
 #     # speak ACP directly. Install `claude-agent-acp` separately or use:
 #     command: npx
 #     args: ["-y", "@zed-industries/claude-agent-acp"]
@@ -302,7 +302,7 @@ execution_security:
 #     #   ANTHROPIC_API_KEY: $ANTHROPIC_API_KEY  # $VAR resolves from host environment
 #
 #   codex:
-#     # EvoFlow expects an ACP adapter here. The standard `external-agent` CLI does not
+#     # QAgent expects an ACP adapter here. The standard `external-agent` CLI does not
 #     # speak ACP directly. Install `external-agent-acp` separately or use:
 #     command: npx
 #     args: ["-y", "@zed-industries/external-agent-acp"]
@@ -549,7 +549,7 @@ summarization:
   # Set to null to skip trimming (not recommended for very long conversations)
   trim_tokens_to_summarize: 15564
 
-  # Custom summary prompt template (null = EvoFlow default: LangChain-style extraction + mirror user's language)
+  # Custom summary prompt template (null = QAgent default: LangChain-style extraction + mirror user's language)
   # Must include a single "{messages}" placeholder if you override this.
   summary_prompt: null
 
@@ -579,11 +579,11 @@ memory:
 # ============================================================================
 # Checkpointer Configuration
 # ============================================================================
-# Configure state persistence for the embedded EvoFlowClient.
+# Configure state persistence for the embedded QAgentClient.
 # The LangGraph Server manages its own state persistence separately
 # via the server infrastructure (this setting does not affect it).
 #
-# When configured, EvoFlowClient will automatically use this checkpointer,
+# When configured, QAgentClient will automatically use this checkpointer,
 # enabling multi-turn conversations to persist across process restarts.
 #
 # Supported types:
@@ -650,7 +650,7 @@ data_retention:
 # ============================================================================
 # IM Channels Configuration
 # ============================================================================
-# Connect EvoFlow to external messaging platforms.
+# Connect QAgent to external messaging platforms.
 # All channels use outbound connections (WebSocket or polling) — no public IP required.
 
 # channels:

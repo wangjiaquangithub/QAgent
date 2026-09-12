@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cross-platform dependency checker for EvoFlow."""
+"""Cross-platform dependency checker for QAgent."""
 
 from __future__ import annotations
 

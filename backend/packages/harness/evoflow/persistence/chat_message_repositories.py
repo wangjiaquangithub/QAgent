@@ -107,7 +107,7 @@ _HIDDEN_CONTEXT_USER_NAMES = frozenset(
         "tool_approval_command",
         # Proactive duty full brief (board + tool rules); visible beat is separate.
         "proactive_duty_brief",
-        # 小V 当前页快照（ephemeral Human；不应进用户气泡）
+        # 小Q 当前页快照（ephemeral Human；不应进用户气泡）
         "xiaomi_ui_context",
     }
 )

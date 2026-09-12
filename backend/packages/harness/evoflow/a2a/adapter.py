@@ -1,4 +1,4 @@
-"""A2A Adapter: translates A2A protocol <-> EvoFlow dispatch_task.
+"""A2A Adapter: translates A2A protocol <-> QAgent dispatch_task.
 
 This is the bridge layer. A2A ``tasks/send`` becomes ``dispatch_task``;
 LangGraph messages become A2A SSE events. The underlying proactive engine

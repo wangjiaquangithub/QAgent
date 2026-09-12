@@ -12,7 +12,7 @@
 >
 > 与[自动化](../tasks/scheduled-tasks.md) [[guides/tasks/scheduled-tasks|自动化]]组合使用效果更好——自动化到点启动目标；目标也可以在[任务中心](../tasks/task-center.md) [[guides/tasks/task-center|任务中心]]查看运行记录。
 
-目标智能体是 EvoFlow 的**长程自驱能力**——你下达一个目标，主智能体自行规划、执行、自检、调整，按步数或时长边界自动停止；中途可暂停、补充指令、终止，结束后可推送结果到飞书等渠道。
+目标智能体是 QAgent 的**长程自驱能力**——你下达一个目标，主智能体自行规划、执行、自检、调整，按步数或时长边界自动停止；中途可暂停、补充指令、终止，结束后可推送结果到飞书等渠道。
 
 > **入口只在实时聊天**：Composer 下方的「目标」药丸 / Goal 模式。  
 > **不属于**侧栏「任务中心」「自动化」「智能体员工」。任务中心管的是多步骤协作任务看板；自动化是到点跑固定 Prompt。
@@ -196,7 +196,7 @@ idle ──启动──▶ running ──需补充信息──▶ waiting ──
 如果配置了 `feishu_push_on_complete=true` 且飞书渠道已就绪：
 
 - 目标自然结束 / 被终止 / 异常停止 → **自动推送 Markdown 总结**到默认会话（与自动化同源：config 配置或入站学习的 chat_id）
-- 飞书群内发送 `开始` / `确认` / `继续` 等指令，可在 EvoFlow 在线且已连接网关时**触发桌面侧应用目标方案并启动**（联动详情见 [飞书集成](../integration/feishu-integration.md) [[guides/integration/feishu-integration|飞书集成]]）
+- 飞书群内发送 `开始` / `确认` / `继续` 等指令，可在 QAgent 在线且已连接网关时**触发桌面侧应用目标方案并启动**（联动详情见 [飞书集成](../integration/feishu-integration.md) [[guides/integration/feishu-integration|飞书集成]]）
 
 **推送内容包含**：
 

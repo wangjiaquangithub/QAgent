@@ -142,7 +142,7 @@ def _weixin_home() -> Path:
     home = (os.getenv("EVOFLOW_HOME") or "").strip()
     if home:
         return Path(home) / "weixin" / "accounts"
-    # Fallback: use backend/.evo-flow (EvoFlow dev default)
+    # Fallback: use backend/.evo-flow (QAgent dev default)
     return Path(__file__).resolve().parent.parent.parent / ".evo-flow" / "weixin" / "accounts"
 
 

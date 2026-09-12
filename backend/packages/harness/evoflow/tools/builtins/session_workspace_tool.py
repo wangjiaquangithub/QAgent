@@ -1,4 +1,4 @@
-"""Per-thread EvoFlow workspace: query / create dir / set root (syncs to EvoPanel via custom stream)."""
+"""Per-thread QAgent workspace: query / create dir / set root (syncs to EvoPanel via custom stream)."""
 
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ def session_workspace_tool(
     action: Literal["query", "create"],
     path: str | None = None,
 ) -> str:
-    """Manage the EvoFlow chat session workspace (project root for Claude Code / tools).
+    """Manage the QAgent chat session workspace (project root for Claude Code / tools).
 
     Args:
         action: ``query`` — show ``local_workspace_root`` from context, resolved path, cwd;

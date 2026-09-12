@@ -3,7 +3,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Ask how to install, configure, or use EvoFlow. For reproducible bugs, open a **Bug** issue instead.
+        Ask how to install, configure, or use QAgent. For reproducible bugs, open a **Bug** issue instead.
   - type: textarea
     id: question
     attributes:

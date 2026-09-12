@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# start.sh - Start all EvoFlow development services
+# start.sh - Start all QAgent development services
 #
 # Must be run from the repo root directory.
 
@@ -65,7 +65,7 @@ mkdir -p logs
 
 echo ""
 echo "=========================================="
-echo "  Starting EvoFlow Development Server"
+echo "  Starting QAgent Development Server"
 echo "=========================================="
 echo ""
 if $DEV_MODE; then
@@ -87,7 +87,7 @@ if ! { \
         [ -f backend/config.yaml ] || \
         [ -f config.yaml ]; \
     }; then
-    echo "✗ No EvoFlow config file found."
+    echo "✗ No QAgent config file found."
     echo "  Checked these locations:"
     echo "    - $EVOFLOW_CONFIG_PATH (when EVOFLOW_CONFIG_PATH is set)"
     echo "    - backend/config.yaml"
@@ -111,6 +111,13 @@ cleanup() {
     trap - INT TERM
     echo ""
     echo "Shutting down services..."
+    # The gateway runs under a small supervisor so a crashed/reloader-exited
+    # Uvicorn process does not leave the frontend permanently disconnected.
+    # Stop that supervisor first so it cannot respawn Uvicorn during cleanup.
+    if [ -n "${GATEWAY_SUPERVISOR_PID:-}" ]; then
+        kill "$GATEWAY_SUPERVISOR_PID" 2>/dev/null || true
+        wait "$GATEWAY_SUPERVISOR_PID" 2>/dev/null || true
+    fi
     pkill -f "langgraph dev" 2>/dev/null || true
     pkill -f "uvicorn app.gateway.app:app" 2>/dev/null || true
     echo "Cleaning up sandbox containers..."
@@ -157,7 +164,24 @@ LANGGRAPH_LOG_LEVEL="${LANGGRAPH_LOG_LEVEL:-${CONFIG_LOG_LEVEL:-info}}"
 echo "✓ LangGraph server started on localhost:2024"
 
 echo "Starting Gateway API..."
-(cd backend && PYTHONUNBUFFERED=1 PYTHONPATH=. "$UV_BIN" run uvicorn app.gateway.app:app --host 0.0.0.0 --port $GATEWAY_PORT $GATEWAY_EXTRA_FLAGS) &
+# Keep Uvicorn in a dedicated supervisor.  In development mode its WatchFiles
+# reloader can exit independently while LangGraph remains alive; previously the
+# final `wait` then kept this script alive but left port 8012 unserved forever.
+run_gateway_supervisor() {
+    local exit_code
+    while true; do
+        (cd backend && EVOFLOW_LANGGRAPH_URL="${EVOFLOW_LANGGRAPH_URL:-http://127.0.0.1:2024}" \
+          PYTHONUNBUFFERED=1 PYTHONPATH=. "$UV_BIN" run uvicorn app.gateway.app:app \
+          --host 0.0.0.0 --port "$GATEWAY_PORT" $GATEWAY_EXTRA_FLAGS) &
+        GATEWAY_CHILD_PID=$!
+        wait "$GATEWAY_CHILD_PID"
+        exit_code=$?
+        echo "⚠ Gateway API exited (status ${exit_code}); restarting in 2 seconds..." >&2
+        sleep 2
+    done
+}
+run_gateway_supervisor &
+GATEWAY_SUPERVISOR_PID=$!
 ./scripts/wait-for-port.sh $GATEWAY_PORT 30 "Gateway API" || {
     echo "✗ Gateway API failed to start. Last log output:"
     tail -60 "logs/gateway-${LOG_DATE}.log" 2>/dev/null || tail -60 logs/gateway.log 2>/dev/null || true
@@ -175,9 +199,9 @@ echo "✓ Gateway API started on localhost:$GATEWAY_PORT"
 echo ""
 echo "=========================================="
 if $DEV_MODE; then
-    echo "  ✓ EvoFlow development server is running!"
+    echo "  ✓ QAgent development server is running!"
 else
-    echo "  ✓ EvoFlow production server is running!"
+    echo "  ✓ QAgent production server is running!"
 fi
 echo "=========================================="
 echo ""

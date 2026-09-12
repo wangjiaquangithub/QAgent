@@ -233,7 +233,7 @@ class TestWebSearchAiDailyInvokeFullJson:
                     "_snippet": "d2",
                 },
             ],
-            "_engine_version": "EvoFlowProviderSearch",
+            "_engine_version": "QAgentProviderSearch",
             "ai_daily": "auto",
             "news_53ai": "off",
             "_official_news_index": authoritative_official_news_index(),

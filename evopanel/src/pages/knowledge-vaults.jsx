@@ -1966,7 +1966,7 @@ function VaultOverview({ vault, status, reindexJob, onAction, onDismissJob }) {
           {needInstall
             ? "本地检索组件尚未安装（正式安装包不含该组件，约需联网下载一次）。请点击下方「安装检索组件并重建」；需本机已安装 Node.js。"
             : indexState.key === "index_pending"
-            ? "当前全文/语义索引未就绪，小V与页面检索可能搜不到内容。请点击下方「重建索引」；重建时会显示进度与结果。"
+            ? "当前全文/语义索引未就绪，小Q与页面检索可能搜不到内容。请点击下方「重建索引」；重建时会显示进度与结果。"
             : indexState.key === "index_partial"
               ? indexState.detail ||
                 "全文索引可用，但语义检索不可用（常见原因：embedding 未配置或不可达）。仍可全文搜索；也可重建索引后重试。"

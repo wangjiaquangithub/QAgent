@@ -41,7 +41,7 @@ function shellHtml(embedded) {
         <div>
           <h2 class="sr-title">资源市场</h2>
           <p class="sr-desc">安装别人分享的资源包（员工 + 工作流 + 技能编排）。市场索引来自 GitHub catalog；也可直接导入本地包。</p>
-          <p class="sr-muted" style="margin:8px 0 0;font-size:12px;line-height:1.5">第三方资源包由其作者提供，许可证与内容以包内声明为准；安装即表示你接受其条款。EvoFlow 不背书第三方内容。</p>
+          <p class="sr-muted" style="margin:8px 0 0;font-size:12px;line-height:1.5">第三方资源包由其作者提供，许可证与内容以包内声明为准；安装即表示你接受其条款。QAgent 不背书第三方内容。</p>
         </div>
         <div class="sr-header-actions">
           <button type="button" class="sr-btn" data-rm-act="goto-mine">我的资源</button>
@@ -223,7 +223,7 @@ function renderCatalog(data) {
     list.innerHTML = `
       <div class="sr-empty">
         市场索引已关闭。默认使用公开仓库
-        <code>EvovexAI/evoflow-resource-market</code>；
+        <code>Quclouds/evoflow-resource-market</code>；
         也可设置 <code>EVOFLOW_RESOURCE_MARKET_CATALOG_URL</code> 指向其它 GitHub raw
         <code>catalog.json</code>，设为空字符串则关闭远程市场。
         <br/><br/>当前可先用上方「导入本地包」。

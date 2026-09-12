@@ -69,7 +69,7 @@ def _skills_root_from_source_tree() -> Path | None:
     candidate = (backend_dir.parent / "skills").resolve()
     if not candidate.is_dir():
         return None
-    # Typical EvoFlow tree has at least one of these; avoids false positives if parent walk lands wrong.
+    # Typical QAgent tree has at least one of these; avoids false positives if parent walk lands wrong.
     if (candidate / "public").is_dir() or (candidate / "custom").is_dir():
         return candidate
     return None

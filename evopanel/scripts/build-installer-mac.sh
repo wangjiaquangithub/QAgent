@@ -93,7 +93,7 @@ fi
 cleanup_hdiutil_state() {
   sync || true
   # Detach leftover volume mounts from a previous failed bundle_dmg.sh
-  for mp in /Volumes/EvoFlow /Volumes/EvoFlow*; do
+  for mp in /Volumes/QAgent /Volumes/QAgent*; do
     if [[ -e "${mp}" ]]; then
       echo "[build-installer-mac] detaching leftover mount: ${mp}"
       hdiutil detach "${mp}" -force 2>/dev/null || true

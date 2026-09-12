@@ -906,7 +906,7 @@ class ObsidianKnowledgeProvider:
             content=content,
             summary=summary,
             source=source,
-            source_description=source_description or f"Ingested by EvoFlow from {source}",
+            source_description=source_description or f"Ingested by QAgent from {source}",
             confidence=confidence,
             tags=tags,
             related_paths=related_paths,

@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "EvoFlow API Gateway",
-    "description": "\n## EvoFlow API Gateway\n\nControl-plane API for EvoFlow — a native Agent Runtime for long-running Agent Teams\n(plan → execute → recover → deliver) with sandboxed tools and observability.\n\n### Features\n\n- **Models Management**: Query and retrieve available AI models\n- **MCP Configuration**: Manage Model Context Protocol (MCP) server configurations\n- **Memory Management**: Access and manage global memory data for personalized conversations\n- **Skills Management**: Query and manage skills and their enabled status\n- **Artifacts**: Access thread artifacts and generated files\n- **Health Monitoring**: System health check endpoints\n\n### Architecture\n\nLangGraph is mounted in-process under `/api/langgraph` (single uvicorn process).\nThis gateway provides custom endpoints for models, MCP configuration, skills, artifacts, and more.\n        ",
+    "title": "QAgent API Gateway",
+    "description": "\n## QAgent API Gateway\n\nControl-plane API for QAgent — a native Agent Runtime for long-running Agent Teams\n(plan → execute → recover → deliver) with sandboxed tools and observability.\n\n### Features\n\n- **Models Management**: Query and retrieve available AI models\n- **MCP Configuration**: Manage Model Context Protocol (MCP) server configurations\n- **Memory Management**: Access and manage global memory data for personalized conversations\n- **Skills Management**: Query and manage skills and their enabled status\n- **Artifacts**: Access thread artifacts and generated files\n- **Health Monitoring**: System health check endpoints\n\n### Architecture\n\nLangGraph is mounted in-process under `/api/langgraph` (single uvicorn process).\nThis gateway provides custom endpoints for models, MCP configuration, skills, artifacts, and more.\n        ",
     "version": "1.0.0"
   },
   "paths": {
@@ -140,7 +140,7 @@
           "models"
         ],
         "summary": "Invoke configured model",
-        "description": "Run one chat completion using EvoFlow config (config.yaml), same as the main agent stack.",
+        "description": "Run one chat completion using QAgent config (config.yaml), same as the main agent stack.",
         "operationId": "invoke_configured_model_api_models_invoke_post",
         "requestBody": {
           "content": {
@@ -1189,7 +1189,7 @@
           "threads"
         ],
         "summary": "Delete Thread Data",
-        "description": "Delete local persisted filesystem data for a thread.\n\nThis endpoint only cleans EvoFlow-managed thread directories. LangGraph\nthread state deletion remains handled by the LangGraph API.",
+        "description": "Delete local persisted filesystem data for a thread.\n\nThis endpoint only cleans QAgent-managed thread directories. LangGraph\nthread state deletion remains handled by the LangGraph API.",
         "operationId": "delete_thread_data_api_threads__thread_id__delete",
         "parameters": [
           {
@@ -1274,7 +1274,7 @@
           "workspaces"
         ],
         "summary": "List Workspaces",
-        "description": "List thread-bound workspace directories managed by EvoFlow.",
+        "description": "List thread-bound workspace directories managed by QAgent.",
         "operationId": "list_workspaces_api_workspaces_get",
         "responses": {
           "200": {
@@ -1820,7 +1820,7 @@
           "channels"
         ],
         "summary": "Feishu Push",
-        "description": "Send a proactive Feishu message (markdown card). Intended for cron or other schedulers.\n\nConfigure ``channels.feishu.push_secret`` in ``config.yaml`` or set ``EVOFLOW_FEISHU_PUSH_SECRET``.\nSend the same value in header ``X-EvoFlow-Feishu-Push-Secret`` or ``Authorization: Bearer <secret>``.\nRequires the Feishu channel to be enabled and running (Gateway started with channel service).",
+        "description": "Send a proactive Feishu message (markdown card). Intended for cron or other schedulers.\n\nConfigure ``channels.feishu.push_secret`` in ``config.yaml`` or set ``EVOFLOW_FEISHU_PUSH_SECRET``.\nSend the same value in header ``X-QAgent-Feishu-Push-Secret`` or ``Authorization: Bearer <secret>``.\nRequires the Feishu channel to be enabled and running (Gateway started with channel service).",
         "operationId": "feishu_push_api_channels_feishu_push_post",
         "requestBody": {
           "content": {
@@ -7168,7 +7168,7 @@
           "messages"
         ],
         "title": "ModelInvokeRequest",
-        "description": "Invoke a configured EvoFlow model (same stack as main chat)."
+        "description": "Invoke a configured QAgent model (same stack as main chat)."
       },
       "ModelInvokeResponse": {
         "properties": {
@@ -8464,7 +8464,7 @@
           "base_dir": {
             "type": "string",
             "title": "Base Dir",
-            "description": "Absolute path for EvoFlow base_dir (data root)"
+            "description": "Absolute path for QAgent base_dir (data root)"
           }
         },
         "type": "object",
@@ -8991,7 +8991,7 @@
     },
     {
       "name": "threads",
-      "description": "Manage EvoFlow thread-local filesystem data"
+      "description": "Manage QAgent thread-local filesystem data"
     },
     {
       "name": "agents",

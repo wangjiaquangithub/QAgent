@@ -56,7 +56,7 @@ class ChatCompletionsRequest(BaseModel):
     model: str | None = None
     stream: bool = False
     temperature: float | None = None
-    # FastGPT / EvoFlow extensions
+    # FastGPT / QAgent extensions
     appId: str | None = None
     variables: dict[str, Any] | None = None
     detail: bool = False

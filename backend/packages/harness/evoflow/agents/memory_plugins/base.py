@@ -1,4 +1,4 @@
-"""Abstract base for external memory providers (Hermes-style plugin contract, EvoFlow port).
+"""Abstract base for external memory providers (Hermes-style plugin contract, QAgent port).
 
 Plugins can mirror conversation turns to a remote or local backend and inject
 retrieved context at the start of each model step. Only one provider is active

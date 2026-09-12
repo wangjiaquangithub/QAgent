@@ -1,4 +1,4 @@
-EvoFlow card PNG assets
+QAgent card PNG assets
 
 Format: PNG
 Card icons/illustrations: 512x512, transparent background

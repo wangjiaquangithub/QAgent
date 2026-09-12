@@ -18,7 +18,7 @@ def setup_agent(
     runtime: ToolRuntime,
     tags: list[str] | None = None,
 ) -> Command:
-    """Setup the custom EvoFlow agent.
+    """Setup the custom QAgent agent.
 
     Args:
         soul: Full SOUL.md content defining the agent's personality and behavior.

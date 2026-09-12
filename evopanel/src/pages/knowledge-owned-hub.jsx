@@ -34,7 +34,7 @@ export function KnowledgeHero({ busy, onCreate }) {
   return (
     <header className="ko-hero">
       <div className="ko-hero__copy">
-        <p className="ko-hub-brand">EvoFlow · Knowledge</p>
+        <p className="ko-hub-brand">QAgent · Knowledge</p>
         <h1 data-testid="ko-page-title">知识库</h1>
         <p className="ko-hero__sub">
           本地优先的文档资产：上传即索引，阅读 / 概览 / 问 AI 一体完成。

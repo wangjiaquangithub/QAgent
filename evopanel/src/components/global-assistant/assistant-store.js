@@ -1,5 +1,5 @@
 /**
- * 小V面板本地状态（UI 持久化；聊天摘要会话由内存 + 可选后端）
+ * 小Q面板本地状态（UI 持久化；聊天摘要会话由内存 + 可选后端）
  */
 const LS_KEY = 'evopanel_xiaomi_assistant_v1'
 
@@ -174,13 +174,13 @@ export function getState() {
   return state
 }
 
-/** 小V 悬浮球是否被用户隐藏（设置页开关用；false = 显示） */
+/** 小Q 悬浮球是否被用户隐藏（设置页开关用；false = 显示） */
 export function isFabUserHidden() {
   return !!state.fabUserHidden
 }
 
 /**
- * 设置小V 悬浮球显示/隐藏。
+ * 设置小Q 悬浮球显示/隐藏。
  * @param {boolean} hidden true=隐藏，false=显示
  */
 export function setFabUserHidden(hidden) {
@@ -254,7 +254,7 @@ export function isAttentionRead(id) {
   return state.unreadReadIds.includes(String(id || '').trim())
 }
 
-/** 当前联系人草稿（小V 同步到 draft 字段以兼容语音） */
+/** 当前联系人草稿（小Q 同步到 draft 字段以兼容语音） */
 export function getContactDraft(contact = state.selectedContact) {
   const key = String(contact || 'xiaomi').trim() || 'xiaomi'
   const map = state.draftByContact || {}

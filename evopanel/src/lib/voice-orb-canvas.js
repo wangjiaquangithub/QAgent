@@ -99,7 +99,7 @@ const STATE_CFG = {
   },
 }
 
-// EvoFlow 状态 → STATE_CFG key 映射
+// QAgent 状态 → STATE_CFG key 映射
 const STATE_MAP = {
   listening: 'listening',
   processing: 'processing',

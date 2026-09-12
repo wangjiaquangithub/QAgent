@@ -441,7 +441,7 @@ def trae_new_chat_tool() -> str:
     context reset, or branch-style isolation. For normal multi-step work in
     one task, keep using the current Trae session and avoid calling this tool.
     """
-    payload = {"metadata": {"caller": "EvoFlow"}, "prepare": True}
+    payload = {"metadata": {"caller": "QAgent"}, "prepare": True}
     ok, raw = _request_json("/v1/sessions", payload, method="POST")
     if ok:
         return raw
@@ -593,7 +593,7 @@ def trae_delegate_tool(
     if new_chat:
         sess_ok, sess_raw = _request_json(
             "/v1/sessions",
-            {"metadata": {"caller": "EvoFlow"}, "prepare": True},
+            {"metadata": {"caller": "QAgent"}, "prepare": True},
             method="POST",
             timeout_seconds_override=bridge_timeout,
         )
@@ -608,7 +608,7 @@ def trae_delegate_tool(
 
     body = {
         "content": str(payload["prompt"]),
-        "metadata": {"caller": "EvoFlow"},
+        "metadata": {"caller": "QAgent"},
     }
     if runtime_workspace:
         body["sessionMetadata"] = {"workspace": runtime_workspace}
@@ -674,7 +674,7 @@ def trae_delegate_tool(
             if new_chat:
                 rec_ok, rec_raw = _request_json(
                     "/v1/sessions",
-                    {"metadata": {"caller": "EvoFlow"}, "prepare": True},
+                    {"metadata": {"caller": "QAgent"}, "prepare": True},
                     method="POST",
                     timeout_seconds_override=bridge_timeout,
                 )

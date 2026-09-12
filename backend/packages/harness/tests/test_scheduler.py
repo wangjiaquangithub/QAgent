@@ -178,7 +178,7 @@ class TestTimerWrapper(unittest.TestCase):
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("EvoFlow Scheduler Engine Tests (#19 远期规划)")
+    print("QAgent Scheduler Engine Tests (#19 远期规划)")
     print(f"Python: {sys.version.split()[0]}")
     print("=" * 60)
 

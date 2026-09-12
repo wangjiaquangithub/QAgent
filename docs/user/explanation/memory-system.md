@@ -106,7 +106,7 @@ topOfMind: 正在优化 Agent 系统...
 
 ## 外部记忆插件
 
-EvoFlow 支持可选的外部记忆插件（`external_provider`），扩展记忆存储能力：
+QAgent 支持可选的外部记忆插件（`external_provider`），扩展记忆存储能力：
 
 - `external_sync_enabled: true`：在内置记忆保存后，同步最近一轮对话到外部插件
 - `external_prefetch_enabled: true`：在模型调用前，从外部插件获取记忆上下文并注入

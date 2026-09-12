@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # DEV ONLY — build Linux OS sandbox helper from open-source crates.
-# EvoFlow does NOT treat runtime CLI as a product upstream.
+# QAgent does NOT treat runtime CLI as a product upstream.
 set -euo pipefail
 
 echo "WARN: DEV ONLY sandbox helper build (not a runtime product dependency)." >&2

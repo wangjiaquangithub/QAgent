@@ -40,7 +40,7 @@ EXECUTOR_SESSION_KEY_PREFIX = "agent:executor:"
 
 # In single-process mode, LangGraph is mounted in-process at /api/langgraph on the Gateway.
 # Override with EVOFLOW_LANGGRAPH_URL to use an external LangGraph instance.
-LANGGRAPH_BASE_URL = os.getenv("EVOFLOW_LANGGRAPH_URL", "http://127.0.0.1:8070/api/langgraph").rstrip("/")
+LANGGRAPH_BASE_URL = os.getenv("EVOFLOW_LANGGRAPH_URL", "http://127.0.0.1:8012/api/langgraph").rstrip("/")
 _HOP_BY_HOP = {"connection", "keep-alive", "host", "content-length", "transfer-encoding"}
 
 

@@ -58,7 +58,7 @@ export const TAB_META = {
   im: { title: '消息渠道', desc: '飞书、Slack、Telegram 等 IM 对接。' },
   security: { title: '安全中心', desc: 'OS 沙箱、新对话默认权限、终端命令策略与审计。' },
   shortcuts: { title: '快捷键', desc: '自定义聊天与全局快捷键，避免与系统冲突。' },
-  api: { title: 'WebUI 远程访问', desc: '启用后，手机、平板或远程浏览器可以访问 EvoPanel。' },
+  api: { title: 'WebUI 远程访问', desc: '启用后，手机、平板或远程浏览器可以访问 QAgent。' },
   users: { title: '用户与权限', desc: '组织管理员管理用户目录、管理员角色与 ACL 模式。' },
   sso: { title: '企业 SSO', desc: '配置 OpenID Connect，让 Web 与桌面客户端使用企业 IdP 单点登录。' },
   usage: { title: '使用统计', desc: 'Token 与费用账本：按日趋势、类型与模型拆分。' },

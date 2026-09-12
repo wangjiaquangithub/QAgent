@@ -1,5 +1,5 @@
 /**
- * 小V数据适配层：聚合现有 Gateway API，不平行造模型
+ * 小Q数据适配层：聚合现有 Gateway API，不平行造模型
  */
 import { api, gatewayProxy } from '../../lib/tauri-api.js'
 import { toTaskStatusGroup, normalizeTaskStatusKey, formatTaskStatusZh } from '../../lib/task-status-label.js'

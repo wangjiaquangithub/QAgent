@@ -1,4 +1,4 @@
-"""小V（用户全局前台）— 独立于 lead_agent 通用提示词/工具面。
+"""小Q（用户全局前台）— 独立于 lead_agent 通用提示词/工具面。
 
 能力盘点（应有工具 / 值班 / 禁止面）：``internal design docs (not published in this repository)``。
 """

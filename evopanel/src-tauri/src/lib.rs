@@ -228,7 +228,7 @@ pub fn run() {
             browser_embed::browser_embed_close,
         ])
         .build(tauri::generate_context!())
-        .expect("启动 EvoFlow 失败")
+        .expect("启动 QAgent 失败")
         .run(|_app, event| {
             if let tauri::RunEvent::Exit = event {
                 ui_extensions::stop_all_ui_extension_services();

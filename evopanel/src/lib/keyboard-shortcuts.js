@@ -29,8 +29,8 @@ export const SHORTCUT_DEFS = {
   },
   toggleXiaomiAssistant: {
     id: 'toggleXiaomiAssistant',
-    label: '小V助手',
-    description: '打开/收起小V；若已隐藏悬浮球则重新显示',
+    label: '小Q助手',
+    description: '打开/收起小Q；若已隐藏悬浮球则重新显示',
     category: 'global',
     editable: true,
     defaultBinding: {

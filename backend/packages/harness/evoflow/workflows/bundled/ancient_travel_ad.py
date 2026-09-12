@@ -202,7 +202,7 @@ APP_DEFINITION: dict[str, Any] = {
 
 
 def install(*, publish: bool = True, overwrite: bool = True) -> dict[str, Any]:
-    """Save (and optionally publish) the bundled App into the local EvoFlow DB."""
+    """Save (and optionally publish) the bundled App into the local QAgent DB."""
     from evoflow.admin import apps as apps_admin
     from evoflow.collab.app_schema import normalize_app_document
     from evoflow.collab.workflow_validator import validate_app_definition

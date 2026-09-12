@@ -20,7 +20,7 @@ from evoflow.proactive.work_items import (
 
 
 def test_dispatch_rationale_includes_xiaomi() -> None:
-    assert dispatch_rationale_zh("xiaomi") == "小V催办派发"
+    assert dispatch_rationale_zh("xiaomi") == "小Q催办派发"
     assert dispatch_rationale_zh("role") == "同事跨岗派发"
     assert dispatch_rationale_zh("employee_page") == "用户从员工页派发"
 

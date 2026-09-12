@@ -95,7 +95,7 @@ async function _postFeishuPush(chatId, markdown) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-EvoFlow-Feishu-Push-Secret': secret,
+      'X-QAgent-Feishu-Push-Secret': secret,
     },
     body: JSON.stringify({
       receive_id: String(chatId).trim(),

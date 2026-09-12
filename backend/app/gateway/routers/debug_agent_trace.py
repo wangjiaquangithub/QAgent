@@ -2007,7 +2007,7 @@ def _attach_timing_to_conversation_turns(payload: dict[str, Any]) -> None:
             "pre_model_breakdown_ms": pre_phases,
             "collab_phase_ms": _collab_phase_timing_per_model_cycle(turn, collab_rows),
             "perceived_reply_ms": pr.get("perceived_reply_ms") if isinstance(pr, dict) else None,
-            "note_zh": ("langgraph_run_wall_ms：本轮主 run（第一次开跑）墙钟；多 run 时看 langgraph_run_wall_sum_ms 与 run 间空档。厂商 HTTP 仅含模型调用；其余为 EvoFlow 进模型前/工具/checkpoint/排队。page_round_trip_ms 仅最后一轮有。"),
+            "note_zh": ("langgraph_run_wall_ms：本轮主 run（第一次开跑）墙钟；多 run 时看 langgraph_run_wall_sum_ms 与 run 间空档。厂商 HTTP 仅含模型调用；其余为 QAgent 进模型前/工具/checkpoint/排队。page_round_trip_ms 仅最后一轮有。"),
         }
         if i == n_turns - 1 and e2e_segs:
             timing["page_round_trip_ms"] = e2e_segs.get("page_round_trip_ms")

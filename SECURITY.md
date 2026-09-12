@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-EvoFlow is under active development. Please use the latest release for security updates.
+QAgent is under active development. Please use the latest release for security updates.
 
 | Version | Supported          |
 |---------|--------------------|
@@ -15,8 +15,8 @@ We take security vulnerabilities seriously. If you discover a security issue, pl
 
 ### How to Report
 
-1. **Email**: Send details to [cloud@evovexai.com](mailto:cloud@evovexai.com)
-2. **GitHub Security Advisory**: Use [GitHub Private Vulnerability Reporting](https://github.com/EvovexAI/EvoFlow/security/advisories/new)
+1. **Email**: Send details to [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com)
+2. **GitHub Security Advisory**: Use [GitHub Private Vulnerability Reporting](https://github.com/wangjiaquangithub/QAgent/security/advisories/new)
 
 ### What to Include
 
@@ -50,14 +50,14 @@ Before any public or third-party release:
    production** and rotate.
 
 The public source-available tree ships a **community sample** keypair in `keys.py` (rotated
-2026-09-11). EvovexAI / commercial packages must inject production keys at build
+2026-09-11). Quclouds / commercial packages must inject production keys at build
 time and must not reuse historical committed material.
 
 Report suspected license bypasses via the channels above.
 
 ## Security Best Practices for Local Installations
 
-Since EvoFlow runs as a local desktop application, users should be aware of the following:
+Since QAgent runs as a local desktop application, users should be aware of the following:
 
 - **API Keys**: Model API keys are stored in the local SQLite database. Ensure your machine is physically secured.
 - **Network Binding**: The desktop Gateway binds to `127.0.0.1` (localhost only) by default — not exposed to the network.

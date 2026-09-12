@@ -42,7 +42,7 @@ def test_filesystem_keyword_search_ranks_title_hits(tmp_path: Path):
 def test_search_falls_back_when_mcp_still_warming(tmp_path: Path):
     provider = ObsidianKnowledgeProvider()
     note = tmp_path / "a.md"
-    note.write_text("# 小V\n全局助手说明\n", encoding="utf-8")
+    note.write_text("# 小Q\n全局助手说明\n", encoding="utf-8")
     cfg = KnowledgeVaultConfig.model_validate(
         {
             "id": "personal",
@@ -65,7 +65,7 @@ def test_search_falls_back_when_mcp_still_warming(tmp_path: Path):
             ),
             patch("evoflow.knowledge.vault.provider.schedule_session_warmup"),
         ):
-            return await provider.search("personal", "小V", mode="hybrid", top_k=5)
+            return await provider.search("personal", "小Q", mode="hybrid", top_k=5)
 
     hits = asyncio.run(_run())
     assert len(hits) >= 1

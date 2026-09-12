@@ -40,7 +40,7 @@ def is_claude_code_worker_runtime_available() -> bool:
     """True if **this process** can start the Claude Code worker (SDK import + subprocess spawn).
 
     Not a guarantee for other processes (e.g. LangGraph) — see module docstring.
-  On Windows with EvoFlow's Selector event-loop policy, ``import claude_agent_sdk`` may succeed
+  On Windows with QAgent's Selector event-loop policy, ``import claude_agent_sdk`` may succeed
     (bundled CLI) while ``asyncio`` subprocess spawn still fails.
     """
     global _claude_mon, _claude_ok

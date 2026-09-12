@@ -22,15 +22,15 @@ def sample_vault(tmp_path: Path) -> Path:
         encoding="utf-8",
     )
     (root / "Knowledge" / "RAG.md").write_text("# RAG\n检索增强生成。\n", encoding="utf-8")
-    (root / "Knowledge" / "EvoFlow.md").write_text(
-        "EvoFlow 使用 [[Agent Memory]] 和 [[RAG]]。\n",
+    (root / "Knowledge" / "QAgent.md").write_text(
+        "QAgent 使用 [[Agent Memory]] 和 [[RAG]]。\n",
         encoding="utf-8",
     )
     return root
 
 
 def test_chinese_content_and_links(sample_vault: Path):
-    text = (sample_vault / "Knowledge" / "EvoFlow.md").read_text(encoding="utf-8")
+    text = (sample_vault / "Knowledge" / "QAgent.md").read_text(encoding="utf-8")
     assert "[[Agent Memory]]" in text
     links = extract_wikilinks(text)
     assert set(links) == {"Agent Memory", "RAG"}
@@ -42,8 +42,8 @@ def test_chinese_content_and_links(sample_vault: Path):
 
 
 def test_graph_depth1(sample_vault: Path):
-    content = (sample_vault / "Knowledge" / "EvoFlow.md").read_text(encoding="utf-8")
-    notes = normalize_notes("personal", {"path": "Knowledge/EvoFlow.md", "content": content, "title": "EvoFlow"})
+    content = (sample_vault / "Knowledge" / "QAgent.md").read_text(encoding="utf-8")
+    notes = normalize_notes("personal", {"path": "Knowledge/QAgent.md", "content": content, "title": "QAgent"})
     g = build_graph_from_note("personal", notes[0], depth=1, direction="outgoing")
     assert len(g.nodes) == 3
     assert {e.target for e in g.edges} == {"Agent Memory", "RAG"}
@@ -59,7 +59,7 @@ def test_inbox_write_allowlist(sample_vault: Path):
     assert target.is_file()
     assert "confidence: 0.80" in target.read_text(encoding="utf-8")
     # vault files untouched outside inbox
-    assert (sample_vault / "Knowledge" / "EvoFlow.md").is_file()
+    assert (sample_vault / "Knowledge" / "QAgent.md").is_file()
 
 
 def test_delete_config_does_not_delete_vault(sample_vault: Path):

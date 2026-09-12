@@ -1,4 +1,4 @@
-"""Capability discovery: map tools/list names + schemas to stable EvoFlow ops."""
+"""Capability discovery: map tools/list names + schemas to stable QAgent ops."""
 
 from __future__ import annotations
 
@@ -128,7 +128,7 @@ def build_search_arguments(
     rerank: bool = False,
     schema: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Map EvoFlow search request → OHS evo_kb_search inputSchema."""
+    """Map QAgent search request → OHS evo_kb_search inputSchema."""
     props = ((schema or {}).get("properties") or {}) if isinstance(schema, dict) else {}
     args: dict[str, Any] = {"query": query, "mode": mode, "limit": top_k, "rerank": bool(rerank)}
     if threshold is not None:

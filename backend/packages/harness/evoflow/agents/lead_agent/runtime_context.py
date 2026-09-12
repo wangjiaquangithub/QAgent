@@ -51,7 +51,7 @@ class LeadAgentRuntimeContext:
     created_by: str | None = None
     owner_scope_id: str | None = None
     org_id: str | None = None
-    # 小V 侧栏：本轮发送时的页面快照（优先于 SQLite session context）
+    # 小Q 侧栏：本轮发送时的页面快照（优先于 SQLite session context）
     xiaomi_page_context: dict[str, Any] | None = None
     goal_mode: bool | None = None
     goal_automated: bool | None = None

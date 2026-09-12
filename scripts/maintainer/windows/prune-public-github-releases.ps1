@@ -1,7 +1,7 @@
 ﻿#requires -Version 5.1
 <#
 .SYNOPSIS
-  Keep only the newest N semver GitHub Releases on EvovexAI/EvoFlow; delete older releases and their tags.
+  Keep only the newest N semver GitHub Releases on Quclouds/QAgent; delete older releases and their tags.
 
 .PARAMETER KeepCount
   Number of releases to retain (default: env EVOFLOW_PUBLIC_RELEASE_KEEP_COUNT or 2).
@@ -70,14 +70,14 @@ function Invoke-PrunePublicGhReleasesCore {
     )
     if ($Keep -lt 1) { throw "KeepCount must be >= 1" }
 
-    $owner = "EvovexAI"
-    $repo = "EvoFlow"
+    $owner = "Quclouds"
+    $repo = "QAgent"
     $api = "https://api.github.com/repos/$owner/$repo"
     $headers = @{
         Authorization          = "Bearer $Token"
         Accept                 = "application/vnd.github+json"
         "X-GitHub-Api-Version" = "2022-11-28"
-        "User-Agent"           = "EvoFlow-prune-public-releases"
+        "User-Agent"           = "QAgent-prune-public-releases"
     }
 
     $protectSet = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)

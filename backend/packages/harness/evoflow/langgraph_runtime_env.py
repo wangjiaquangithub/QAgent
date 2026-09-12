@@ -34,7 +34,7 @@ def apply_langgraph_server_env(*, home: Path | None = None) -> dict[str, str]:
     """Point LangGraph API at a sqlite file under ``EVOFLOW_HOME`` (not ``:memory:``).
 
     Tauri / ``gateway_entry --mode langgraph`` call this before ``run_server`` so
-    thread registry survives process restarts when paired with EvoFlow checkpointer config.
+    thread registry survives process restarts when paired with QAgent checkpointer config.
     """
     from evoflow.desktop_stdio import apply_windows_stdio_fixes
 

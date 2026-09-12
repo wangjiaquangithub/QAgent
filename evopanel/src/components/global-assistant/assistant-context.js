@@ -228,7 +228,7 @@ function collectVisibleUiHints() {
 }
 
 /**
- * 小V 发消息用的完整页面快照（写入 session context，不进用户气泡）。
+ * 小Q 发消息用的完整页面快照（写入 session context，不进用户气泡）。
  * @param {string} [rawRoute]
  * @param {Partial<{ label?: string, contextLabel?: string, contextId?: string, contextType?: string, route?: string, module?: string }>} [override]
  */
@@ -279,7 +279,7 @@ export function collectXiaomiPageSnapshot(rawRoute, override = {}) {
   return snap
 }
 
-/** 适合「左侧模块 + 右侧小V 引导」的页面 */
+/** 适合「左侧模块 + 右侧小Q 引导」的页面 */
 export function isModuleGuideRoute(rawRoute) {
   const ctx = extractPageContext(rawRoute)
   const mod = String(ctx.module || '')
@@ -353,43 +353,43 @@ export function edgeCoachTip(rawRoute) {
   const id = `edge-${mod}`
   const map = {
     employees: {
-      title: '小V 可以协助员工',
-      body: '选中员工后，让小V 派活、查进度或改职责。',
+      title: '小Q 可以协助员工',
+      body: '选中员工后，让小Q 派活、查进度或改职责。',
     },
     workflow: {
-      title: '小V 可以协助工作流',
-      body: '打开工作流后，让小V 改参数、排查问题或直接运行。',
+      title: '小Q 可以协助工作流',
+      body: '打开工作流后，让小Q 改参数、排查问题或直接运行。',
     },
     knowledge: {
-      title: '小V 可以协助知识库',
-      body: '建库、检索、整理内容，都可以直接跟小V 说。',
+      title: '小Q 可以协助知识库',
+      body: '建库、检索、整理内容，都可以直接跟小Q 说。',
     },
     items: {
-      title: '小V 可以协助事项',
-      body: '记待办、派给员工、跟进进度，点右侧打开小V。',
+      title: '小Q 可以协助事项',
+      body: '记待办、派给员工、跟进进度，点右侧打开小Q。',
     },
     tasks: {
-      title: '小V 可以协助任务',
-      body: '问卡点、催办、看谁在忙，交给右侧小V。',
+      title: '小Q 可以协助任务',
+      body: '问卡点、催办、看谁在忙，交给右侧小Q。',
     },
     settings: {
-      title: '小V 可以协助设置',
-      body: '改模型、外观或其它配置，用白话跟小V 说即可。',
+      title: '小Q 可以协助设置',
+      body: '改模型、外观或其它配置，用白话跟小Q 说即可。',
     },
     chat: {
-      title: '小V 在侧边随时待命',
-      body: '不想打断主对话时，用右侧小V 问进度或管平台。',
+      title: '小Q 在侧边随时待命',
+      body: '不想打断主对话时，用右侧小Q 问进度或管平台。',
     },
     home: {
-      title: '小V 在右侧协助你',
-      body: '点边缘「小V」打开：问进度、建事项、管员工与知识库。',
+      title: '小Q 在右侧协助你',
+      body: '点边缘「小Q」打开：问进度、建事项、管员工与知识库。',
     },
   }
   const tip = map[mod] || map.home
   return { id, title: tip.title, body: tip.body }
 }
 
-/** Routes where 小V floating UI must stay hidden */
+/** Routes where 小Q floating UI must stay hidden */
 export function shouldHideAssistant(rawRoute) {
   const path = String(rawRoute ?? getCurrentRoute() ?? '')
     .split('?')[0]

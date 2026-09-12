@@ -101,7 +101,7 @@ function applyDeepLinkHash(hash) {
  */
 export async function notifyDesktopCompletion(opts) {
   if (!isTauri || !isDesktopNotifyEnabled()) return
-  const title = String(opts?.title || 'EvoFlow').trim() || 'EvoFlow'
+  const title = String(opts?.title || 'QAgent').trim() || 'QAgent'
   const body = String(opts?.body || '').trim()
   const tag = opts?.tag ? String(opts.tag) : ''
   if (!shouldSend(tag)) return

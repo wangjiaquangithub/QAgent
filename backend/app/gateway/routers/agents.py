@@ -208,7 +208,7 @@ def _main_agent_to_response(include_soul: bool = False) -> AgentResponse:
     _main_type = (agent_cfg.agent_type if agent_cfg else None) or "custom"
     return AgentResponse(
         agent_code="main",
-        agent_name=_main_display or "EvoFlow",
+        agent_name=_main_display or "QAgent",
         description=agent_cfg.description if agent_cfg else "",
         model=model,
         tool_groups=agent_cfg.tool_groups if agent_cfg else None,
@@ -416,7 +416,7 @@ def _normalize_agent_name(name: str) -> str:
 
 
 def _agent_requires_external_cli(agent_cfg: AgentConfig) -> bool:
-    """True when capability is delegated to a host CLI/SDK (e.g. Claude Code), not EvoFlow tool/MCP/skills."""
+    """True when capability is delegated to a host CLI/SDK (e.g. Claude Code), not QAgent tool/MCP/skills."""
     code = (agent_cfg.agent_code or "").strip().lower()
     if code == "claude-code":
         return True
@@ -954,7 +954,7 @@ async def update_agent(http_request: Request, name: str, request: AgentUpdateReq
             elif agent_cfg.model is not None:
                 updated["model"] = agent_cfg.model
 
-            # 小V：系统前台固定能力面，禁止挂普通工具 / MCP / 技能。
+            # 小Q：系统前台固定能力面，禁止挂普通工具 / MCP / 技能。
             _is_xiaomi = False
             try:
                 from evoflow.agents.xiaomi.identity import is_xiaomi_agent

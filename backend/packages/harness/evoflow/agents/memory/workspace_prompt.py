@@ -38,7 +38,7 @@ _SESSION_NOISE_LINE_RE = re.compile(
 
 WORKSPACE_BOOTSTRAP_PROMPT = """You are a codebase analyst. Build durable **project assets** for an AI coding assistant.
 
-IMPORTANT: Generate all content in Chinese. Keep proper nouns and technical terms in their original form (EvoFlow, LangGraph, etc.).
+IMPORTANT: Generate all content in Chinese. Keep proper nouns and technical terms in their original form (QAgent, LangGraph, etc.).
 
 Repository context:
 <repository>

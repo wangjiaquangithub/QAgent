@@ -2,7 +2,7 @@ import { _ } from '../helper.js'
 
 export default {
   title: _('仪表盘', 'Dashboard', '儀表板'),
-  desc: _('EvoFlow 运行状态概览', 'EvoFlow runtime status overview', 'EvoFlow 執行狀態概覽', 'EvoFlow 実行状況の概要', 'EvoFlow 실행 상태 개요', 'Tổng quan trạng thái EvoFlow', 'Resumen del estado de EvoFlow', 'Visão geral do estado do EvoFlow', 'Обзор состояния EvoFlow', 'Vue d\'ensemble de l\'état EvoFlow', 'EvoFlow-Statusübersicht'),
+  desc: _('QAgent 运行状态概览', 'QAgent runtime status overview', 'QAgent 執行狀態概覽', 'QAgent 実行状況の概要', 'QAgent 실행 상태 개요', 'Tổng quan trạng thái QAgent', 'Resumen del estado de QAgent', 'Visão geral do estado do QAgent', 'Обзор состояния QAgent', 'Vue d\'ensemble de l\'état QAgent', 'QAgent-Statusübersicht'),
   gateway: _('Gateway', 'Gateway'),
   portDetect: _('端口检测', 'Port detection', '連接埠檢測', 'ポート検出', '포트 감지'),
   notStarted: _('未启动', 'Not started', '未啟動', '未起動', '미시작', 'Chưa khởi động', 'No iniciado', 'Não iniciado', 'Не запущен', 'Non démarré', 'Nicht gestartet'),
@@ -21,7 +21,7 @@ export default {
   basedOnProviders: _('基于 {count} 个渠道商', 'From {count} providers', '基於 {count} 個渠道商'),
   baseServices: _('基础服务', 'Services', '基礎服務'),
   controlUI: _('Control UI', 'Control UI'),
-  controlUIDesc: _('EvoFlow 原生面板', 'EvoFlow native panel', 'EvoFlow 原生面板'),
+  controlUIDesc: _('QAgent 原生面板', 'QAgent native panel', 'QAgent 原生面板'),
   controlUIClick: _('点击打开浏览器', 'Click to open in browser', '點擊開啟瀏覽器'),
   controlUINotRunning: _('Gateway 未运行', 'Gateway not running', 'Gateway 未執行'),
   restartGw: _('重启 Gateway', 'Restart Gateway', '重啟 Gateway'),

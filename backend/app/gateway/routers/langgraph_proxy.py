@@ -460,7 +460,7 @@ async def attach_run_stream(
         "X-Accel-Buffering": "no",
     }
     if use_ui_sse:
-        headers["X-EvoFlow-Stream-Format"] = "agui" if attach_stream_fmt != "openai" else "openai"
+        headers["X-QAgent-Stream-Format"] = "agui" if attach_stream_fmt != "openai" else "openai"
 
     # Forward auth/cookies and other relevant headers to LangGraph.
     upstream_headers = {k: v for k, v in request.headers.items() if k.lower() not in HOP_BY_HOP_HEADERS}

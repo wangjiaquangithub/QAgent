@@ -749,7 +749,7 @@ describe('resolvePrimaryToolCallArgs (via normalizeChatToolPayloadToEntries / ex
       })
       acc += c?.text || ''
     }
-    expect(acc).toBe('EvoFlow 是什么\n\n**EvoFlow**')
+    expect(acc).toBe('QAgent 是什么\n\n**QAgent**')
     expect(stripThinkingTags('\n\n**')).toBe('**')
     expect(stripThinkingTagsPreserveNewlines('\n\n**')).toBe('\n\n**')
   })
@@ -1008,9 +1008,9 @@ describe('extractPathFromToolOutput', () => {
     expect(
       extractPathFromToolOutput(
         'write',
-        'OK: wrote 78 bytes to D:/example/EvoFlow/backend/smoke_test_temp.txt',
+        'OK: wrote 78 bytes to D:/example/QAgent/backend/smoke_test_temp.txt',
       ),
-    ).toBe('D:/example/EvoFlow/backend/smoke_test_temp.txt')
+    ).toBe('D:/example/QAgent/backend/smoke_test_temp.txt')
   })
   it('parses replace and delete OK lines', () => {
     expect(extractPathFromToolOutput('replace', 'OK: Replaced 2 occurrence(s) in src/foo.ts')).toBe(
@@ -1551,7 +1551,7 @@ Read catalog:
       '---',
       'path: skills/public/evoflow-intro/SKILL.md',
       'status: draft',
-      'core: EvoFlow 自介绍技能',
+      'core: QAgent 自介绍技能',
       '---',
       '',
       '## 简介',
@@ -1854,25 +1854,25 @@ describe('reasoning timeline history', () => {
 describe('chat image path normalization', () => {
   it('normalizeLocalImagePath converts Windows backslashes', async () => {
     const { normalizeLocalImagePath } = await import('../src/lib/chat-image-src.js')
-    expect(normalizeLocalImagePath('D:\\github\\EvoFlow\\outputs\\cat.png')).toBe(
-      'D:/github/EvoFlow/outputs/cat.png',
+    expect(normalizeLocalImagePath('D:\\github\\QAgent\\outputs\\cat.png')).toBe(
+      'D:/github/QAgent/outputs/cat.png',
     )
   })
 
   it('normalizeLocalImagePath recovers markdown-corrupted paths', async () => {
     const { normalizeLocalImagePath } = await import('../src/lib/chat-image-src.js')
     expect(
-      normalizeLocalImagePath('D:githubEvoFlowoutputsmedia_image_dd1ec110-b420-4932-93c3-b610b19a.png'),
-    ).toBe('D:/githubEvoFlow/outputs/media_image_dd1ec110-b420-4932-93c3-b610b19a.png')
+      normalizeLocalImagePath('D:githubQAgentoutputsmedia_image_dd1ec110-b420-4932-93c3-b610b19a.png'),
+    ).toBe('D:/githubQAgent/outputs/media_image_dd1ec110-b420-4932-93c3-b610b19a.png')
   })
 
   it('resolveMediaAssetSrc infers workspace root from absolute path without binding', async () => {
     const { setChatWorkspaceRoot } = await import('../src/lib/chat-workspace-context.js')
     setChatWorkspaceRoot('')
-    const src = resolveMediaAssetSrc('D:/github/EvoFlow/outputs/cat.png')
+    const src = resolveMediaAssetSrc('D:/github/QAgent/outputs/cat.png')
     expect(src).toContain('/api/workspaces/serve-file')
-    expect(src).toContain(encodeURIComponent('D:/github/EvoFlow'))
-    expect(src).toContain(encodeURIComponent('D:/github/EvoFlow/outputs/cat.png'))
+    expect(src).toContain(encodeURIComponent('D:/github/QAgent'))
+    expect(src).toContain(encodeURIComponent('D:/github/QAgent/outputs/cat.png'))
   })
 })
 
@@ -1928,14 +1928,14 @@ describe('linkifyWorkspaceAtMentions absolute paths', () => {
     const { setChatWorkspaceRoot } = await import('../src/lib/chat-workspace-context.js')
     const { linkifyWorkspaceAtMentions } = await import('../src/lib/workspace-file-mention-display.js')
     const { renderMarkdown } = await import('../src/lib/markdown.js')
-    setChatWorkspaceRoot('D:/dev/github/EvoFlow')
-    const stored = '`@@D:/dev/github/EvoFlow/outputs/smart-employee-test/@@`'
+    setChatWorkspaceRoot('D:/dev/github/QAgent')
+    const stored = '`@@D:/dev/github/QAgent/outputs/smart-employee-test/@@`'
     const linked = linkifyWorkspaceAtMentions(stored)
     expect(linked).toContain('evoflow-file:')
     expect(linked).not.toMatch(/`\[📄/)
     const html = renderMarkdown(`### 交付物位置\n${stored}\n`)
     expect(html).toContain('msg-workspace-file-mention')
-    expect(html).toContain('data-evf-file-path="D:/dev/github/EvoFlow/outputs/smart-employee-test/"')
+    expect(html).toContain('data-evf-file-path="D:/dev/github/QAgent/outputs/smart-employee-test/"')
     expect(html).not.toMatch(/<code>[^<]*evoflow-file/)
     setChatWorkspaceRoot('')
   })
@@ -2059,7 +2059,7 @@ describe('relaxMarkdownLineBreaks', () => {
 
   it('merges split separator chunks and renders partial streaming table', async () => {
     const { renderMarkdownStreaming } = await import('../src/lib/markdown.js')
-    const raw = '**标题：EvoFlow 自动化计划**\n\n| 问题 | 现状 | 改造方向 |\n|------\n|---------|'
+    const raw = '**标题：QAgent 自动化计划**\n\n| 问题 | 现状 | 改造方向 |\n|------\n|---------|'
     const html = renderMarkdownStreaming(raw)
     expect(html).toContain('msg-streaming-table-partial')
     expect(html).toContain('<th>问题</th>')
@@ -2078,7 +2078,7 @@ describe('relaxMarkdownLineBreaks', () => {
   it('splits glued H1 title and body for streaming intro', async () => {
     const { relaxMarkdownLineBreaks, renderMarkdownStreaming } = await import('../src/lib/markdown.js')
     const raw =
-      '#EvoFlow产品能力全景介绍你好，我是**Evo Assistant**，由 **EvovexAI**开发。'
+      '#QAgent产品能力全景介绍你好，我是**Evo Assistant**，由 **Quclouds**开发。'
     const relaxed = relaxMarkdownLineBreaks(raw)
     expect(relaxed).toMatch(/介绍\n\n你好/)
     const html = renderMarkdownStreaming(raw)

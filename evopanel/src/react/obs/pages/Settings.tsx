@@ -47,7 +47,7 @@ function ThemeSettingRow() {
     <div className="setting-row setting-row--theme">
       <div>
         <strong>主题</strong>
-        <span>与 EvoPanel 全局主题同步，支持亮色、暗色和跟随系统</span>
+        <span>与 QAgent 全局主题同步，支持亮色、暗色和跟随系统</span>
       </div>
       <div className="obs-theme-row" role="group" aria-label="主题">
         {(['light', 'dark', 'system'] as const).map((key) => (

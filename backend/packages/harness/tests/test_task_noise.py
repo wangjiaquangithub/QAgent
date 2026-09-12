@@ -48,7 +48,7 @@ def test_is_task_center_noise_hides_duty_patrol():
         }
     )
     assert not is_task_center_noise(
-        {"name": "修复 EvoFlow 标题不生效", "source": "role", "raised_by": "xiaomi"}
+        {"name": "修复 QAgent 标题不生效", "source": "role", "raised_by": "xiaomi"}
     )
     assert not is_task_center_noise(
         {

@@ -53,7 +53,7 @@ def test_list_dir_same_path_different_depth_not_same_fingerprint() -> None:
     mw = LoopDetectionMiddleware()
     runtime = _runtime("t-depth")
     state: dict = {"messages": []}
-    path = r"D:\github\EvoFlow"
+    path = r"D:\github\QAgent"
 
     for depth in (1, 2, 3):
         state["messages"] = [_ai_tool("list_dir", {"path": path, "depth": depth}, call_id=f"c{depth}")]
@@ -180,7 +180,7 @@ def test_cd_node_different_scripts_have_distinct_fingerprints() -> None:
 
 
 def test_read_offset_micro_nudge_shares_fingerprint() -> None:
-    path = r"D:/dev/github/EvoFlow/evopanel/src/react/hooks/useSessionList.ts"
+    path = r"D:/dev/github/QAgent/evopanel/src/react/hooks/useSessionList.ts"
     fp_a = _explore_loop_fingerprint(
         {"name": "read", "args": {"path": path, "offset": 130, "limit": 30}}
     )
@@ -195,7 +195,7 @@ def test_read_offset_micro_nudge_shares_fingerprint() -> None:
 
 
 def test_rg_ignores_context_jitter_in_fingerprint() -> None:
-    path = r"D:/dev/github/EvoFlow/evopanel/src/react/hooks/useSessionList.ts"
+    path = r"D:/dev/github/QAgent/evopanel/src/react/hooks/useSessionList.ts"
     fp_a = _explore_loop_fingerprint(
         {
             "name": "rg",
@@ -228,7 +228,7 @@ def test_read_rg_thrash_not_blocked_when_explore_loop_disabled() -> None:
     mw = LoopDetectionMiddleware()
     runtime = _runtime("t-adding-refresh")
     state: dict = {"messages": []}
-    path = r"D:/dev/github/EvoFlow/evopanel/src/react/hooks/useSessionList.ts"
+    path = r"D:/dev/github/QAgent/evopanel/src/react/hooks/useSessionList.ts"
 
     for i in range(6):
         offset = 130 + (i % 2)

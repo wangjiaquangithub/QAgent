@@ -1,4 +1,4 @@
-"""EvoFlow Evaluation Module.
+"""QAgent Evaluation Module.
 
 Real-data-driven evaluation center: business quality, security, performance,
 and evaluation execution engine. No mock data — returns empty structures

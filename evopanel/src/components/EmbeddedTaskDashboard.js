@@ -4,7 +4,7 @@
  * 
  * 显示在聊天页面中，当有 2 个及以上并行任务时自动显示
  * 实时展示任务进度和统计信息
- * 参考文档：EvoFlow 前端实现进度.md - Task 2.1
+ * 参考文档：QAgent 前端实现进度.md - Task 2.1
  */
 
 import { tasksAPI } from '../lib/api-client.js'

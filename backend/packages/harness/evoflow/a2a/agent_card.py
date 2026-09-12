@@ -71,7 +71,7 @@ def role_to_agent_card(role: ProactiveRole) -> dict[str, Any]:
         "defaultInputModes": ["text/plain"],
         "defaultOutputModes": ["text/plain", "application/json"],
         "skills": skills,
-        # EvoFlow extensions
+        # QAgent extensions
         "department": role.department,
         "workspace": cfg.workspace_path,
         "model": cfg.model_name or "",

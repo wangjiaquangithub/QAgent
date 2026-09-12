@@ -2,13 +2,13 @@
 
 ## Discussions 建议分类
 
-在 [GitHub Discussions](https://github.com/EvovexAI/EvoFlow/discussions) 启用后，推荐使用这些分类（名称可按仓库设置微调）：
+在 [GitHub Discussions](https://github.com/wangjiaquangithub/QAgent/discussions) 启用后，推荐使用这些分类（名称可按仓库设置微调）：
 
 | 分类 | 用途 |
 |------|------|
 | **Q&A** | 安装、配置、Plan/Goal「怎么用」——不是缺陷跟踪 |
 | **Ideas** | 功能脑暴；较大想法可升格为 [RFC](rfc.md) |
-| **Show and tell** | 你用 EvoFlow + Skill 做出的工作流 / 截图 |
+| **Show and tell** | 你用 QAgent + Skill 做出的工作流 / 截图 |
 | **RFC** | 按 [RFC 模板](rfc.md) 贴提案（若未单独分类，可放 Ideas 并标题加 `[RFC]`） |
 | **Announcements** | 维护者发版与政策（只读为主） |
 
@@ -34,7 +34,7 @@
 
 ### 贡献者如何挑
 
-1. 筛标签 [`good first issue`](https://github.com/EvovexAI/EvoFlow/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)  
+1. 筛标签 [`good first issue`](https://github.com/wangjiaquangithub/QAgent/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)  
 2. 评论「我来做」避免重复  
 3. 按 [CONTRIBUTING.md](../../CONTRIBUTING.md) 开 `docs/*` 或 `fix/*` 分支  
 

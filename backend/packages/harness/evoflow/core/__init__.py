@@ -1,1 +1,1 @@
-"""EvoFlow core modules: scheduler, executor, and runtime infrastructure."""
+"""QAgent core modules: scheduler, executor, and runtime infrastructure."""

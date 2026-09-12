@@ -1,6 +1,6 @@
-# EvoFlow Sandbox Provisioner
+# QAgent Sandbox Provisioner
 
-The **Sandbox Provisioner** is a FastAPI service that dynamically manages sandbox Pods in Kubernetes. It provides a REST API for the EvoFlow backend to create, monitor, and destroy isolated sandbox environments for code execution.
+The **Sandbox Provisioner** is a FastAPI service that dynamically manages sandbox Pods in Kubernetes. It provides a REST API for the QAgent backend to create, monitor, and destroy isolated sandbox environments for code execution.
 
 ## Architecture
 

@@ -1,16 +1,16 @@
-EvoFlow 软件许可协议 & 免责声明
+QAgent 软件许可协议 & 免责声明
 ===================================
 
 1. 许可范围
 
-   本软件（EvoFlow）由 EvovexAI 发布，适用「PolyForm Noncommercial License
-   1.0.0」（完整文本见安装目录或 https://github.com/EvovexAI/EvoFlow 仓库根目录
+   本软件（QAgent）由 Quclouds 发布，适用「PolyForm Noncommercial License
+   1.0.0」（完整文本见安装目录或 https://github.com/wangjiaquangithub/QAgent 仓库根目录
    LICENSE 文件）。
 
    - 允许：个人学习、研究及非商业用途下的使用、修改与分发（须保留版权声明与许可全文）。
-   - 禁止：未经版权人（景银泰/EvovexAI）书面授权的商业使用，包括但不限于收费产品/服务、营利性
+   - 禁止：未经版权人（王佳全（WangJiaquan）/Quclouds）书面授权的商业使用，包括但不限于收费产品/服务、营利性
      企业内部使用、向第三方提供托管/SaaS、收费再许可等。
-   - 商用授权请联系：cloud@evovexai.com
+   - 商用授权请联系：wangjiaquan@quclouds.com
 
    部分组件源自第三方（如 DeerFlow，MIT），详见 NOTICE 文件。
 
@@ -24,11 +24,11 @@ EvoFlow 软件许可协议 & 免责声明
 
 ---
 
-EvoFlow Software License & Disclaimer (summary)
+QAgent Software License & Disclaimer (summary)
 
 1. Licensed under the PolyForm Noncommercial License 1.0.0. Non-commercial use
    is permitted with attribution. Commercial use requires written permission:
-   cloud@evovexai.com. See LICENSE and NOTICE in the repository for third-party
+   wangjiaquan@quclouds.com. See LICENSE and NOTICE in the repository for third-party
    components.
 
 2. Provided “as is” without warranties; you assume all risks arising from use.

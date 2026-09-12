@@ -58,7 +58,7 @@ def test_emit_worker_file_completed_omits_full_file_bodies(monkeypatch):
         tool_name="replace",
         action="replace",
         old_string="EvoPanel",
-        new_string="EvoFlow",
+        new_string="QAgent",
         before_content=big,
         after_content=big,
     )
@@ -69,4 +69,4 @@ def test_emit_worker_file_completed_omits_full_file_bodies(monkeypatch):
     assert "before_content" not in payload
     assert "after_content" not in payload
     assert payload["old_string"] == "EvoPanel"
-    assert payload["new_string"] == "EvoFlow"
+    assert payload["new_string"] == "QAgent"

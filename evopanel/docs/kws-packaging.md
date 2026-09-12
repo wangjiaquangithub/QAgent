@@ -1,6 +1,6 @@
 # 本地唤醒词（KWS）打包说明
 
-桌面端「小V小V」本地关键词唤醒资源位于 `public/kws/`，会随 Vite → Tauri 安装包分发。
+桌面端「小Q小Q」本地关键词唤醒资源位于 `public/kws/`，会随 Vite → Tauri 安装包分发。
 
 只保留运行时文件（`scripts/download-kws-model.js` 会自动 prune）：
 

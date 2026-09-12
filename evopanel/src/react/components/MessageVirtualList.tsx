@@ -16,7 +16,7 @@ import { resolveMessageRowIsStreaming } from '../lib/message-row-streaming.js'
 import { getLiveStreamSnapshot, subscribeLiveStream } from '../lib/live-stream-store.js'
 import { isLiveStreamPathEnabled } from '../lib/stream-live-path-toggle.js'
 import { MessageRow } from './MessageRow.js'
-import { EvoFlowHomeDashboard } from './EvoFlowHomeDashboard.js'
+import { QAgentHomeDashboard } from './EvoFlowHomeDashboard.js'
 import type { DisplayRow, StreamState, SubagentStreamTask } from '../chat-types.js'
 import type { ChatArtifact } from '../lib/chat-artifact.js'
 import { chatArtifactDisplayLabel } from '../lib/chat-artifact.js'
@@ -2012,7 +2012,7 @@ export const MessageVirtualList = memo(function MessageVirtualList({
     }
     return (
       <div className="react-vlist-scroller chat-messages-inner chat-messages-inner--home">
-        <EvoFlowHomeDashboard onPrompt={onQuickPrompt} />
+        <QAgentHomeDashboard onPrompt={onQuickPrompt} />
       </div>
     )
   }

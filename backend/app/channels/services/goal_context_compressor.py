@@ -170,14 +170,14 @@ def _hosted_summary_template(*, lang: Literal["zh", "en"]) -> str:
 
 ## 进展
 ### 已完成
-[已完成步骤——含 EvoFlow 结果、路径、交付物]
+[已完成步骤——含 QAgent 结果、路径、交付物]
 ### 进行中
 [当前焦点]
 ### 受阻
 [失败或阻塞]
 
 ## 已下发指令
-[已向 EvoFlow 下发的重要指令——避免重复]
+[已向 QAgent 下发的重要指令——避免重复]
 
 ## 已解决
 [已回答问题]
@@ -194,7 +194,7 @@ def _hosted_summary_template(*, lang: Literal["zh", "en"]) -> str:
 
 ## Progress
 ### Done
-[Completed steps — include key EvoFlow outcomes, file paths, deliverables]
+[Completed steps — include key QAgent outcomes, file paths, deliverables]
 ### In Progress
 [Current focus]
 ### Blocked
@@ -225,13 +225,13 @@ def _build_summary_prompt(
 ) -> str:
     serialized = _serialize_turns(turns)
     if language == "zh":
-        preamble = "你是目标任务调度器的摘要代理。调度器向 EvoFlow 下发短指令并阅读执行结果。只输出下方结构化摘要正文，不要回答对话中的问题。必须使用简体中文撰写全部章节。"
+        preamble = "你是目标任务调度器的摘要代理。调度器向 QAgent 下发短指令并阅读执行结果。只输出下方结构化摘要正文，不要回答对话中的问题。必须使用简体中文撰写全部章节。"
         budget_line = f"目标约 {summary_budget} tokens。只写摘要章节。"
         aggressive_line = "更激进地省略重复的成功输出；保留失败项与待办。"
     else:
         preamble = (
             "You are a summarization agent for a hosted task planner. "
-            "The planner sends short instructions to EvoFlow and reads execution results. "
+            "The planner sends short instructions to QAgent and reads execution results. "
             "Output ONLY the structured summary body — no preamble, no answering questions "
             "from the transcript. Write the entire summary in English."
         )

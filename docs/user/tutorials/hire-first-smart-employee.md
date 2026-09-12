@@ -12,7 +12,7 @@
 
 ## 前置条件
 
-- 已安装并打开 EvoFlow 桌面端 / Web
+- 已安装并打开 QAgent 桌面端 / Web
 - 已配置至少一个可用对话模型
 - 「智能体」页里已有可用角色（可用预设，或先走 [创建自定义 Agent](create-agent.md) [[tutorials/create-agent|创建自定义 Agent]]）
 - 聊天侧栏已添加至少一个本机**工作空间**目录
@@ -61,7 +61,7 @@
 2. 可选：勾选「本轮事项」聚焦某一项
 3. 等待本轮跑完（卡片可能显示「工作中」）
 
-同时可打开 **小V** → **对话** → 点选该员工，边看汇报边等。
+同时可打开 **小Q** → **对话** → 点选该员工，边看汇报边等。
 
 ### 5. 处理待审批（有下游交工或事项时）
 
@@ -97,14 +97,14 @@
 - [ ] 至少成功触发过一次「现在开始工作」
 - [ ] 知道待审批在哪处理（含同意 vs 同意派发）
 - [ ] 能打开工作日志 / 工作过程
-- [ ] （可选）小V 里能对该员工发一条临时委派
+- [ ] （可选）小Q 里能对该员工发一条临时委派
 
 ## 下一步
 
 | 你想… | 去看 |
 |------|------|
 | 把职责写得更像真实岗位 | [案例：运维值班](../cases/use-main-agent.md) [[cases/use-main-agent|案例：运维值班]] · [代码审查员](../cases/create-agent.md) [[cases/create-agent|代码审查员]] |
-| 临时委派、绑飞书 | [智能体员工 · 小V](../guides/configuration/smart-employees.md#用小v-委派) [[guides/configuration/smart-employees|智能体员工 · 小V]] |
+| 临时委派、绑飞书 | [智能体员工 · 小Q](../guides/configuration/smart-employees.md#用小v-委派) [[guides/configuration/smart-employees|智能体员工 · 小Q]] |
 | 入口 / 状态 / 下游 / 何时审核 | [概念说明](../explanation/smart-employees.md#入口什么会让员工开始干活) [[explanation/smart-employees|概念说明]] |
 | 交工下游、任务总结 | [交工与下游接力](../guides/configuration/smart-employees.md#交工任务总结与下游接力) [[guides/configuration/smart-employees|交工与下游接力]] |
 | 搞清和自动化 / Plan 的边界 | [概念说明](../explanation/smart-employees.md) [[explanation/smart-employees|概念说明]] |

@@ -8,7 +8,7 @@
 >
 > 技能是"领域知识包"（告诉 AI 怎么做），工具是"内置能力"（read/write/terminal），MCP 是"外部服务"（GitHub API、Notion、PostgreSQL 等）。三者互补，可在一个角色上同时配置。
 
-EvoFlow 给 Agent 提供能力的方式分**三层**：内置工具、技能、MCP。本文统一介绍三者的分工，然后展开 MCP 的配置。
+QAgent 给 Agent 提供能力的方式分**三层**：内置工具、技能、MCP。本文统一介绍三者的分工，然后展开 MCP 的配置。
 
 ---
 
@@ -29,7 +29,7 @@ EvoFlow 给 Agent 提供能力的方式分**三层**：内置工具、技能、M
 
 | 维度 | 内置工具（Tools） | 技能（Skills） | MCP |
 |------|------------------|---------------|-----|
-| **形态** | EvoFlow 代码内置函数 | 文件夹 + `SKILL.md` | 外部进程 / HTTP 服务 |
+| **形态** | QAgent 代码内置函数 | 文件夹 + `SKILL.md` | 外部进程 / HTTP 服务 |
 | **来源** | 框架自带，无需配置 | `skills/public/` + `skills/custom/` | 用户自行配置 / 市场安装 |
 | **加载** | 启动时注册，按**场景**渐进暴露 | 进 Agent 时按 frontmatter 注入说明 | 配置启用后启动时连接 |
 | **触发** | 模型显式调用 | 模型读到说明后**自行决定**调用 | 模型显式调用 |
@@ -47,7 +47,7 @@ EvoFlow 给 Agent 提供能力的方式分**三层**：内置工具、技能、M
 
 ## 二、内置工具
 
-EvoFlow 内置一组工具，**按场景渐进暴露**给 Agent——避免一次性把上百个工具描述塞进上下文浪费 Token。面板里的「智能体 → 连接器」主要用于管理 MCP；内置工具本身不需要在 UI 开关，会随你在聊天里选的**场景**自动启用。
+QAgent 内置一组工具，**按场景渐进暴露**给 Agent——避免一次性把上百个工具描述塞进上下文浪费 Token。面板里的「智能体 → 连接器」主要用于管理 MCP；内置工具本身不需要在 UI 开关，会随你在聊天里选的**场景**自动启用。
 
 ### 常用内置工具速览
 
@@ -102,9 +102,9 @@ EvoFlow 内置一组工具，**按场景渐进暴露**给 Agent——避免一�
 
 ## 三、什么是 MCP
 
-Model Context Protocol（MCP）是 Anthropic 提出的开放协议，让 AI 应用以**统一方式**接入外部工具与数据源。MCP 服务器暴露标准化的工具接口，EvoFlow 启用后自动注册为 Agent 可用的工具。
+Model Context Protocol（MCP）是 Anthropic 提出的开放协议，让 AI 应用以**统一方式**接入外部工具与数据源。MCP 服务器暴露标准化的工具接口，QAgent 启用后自动注册为 Agent 可用的工具。
 
-EvoFlow 支持三种 MCP 传输类型：
+QAgent 支持三种 MCP 传输类型：
 
 | 类型 | 形态 | 适合场景 |
 |------|------|---------|
@@ -114,7 +114,7 @@ EvoFlow 支持三种 MCP 传输类型：
 
 ### 调用方式（原生工具）
 
-EvoFlow 把 MCP 工具**直接注册为 Agent 的 function 工具**，模型按名称调用，**不需要** `terminal`、`mcp-terminal` 或手写 JSON-RPC。
+QAgent 把 MCP 工具**直接注册为 Agent 的 function 工具**，模型按名称调用，**不需要** `terminal`、`mcp-terminal` 或手写 JSON-RPC。
 
 | 概念 | 说明 |
 |------|------|
@@ -148,12 +148,12 @@ EvoFlow 把 MCP 工具**直接注册为 Agent 的 function 工具**，模型按�
 
 #### 方式一：从市场安装
 
-1. 切到「市场」Tab，自动加载 **Glama MCP 目录**（空关键词时同时展示 EvoFlow 精选）
+1. 切到「市场」Tab，自动加载 **Glama MCP 目录**（空关键词时同时展示 QAgent 精选）
 2. 搜索框输入关键词（如 `github`、`filesystem`、`postgres`）
 3. 卡片右下角「安装」→ Gateway 从 **官方 MCP Registry** 解析安装配置并写入本地
 4. 已安装的可在「已安装」Tab 启用并分配给 Agent
 
-> **市场来源**：搜索来自 [Glama](https://glama.ai/mcp/servers)；一键安装配置优先解析 [官方 MCP Registry](https://registry.modelcontextprotocol.io)。Glama 不可用时回退到 EvoFlow 精选列表。第三方 MCP 请自行评估安全性，**stdio 类会在本机起子进程**。
+> **市场来源**：搜索来自 [Glama](https://glama.ai/mcp/servers)；一键安装配置优先解析 [官方 MCP Registry](https://registry.modelcontextprotocol.io)。Glama 不可用时回退到 QAgent 精选列表。第三方 MCP 请自行评估安全性，**stdio 类会在本机起子进程**。
 
 #### 方式二：手动添加自定义 MCP
 
@@ -177,7 +177,7 @@ EvoFlow 把 MCP 工具**直接注册为 Agent 的 function 工具**，模型按�
 3. 勾选可调用的 MCP（或"全部可用"）
 4. 保存生效
 
-未勾选的 MCP **不会出现在该 Agent 的工具列表**——这是 EvoFlow 的最小权限原则。
+未勾选的 MCP **不会出现在该 Agent 的工具列表**——这是 QAgent 的最小权限原则。
 
 ---
 
@@ -211,10 +211,10 @@ EvoFlow 把 MCP 工具**直接注册为 Agent 的 function 工具**，模型按�
 }
 ```
 
-`$VAR` 语法会在运行时从 EvoFlow 进程环境读取。设置环境变量的方式：
+`$VAR` 语法会在运行时从 QAgent 进程环境读取。设置环境变量的方式：
 
 - 「**设置 → 环境变量**」Tab 集中维护（推荐）
-- 启动 EvoFlow 前用系统 `export` / `setx`
+- 启动 QAgent 前用系统 `export` / `setx`
 - `.env` 文件（仅本地开发）
 
 
@@ -418,16 +418,16 @@ stdio MCP 启动失败时，Gateway 启动日志会带具体报错（如 npx 找
 当前框架对 MCP 调用并发没有专门节流，但**模型层**的并发由场景与 Agent 配置控制。若某 MCP 容易被高频调用拖慢，建议在该 MCP 服务端自己加速率限制。
 
 **Q：能不能让自己写的 MCP 出现在「市场」？**
-当前市场是 EvoFlow 团队整理的精选清单，**不对外开放自助提交**。你可以：
+当前市场是 QAgent 团队整理的精选清单，**不对外开放自助提交**。你可以：
 - 用「方式二：手动添加」配进面板
 - 把 `~/.evoflow/mcp.json` 或 MCP 片段加进团队仓库，队友 clone 后导入或 `evoflow mcp set` 即可
-- 联系 EvoFlow 团队提交收录建议
+- 联系 QAgent 团队提交收录建议
 
 **Q：MCP 报警敏感数据会被发到第三方吗？**
 本地 stdio MCP **完全在你本机运行**，不会出网（除非该 MCP 自己访问网络）。远程 SSE / HTTP MCP 会按其 URL 出网，配置前请确认服务可信。
 
 **Q：怎么彻底禁用某个 MCP 的某些工具？**
-MCP 服务器自己暴露的工具粒度由其实现决定，EvoFlow 当前**不能屏蔽单个 MCP 的子工具**。可在角色「能力 → MCP 模块」里只勾选需要的服务器，未勾选的服务器工具不会挂载到该 Agent。
+MCP 服务器自己暴露的工具粒度由其实现决定，QAgent 当前**不能屏蔽单个 MCP 的子工具**。可在角色「能力 → MCP 模块」里只勾选需要的服务器，未勾选的服务器工具不会挂载到该 Agent。
 
 ---
 

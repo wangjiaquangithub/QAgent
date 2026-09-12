@@ -1134,7 +1134,7 @@ async def resolve_workspace(
 
 @router.get("", response_model=ListWorkspacesResponse)
 async def list_workspaces() -> ListWorkspacesResponse:
-    """List thread-bound workspace directories managed by EvoFlow."""
+    """List thread-bound workspace directories managed by QAgent."""
     paths = get_paths()
     threads_dir = paths.base_dir / "threads"
     if not threads_dir.exists():

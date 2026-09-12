@@ -179,7 +179,7 @@ export async function notifyDesktopUpdateReady(version) {
   try {
     const { notifyDesktopCompletion } = await import('./desktop-notification.js')
     await notifyDesktopCompletion({
-      title: 'EvoFlow 更新已就绪',
+      title: 'QAgent 更新已就绪',
       body: `v${version || ''} 已下载完成，点击横幅或设置 → 关于 → 立即重启以完成更新。`,
       tag: 'evoflow-update-ready',
     })

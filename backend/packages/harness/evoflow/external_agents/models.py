@@ -118,7 +118,7 @@ class ExternalAgentRuntime:
 
     # Identifiers
     session_id: str = ""
-    task_id: str = ""  # EvoFlow task ID
+    task_id: str = ""  # QAgent task ID
     agent_type: str = ""
 
     # State

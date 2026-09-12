@@ -18,7 +18,7 @@ body:
     id: proposal
     attributes:
       label: Proposed solution
-      description: What should EvoFlow do?
+      description: What should QAgent do?
     validations:
       required: true
   - type: textarea

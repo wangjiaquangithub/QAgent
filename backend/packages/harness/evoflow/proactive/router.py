@@ -187,7 +187,7 @@ class DispatchTaskRequest(BaseModel):
     )
     from_agent: str = Field(
         "",
-        description="叫醒/派发方 agent_code（同事跨岗或小V）；写入 Task.raised_by / woken_by",
+        description="叫醒/派发方 agent_code（同事跨岗或小Q）；写入 Task.raised_by / woken_by",
     )
     related_task_id: str = Field(
         "",

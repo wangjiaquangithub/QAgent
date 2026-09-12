@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 # 非工作区检索意图：跳过 prefetch，避免「介绍一下自己」等对话触发整库预读 + scheduler 行
 _NON_WORKSPACE_PREFETCH_RE = re.compile(
     r"(介绍一下|介绍.{0,8}自己|你是谁|你能做什么|有什么功能|evoflow\s*是什么|"
-    r"怎么用\s*evoflow|使用方式|能力边界|官网|evovexai)",
+    r"怎么用\s*evoflow|使用方式|能力边界|官网|quclouds)",
     re.IGNORECASE,
 )
 

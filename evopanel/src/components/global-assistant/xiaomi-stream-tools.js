@@ -1,5 +1,5 @@
 /**
- * 小V 流式过程：把 AG-UI / classic chat 事件收敛成与主对话同款 tool 行，
+ * 小Q 流式过程：把 AG-UI / classic chat 事件收敛成与主对话同款 tool 行，
  * 供 buildSemanticRunSteps → 对勾步骤列表复用。
  */
 

@@ -24,7 +24,7 @@ _ISOLATION_LOCK = threading.RLock()
 
 
 def resolve_eval_config_yaml() -> Path | None:
-    """Locate repo ``config.yaml`` so tool catalog works outside EvoFlow cwd.
+    """Locate repo ``config.yaml`` so tool catalog works outside QAgent cwd.
 
     Smoke subprocesses use ``cwd=harness``; without ``EVOFLOW_CONFIG_PATH``,
     ``get_app_config()`` fails and ``resolve_agent_tool_names_for_agent`` returns [].
@@ -35,7 +35,7 @@ def resolve_eval_config_yaml() -> Path | None:
         if p.is_file():
             return p.resolve()
     here = Path(__file__).resolve()
-    # .../backend/packages/harness/evoflow/eval/scenarios/_harness.py → EvoFlow/
+    # .../backend/packages/harness/evoflow/eval/scenarios/_harness.py → QAgent/
     candidates = [
         here.parents[6] / "config.yaml",
         here.parents[3] / "config.yaml",

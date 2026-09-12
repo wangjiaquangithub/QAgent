@@ -1,4 +1,4 @@
-# 生态对照：EvoFlow 与爱马仕 / Codex / 小龙虾 / DeerFlow
+# 生态对照：QAgent 与爱马仕 / Codex / 小龙虾 / DeerFlow
 
 > **先把名字对齐**——社区口语和仓库名经常混用，本文固定用下表。对照的是**产品定位与能力地图**，不是代码同源证明，也不是法律意见。
 >
@@ -13,15 +13,15 @@
 | **爱马仕** | Hermes Agent | [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | 网关 / IM / 技能 / 记忆插件向的参考实现 |
 | **Codex** | OpenAI Codex（CLI / Agent tooling） | [openai/codex](https://github.com/openai/codex) | 本地编码 Agent 循环、沙箱与 CLI UX 参考 |
 | **小龙虾** | OpenClaw | [openclaw/openclaw](https://github.com/openclaw/openclaw) | 多渠道个人助手 + 技能包装参考 |
-| **DF** | DeerFlow | [bytedance/deer-flow](https://github.com/bytedance/deer-flow) | EvoFlow 早期工程基线之一（MIT 致谢，见 [NOTICE](../../../NOTICE)） |
-| **当前活动项目** | **EvoFlow**（桌面 EvoPanel + Gateway + Harness） | 本仓库 | 面向长任务的 **Agent Runtime + 控制平面**产品 |
+| **DF** | DeerFlow | [bytedance/deer-flow](https://github.com/bytedance/deer-flow) | QAgent 早期工程基线之一（MIT 致谢，见 [NOTICE](../../../NOTICE)） |
+| **当前活动项目** | **QAgent**（桌面 EvoPanel + Gateway + Harness） | 本仓库 | 面向长任务的 **Agent Runtime + 控制平面**产品 |
 
 **关系一句话（务必读）**
 
 | 关系 | 说明 |
 |------|------|
-| EvoFlow ↔ DF | 早期参考并复用过 DeerFlow 思路/部分代码；现已系统性重构为独立产品。**不是**「DeerFlow 换皮」 |
-| EvoFlow ↔ 爱马仕 / 小龙虾 / Codex | **设计与能力参考**（渠道、技能、记忆、编码 Agent UX 等），见 NOTICE。**不是**这些项目的官方分支 |
+| QAgent ↔ DF | 早期参考并复用过 DeerFlow 思路/部分代码；现已系统性重构为独立产品。**不是**「DeerFlow 换皮」 |
+| QAgent ↔ 爱马仕 / 小龙虾 / Codex | **设计与能力参考**（渠道、技能、记忆、编码 Agent UX 等），见 NOTICE。**不是**这些项目的官方分支 |
 | 爱马仕 ≠ Codex | 爱马仕是 Hermes Agent；Codex 是 OpenAI 编码 Agent 工具链——两回事，不要写成「爱马仕 Codex」一个东西 |
 
 ---
@@ -34,16 +34,16 @@
 | **Hermes（爱马仕）** | 偏 **网关 + 多渠道助手 + 技能/记忆插件** 的 Agent 运行面 | IM / 社区运维向助手与插件生态 |
 | **OpenClaw（小龙虾）** | 偏 **多渠道个人助手 + 技能包装** 的控制面模式 | 个人助理、渠道里干活 |
 | **Codex** | 偏 **本地编码 Agent**：改代码、跑命令、沙箱、CLI/IDE 向 | 写码、修仓、工程闭环 |
-| **EvoFlow（本项目）** | **原生 Agent Runtime + 产品控制平面**：Plan / Goal / 团队 / 员工值班 / 多节点工作流 / 审批 / 自我进化 / 费用与运维，桌面开箱 | **个人固定业务工作流**；**多 AI 员工组织协作 + 关键审批** |
+| **QAgent（本项目）** | **原生 Agent Runtime + 产品控制平面**：Plan / Goal / 团队 / 员工值班 / 多节点工作流 / 审批 / 自我进化 / 费用与运维，桌面开箱 | **个人固定业务工作流**；**多 AI 员工组织协作 + 关键审批** |
 
 ---
 
-## 3. EvoFlow 功能地图（当前活动项目）
+## 3. QAgent 功能地图（当前活动项目）
 
 与 [产品总览](../getting-started/product-overview.md) 一致，按「控制平面入口」展开：
 
 ```text
-EvoFlow 控制平面
+QAgent 控制平面
 ├── 对话壳
 │   ├── Ask / Agent（日常）
 │   ├── Plan（先计划再执行）
@@ -55,7 +55,7 @@ EvoFlow 控制平面
 │   └── 自动化（定时 / 一次性）
 ├── 岗位与组织协作
 │   ├── 智能体（人设 · 工具 · 技能 · MCP）
-│   └── 智能体员工（值班 · 关键审批 · 汇报；小V 前台）
+│   └── 智能体员工（值班 · 关键审批 · 汇报；小Q 前台）
 ├── 工作空间与工程上下文
 │   ├── 工作空间（项目目录绑定 · 侧栏分组 · 读写边界）
 │   └── 代码索引（导入 / 引用 / 类型图谱 · Agent 检索）
@@ -76,7 +76,7 @@ EvoFlow 控制平面
 
 ### 3.1 能力块 ↔ 入口
 
-| 能力块 | EvoFlow 有什么 | 用户感知入口 |
+| 能力块 | QAgent 有什么 | 用户感知入口 |
 |--------|----------------|--------------|
 | 长任务规划 | Plan 澄清 → 确认 → Teams 执行 | 聊天 Plan |
 | 后台长跑 | Goal 模式 | 聊天 Goal |
@@ -101,7 +101,7 @@ EvoFlow 控制平面
 | 场景 | 怎么跑 | 用到的能力 |
 |------|--------|------------|
 | **个人固定业务工作流** | 把重复业务拆成多节点 → 应用中心编排并发布 → 以后只换参数再跑；可叠加自动化到点触发 | 应用中心 · 工作空间 · 技能/MCP · 自动化 · 费用/观测 |
-| **组织协作：多 AI 员工 + 关键审批** | 智能体配能力 → 雇佣为员工并绑工作区 → 值班/委派并行 → 交工或下游唤醒走**待审批 / 验收** | 智能体员工 · 小V · 任务中心 · 审批策略 · 资产沉淀 · 安全中心 |
+| **组织协作：多 AI 员工 + 关键审批** | 智能体配能力 → 雇佣为员工并绑工作区 → 值班/委派并行 → 交工或下游唤醒走**待审批 / 验收** | 智能体员工 · 小Q · 任务中心 · 审批策略 · 资产沉淀 · 安全中心 |
 
 一句话：**固定流程用工作流产品化；多人（多员工）用组织协作 + 闸门审批；跑完还能沉淀经验与反思，形成自我进化。**
 
@@ -111,7 +111,7 @@ EvoFlow 控制平面
 
 图例：`●` 一等能力 / 主打 · `◐` 有或部分具备 · `○` 弱或不作为主战场 · `—` 基本不涉及（公开定位层面）
 
-| 能力维度 | EvoFlow | DeerFlow (DF) | Hermes（爱马仕） | OpenClaw（小龙虾） | Codex |
+| 能力维度 | QAgent | DeerFlow (DF) | Hermes（爱马仕） | OpenClaw（小龙虾） | Codex |
 |----------|---------|---------------|------------------|--------------------|-------|
 | **产品形态** | ● 桌面控制平面 + Gateway | ◐ Web / harness 自托管 | ◐ 网关 / Agent 运行面 | ◐ 多渠道助手 | ● CLI / 编码 Agent |
 | **许可（公开）** | 源码可见 · 非商业（PolyForm NC） | 开源（MIT 等，以上游为准） | 开源（以上游为准） | 开源（以上游为准） | 上游工具链许可 |
@@ -142,52 +142,52 @@ EvoFlow 控制平面
 
 ## 5. 和 DF（DeerFlow）差在哪
 
-DeerFlow 公开定位是 **super agent harness**：Lead 编排子代理、技能、沙箱、记忆、Gateway/Web——和 EvoFlow **底层叙事有重叠**（这也是早期参考它的原因）。
+DeerFlow 公开定位是 **super agent harness**：Lead 编排子代理、技能、沙箱、记忆、Gateway/Web——和 QAgent **底层叙事有重叠**（这也是早期参考它的原因）。
 
-| 维度 | DeerFlow | EvoFlow | 差异要点 |
+| 维度 | DeerFlow | QAgent | 差异要点 |
 |------|----------|---------|----------|
-| 主叙事 | Harness / 研究与通用长程 Agent | **Runtime + 控制平面产品** | DF 偏「装好就能编排 Agent」；EvoFlow 偏「装好就能管任务、岗位、验收、费用与安全」 |
+| 主叙事 | Harness / 研究与通用长程 Agent | **Runtime + 控制平面产品** | DF 偏「装好就能编排 Agent」；QAgent 偏「装好就能管任务、岗位、验收、费用与安全」 |
 | 产品壳 | Web / 自托管为主 | **桌面 EvoPanel 一等** | 开箱路径不同 |
-| 任务生命周期 | 线程 / 子代理 / 技能为主 | **Plan → Teams → 任务中心 → 验收** 产品化 | EvoFlow 把「可修订计划 + 看板」做成主路径 |
-| 组织形态 | Agent / 子代理 | **智能体员工、关键审批、汇报、小V 前台** | DF 不主打「编内值班岗 + 闸门」 |
+| 任务生命周期 | 线程 / 子代理 / 技能为主 | **Plan → Teams → 任务中心 → 验收** 产品化 | QAgent 把「可修订计划 + 看板」做成主路径 |
+| 组织形态 | Agent / 子代理 | **智能体员工、关键审批、汇报、小Q 前台** | DF 不主打「编内值班岗 + 闸门」 |
 | 流程沉淀 | 技能与配置 | **应用中心多节点工作流发布再跑** | 个人固定业务工作流产品化 |
 | 自我进化 | 记忆能力有 | **经验沉淀 + 反思过程** 资产中心一等 | 可运营的「越跑越懂你」 |
 | 治理运维 | 偏开发者自建 | **费用统计 · 运维观测 · 安全中心 · 多账号/SSO** | 控制平面内建 |
 | 工程关系 | 独立上游 | 早期基线 + **独立重构**；NOTICE / AUTHORS 致谢 | 不是持续 fork 同步 |
 
-**一句话**：DF 更像「可扩展的 Agent 发动机说明书」；EvoFlow 更像「带着仪表盘、排班表、审批闸门和费用账本的车间」。
+**一句话**：DF 更像「可扩展的 Agent 发动机说明书」；QAgent 更像「带着仪表盘、排班表、审批闸门和费用账本的车间」。
 
 ---
 
 ## 6. 和爱马仕（Hermes Agent）差在哪
 
-| 维度 | Hermes（爱马仕） | EvoFlow | 差异要点 |
+| 维度 | Hermes（爱马仕） | QAgent | 差异要点 |
 |------|------------------|---------|----------|
 | 重心 | 网关、渠道、技能/记忆**插件面** | 全产品控制平面 + Harness | 爱马仕强在「助手怎么接渠道与插件」 |
-| 长任务 / 工作流产品化 | 非主打 | Plan / Goal / 应用中心 / 任务中心 | EvoFlow 把固定业务与长任务做成可观测交付 |
+| 长任务 / 工作流产品化 | 非主打 | Plan / Goal / 应用中心 / 任务中心 | QAgent 把固定业务与长任务做成可观测交付 |
 | 组织审批 | 弱 | 智能体员工关键审批 | |
 | 费用 / 安全 / 观测 | 插件或自建 | 产品内设置页一等 | |
 | 编码 | 非主战场 | 工作空间 + 代码索引；可接外部编码 Agent | 不要和 Codex 混为一谈 |
-| 对 EvoFlow 的实际影响 | 渠道 / 记忆插件 / web search 等**设计参考**；部分路径有「Hermes-style」实现注释 | — | 归因见 NOTICE，不是品牌共生 |
+| 对 QAgent 的实际影响 | 渠道 / 记忆插件 / web search 等**设计参考**；部分路径有「Hermes-style」实现注释 | — | 归因见 NOTICE，不是品牌共生 |
 
 ---
 
 ## 7. 和 Codex 差在哪
 
-| 维度 | Codex | EvoFlow | 差异要点 |
+| 维度 | Codex | QAgent | 差异要点 |
 |------|-------|---------|----------|
-| 主战场 | **写码、改仓、本地 Agent 循环** | **把事做完**（业务工作流 / 运营 / 值班 / 交付都可） | Codex 深；EvoFlow 宽 |
-| 工程上下文 | 仓内 CLI/IDE 心智 | **工作空间 + 代码索引图谱**（产品面板） | 都碰代码，EvoFlow 还管组织与流程 |
+| 主战场 | **写码、改仓、本地 Agent 循环** | **把事做完**（业务工作流 / 运营 / 值班 / 交付都可） | Codex 深；QAgent 宽 |
+| 工程上下文 | 仓内 CLI/IDE 心智 | **工作空间 + 代码索引图谱**（产品面板） | 都碰代码，QAgent 还管组织与流程 |
 | UI | CLI / IDE 向 | 桌面控制平面 | 交互心智不同 |
 | 多岗位 / 审批 | — | 智能体员工 + 关键审批 | Codex 不做排班同事 |
 | 费用 / 安全中心 / 资源市场 | 弱或不作为产品主路径 | 一等 | |
-| 关系 | EvoFlow **参考**其沙箱与编码 Agent UX | 可选用外部编码 Agent 补深度 | 互补，而非替代 |
+| 关系 | QAgent **参考**其沙箱与编码 Agent UX | 可选用外部编码 Agent 补深度 | 互补，而非替代 |
 
 ---
 
 ## 8. 和小龙虾（OpenClaw）差在哪
 
-| 维度 | OpenClaw（小龙虾） | EvoFlow | 差异要点 |
+| 维度 | OpenClaw（小龙虾） | QAgent | 差异要点 |
 |------|-------------------|---------|----------|
 | 重心 | 多渠道个人助手、技能包装 | 长任务 Runtime + **组织/任务/治理**控制平面 | 小龙虾强在「渠道里的助手」 |
 | 固定业务工作流 | 技能串联偏多 | **应用中心多节点**产品化再跑 | |
@@ -201,10 +201,10 @@ DeerFlow 公开定位是 **super agent harness**：Lead 编排子代理、技能
 
 ## 9. 「我们到底多了什么 / 少了什么」速查
 
-### EvoFlow 相对四者**更突出**的
+### QAgent 相对四者**更突出**的
 
 1. **Plan → 确认 → Agent Teams → 任务中心验收** 的产品闭环  
-2. **智能体员工**（值班、**关键审批**、汇报）与小V 前台 — 适合组织协作  
+2. **智能体员工**（值班、**关键审批**、汇报）与小Q 前台 — 适合组织协作  
 3. **应用中心多节点工作流** — 适合个人固定业务反复跑  
 4. **自我进化**：资产中心经验沉淀、反思过程、画像 / 记忆  
 5. **工作空间 + 代码索引** 作为工程上下文一等能力  
@@ -212,7 +212,7 @@ DeerFlow 公开定位是 **super agent harness**：Lead 编排子代理、技能
 7. **资源市场与扩展应用**（资源中心）  
 8. **桌面控制平面**开箱（模型、任务、费用、安全同一壳）  
 
-### EvoFlow **不假装取代**的
+### QAgent **不假装取代**的
 
 1. **Codex 级**深度本地编码 IDE/CLI 体验（可外接，不是主叙事）  
 2. **DeerFlow 社区**作为独立开源 harness 的生态与发行节奏  
@@ -222,7 +222,7 @@ DeerFlow 公开定位是 **super agent harness**：Lead 编排子代理、技能
 
 | 别说 | 应说 |
 |------|------|
-| 「EvoFlow 就是开源 DeerFlow」 | 「早期参考 DF，现为独立源码可见产品」 |
+| 「QAgent 就是开源 DeerFlow」 | 「早期参考 DF，现为独立源码可见产品」 |
 | 「爱马仕 Codex」 | 「爱马仕 = Hermes；Codex = OpenAI 编码 Agent」 |
 | 「我们完全开源」 | 「源码可见 · PolyForm 非商业；商用需授权」 |
 
@@ -231,7 +231,7 @@ DeerFlow 公开定位是 **super agent harness**：Lead 编排子代理、技能
 ## 10. 延伸阅读
 
 - [产品总览 · 功能地图](../getting-started/product-overview.md)  
-- [为什么是 EvoFlow](why-evoflow.md)  
+- [为什么是 QAgent](why-evoflow.md)  
 - [Agent 系统](agent-system.md) · [智能体员工](smart-employees.md) · [资产中心](asset-center.md)  
 - [工作空间](../guides/chat/workspace.md) · [资源包与资源市场](../guides/configuration/resource-packs.md)  
 - 仓库根 [NOTICE](../../../NOTICE) · [AUTHORS](../../../AUTHORS.md) · [README](../../../README.md)

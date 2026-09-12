@@ -22,9 +22,9 @@ def _chat_prompt(**kwargs) -> str:
 
 def test_pure_chat_uses_full_role_and_compact_style() -> None:
     text = _chat_prompt()
-    assert "EvovexAI assistant" in text or "EvovexAI" in text
+    assert "Quclouds assistant" in text or "Quclouds" in text
     assert "Sessions may include context, state" in text
-    assert "## Communication style (EvovexAI)" not in text
+    assert "## Communication style (Quclouds)" not in text
     assert "Tone: professional, warm, practical" in text
 
 

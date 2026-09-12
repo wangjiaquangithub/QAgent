@@ -3,17 +3,17 @@
  * 国内用户自动使用 Gitee 镜像，解决 GitHub 访问慢/不可达的问题
  */
 
-const GITHUB_ORG = 'https://github.com/EvovexAI'
-const GITEE_ORG = 'https://gitee.com/YT'
-const GITHUB_RAW = 'https://raw.githubusercontent.com/EvovexAI'
-const GITEE_RAW = 'https://gitee.com/YT'
+const GITHUB_ORG = 'https://github.com/wangjiaquangithub'
+const GITEE_ORG = 'https://gitee.com/Quclouds'
+const GITHUB_RAW = 'https://raw.githubusercontent.com/Quclouds'
+const GITEE_RAW = 'https://gitee.com/Quclouds'
 
 // 仓库名映射（GitHub → Gitee，名称不同时需映射）
 const REPO_MAP = {
-  EvoFlow: 'evopanel',
+  QAgent: 'evopanel',
   evopanel: 'evopanel',
   evoflow: 'evoflow',
-  EvoFlow: 'EvoFlow',
+  QAgent: 'QAgent',
 }
 
 /**

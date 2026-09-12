@@ -1,4 +1,4 @@
-"""Inject 小V page snapshot as an ephemeral named HumanMessage (never system).
+"""Inject 小Q page snapshot as an ephemeral named HumanMessage (never system).
 
 Putting live UI into the system prompt busts prefix cache on every navigation.
 Mirror mission/collab live footers: append ``name=xiaomi_ui_context`` before each

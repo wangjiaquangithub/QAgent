@@ -8,7 +8,7 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_LANGGRAPH_BASE_URL = "http://127.0.0.1:8070/api/langgraph"
+DEFAULT_LANGGRAPH_BASE_URL = "http://127.0.0.1:8012/api/langgraph"
 
 
 def resolve_langgraph_base_url() -> str:

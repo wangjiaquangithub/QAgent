@@ -6,7 +6,7 @@ import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 
-ext_root = Path(r"d:\dev\github\EvoFlow\extensions")
+ext_root = Path(r"d:\dev\github\QAgent\extensions")
 pairs = [
     (ext_root / "contentos-trending", Path(r"D:\dev\github\ContentOS\evoflow-extensions\trending"), "contentos-trending"),
     (ext_root / "contentos-decompose", Path(r"D:\dev\github\ContentOS\evoflow-extensions\decompose"), "contentos-decompose"),

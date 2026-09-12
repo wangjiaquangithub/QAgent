@@ -198,7 +198,7 @@ def resolve_agent_tool_names_for_agent(
 ) -> frozenset[str]:
     """Tool names an agent code may use (runtime catalog ∩ agent config)."""
     aid = str(agent_id or "").strip() or "main"
-    # 小V：config.tools=[] is intentional (no role-editor tools). Runtime surface is
+    # 小Q：config.tools=[] is intentional (no role-editor tools). Runtime surface is
     # fixed xiaomi_* — must not treat empty whitelist as “no tools”.
     try:
         from evoflow.agents.xiaomi.identity import is_xiaomi_agent

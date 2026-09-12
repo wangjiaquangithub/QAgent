@@ -63,7 +63,7 @@ export const WebEmbedKind = memo(function WebEmbedKind({
   editable?: boolean
   onUrlChange?: (url: string) => void
   onClose?: () => void
-  /** When set, attach EvoFlow extension postMessage bridge after iframe mounts. */
+  /** When set, attach QAgent extension postMessage bridge after iframe mounts. */
   extensionId?: string
   extensionManifest?: Record<string, unknown> | null
   /** Override iframe sandbox token list / string (extensions use manifest.ui.sandbox). */

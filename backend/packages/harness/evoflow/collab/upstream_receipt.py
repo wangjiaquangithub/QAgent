@@ -6,7 +6,7 @@ action signal:
 
 - Direct manager (parent ``assigned_to``) can fan-out the next hop (e.g. test).
 - When all siblings under that parent are terminal, also nudge ``raised_by``
-  one hop up (e.g. product / 小V) to accept and ``completed`` the root.
+  one hop up (e.g. product / 小Q) to accept and ``completed`` the root.
 """
 
 from __future__ import annotations

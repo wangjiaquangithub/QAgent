@@ -18,13 +18,13 @@
 - 使用 Supervisor（超级总控智能体）创建一个多 Agent 协作项目
 - 进行任务规划与编排
 - 理解多个 Agent 之间的协调机制
-- 在 EvoFlow 中监控项目进度
+- 在 QAgent 中监控项目进度
 - 通过一个完整的研究项目示例，掌握端到端流程
 
 ## 前置条件
 
 - 已完成 [安装](../getting-started/installation.md) [[getting-started/installation|安装]]
-- EvoFlow 服务正在运行
+- QAgent 服务正在运行
 - 已了解 [Agent 的基本概念](create-agent.md) [[tutorials/create-agent|Agent 的基本概念]]
 - 建议先了解 [子代理系统](../explanation/subagent-system.md) [[explanation/subagent-system|子代理系统]]
 
@@ -36,7 +36,7 @@
 
 ### 1. 理解多智能体协作
 
-多智能体协作（Project）是 EvoFlow 中处理复杂项目的高级机制。它的核心思想是：
+多智能体协作（Project）是 QAgent 中处理复杂项目的高级机制。它的核心思想是：
 
 - **Supervisor（超级总控智能体）**：负责任务拆解、分配和协调的中枢
 - **Sub-agent（子代理）**：执行具体任务的专项 Agent，每个可以有不同的角色、技能和模型
@@ -75,9 +75,9 @@ Supervisor（超级总控智能体）
   +-- Sub-agent 4: 审核员（负责质量审核）
 ```
 
-#### 2.2 在 EvoFlow 中创建项目
+#### 2.2 在 QAgent 中创建项目
 
-1. 打开 EvoFlow，进入 **项目管理** 页面
+1. 打开 QAgent，进入 **项目管理** 页面
 2. 点击 **新建项目**
 3. 填写项目信息：
 
@@ -190,11 +190,11 @@ Supervisor（超级总控智能体）
 
 所有子任务完成后，超级总控智能体将各阶段结果进行汇总，生成最终交付物返回给用户。
 
-### 6. 在 EvoFlow 中监控进度
+### 6. 在 QAgent 中监控进度
 
 #### 6.1 项目总览
 
-打开 EvoFlow 的 **项目管理** 页面，可以看到：
+打开 QAgent 的 **项目管理** 页面，可以看到：
 
 - 项目当前状态（执行中/已完成/失败）
 - 总体进度百分比

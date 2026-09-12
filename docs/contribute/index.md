@@ -24,4 +24,4 @@
 3. **Bug fix** — 有复现、有测试更佳  
 4. **渠道 / Runtime / Gateway / EvoPanel** — 大改先 [RFC](rfc.md)，再实现  
 
-日常问答用 [Discussions](https://github.com/EvovexAI/EvoFlow/discussions)；可复现缺陷用 Issue。
+日常问答用 [Discussions](https://github.com/wangjiaquangithub/QAgent/discussions)；可复现缺陷用 Issue。

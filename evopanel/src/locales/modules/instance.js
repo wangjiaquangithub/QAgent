@@ -17,6 +17,6 @@ export default {
   adding: _('添加中...', 'Adding...', '新增中...', 'Đang thêm...', 'Agregando...', 'Adicionando...', 'Добавление...', 'Ajout...', 'Wird hinzugefügt...'),
   switchedTo: _('已切换到 {name} — 模型配置、Agent 等将管理该实例', 'Switched to {name} — Models, Agents, etc. will manage this instance', '已切換到 {name} — 模型設定、Agent 等將管理該執行個體'),
   current: _('当前', 'Active', '目前', '現在', '현재', 'Hiện tại', 'Actual', 'Atual', 'Текущий', 'Actuel', 'Aktuell'),
-  remoteHint: _('远程服务器需要运行 EvoPanel (serve.js)。', 'The remote server must be running EvoPanel (serve.js).', '遠程伺服器需要執行 EvoPanel (serve.js)。'),
+  remoteHint: _('远程服务器需要运行 QAgent (serve.js)。', 'The remote server must be running QAgent (serve.js).', '遠程伺服器需要執行 QAgent (serve.js)。'),
   example: _('示例', 'Example', '範例', '例', '예시'),
 }

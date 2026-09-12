@@ -12,7 +12,7 @@ _SAFE_THREAD_ID_RE = re.compile(r"^[A-Za-z0-9_\-]+$")
 
 class Paths:
     """
-    Centralized path configuration for EvoFlow application data.
+    Centralized path configuration for QAgent application data.
 
     Directory layout (host side):
         {base_dir}/

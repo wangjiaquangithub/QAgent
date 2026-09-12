@@ -1,4 +1,4 @@
-"""EvoFlow owned knowledge base (local-first RAG replacing Obsidian as primary path).
+"""QAgent owned knowledge base (local-first RAG replacing Obsidian as primary path).
 
 See ``internal design docs (not published in this repository)``.
 """

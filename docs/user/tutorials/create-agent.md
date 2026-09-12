@@ -28,15 +28,15 @@
 
 ### 1. 什么是 Agent
 
-Agent 是 EvoFlow 中具有特定角色和能力的智能体。每个 Agent 可以拥有：
+Agent 是 QAgent 中具有特定角色和能力的智能体。每个 Agent 可以拥有：
 - **SOUL**：定义 Agent 的角色、性格和行为准则
 - **IDENTITY**：Agent 的自我认知
 - **独立模型配置**：可以覆盖全局默认模型
 - **工具集**：可用工具的组合
 
-### 2. 在 EvoFlow 中创建 Agent
+### 2. 在 QAgent 中创建 Agent
 
-1. 打开 EvoFlow，进入 **Agent 管理** 页面
+1. 打开 QAgent，进入 **Agent 管理** 页面
 2. 点击 **新建 Agent**
 3. 填写 Agent 名称，例如 `research-assistant`
 4. 编辑 SOUL 内容，定义 Agent 的角色：
@@ -52,7 +52,7 @@ Agent 是 EvoFlow 中具有特定角色和能力的智能体。每个 Agent 可�
 
 ### 4. 在聊天中使用 Agent
 
-在 EvoFlow 聊天界面选择对应的 Agent，或通过 IM 渠道发送消息时指定 `agent_name`。
+在 QAgent 聊天界面选择对应的 Agent，或通过 IM 渠道发送消息时指定 `agent_name`。
 
 ## 验证是否生效
 

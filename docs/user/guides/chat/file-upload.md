@@ -11,14 +11,14 @@
 > **功能关系**：文件上传是**当前会话的附件**，不是长期知识库——如果需要可反复检索的向量库，使用[上传文档（RAG）](../configuration/document-knowledge-base.md) [[guides/configuration/document-knowledge-base|上传文档（RAG）]]；如果要连接 Obsidian/Markdown 笔记，使用[知识库（Vault）](../configuration/knowledge-vault.md) [[guides/configuration/knowledge-vault|知识库（Vault）]]。三者覆盖不同粒度的知识管理需求。
 
 ## 适用场景
-向 EvoFlow **会话**上传文档文件（PDF、PPT、Excel、Word），让 Agent 基于文件内容回答问题或执行分析。
+向 QAgent **会话**上传文档文件（PDF、PPT、Excel、Word），让 Agent 基于文件内容回答问题或执行分析。
 
 > 这是**当前线程**的附件，不是长期知识库。  
 > - 要做成可反复检索的向量库 → [上传文档（RAG）](../configuration/document-knowledge-base.md) [[guides/configuration/document-knowledge-base|上传文档（RAG）]]  
 > - 要连接 Obsidian / Markdown 笔记 → [知识库（Vault）](../configuration/knowledge-vault.md) [[guides/configuration/knowledge-vault|知识库（Vault）]]
 
 ## 前置条件
-- EvoFlow 已运行
+- QAgent 已运行
 - 已知目标 `thread_id`
 
 ## 方式一：通过聊天界面（推荐）

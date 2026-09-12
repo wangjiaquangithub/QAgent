@@ -5,10 +5,10 @@
  *   1) WASM runtime from npm `sherpa-onnx` via npmmirror (includes KWS exports)
  *   2) ONNX model from GitHub release (usually reachable) or skip if already present
  *
- * Default wake word: 「小V小V」
- * Phoneme aliases（均标注 @小V小V；tokens 仅有大写 V）:
+ * Default wake word: 「小Q小Q」
+ * Phoneme aliases（均标注 @小Q小Q；tokens 仅有大写 V）:
  *   - 字母 V / 小维·小微（主唤醒，高 boost、低阈值）
- *   - 口音/ASR 误听（蜜、米等），仅作兼容，产品名仍是小V
+ *   - 口音/ASR 误听（蜜、米等），仅作兼容，产品名仍是小Q
  * Run: node scripts/download-kws-model.js
  */
 
@@ -85,13 +85,13 @@ function writeKeywords() {
     [
       // tokens.txt has uppercase V only (lowercase v is invalid)
       // :boost #threshold — letter-V / 维·微 are weaker than 蜜/米 on Wenetspeech KWS
-      'x iǎo V x iǎo V @小V小V :2.5 #0.18',
-      'x iǎo w éi x iǎo w éi @小V小V :2.5 #0.18',
-      'x iǎo w ēi x iǎo w ēi @小V小V :2.5 #0.18',
-      'x iǎo w ěi x iǎo w ěi @小V小V :2.0 #0.2',
+      'x iǎo V x iǎo V @小Q小Q :2.5 #0.18',
+      'x iǎo w éi x iǎo w éi @小Q小Q :2.5 #0.18',
+      'x iǎo w ēi x iǎo w ēi @小Q小Q :2.5 #0.18',
+      'x iǎo w ěi x iǎo w ěi @小Q小Q :2.0 #0.2',
       // legacy / ASR-near pronunciations → same product wake label
-      'x iǎo m ì x iǎo m ì @小V小V :1.0 #0.25',
-      'x iǎo m ǐ x iǎo m ǐ @小V小V :1.0 #0.25',
+      'x iǎo m ì x iǎo m ì @小Q小Q :1.0 #0.25',
+      'x iǎo m ǐ x iǎo m ǐ @小Q小Q :1.0 #0.25',
       '',
     ].join('\n'),
   )

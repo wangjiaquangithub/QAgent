@@ -18,7 +18,7 @@ function shortImId(id: string, keep = 14): string {
 function agentWhoLabel(agent: string): string {
   const code = String(agent || '').trim()
   if (!code || code === 'main' || code === 'lead_agent') return '主对话'
-  if (code === 'xiaomi') return '小V'
+  if (code === 'xiaomi') return '小Q'
   return code
 }
 
@@ -30,8 +30,8 @@ export function isWeakImSessionTitle(title: string | null | undefined): boolean 
   if (/^(飞书|微信|Slack|Telegram)\s*·\s*[a-zA-Z0-9_-]{6,}…?$/i.test(t)) return true
   // 飞书 · oc_xxx · topic（仍无岗位名）
   if (/^(飞书|微信|Slack|Telegram)\s*·\s*(oc_|ou_|on_|om_)[a-zA-Z0-9]+…?(?:\s*·\s*.+)?$/i.test(t)) {
-    // 已含岗位/主对话/小V 的不算弱标题
-    if (/主对话|小V|岗位|智能体|默认推送|私聊/.test(t)) return false
+    // 已含岗位/主对话/小Q 的不算弱标题
+    if (/主对话|小Q|岗位|智能体|默认推送|私聊/.test(t)) return false
     // 三段且中间不是纯 id 时可能是「飞书 · 岗位 · id」
     const parts = t.split(/\s*·\s*/)
     if (parts.length >= 3) {

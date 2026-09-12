@@ -54,7 +54,7 @@ export async function runAboutUpdateCheck(container, { resultEl, btn }) {
         ${offer.oneClick
     ? `<button type="button" class="about-check-btn" id="about-install-update">${primaryLabel}</button>`
     : `<button type="button" class="about-check-btn" id="about-download-update">下载安装包</button>`}
-        <a class="about-link" href="https://github.com/EvovexAI/EvoFlow/releases" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px">查看更新说明</a>
+        <a class="about-link" href="https://github.com/wangjiaquangithub/QAgent/releases" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px">查看更新说明</a>
       </div>
     `
 
@@ -66,12 +66,12 @@ export async function runAboutUpdateCheck(container, { resultEl, btn }) {
       })
     } else {
       container.querySelector('#about-download-update')?.addEventListener('click', () => {
-        window.open(offer.manualUrl || 'https://github.com/EvovexAI/EvoFlow/releases', '_blank')
+        window.open(offer.manualUrl || 'https://github.com/wangjiaquangithub/QAgent/releases', '_blank')
       })
     }
   } catch (err) {
     const msg = err?.message || String(err)
-    resultEl.innerHTML = `<p class="update-error">检查失败：${escapeHtml(msg)}</p><p class="update-hint">请前往 <a href="https://github.com/EvovexAI/EvoFlow/releases" target="_blank" rel="noopener">GitHub Releases</a> 查看最新版本</p>`
+    resultEl.innerHTML = `<p class="update-error">检查失败：${escapeHtml(msg)}</p><p class="update-hint">请前往 <a href="https://github.com/wangjiaquangithub/QAgent/releases" target="_blank" rel="noopener">GitHub Releases</a> 查看最新版本</p>`
   } finally {
     btn.disabled = false
     btn.textContent = '检查更新'

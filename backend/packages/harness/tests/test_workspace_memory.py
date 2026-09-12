@@ -119,7 +119,7 @@ def test_prune_workspace_memory_drops_ephemeral(sqlite_tmp: Path) -> None:
 
 
 def test_seed_workspace_memory_evoflow_layout(sqlite_tmp: Path) -> None:
-    root = sqlite_tmp / "EvoFlow"
+    root = sqlite_tmp / "QAgent"
     (root / "backend" / "packages" / "harness" / "evoflow").mkdir(parents=True)
     (root / "evopanel").mkdir()
     out = seed_workspace_memory(str(root))
@@ -128,4 +128,4 @@ def test_seed_workspace_memory_evoflow_layout(sqlite_tmp: Path) -> None:
     assert data["facts"]
     assert any("harness" in str(f.get("title") or "").lower() for f in data["facts"])
     standing = str(data.get("standing") or "")
-    assert "EvoFlow" in standing or "Agent" in standing
+    assert "QAgent" in standing or "Agent" in standing

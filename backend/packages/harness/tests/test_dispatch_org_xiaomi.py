@@ -1,4 +1,4 @@
-"""小V（系统前台）派发不受组织上下级/平级限制。"""
+"""小Q（系统前台）派发不受组织上下级/平级限制。"""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ def test_xiaomi_can_dispatch_across_org_and_hierarchy() -> None:
     # Alias display code still treated as front desk.
     assert (
         validate_dispatch_org_relationship(
-            from_agent="小V", target_code="project-architect", roster=roster
+            from_agent="小Q", target_code="project-architect", roster=roster
         )
         is None
     )
@@ -104,7 +104,7 @@ def test_xiaomi_duty_prompt_says_manage_anyone() -> None:
 
     role = ProactiveRole(
         agent_code="xiaomi",
-        role_name="小V",
+        role_name="小Q",
         config=ProactiveRoleConfig(),
     )
     text = build_xiaomi_duty_system_prompt(role)

@@ -2,7 +2,7 @@ import { _ } from '../helper.js'
 
 export default {
   title: _('Gateway 配置', 'Gateway Config', 'Gateway 設定'),
-  desc: _('Gateway 是 AI 模型的统一入口，所有应用通过它来调用模型服务', 'Gateway is the unified entry for AI models. All apps call model services through it.', 'Gateway 是 AI 模型的統一入口，所有應用通過它來呼叫模型服務', 'EvoFlow Gateway サービスの設定と管理', 'Cấu hình và quản lý Gateway', 'Configurar y gestionar Gateway', 'Configurar e gerenciar Gateway', 'Настройка и управление Gateway', 'Configurer et gérer Gateway', 'Gateway konfigurieren und verwalten'),
+  desc: _('Gateway 是 AI 模型的统一入口，所有应用通过它来调用模型服务', 'Gateway is the unified entry for AI models. All apps call model services through it.', 'Gateway 是 AI 模型的統一入口，所有應用通過它來呼叫模型服務', 'QAgent Gateway サービスの設定と管理', 'Cấu hình và quản lý Gateway', 'Configurar y gestionar Gateway', 'Configurar e gerenciar Gateway', 'Настройка и управление Gateway', 'Configurer et gérer Gateway', 'Gateway konfigurieren und verwalten'),
   saveApply: _('保存并生效', 'Save & Apply', '儲存並生效'),
   saveHint: _('修改后点击保存，Gateway 会自动重载', 'Click save after changes, Gateway will auto-reload', '修改後點擊儲存，Gateway 會自動重載'),
   saving: _('保存中...', 'Saving...', '儲存中...'),

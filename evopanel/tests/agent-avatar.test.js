@@ -12,11 +12,11 @@ describe('agent-avatar', () => {
   })
 
   it('falls back to initial letter when avatar unset', () => {
-    const r = resolveAgentAvatar({ agent_code: 'main', agent_name: '小V' })
+    const r = resolveAgentAvatar({ agent_code: 'main', agent_name: '小Q' })
     expect(r.kind).toBe('initial')
     if (r.kind === 'initial') {
       expect(r.initial).toBe('小')
-      expect(r.bg).toBe(hashColor('小V'))
+      expect(r.bg).toBe(hashColor('小Q'))
     }
   })
 

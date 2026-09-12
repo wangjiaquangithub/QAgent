@@ -1,4 +1,4 @@
-"""ChannelStore — persists IM chat-to-EvoFlow thread mappings (SQLite)."""
+"""ChannelStore — persists IM chat-to-QAgent thread mappings (SQLite)."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class ChannelStore:
-    """Maps IM conversations to EvoFlow threads in ``evoflow_channel_bindings``."""
+    """Maps IM conversations to QAgent threads in ``evoflow_channel_bindings``."""
 
     def __init__(self, path: str | None = None) -> None:
         del path  # legacy JSON path; unused

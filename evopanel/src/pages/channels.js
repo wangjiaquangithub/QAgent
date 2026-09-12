@@ -313,7 +313,7 @@ function channelsShellHtml(settingsModal) {
     <div class="page-header">
       <div>
         <h1 class="page-title">IM Channels</h1>
-        <p class="page-desc">Manage EvoFlow multi-channel (Feishu, Weixin, Slack, Telegram, etc)</p>
+        <p class="page-desc">Manage QAgent multi-channel (Feishu, Weixin, Slack, Telegram, etc)</p>
       </div>
       <div class="page-actions">
         <button type="button" class="btn btn-secondary btn-sm" id="btn-reload">Reload</button>

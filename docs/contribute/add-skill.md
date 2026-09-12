@@ -1,6 +1,6 @@
 # 添加 Skill
 
-Skills 是扩展 EvoFlow 能力的首选方式：一份 `SKILL.md` + 可选脚本/资源，不必改 Runtime 核心。
+Skills 是扩展 QAgent 能力的首选方式：一份 `SKILL.md` + 可选脚本/资源，不必改 Runtime 核心。
 
 用户侧教程：[添加技能](../user/tutorials/add-skill.md) · [技能管理](../user/guides/configuration/skill-management.md) · [技能系统说明](../user/explanation/skill-system.md)
 

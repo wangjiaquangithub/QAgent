@@ -2,12 +2,12 @@
 
 MiniMax's OpenAI-compatible chat completions API can return structured
 ``reasoning_details`` when ``extra_body.reasoning_split=true`` is enabled.
-``langchain_openai.ChatOpenAI`` currently ignores that field, so EvoFlow's
+``langchain_openai.ChatOpenAI`` currently ignores that field, so QAgent's
 frontend never receives reasoning content in the shape it expects.
 
 This adapter preserves ``reasoning_split`` in the request payload and maps the
 provider-specific reasoning field into ``additional_kwargs.reasoning_content``,
-which EvoFlow already understands.
+which QAgent already understands.
 """
 
 from __future__ import annotations

@@ -21,32 +21,32 @@ import {
 describe('splitPathLabelSuffix', () => {
   it('repairs path.md,label:标题}]', () => {
     const { path, label } = splitPathLabelSuffix(
-      'docs/roles/x/20260722-14/抖音口播稿_EvoFlow智能体员工.md,label:抖音口播稿 - EvoFlow智能体员工}]',
+      'docs/roles/x/20260722-14/抖音口播稿_QAgent智能体员工.md,label:抖音口播稿 - QAgent智能体员工}]',
     )
-    expect(path).toBe('docs/roles/x/20260722-14/抖音口播稿_EvoFlow智能体员工.md')
-    expect(label).toBe('抖音口播稿 - EvoFlow智能体员工')
+    expect(path).toBe('docs/roles/x/20260722-14/抖音口播稿_QAgent智能体员工.md')
+    expect(label).toBe('抖音口播稿 - QAgent智能体员工')
   })
 })
 
 describe('coerceOutputsFromMessyText', () => {
   it('parses pseudo-JSON outputs blob', () => {
     const items = coerceOutputsFromMessyText(
-      '[{docs/roles/evoflow-marketing-director/20260722-14/抖音口播稿_EvoFlow智能体员工.md,label:抖音口播稿 - EvoFlow智能体员工}]',
+      '[{docs/roles/evoflow-marketing-director/20260722-14/抖音口播稿_QAgent智能体员工.md,label:抖音口播稿 - QAgent智能体员工}]',
     )
     expect(items).toHaveLength(1)
-    expect(items[0].value).toContain('抖音口播稿_EvoFlow智能体员工.md')
+    expect(items[0].value).toContain('抖音口播稿_QAgent智能体员工.md')
     expect(items[0].value).not.toContain('label:')
-    expect(items[0].label).toBe('抖音口播稿 - EvoFlow智能体员工')
+    expect(items[0].label).toBe('抖音口播稿 - QAgent智能体员工')
   })
 
   it('parses type:file,key:…,value:… blob', () => {
     const items = coerceOutputsFromMessyText(
-      'type:file,key:口播稿,value:docs/roles/evoflow-marketing-director/20260722-14/抖音口播稿_EvoFlow智能体员工.md',
+      'type:file,key:口播稿,value:docs/roles/evoflow-marketing-director/20260722-14/抖音口播稿_QAgent智能体员工.md',
     )
     expect(items).toHaveLength(1)
     expect(items[0].key).toBe('口播稿')
     expect(items[0].value).toBe(
-      'docs/roles/evoflow-marketing-director/20260722-14/抖音口播稿_EvoFlow智能体员工.md',
+      'docs/roles/evoflow-marketing-director/20260722-14/抖音口播稿_QAgent智能体员工.md',
     )
   })
 })
@@ -59,15 +59,15 @@ describe('taskOutputsOf', () => {
           type: 'file',
           key: 'script',
           value:
-            'type:file,key:口播稿,value:docs/roles/x/20260722-14/抖音口播稿_EvoFlow智能体员工.md',
-          label: '抖音口播稿 - EvoFlow智能体员工',
+            'type:file,key:口播稿,value:docs/roles/x/20260722-14/抖音口播稿_QAgent智能体员工.md',
+          label: '抖音口播稿 - QAgent智能体员工',
         },
       ],
     })
-    expect(items[0].value).toBe('docs/roles/x/20260722-14/抖音口播稿_EvoFlow智能体员工.md')
-    expect(items[0].label).toBe('抖音口播稿 - EvoFlow智能体员工')
-    expect(outputDisplayName(items[0])).toBe('抖音口播稿 - EvoFlow智能体员工')
-    expect(outputFileBasename(items[0])).toBe('抖音口播稿_EvoFlow智能体员工.md')
+    expect(items[0].value).toBe('docs/roles/x/20260722-14/抖音口播稿_QAgent智能体员工.md')
+    expect(items[0].label).toBe('抖音口播稿 - QAgent智能体员工')
+    expect(outputDisplayName(items[0])).toBe('抖音口播稿 - QAgent智能体员工')
+    expect(outputFileBasename(items[0])).toBe('抖音口播稿_QAgent智能体员工.md')
   })
 })
 
@@ -88,7 +88,7 @@ describe('renderTaskOutputCardsHtml', () => {
           {
             type: 'file',
             value: 'docs/roles/x/a.md',
-            label: '抖音口播稿 - EvoFlow智能体员工',
+            label: '抖音口播稿 - QAgent智能体员工',
           },
         ],
       },
@@ -99,7 +99,7 @@ describe('renderTaskOutputCardsHtml', () => {
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;'),
     )
-    expect(html).toContain('抖音口播稿 - EvoFlow智能体员工')
+    expect(html).toContain('抖音口播稿 - QAgent智能体员工')
     expect(html).toContain('data-act="preview-output"')
     expect(html).toContain('预览')
     expect(html).toContain('td-output-row')
@@ -197,13 +197,13 @@ describe('role workspace helpers', () => {
         'C:\\Users\\admin\\.evoflow\\threads\\2b8e947a-b06a-47e2-9ad4-fc8eaa418a55\\user-data\\workspace',
       ),
     ).toBe(true)
-    expect(isThreadSandboxWorkspacePath('D:/dev/github/EvoFlow')).toBe(false)
+    expect(isThreadSandboxWorkspacePath('D:/dev/github/QAgent')).toBe(false)
   })
 
   it('infers agent_code from docs/roles path', () => {
     expect(
       agentCodeFromRoleOutputPath(
-        'docs/roles/evoflow-marketing-director/20260722-14/抖音口播稿_EvoFlow智能体员工.md',
+        'docs/roles/evoflow-marketing-director/20260722-14/抖音口播稿_QAgent智能体员工.md',
       ),
     ).toBe('evoflow-marketing-director')
   })
@@ -211,14 +211,14 @@ describe('role workspace helpers', () => {
   it('keeps Windows absolute deliverable paths (no drive strip)', async () => {
     const { healStrippedAbsolutePath } = await import('../src/lib/workspace-abs-path.js')
     const { extractOutputPathFields } = await import('../src/lib/task-summary.js')
-    const root = 'D:/dev/github/EvoFlow'
-    const abs = 'D:/dev/github/EvoFlow/output/smart-employee-test/note.md'
+    const root = 'D:/dev/github/QAgent'
+    const abs = 'D:/dev/github/QAgent/output/smart-employee-test/note.md'
     expect(extractOutputPathFields(abs).path).toBe(abs)
-    expect(healStrippedAbsolutePath(':/dev/github/EvoFlow/output/smart-employee-test/note.md', root)).toBe(
+    expect(healStrippedAbsolutePath(':/dev/github/QAgent/output/smart-employee-test/note.md', root)).toBe(
       abs,
     )
     expect(
-      healStrippedAbsolutePath('/dev/github/EvoFlow/output/smart-employee-test/note.md', root),
+      healStrippedAbsolutePath('/dev/github/QAgent/output/smart-employee-test/note.md', root),
     ).toBe(abs)
   })
 })

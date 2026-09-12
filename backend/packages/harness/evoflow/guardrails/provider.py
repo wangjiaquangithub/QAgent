@@ -42,7 +42,7 @@ class GuardrailProvider(Protocol):
 
     Any class with these methods works - no base class required.
     Providers are loaded by class path via resolve_variable(),
-    the same mechanism EvoFlow uses for models, tools, and sandbox.
+    the same mechanism QAgent uses for models, tools, and sandbox.
     """
 
     name: str

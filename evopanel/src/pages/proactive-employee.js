@@ -401,7 +401,7 @@ const _DISPATCH_RATIONALE_ZH = {
   chat_mention: '用户在主聊天 @ 派发',
   manual: '手动派发',
   role: '同事跨岗派发',
-  xiaomi: '小V催办派发',
+  xiaomi: '小Q催办派发',
   event: '事件触发派发',
 }
 
@@ -570,13 +570,13 @@ function humanRationale(raw, roster = []) {
   if (!s || _NOISE_RATIONALE_RE.test(s)) return ''
   if (_LEGACY_DISPATCH_RATIONALE[s]) return _LEGACY_DISPATCH_RATIONALE[s]
   if (s === '同事跨岗叫醒') return '同事跨岗派发'
-  if (s === '小V催办叫醒') return '小V催办派发'
+  if (s === '小Q催办叫醒') return '小Q催办派发'
   // Legacy stored line: 同事跨岗叫醒 · 由「product-manager」叫醒
-  const wake = /^(同事跨岗叫醒|小V催办叫醒|同事跨岗派发|小V催办派发)\s*[·•]\s*由[「"']([^」"']+)[」"']叫醒$/u.exec(
+  const wake = /^(同事跨岗叫醒|小Q催办叫醒|同事跨岗派发|小Q催办派发)\s*[·•]\s*由[「"']([^」"']+)[」"']叫醒$/u.exec(
     s,
   )
   if (wake) {
-    const base = wake[1].includes('小V') ? '小V催办派发' : '同事跨岗派发'
+    const base = wake[1].includes('小Q') ? '小Q催办派发' : '同事跨岗派发'
     const who = formatRaisedByLabel(wake[2], roster) || wake[2]
     if (!who || who === '用户') return base
     return `${base} · ${who}`
@@ -1274,7 +1274,7 @@ async function loadAgentCapability(code) {
   const isFrontDesk =
     String(id).toLowerCase() === 'xiaomi' ||
     !!agent?.system_front_desk ||
-    String(agent?.agent_name || '').trim() === '小V'
+    String(agent?.agent_name || '').trim() === '小Q'
   try {
     if (isFrontDesk) {
       chips.push({

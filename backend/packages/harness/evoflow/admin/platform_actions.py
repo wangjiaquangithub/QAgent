@@ -1,6 +1,6 @@
 """平台行政：单一注册表 + 说明书（catalog）+ 分发执行。
 
-通用内置工具 ``platform`` 的后端（EvoFlow / 小V 等均可挂载）。
+通用内置工具 ``platform`` 的后端（QAgent / 小Q 等均可挂载）。
 能力只加注册条目，不新增工具名。Handler 见 ``platform_handlers.py``。
 """
 

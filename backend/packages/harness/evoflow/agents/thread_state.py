@@ -70,7 +70,7 @@ def merge_viewed_images(existing: dict[str, ViewedImageData] | None, new: dict[s
 
 
 class ThreadState(AgentState):
-    """AgentState plus EvoFlow thread fields.
+    """AgentState plus QAgent thread fields.
 
     ``ui_messages`` holds a pre-summarization copy of the conversation for UI display
     when ``SummarizationMiddleware`` is enabled; ``messages`` is what the model sees.

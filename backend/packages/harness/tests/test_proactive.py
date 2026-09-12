@@ -684,7 +684,7 @@ class TestPrompt:
             agent_code="product-manager",
             role_name="产品经理",
             config=ProactiveRoleConfig(
-                workspace_path="D:/example/EvoFlow",
+                workspace_path="D:/example/QAgent",
                 domain_scope=["docs/", "evopanel/"],
                 kpis=["每轮推进 1 件"],
             ),
@@ -937,7 +937,7 @@ class TestPrompt:
             role_name="产品经理",
             config=ProactiveRoleConfig(
                 responsibilities=["写 PRD"],
-                workspace_path="D:/example/EvoFlow",
+                workspace_path="D:/example/QAgent",
             ),
         )
         same = ProactiveRole(
@@ -945,7 +945,7 @@ class TestPrompt:
             role_name="技术总监",
             config=ProactiveRoleConfig(
                 responsibilities=["拆派"],
-                workspace_path="D:/example/EvoFlow",
+                workspace_path="D:/example/QAgent",
             ),
         )
         other = ProactiveRole(
@@ -1011,9 +1011,9 @@ class TestPrompt:
         dirty = "evoflow-fullstack-lead:task:2608280500_e6e3"
         framing = build_employee_chat_framing(
             f"proactive:{dirty}",
-            role_name="EvoFlow全栈工程师",
+            role_name="QAgent全栈工程师",
         )
-        assert "EvoFlow全栈工程师" in framing
+        assert "QAgent全栈工程师" in framing
         assert "agent_code=`evoflow-fullstack-lead`" in framing
         assert ":task:" not in framing
         assert "2608280500_e6e3" not in framing

@@ -655,7 +655,7 @@ fn verify_sidecar_panel_pin(backend_exe: &Path) -> Result<(), String> {
                     manifest_path.display()
                 ));
                 return Err(
-                    "内置网关缺少版本清单，与桌面端不是同一安装包。请重新安装官方 EvoFlow 桌面端。"
+                    "内置网关缺少版本清单，与桌面端不是同一安装包。请重新安装官方 QAgent 桌面端。"
                         .to_string(),
                 );
             }
@@ -675,7 +675,7 @@ fn verify_sidecar_panel_pin(backend_exe: &Path) -> Result<(), String> {
         .unwrap_or("");
     if got.is_empty() {
         return Err(
-            "内置网关版本清单缺少 panel_version。请重新安装官方 EvoFlow 桌面端。".to_string(),
+            "内置网关版本清单缺少 panel_version。请重新安装官方 QAgent 桌面端。".to_string(),
         );
     }
     if got != expected {
@@ -800,7 +800,7 @@ pub fn ensure_backend_sidecar(app: &tauri::AppHandle) -> Result<(), String> {
             append_startup_log(
                 "ensure_backend_sidecar error: no evoflow-gateway.exe and EVOFLOW_BACKEND_DIR missing",
             );
-            "未找到内置网关可执行文件（evoflow-gateway）；本地调试请设 EVOFLOW_BACKEND_DIR 指向 backend（含 .venv）"
+            "未找到 QAgent 后台服务组件。请重新安装 QAgent 后重试。"
                 .to_string()
         })?;
         let python = resolve_dev_python(&backend_dir).ok_or_else(|| {
@@ -824,7 +824,7 @@ pub fn ensure_backend_sidecar(app: &tauri::AppHandle) -> Result<(), String> {
         // Prefer backend config.yaml via walk from packaging/windows/gateway_entry.py
         entry.clone().parent().map(|p| p.to_path_buf()).unwrap_or_else(|| backend_dir.clone())
     } else {
-        return Err("未找到内置网关可执行文件（evoflow-gateway）".to_string());
+        return Err("未找到 QAgent 后台服务组件。请重新安装 QAgent 后重试。".to_string());
     };
 
     if let Some(ref exe) = backend_exe {
@@ -901,7 +901,7 @@ pub fn ensure_backend_sidecar(app: &tauri::AppHandle) -> Result<(), String> {
         apply_pythonpath_for_backend(&mut c, backend_dir);
         c
     } else {
-        return Err("未找到内置网关可执行文件（evoflow-gateway）".to_string());
+        return Err("未找到 QAgent 后台服务组件。请重新安装 QAgent 后重试。".to_string());
     };
 
     cmd.current_dir(if python_launch.is_some() {

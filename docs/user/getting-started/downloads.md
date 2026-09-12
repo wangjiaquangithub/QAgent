@@ -9,7 +9,7 @@
 
 ## 桌面客户端
 
-**桌面客户端** 的安装包与 EvoFlow 本体一并发布在 **[EvovexAI/EvoFlow Releases](https://github.com/EvovexAI/EvoFlow/releases)**。
+**桌面客户端** 的安装包与 QAgent 本体一并发布在 **[wangjiaquangithub/QAgent Releases](https://github.com/wangjiaquangithub/QAgent/releases)**。
 
 ### 下载哪个文件？
 
@@ -17,9 +17,9 @@
 
 | 系统 | 文件名示例 | 说明 |
 |------|-----------|------|
-| **Windows** | `EvoFlow_Setup_x.x.x_x64.exe` | 安装程序，双击运行 |
-| **macOS** | `EvoFlow_x.x.x_x64.dmg` | 磁盘映像，安装后拖到 Applications 文件夹 |
-| **Linux** | `EvoFlow_x.x.x_x64.AppImage` | 下载后 `chmod +x` 即可运行 |
+| **Windows** | `QAgent_Setup_x.x.x_x64.exe` | 安装程序，双击运行 |
+| **macOS** | `QAgent_x.x.x_x64.dmg` | 磁盘映像，安装后拖到 Applications 文件夹 |
+| **Linux** | `QAgent_x.x.x_x64.AppImage` | 下载后 `chmod +x` 即可运行 |
 
 > 如果系统提示"无法验证开发者"，macOS 用户去「系统设置 → 隐私与安全性」中允许运行；Windows 用户点击"更多信息"后再点"仍要运行"即可。
 

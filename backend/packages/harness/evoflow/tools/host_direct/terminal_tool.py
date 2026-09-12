@@ -1,4 +1,4 @@
-"""Terminal Tool — full-featured shell command execution for EvoFlow.
+"""Terminal Tool — full-featured shell command execution for QAgent.
 
 Provides a unified terminal interface inspired by Hermes Agent:
 - Foreground command execution with timeout

@@ -1,5 +1,5 @@
 /**
- * 小V全局助手会话：后端 SQLite chat session + 内存消息镜像
+ * 小Q全局助手会话：后端 SQLite chat session + 内存消息镜像
  * session agent = xiaomi；key 持久化在 localStorage
  */
 import { api } from '../../lib/tauri-api.js'
@@ -22,7 +22,7 @@ import { normalizeAssistantSegmentTimelineOrder } from '../../lib/chat-normalize
 
 const LS_SESSION = 'evopanel_xiaomi_assistant_session_key'
 export const XIAOMI_AGENT = 'xiaomi'
-export const XIAOMI_SESSION_TITLE = '小V · 全局助手'
+export const XIAOMI_SESSION_TITLE = '小Q · 全局助手'
 
 let _unsubEvent = null
 let _activeRunId = ''
@@ -217,7 +217,7 @@ export function stripInjectedPageContext(text) {
 }
 
 /**
- * Ensure backend session for 小V; load transcript into store.messages
+ * Ensure backend session for 小Q; load transcript into store.messages
  * @returns {Promise<string>} sessionKey
  */
 export async function ensureXiaomiSession() {
@@ -253,7 +253,7 @@ export async function ensureXiaomiSession() {
       },
     })
     key = String(row?.sessionKey || row?.key || '').trim()
-    if (!key) throw new Error('创建小V会话失败')
+    if (!key) throw new Error('创建小Q会话失败')
   }
 
   writeStoredSessionKey(key)
@@ -274,7 +274,7 @@ function markXiaomiRunStarted(runId) {
     last.runId = runId
     last.pending = true
     last.streaming = true
-    if (!last.text || last.text === '小V处理中…') last.text = ''
+    if (!last.text || last.text === '小Q处理中…') last.text = ''
     if (!Array.isArray(last.tools)) last.tools = []
     if (last.reasoning == null) last.reasoning = ''
     last.segments = []
@@ -333,7 +333,7 @@ function syncXiaomiLiveFromAgui() {
   if (openText) {
     last.text = openText
     last.pending = false
-  } else if (last.pending || last.text === '小V处理中…') {
+  } else if (last.pending || last.text === '小Q处理中…') {
     last.text = ''
     last.pending = !proj.tools.length && !proj.reasoningPreview
   }
@@ -399,7 +399,7 @@ function appendXiaomiAssistantPiece(piece, runId) {
     }
     messages.push(last)
   }
-  if (last.pending || last.text === '小V处理中…') {
+  if (last.pending || last.text === '小Q处理中…') {
     last.text = ''
     last.pending = false
   }
@@ -419,7 +419,7 @@ function finishXiaomiAssistantRun(runId, finalText) {
     // Prefer richer text: final payload can briefly lag behind streamed body after tools.
     if (incoming && (!streamed || incoming.length >= streamed.length || incoming.includes(streamed.slice(0, 48)))) {
       last.text = incoming
-    } else if (last.pending || last.text === '小V处理中…') {
+    } else if (last.pending || last.text === '小Q处理中…') {
       last.text = incoming || ''
     }
     last.pending = false
@@ -849,7 +849,7 @@ export async function stopXiaomiChat() {
 }
 
 /**
- * 在当前小V会话内开新轮次：清空 transcript，换新 LangGraph thread（session_key 不变）。
+ * 在当前小Q会话内开新轮次：清空 transcript，换新 LangGraph thread（session_key 不变）。
  * 对齐智能体员工「每轮新 thread」的隔离感，避免一直叠在超长历史上。
  * @returns {Promise<string>} sessionKey
  */
@@ -901,7 +901,7 @@ function isXiaomiSessionRow(row) {
   const sk = String(row.sessionKey || row.key || '').toLowerCase()
   if (sk.includes('xiaomi')) return true
   const title = String(row.title || '')
-  if (title.includes('小V')) return true
+  if (title.includes('小Q')) return true
   return false
 }
 
@@ -915,7 +915,7 @@ function normalizeXiaomiSessionRow(row) {
   }
 }
 
-/** 拉取小V 历史会话列表（写入 store.xiaomiSessions） */
+/** 拉取小Q 历史会话列表（写入 store.xiaomiSessions） */
 export async function refreshXiaomiSessionList() {
   patchState({ xiaomiSessionsLoading: true })
   try {
@@ -942,7 +942,7 @@ export async function refreshXiaomiSessionList() {
 }
 
 /**
- * 切换到已有小V 会话并加载历史。
+ * 切换到已有小Q 会话并加载历史。
  * @param {string} sessionKey
  */
 export async function switchXiaomiSession(sessionKey) {
@@ -988,7 +988,7 @@ export async function switchXiaomiSession(sessionKey) {
 }
 
 /**
- * 新开一个小V 对话会话（新 session_key，不复用旧线程）。
+ * 新开一个小Q 对话会话（新 session_key，不复用旧线程）。
  * @returns {Promise<string>}
  */
 export async function startXiaomiNewChat() {
@@ -1009,7 +1009,7 @@ export async function startXiaomiNewChat() {
     },
   })
   const key = String(row?.sessionKey || row?.key || '').trim()
-  if (!key) throw new Error('创建小V会话失败')
+  if (!key) throw new Error('创建小Q会话失败')
   writeStoredSessionKey(key)
   patchState(
     {

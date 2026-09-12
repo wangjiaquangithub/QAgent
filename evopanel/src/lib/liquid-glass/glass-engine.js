@@ -1,8 +1,8 @@
 /**
- * EvoFlow WebGL 液态玻璃引擎（基于 DSH glass-shader，MIT）
+ * QAgent WebGL 液态玻璃引擎（基于 DSH glass-shader，MIT）
  */
 import { attachLiquidGlassShader, DEFAULT_GLASS_SHADER_OPTIONS } from './glass-shader.js'
-import { collectEvoFlowGlassGeometry } from './dom-geometry.js'
+import { collectQAgentGlassGeometry } from './dom-geometry.js'
 import { BACKGROUND_EVENT } from '../appearance-background.js'
 import {
   paintLiquidGlassScene,
@@ -112,7 +112,7 @@ export function startGlassEngine() {
 
   const hooks = {
     drawScene,
-    collectGeometry: collectEvoFlowGlassGeometry,
+    collectGeometry: collectQAgentGlassGeometry,
   }
 
   if (_shader?.active) {

@@ -156,7 +156,7 @@ class PatchedChatOpenAI(VendorRoundtripChatMixin, ChatOpenAI):
         """Preserve provider-specific reasoning fields into additional_kwargs.reasoning_content.
 
         DashScope (OpenAI-compatible) emits streamed thinking in `delta.reasoning_content`.
-        EvoFlow frontend expects `additional_kwargs.reasoning_content`, so we map it here.
+        QAgent frontend expects `additional_kwargs.reasoning_content`, so we map it here.
         """
         # Delegate to upstream implementation for standard parsing.
         gen = super()._convert_chunk_to_generation_chunk(chunk, default_chunk_class, base_generation_info)

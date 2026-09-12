@@ -1,6 +1,6 @@
-# EvoFlow Observability Mock Frontend
+# QAgent Observability Mock Frontend
 
-这是一个基于 **Vite + React + TypeScript** 的 EvoFlow 观测平台前端 mock 项目。
+这是一个基于 **Vite + React + TypeScript** 的 QAgent 观测平台前端 mock 项目。
 
 已包含页面：
 

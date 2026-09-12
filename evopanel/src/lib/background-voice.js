@@ -46,7 +46,7 @@ import { createPttController, PTT_SHORT_PRESS_HINT } from './voice-ptt.js'
 /** @type {boolean} */
 let wakeWordEnabled = false
 
-const TRAY_BASE = 'EvoFlow'
+const TRAY_BASE = 'QAgent'
 
 /** @type {boolean} */
 let inited = false
@@ -406,7 +406,7 @@ export async function initBackgroundVoice() {
 let wakeWordBackend = null
 
 /**
- * Toggle wake word detection (「小V小V」).
+ * Toggle wake word detection (「小Q小Q」).
  * Prefer local sherpa-onnx KWS; if WASM missing, fall back to Web Speech API.
  * On hit → auto-starts continuous voice mode.
  * @param {boolean} [enable] true=on, false=off, undefined=toggle
@@ -425,12 +425,12 @@ export async function toggleWakeWord(enable) {
           wakeWordEnabled = true
           wakeWordBackend = 'kws'
           window.addEventListener('wake-word-hit', onWakeWordHit)
-          console.log('[background-voice] Wake word ear ON (local KWS · 小V小V)')
+          console.log('[background-voice] Wake word ear ON (local KWS · 小Q小Q)')
           return true
         }
       } else {
         console.info(
-          '[background-voice] KWS WASM missing — trying Web Speech wake (say 小V小V). Optional: node scripts/download-kws-model.js',
+          '[background-voice] KWS WASM missing — trying Web Speech wake (say 小Q小Q). Optional: node scripts/download-kws-model.js',
         )
       }
     } catch (e) {
@@ -450,7 +450,7 @@ export async function toggleWakeWord(enable) {
         wakeWordEnabled = true
         wakeWordBackend = 'webspeech'
         window.addEventListener('wake-word-hit', onWakeWordHit)
-        console.log('[background-voice] Wake word ear ON (Web Speech · 小V小V)')
+        console.log('[background-voice] Wake word ear ON (Web Speech · 小Q小Q)')
         return true
       }
     } catch (e) {
@@ -496,7 +496,7 @@ async function onWakeWordHit() {
   // Re-entrancy guard: Web Speech may fire multiple hits while we start listening.
   if (onWakeWordHit._busy) return
   onWakeWordHit._busy = true
-  console.log('[background-voice] Wake word hit! Opening 小V...')
+  console.log('[background-voice] Wake word hit! Opening 小Q...')
 
   try {
     await openXiaomiForWake()
@@ -545,7 +545,7 @@ async function onWakeWordHit() {
 async function acknowledgeWakeHit() {
   try {
     const { toast } = await import('../components/toast.js')
-    toast('小V在听，请说…', 'info')
+    toast('小Q在听，请说…', 'info')
   } catch {
     /* ignore */
   }
@@ -577,7 +577,7 @@ async function runWebSpeechCommandTurn() {
     const cleaned = String(text || '').trim()
     if (!cleaned) {
       const { toast } = await import('../components/toast.js')
-      toast('没听清，再说一次「小V小V」', 'warning')
+      toast('没听清，再说一次「小Q小Q」', 'warning')
       void setVoiceTrayState('idle')
       return
     }
@@ -707,7 +707,7 @@ export async function toggleContinuousMode(opts = {}) {
   const sendReady = isVoiceSendHandlerReady() || isXiaomiVoiceSendHandlerReady()
   if (!sendReady) {
     const { toast } = await import('../components/toast.js')
-    toast('小V尚未就绪，请稍后再试', 'warning')
+    toast('小Q尚未就绪，请稍后再试', 'warning')
     return false
   }
 
@@ -874,7 +874,7 @@ export async function handleVoiceCommandText(text, opts = {}) {
 
 /**
  * Pause conversation listening (continuous / follow-up). Wake-word ear stays on
- * so the user can say 「小V小V」 to resume.
+ * so the user can say 「小Q小Q」 to resume.
  * @param {{ reason?: 'voice' | 'button' | 'reset', silent?: boolean }} [opts]
  */
 export async function pauseConversationListening(opts = {}) {
@@ -922,7 +922,7 @@ export async function pauseConversationListening(opts = {}) {
   if (!silent) {
     try {
       const { toast } = await import('../components/toast.js')
-      toast('已暂停监听，再说「小V小V」继续', 'info')
+      toast('已暂停监听，再说「小Q小Q」继续', 'info')
     } catch {
       /* ignore */
     }

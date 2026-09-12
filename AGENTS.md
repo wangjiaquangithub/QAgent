@@ -1,18 +1,16 @@
-# EvoFlow
+# QAgent
 
-本项目的 AI 可消费知识库位于 [`.codebasewiki/`](./.codebasewiki/)(多工具按 [AGENTS.md 标准](https://agents.md/) 自动发现本文件)。
+## AI 代码检索约定
 
-## 检索约定(AI 默认先查知识库)
-处理「代码在哪 / 某模块怎么工作 / 某概念涉及哪些文件」前:
-1. 先读 `.codebasewiki/index/index.md`(模块地图)+ `index/architecture.md`(整体架构),再下钻;
-2. 关键词 → 源文件用 `/codebase-navigator <关键词>`(四层索引,<10s 定位);
-3. 全项目 Grep 是最后手段,不是默认。已知确切路径的简单查找仍可直接 Read/Grep。
+目标是先快速、可靠地定位代码；不要为了检索而等待重型索引或执行全库分析。
 
-## 五环闭环
-- **建库**:`/codebase-bootstrap` 或 `python .claude/skills/codebase-bootstrap/scripts/bootstrap.py`
-- **检索**:`/codebase-navigator <关键词>`
-- **沉淀**:会话结束自动(Stop hook → codebase-compound)
-- **编排验证**:`/codebase-loop verify`
-- **质量审**:`/codebase-wiki`(审 .codebasewiki/ 断链/缺节/frontmatter)
+1. **已知路径或明确文件名**：直接 Read / Grep 对应文件。
+2. **函数、类、字段、报错文本或业务关键词**：优先使用范围受控的 `rg`（先限定目录或文件类型；必要时再扩大范围）。
+3. **理解局部实现**：读取命中点及其直接调用方/被调用方，不做无关的全项目遍历。
+4. **跨模块调用链、依赖关系或大范围改动影响评估**：先用源码搜索和针对性阅读；只有在已明确可用、且结果确实能缩小范围的架构索引工具存在时，才将其作为可选辅助，不能阻塞普通开发任务。
 
-详见 `.claude/skills/codebase-wiki/SKILL.md`。
+## 当前索引状态
+
+- `.codebasewiki/` 与 `.claude/` 当前不在仓库中，因此不得把它们或 `/codebase-navigator`、`/codebase-bootstrap` 等命令当作处理任务的前置条件。
+- CodeSynapse 当前在 Codex 中已禁用；不要将它用作默认检索路径。
+- 如果将来重新建立并维护轻量知识库，可将它作为补充导航资料；索引缺失、过期或查询缓慢时，应立即回退到直接读文件和精准搜索。

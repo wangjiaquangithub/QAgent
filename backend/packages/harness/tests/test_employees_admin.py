@@ -82,7 +82,7 @@ def test_employees_hire_update_pause_resume(sqlite_tmp: Path) -> None:
             "agent_code": "code-reviewer",
             "role_name": "巡检员",
             "responsibilities": ["巡检 lint"],
-            "workspace_path": "D:/example/EvoFlow",
+            "workspace_path": "D:/example/QAgent",
             "kpis": ["0 errors"],
         }
     )
@@ -456,7 +456,7 @@ def test_employees_update_reports_to(sqlite_tmp: Path) -> None:
         {
             "agent_code": "product-manager",
             "role_name": "产品经理",
-            "workspace_path": "D:/example/EvoFlow",
+            "workspace_path": "D:/example/QAgent",
             "responsibilities": ["统筹"],
         }
     )
@@ -464,7 +464,7 @@ def test_employees_update_reports_to(sqlite_tmp: Path) -> None:
         {
             "agent_code": "fe-dev",
             "role_name": "前端",
-            "workspace_path": "D:/example/EvoFlow",
+            "workspace_path": "D:/example/QAgent",
             "responsibilities": ["前端开发"],
         }
     )

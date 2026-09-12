@@ -108,7 +108,7 @@ describe('formatToolDisplayTitle', () => {
     const tool = {
       name: '工具',
       input: {
-        path: 'D:\\github\\EvoFlow\\backend\\app\\channels\\manager.py',
+        path: 'D:\\github\\QAgent\\backend\\app\\channels\\manager.py',
         offset: '1300',
         limit: '200',
       },

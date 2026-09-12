@@ -21,7 +21,7 @@ describe('toUserFacingError', () => {
   })
 
   it('maps gateway errors', () => {
-    expect(toUserFacingError('请重启 EvoFlow Gateway 后重试')).toBe(
+    expect(toUserFacingError('请重启 QAgent Gateway 后重试')).toBe(
       '服务连接异常，请确认服务已启动后重试',
     )
   })

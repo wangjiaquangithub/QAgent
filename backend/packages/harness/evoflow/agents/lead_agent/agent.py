@@ -546,7 +546,7 @@ def _create_todo_list_middleware(is_plan_mode: bool) -> TodoMiddleware | None:
     if not is_plan_mode:
         return None
 
-    # Custom prompts matching EvoFlow's style
+    # Custom prompts matching QAgent's style
     system_prompt = """
 <todo_list_system>
 You have access to the `write_todos` tool to help you manage and track complex multi-step objectives.
@@ -810,7 +810,7 @@ def _build_middlewares(config: RunnableConfig, model_name: str | None, agent_nam
     middlewares.append(ScenarioRuntimeHintMiddleware())
     # Fresh plan/task snapshot at end of message list every model call (survives prompt fingerprint skip + summarization).
     middlewares.append(CollabThreadLiveContextFooterMiddleware())
-    # 小V：当前页快照走 ephemeral Human（name=xiaomi_ui_context），不进 system，保前缀缓存。
+    # 小Q：当前页快照走 ephemeral Human（name=xiaomi_ui_context），不进 system，保前缀缓存。
     middlewares.append(XiaomiUiContextLiveFooterMiddleware())
 
     # Add SubagentLimitMiddleware to truncate excess parallel task calls
@@ -1552,7 +1552,7 @@ def make_lead_agent(config: RunnableConfig, runtime: ServerRuntime | None = None
     tools = _strip_mind_map_tools(tools)
     all_tools = _strip_mind_map_tools(all_tools)
 
-    # 小V（xiaomi）：平台管家工具白名单 + 传讯三件套（与 main / 员工工具面分离）。
+    # 小Q（xiaomi）：平台管家工具白名单 + 传讯三件套（与 main / 员工工具面分离）。
     try:
         from evoflow.agents.xiaomi.identity import is_xiaomi_agent
         from evoflow.agents.xiaomi.tools import get_xiaomi_tools

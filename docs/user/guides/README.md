@@ -2,7 +2,7 @@
 
 > **面对这份文档目录，你可能想知道"我该先看哪个"**：
 >
-> - **第一次用**：从 [getting-started/](../getting-started/introduction.md) [[getting-started/introduction|介绍]] 开始，了解 EvoFlow 能做什么，然后下载安装
+> - **第一次用**：从 [getting-started/](../getting-started/introduction.md) [[getting-started/introduction|介绍]] 开始，了解 QAgent 能做什么，然后下载安装
 > - **想上手试试**：看 [5 分钟快速上手](../getting-started/quick-start.md) [[getting-started/quick-start|快速上手]] 和 [完成第一个任务](../getting-started/first-task.md) [[getting-started/first-task|第一个任务]]
 > - **想了解某个功能**：按模块看——聊天模式、Plan 模式、目标、角色管理、知识库、自动化……
 > - **遇到问题**：先看 [FAQ](faq.md) [[guides/faq|FAQ]]，没找到就去 GitHub Issues
@@ -35,7 +35,7 @@
 | 主题 | 文档 |
 |------|------|
 | 面板设置 | [settings.md](configuration/settings.md) [[guides/configuration/settings|面板设置]] |
-| EvoFlow 桌面端使用指南 | [evopanel-guide.md](configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|桌面端使用指南]] |
+| QAgent 桌面端使用指南 | [evopanel-guide.md](configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|桌面端使用指南]] |
 | 智能体（角色）管理 | [agent-management.md](configuration/agent-management.md) [[guides/configuration/agent-management|智能体管理]] |
 | 智能体员工（值班岗） | [smart-employees.md](configuration/smart-employees.md) [[guides/configuration/smart-employees|智能体员工]] · 教程 [雇佣第一个员工](../tutorials/hire-first-smart-employee.md) [[tutorials/hire-first-smart-employee|雇佣第一个员工]] · 概念 [是什么](../explanation/smart-employees.md) [[explanation/smart-employees|智能体员工是什么]] |
 | 技能管理 | [skill-management.md](configuration/skill-management.md) [[guides/configuration/skill-management|技能管理]] |
@@ -68,13 +68,13 @@
 
 ---
 
-延伸阅读：[原理说明（explanation/）](../explanation/why-evoflow.md) [[explanation/why-evoflow|为什么 EvoFlow]] · [案例实践（cases/）](../cases/index.md) [[cases/index|案例实践]]
+延伸阅读：[原理说明（explanation/）](../explanation/why-evoflow.md) [[explanation/why-evoflow|为什么 QAgent]] · [案例实践（cases/）](../cases/index.md) [[cases/index|案例实践]]
 
 ---
 
 ## 相关阅读
 
-- [[getting-started/introduction|产品介绍]] — EvoFlow 能力总览
+- [[getting-started/introduction|产品介绍]] — QAgent 能力总览
 - [[getting-started/quick-start|快速上手]] — 5 分钟上手
-- [[explanation/why-evoflow|为什么 EvoFlow]] — 设计理念
+- [[explanation/why-evoflow|为什么 QAgent]] — 设计理念
 - [[cases/index|案例实践]] — 真实场景案例

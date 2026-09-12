@@ -12,7 +12,7 @@ from evoflow.assets.workspace_memory_policy import (
 def test_ephemeral_content_rejected() -> None:
     assert is_workspace_ephemeral_content("hello world test")
     assert is_workspace_ephemeral_content("本次已重写组件")
-    assert not is_workspace_ephemeral_content("EvoFlow backend 使用 FastAPI Gateway 路由注册")
+    assert not is_workspace_ephemeral_content("QAgent backend 使用 FastAPI Gateway 路由注册")
 
 
 def test_should_persist_module_fact() -> None:

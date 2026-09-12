@@ -243,7 +243,7 @@ _ALLOWED_INVOKE_OBS_KINDS = frozenset({"hosted_panel", "hosted_closure"})
 
 
 class ModelInvokeRequest(BaseModel):
-    """Invoke a configured EvoFlow model (same stack as main chat)."""
+    """Invoke a configured QAgent model (same stack as main chat)."""
 
     model_name: str | None = Field(
         default=None,
@@ -287,7 +287,7 @@ def _extract_invoke_text(content: object) -> str:
     "/models/invoke",
     response_model=ModelInvokeResponse,
     summary="Invoke configured model",
-    description="Run one chat completion using EvoFlow DB-backed model config, same as the main agent stack.",
+    description="Run one chat completion using QAgent DB-backed model config, same as the main agent stack.",
 )
 async def invoke_configured_model(request: ModelInvokeRequest) -> ModelInvokeResponse:
     from langchain_core.messages import AIMessage, HumanMessage, SystemMessage

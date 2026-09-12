@@ -1,5 +1,5 @@
 /**
- * Strip TypeScript from copied glass-shader and inject EvoFlow geometry hooks.
+ * Strip TypeScript from copied glass-shader and inject QAgent geometry hooks.
  */
 import fs from 'node:fs'
 import path from 'node:path'

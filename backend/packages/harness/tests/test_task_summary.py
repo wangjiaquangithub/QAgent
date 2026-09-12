@@ -68,34 +68,34 @@ def test_normalize_task_outputs_repairs_path_label_pseudo_json():
     """Agents often emit ``[{path.md,label:标题}]`` instead of JSON."""
     messy = (
         "[{docs/roles/evoflow-marketing-director/20260722-14/"
-        "抖音口播稿_EvoFlow智能体员工.md,label:抖音口播稿 - EvoFlow智能体员工}]"
+        "抖音口播稿_QAgent智能体员工.md,label:抖音口播稿 - QAgent智能体员工}]"
     )
     items = normalize_task_outputs(messy)
     assert len(items) == 1
     assert items[0]["type"] == "file"
-    assert items[0]["value"].endswith("抖音口播稿_EvoFlow智能体员工.md")
+    assert items[0]["value"].endswith("抖音口播稿_QAgent智能体员工.md")
     assert "," not in items[0]["value"]
-    assert items[0]["label"] == "抖音口播稿 - EvoFlow智能体员工"
+    assert items[0]["label"] == "抖音口播稿 - QAgent智能体员工"
 
     # Already-persisted dirty value field also repairs on read/normalize.
     dirty_value = (
-        "docs/roles/x/20260722-14/抖音口播稿_EvoFlow智能体员工.md,"
-        "label:抖音口播稿 - EvoFlow智能体员工}]"
+        "docs/roles/x/20260722-14/抖音口播稿_QAgent智能体员工.md,"
+        "label:抖音口播稿 - QAgent智能体员工}]"
     )
     one = normalize_task_outputs([{"type": "file", "key": "a", "value": dirty_value}])
-    assert one[0]["value"].endswith("抖音口播稿_EvoFlow智能体员工.md")
-    assert one[0]["label"] == "抖音口播稿 - EvoFlow智能体员工"
+    assert one[0]["value"].endswith("抖音口播稿_QAgent智能体员工.md")
+    assert one[0]["label"] == "抖音口播稿 - QAgent智能体员工"
 
 
 def test_normalize_task_outputs_repairs_type_key_value_blob():
     blob = (
         "type:file,key:口播稿,value:docs/roles/evoflow-marketing-director/"
-        "20260722-14/抖音口播稿_EvoFlow智能体员工.md"
+        "20260722-14/抖音口播稿_QAgent智能体员工.md"
     )
     items = normalize_task_outputs(blob)
     assert len(items) == 1
     assert items[0]["key"] == "口播稿"
-    assert items[0]["value"].endswith("抖音口播稿_EvoFlow智能体员工.md")
+    assert items[0]["value"].endswith("抖音口播稿_QAgent智能体员工.md")
     assert "type:" not in items[0]["value"]
 
     nested = normalize_task_outputs(
@@ -104,12 +104,12 @@ def test_normalize_task_outputs_repairs_type_key_value_blob():
                 "type": "file",
                 "key": "script",
                 "value": blob,
-                "label": "抖音口播稿 - EvoFlow智能体员工",
+                "label": "抖音口播稿 - QAgent智能体员工",
             }
         ]
     )
-    assert nested[0]["value"].endswith("抖音口播稿_EvoFlow智能体员工.md")
-    assert nested[0]["label"] == "抖音口播稿 - EvoFlow智能体员工"
+    assert nested[0]["value"].endswith("抖音口播稿_QAgent智能体员工.md")
+    assert nested[0]["label"] == "抖音口播稿 - QAgent智能体员工"
 
 
 def test_evidence_paths_roundtrip():

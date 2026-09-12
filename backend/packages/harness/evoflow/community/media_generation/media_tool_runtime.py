@@ -44,7 +44,7 @@ def media_providers_runtime_hint(*, lang: str = "zh") -> str:
         if not image and not video:
             return (
                 "<media_providers_runtime>\n"
-                "当前**无可用**媒体生图/生视频渠道。请配置环境变量（如 `VOLCENGINE_API_KEY`、`AGNES_API_KEY`）或在 EvoFlow 设置 → 模型 → 创意媒体 中填写并启用。"
+                "当前**无可用**媒体生图/生视频渠道。请配置环境变量（如 `VOLCENGINE_API_KEY`、`AGNES_API_KEY`）或在 QAgent 设置 → 模型 → 创意媒体 中填写并启用。"
                 "**禁止**在工具参数中传入 `wan`、`kling` 或任何未在下列列表中的 provider。\n"
                 "</media_providers_runtime>"
             )
@@ -65,7 +65,7 @@ def media_providers_runtime_hint(*, lang: str = "zh") -> str:
     if not image and not video:
         return (
             "<media_providers_runtime>\n"
-            "No media image/video providers are configured. Set env vars (e.g. VOLCENGINE_API_KEY, AGNES_API_KEY) or configure EvoFlow Settings → Models → Creative Media. "
+            "No media image/video providers are configured. Set env vars (e.g. VOLCENGINE_API_KEY, AGNES_API_KEY) or configure QAgent Settings → Models → Creative Media. "
             "Do not pass `wan`, `kling`, or other providers in tool args.\n"
             "</media_providers_runtime>"
         )

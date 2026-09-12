@@ -668,7 +668,7 @@ def build_thread_live_context_appendix(thread_id: str | None, *, prompt_language
 
 
 def _is_xiaomi_lead_run(agent_name: str | None) -> bool:
-    """True only for the dedicated 小V agent (``xiaomi``), never default ``main``."""
+    """True only for the dedicated 小Q agent (``xiaomi``), never default ``main``."""
     try:
         from evoflow.agents.xiaomi.identity import is_xiaomi_agent
 
@@ -1929,7 +1929,7 @@ def apply_prompt_template(
             bootstrap_mode = True
 
     # Employee user-chat (proactive:{code}/:task:/:chat:) → dedicated v2 skeleton.
-    # Not duty handbook; not generic EvovexAI <role> + employee_posting stack.
+    # Not duty handbook; not generic Quclouds <role> + employee_posting stack.
     employee_ok = False
     emp_identity = None
     if not _is_xiaomi_lead_run(agent_name):

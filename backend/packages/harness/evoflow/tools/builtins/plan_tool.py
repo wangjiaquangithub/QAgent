@@ -507,7 +507,7 @@ def _plan_tool_impl(
     bound = bool(bind_meta.get("bound"))
     if thread_id and not bound:
         bind_err = str(bind_meta.get("bindError") or "").strip() or (
-            "计划未写入任务表。请完全重启 EvoFlow Gateway 以执行数据库迁移，然后重新提交 plan。"
+            "计划未写入任务表。请完全重启 QAgent Gateway 以执行数据库迁移，然后重新提交 plan。"
         )
         return json.dumps(
             {

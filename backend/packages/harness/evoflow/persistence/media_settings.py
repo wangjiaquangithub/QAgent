@@ -182,7 +182,7 @@ def vendor_setup_hint(vendor_id: str) -> str:
     label = VENDOR_UI_LABELS.get(vendor, vendor_id)
     return (
         f"未配置或未启用 {label}。"
-        f"请在 EvoFlow → 设置 → 模型 → 创意媒体 → {label} 填写凭据并打开启用开关。"
+        f"请在 QAgent → 设置 → 模型 → 创意媒体 → {label} 填写凭据并打开启用开关。"
     )
 
 

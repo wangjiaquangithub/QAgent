@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# deploy.sh - Build and start (or stop) EvoFlow production services
+# deploy.sh - Build and start (or stop) QAgent production services
 #
 # Usage:
 #   deploy.sh [up]   — build images and start containers (default)
@@ -153,7 +153,7 @@ fi
 # ── Banner ────────────────────────────────────────────────────────────────────
 
 echo "=========================================="
-echo "  EvoFlow Production Deployment"
+echo "  QAgent Production Deployment"
 echo "=========================================="
 echo ""
 
@@ -199,7 +199,7 @@ echo ""
 
 echo ""
 echo "=========================================="
-echo "  EvoFlow is running!"
+echo "  QAgent is running!"
 echo "=========================================="
 echo ""
 echo "  🌐 LangGraph:   http://localhost:2024"

@@ -1,4 +1,4 @@
-# EvoFlow 文档
+# QAgent 文档
 
 面向用户的操作文档在此维护；贡献与源码流程见仓库根目录治理文件。
 
@@ -17,7 +17,7 @@
 | 📨 [IM 渠道](user/guides/integration/im-channels.md) | 飞书 / 微信等 |
 | 🔒 [安全护栏](user/guides/security/guardrails.md) | 本地安装注意点 |
 | ❓ [FAQ](user/guides/faq.md) | 常见问题 |
-| 🏗️ [为什么用 EvoFlow](user/explanation/why-evoflow.md) | 概念与边界 |
+| 🏗️ [为什么用 QAgent](user/explanation/why-evoflow.md) | 概念与边界 |
 | 🤝 [贡献者指南](contribute/index.md) | 仓库地图 · 代码 Wiki · 分支 · Skill · 渠道 · RFC |
 | 🗺️ [代码知识库 Wiki](contribute/codebase-wiki.md) | `.codebasewiki/` 模块地图与架构 |
 | 🌱 [Good First Issue / Discussions](contribute/discussions-and-good-first-issues.md) | 新人任务与社区分类 |

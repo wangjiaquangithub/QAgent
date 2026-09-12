@@ -160,7 +160,7 @@ def web_extract_tool(
         try:
             req = urllib.request.Request(
                 url,
-                headers={"User-Agent": "Mozilla/5.0 (compatible; EvoFlow/1.0)"},
+                headers={"User-Agent": "Mozilla/5.0 (compatible; QAgent/1.0)"},
             )
             resp = urllib.request.urlopen(req, timeout=30)
             html = resp.read().decode("utf-8", errors="replace")

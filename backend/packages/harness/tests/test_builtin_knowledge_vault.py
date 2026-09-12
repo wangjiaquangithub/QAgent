@@ -18,7 +18,7 @@ def vault_home(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     home.mkdir()
     src = tmp_path / "docs_user"
     src.mkdir()
-    (src / "README.md").write_text("# User guide\n\nHow to use EvoFlow.\n", encoding="utf-8")
+    (src / "README.md").write_text("# User guide\n\nHow to use QAgent.\n", encoding="utf-8")
     (src / "guides").mkdir()
     (src / "guides" / "quick.md").write_text("# Quick start\n\nInstall then open panel.\n", encoding="utf-8")
 

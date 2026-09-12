@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 WIKI = ROOT / ".codebasewiki" / "codebase"
 TODAY = date.today().isoformat()
 
-# Short Chinese blurbs for known EvoFlow modules (fallback = generic).
+# Short Chinese blurbs for known QAgent modules (fallback = generic).
 BLURBS: dict[str, tuple[str, list[str]]] = {
     "a2a": ("Agent-to-Agent 协议钩子，便于跨 Agent 互操作。", ["暴露 A2A 接入点", "与 harness 运行时协作"]),
     "admin": ("配置与持久化管理服务，避免业务工具直接耦合管理面。", ["配置读写", "管理侧服务边界"]),
@@ -341,7 +341,7 @@ def fill_module(mod_dir: Path) -> bool:
     rows = top_level_rows(src, files)
 
     # enrich blurb from docstring
-    blurb, goals = BLURBS.get(mod, (f"`{mod}` 是 EvoFlow harness/backend 中的功能模块。", ["提供本目录内能力", "被上层安全调用"]))
+    blurb, goals = BLURBS.get(mod, (f"`{mod}` 是 QAgent harness/backend 中的功能模块。", ["提供本目录内能力", "被上层安全调用"]))
     for e in entries[:2]:
         text = read_text(ROOT / e["path"], 60)
         doc = first_docstring(text)

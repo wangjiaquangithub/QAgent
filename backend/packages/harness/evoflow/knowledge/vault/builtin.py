@@ -1,10 +1,10 @@
 """System-builtin Obsidian Knowledge Vaults.
 
-1. **用户指南** — SSOT EvoFlow ``docs/user/`` (packaged under ``user-guide/``), read-only.
+1. **用户指南** — SSOT QAgent ``docs/user/`` (packaged under ``user-guide/``), read-only.
 2. **运营知识库** — SSOT ContentOS ``docs/智能内容运营平台/知识库/``
    (optional packaged snapshot under ``ops-knowledge/``), read-write.
 
-On Gateway startup we register both so 小V / ``knowledge`` tools can search them.
+On Gateway startup we register both so 小Q / ``knowledge`` tools can search them.
 Dev checkouts point 运营知识库 at the live ContentOS tree (sibling checkout).
 """
 
@@ -21,13 +21,13 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 BUILTIN_USER_GUIDE_VAULT_ID = "evoflow-user-guide"
-BUILTIN_USER_GUIDE_VAULT_NAME = "EvoFlow 用户指南"
+BUILTIN_USER_GUIDE_VAULT_NAME = "QAgent 用户指南"
 
 BUILTIN_OPS_KNOWLEDGE_VAULT_ID = "evoflow-ops-knowledge"
 BUILTIN_OPS_KNOWLEDGE_VAULT_NAME = "运营知识库"
 
 BUILTIN_ASSET_VAULT_ID = "evoflow-assets"
-BUILTIN_ASSET_VAULT_NAME = "EvoFlow 资产中心"
+BUILTIN_ASSET_VAULT_NAME = "QAgent 资产中心"
 
 _SOURCE_MARKER = ".vault_source"
 _ASSET_USER_GUIDE = Path("assets") / "builtin_knowledge_vaults" / "user-guide"
@@ -99,7 +99,7 @@ def _repo_docs_user() -> Path | None:
 
 
 def _evoflow_repo_root() -> Path | None:
-    """Locate EvoFlow repo root (has ``docs/user`` + ``backend``)."""
+    """Locate QAgent repo root (has ``docs/user`` + ``backend``)."""
     here = Path(__file__).resolve()
     for parent in here.parents:
         if (parent / "docs" / "user").is_dir() and (parent / "backend").is_dir():
@@ -116,7 +116,7 @@ def contentos_ops_knowledge_src() -> Path | None:
 
     Resolution order:
     1. ``EVOFLOW_OPS_KNOWLEDGE_ROOT`` or ``CONTENTOS_KNOWLEDGE_ROOT``
-    2. Sibling ``../ContentOS/...`` or ``../evo/ContentOS/...`` next to EvoFlow
+    2. Sibling ``../ContentOS/...`` or ``../evo/ContentOS/...`` next to QAgent
     3. ``CONTENTOS_ROOT`` / docs/...
     """
     for key in ("EVOFLOW_OPS_KNOWLEDGE_ROOT", "CONTENTOS_KNOWLEDGE_ROOT"):
@@ -333,7 +333,7 @@ def resolve_ops_knowledge_vault_path(*, force_materialize: bool = False) -> Path
 def resolve_ops_knowledge_vault_path_result(*, force_materialize: bool = False) -> dict[str, Any]:
     """Prefer live ContentOS 知识库; else materialize packaged snapshot.
 
-    Writing stays in ContentOS; EvoFlow only mounts the path as builtin Vault.
+    Writing stays in ContentOS; QAgent only mounts the path as builtin Vault.
     Live ContentOS trees are never copied — ``contentUpdated`` is False (index
     freshness is the operator's responsibility / write-path auto-reindex).
     """

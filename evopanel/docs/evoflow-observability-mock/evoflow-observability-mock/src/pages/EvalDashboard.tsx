@@ -59,7 +59,7 @@ export function EvalDashboard() {
       <header className="topbar">
         <div className="page-title">
           <h1>健康总览 Eval Dashboard</h1>
-          <p>EvoFlow 整体健康度与核心指标总览</p>
+          <p>QAgent 整体健康度与核心指标总览</p>
         </div>
         <div className="filter-row">
           <DataSourceBadge source={summary.dataSource} />

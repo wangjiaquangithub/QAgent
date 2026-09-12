@@ -1,4 +1,4 @@
-"""Bridge Hermes ``MemoryManager`` to EvoFlow's external-memory orchestrator API."""
+"""Bridge Hermes ``MemoryManager`` to QAgent's external-memory orchestrator API."""
 
 from __future__ import annotations
 

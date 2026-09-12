@@ -57,7 +57,7 @@ async def get_thread_tool_timeline(request: Request,
 async def delete_thread_data(request: Request, thread_id: str) -> ThreadDeleteResponse:
     """Delete local persisted filesystem data for a thread.
 
-    This endpoint only cleans EvoFlow-managed thread directories. LangGraph
+    This endpoint only cleans QAgent-managed thread directories. LangGraph
     thread state deletion remains handled by the LangGraph API.
     """
     require_thread_visible(request, thread_id)

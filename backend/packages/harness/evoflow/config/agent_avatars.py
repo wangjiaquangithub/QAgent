@@ -24,7 +24,7 @@ _BUNDLED_AVATARS_DIR = (
 )
 
 # Codes without their own cutout file → reuse another packaged asset.
-# NOTE: 小V must NOT alias to ``main`` (male lead cutout). Default is gallery
+# NOTE: 小Q must NOT alias to ``main`` (male lead cutout). Default is gallery
 # ``preset:analyst`` (see agents_config._XIAOMI_DEFAULT_AVATAR).
 _BUNDLED_AVATAR_ALIASES: dict[str, str] = {}
 

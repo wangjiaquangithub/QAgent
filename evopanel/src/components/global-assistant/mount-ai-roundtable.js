@@ -1,5 +1,5 @@
 /**
- * 将 AIRoundtableRoom React UI 挂到小V根节点（全屏会议室）
+ * 将 AIRoundtableRoom React UI 挂到小Q根节点（全屏会议室）
  */
 import { createElement } from 'react'
 import { createRoot } from 'react-dom/client'

@@ -1,4 +1,4 @@
-"""EvoFlow admin services — config/persistence operations without tools coupling."""
+"""QAgent admin services — config/persistence operations without tools coupling."""
 
 from evoflow.admin import (
     agents,

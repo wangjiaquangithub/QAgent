@@ -29,7 +29,7 @@ class RuntimePathsResponse(BaseModel):
 
 
 class UpdatePathsRequest(BaseModel):
-    base_dir: str = Field(..., description="Absolute path for EvoFlow base_dir (data root)")
+    base_dir: str = Field(..., description="Absolute path for QAgent base_dir (data root)")
 
 
 @router.get("", response_model=RuntimePathsResponse)

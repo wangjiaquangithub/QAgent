@@ -14,7 +14,7 @@ const ACTION_CARDS: Array<{
   {
     id: 'intro',
     title: EVOFLOW_INTRO_SELF_LABEL,
-    desc: '了解 EvoFlow 的核心能力\n与使用方式',
+    desc: '了解 QAgent 的核心能力\n与使用方式',
     iconSrc: `${CARD_ASSET_BASE}/intro_icon.png`,
     illustrationSrc: `${CARD_ASSET_BASE}/intro_3d.png`,
     prompt: EVOFLOW_INTRO_SELF_PROMPT,
@@ -80,7 +80,7 @@ export function QuickStartPanel({ onPrompt }: { onPrompt?: (text: string) => voi
       <div className="quick-start-header">
         <h2 className="quick-start-title">
           欢迎来到{' '}
-          <span className="quick-start-title-brand">EvoFlow</span>
+          <span className="quick-start-title-brand">QAgent</span>
           {' '}&#x1F44B;
         </h2>
         <p className="quick-start-desc">选择一个功能快速开始，或直接输入你的想法和任务</p>

@@ -379,7 +379,7 @@ Function PageLeaveReinstall
       Abort
     ${EndIf}
 
-    ; --- EvoFlow: post-uninstall safety net -----------------------------------
+    ; --- QAgent: post-uninstall safety net -----------------------------------
     ; Old uninstallers may miss multi-pass kill; leftover
     ; evoflow-gateway (+ kb-mcp node) may lock _internal / knowledge assets.
     ; Re-run latest kill (desktop tree first, then gateway leftovers) before copy.

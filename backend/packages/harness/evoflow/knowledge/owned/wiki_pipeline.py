@@ -144,7 +144,7 @@ async def run_wiki_ingest(job: dict[str, Any]) -> None:
     lines = ["# 知识库索引", "", f"共 {len(summary_slugs)} 篇文档摘要。", "", "## 文档", ""]
     for slug, title in summary_slugs:
         lines.append(f"- [[{slug}|{title}]]")
-    lines.extend(["", "## 说明", "", "本索引由 EvoFlow Wiki 管线自动生成；可手动编辑页面正文。", ""])
+    lines.extend(["", "## 说明", "", "本索引由 QAgent Wiki 管线自动生成；可手动编辑页面正文。", ""])
     # Also list existing summary pages if rebuild without docs filter emptied
     if not summary_slugs:
         for p in wiki.list_pages(kb_id, page_type="summary"):

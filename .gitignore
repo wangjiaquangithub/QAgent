@@ -1,4 +1,4 @@
-# EvoFlow docker image cache
+# QAgent docker image cache
 docker/.cache/
 # oh-my-claudecode state
 .omc/
@@ -92,7 +92,7 @@ backend/Dockerfile.langgraph
 .cursor/
 outputs/
 temp/
-uploads/
+/uploads/
 
 # Local scratch / error dumps (never commit)
 backend/err.txt
@@ -204,7 +204,7 @@ backend/debug.py
 # Per-thread harness runtime (mission state, local agent copies)
 backend/.evoflow/threads/
 
-# EvoFlow runtime data (SQLite DBs, state, etc.)
+# QAgent runtime data (SQLite DBs, state, etc.)
 backend/.evoflow/data/
 
 # Local one-off helper scripts
@@ -293,7 +293,7 @@ docs/roles/
 backend/docs/roles/
 tmp_media_analysis.txt
 
-# Legacy / private doc buckets (content lives in evo/EvoFlow-private-docs; ignore if recreated)
+# Legacy / private doc buckets (content lives in evo/QAgent-private-docs; ignore if recreated)
 docs/system/
 docs/prd/
 docs/dev/
@@ -307,13 +307,13 @@ skills/devops/commit-push-release/
 # Local editor / Cursor Agent state (maintainer skills live under scripts/maintainer/skills/)
 .cursor/
 plugins/trae/
-# Client updater channel lives on public EvovexAI/EvoFlow only (draft under scripts/maintainer/update/)
+# Client updater channel lives on public EvovexAI/QAgent only (draft under scripts/maintainer/update/)
 /update/
 # One-off workflow param samples (not product source)
 /workflows/
 # Bundled ContentOS / UI extension packs (not in open tree; install via resource market)
 /extensions/
-# Scrubbed / internal skill packs (archived under evo/_local or EvoFlow-private-docs)
+# Scrubbed / internal skill packs (archived under evo/_local or QAgent-private-docs)
 skills/.public-sync.json
 skills/development/
 skills/devops/

@@ -21,7 +21,7 @@ fn audit_log(action: &str, detail: &str) {
         .and_then(|mut f| std::io::Write::write_all(&mut f, line.as_bytes()));
 }
 
-/// EvoFlow 数据目录（~/.evoflow/evopanel/）
+/// QAgent 数据目录（~/.evoflow/evopanel/）
 fn data_dir() -> PathBuf {
     super::evoflow_dir().join(super::PANEL_DATA_DIR_NAME)
 }

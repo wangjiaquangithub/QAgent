@@ -106,7 +106,7 @@ def test_normalize_search_and_notes():
                 "snippet": "智能体长期记忆",
                 "tags": ["agent"],
                 "links": ["Knowledge/RAG.md"],
-                "backlinks": ["Projects/EvoFlow.md"],
+                "backlinks": ["Projects/QAgent.md"],
             }
         ]
     }
@@ -118,7 +118,7 @@ def test_normalize_search_and_notes():
 
     notes = normalize_notes(
         "personal",
-        {"path": "Knowledge/EvoFlow.md", "content": "使用 [[Agent Memory]] 和 [[RAG]]。"},
+        {"path": "Knowledge/QAgent.md", "content": "使用 [[Agent Memory]] 和 [[RAG]]。"},
     )
     assert notes[0].links == ["Agent Memory", "RAG"]
 
@@ -126,14 +126,14 @@ def test_normalize_search_and_notes():
 def test_graph_from_note():
     note = KnowledgeNote(
         vaultId="personal",
-        path="Knowledge/EvoFlow.md",
-        title="EvoFlow",
+        path="Knowledge/QAgent.md",
+        title="QAgent",
         content="x",
         links=["Agent Memory", "RAG"],
         backlinks=[],
     )
     g = build_graph_from_note("personal", note, depth=1, direction="outgoing")
-    assert g.center_path == "Knowledge/EvoFlow.md"
+    assert g.center_path == "Knowledge/QAgent.md"
     assert len(g.nodes) == 3
     assert len(g.edges) == 2
 

@@ -9,9 +9,9 @@
 >
 > 适合大段代码重构、多文件改造、依赖升级、调试 bug 等需要长时间交互的编码场景。
 >
-> **功能关系**：Claude Code 是 EvoFlow 主智能体的编码增强模式——它不加载 EvoFlow 的技能/MCP/记忆生态，专注于代码操作；可与[Plan 模式](plan-mode.md) [[plan-mode|Plan 模式]]组合使用（Plan 模式的子任务可调用 Claude Code）；与[工作空间场景](workspace.md) [[workspace|工作空间场景]]共享同一套工作目录沙箱机制。
+> **功能关系**：Claude Code 是 QAgent 主智能体的编码增强模式——它不加载 QAgent 的技能/MCP/记忆生态，专注于代码操作；可与[Plan 模式](plan-mode.md) [[plan-mode|Plan 模式]]组合使用（Plan 模式的子任务可调用 Claude Code）；与[工作空间场景](workspace.md) [[workspace|工作空间场景]]共享同一套工作目录沙箱机制。
 
-EvoFlow 内置 **Claude Code 直连模式**：让 Anthropic Claude 的原生工具链直接接管当前会话，专门处理代码编辑、命令执行、多文件操作、架构设计等软件开发任务。与 EvoFlow 主智能体相比，Claude Code 模式更专注、更少中间层，适合**长时间、重交互的编码场景**。
+QAgent 内置 **Claude Code 直连模式**：让 Anthropic Claude 的原生工具链直接接管当前会话，专门处理代码编辑、命令执行、多文件操作、架构设计等软件开发任务。与 QAgent 主智能体相比，Claude Code 模式更专注、更少中间层，适合**长时间、重交互的编码场景**。
 
 ---
 
@@ -28,26 +28,26 @@ EvoFlow 内置 **Claude Code 直连模式**：让 Anthropic Claude 的原生工�
 
 - 纯聊天、知识问答 → 用主智能体的「日常对话」
 - 需要多角色协作的项目交付 → 用 [Plan 模式](plan-mode.md) [[plan-mode|Plan 模式]] 调度项目团队
-- 需要 EvoFlow 的技能/MCP/记忆生态 → 用主智能体，Claude Code **不会自动加载 EvoFlow 技能与 MCP**
+- 需要 QAgent 的技能/MCP/记忆生态 → 用主智能体，Claude Code **不会自动加载 QAgent 技能与 MCP**
 
 ---
 
 ## 启用与关闭
 
-### 桌面端（EvoFlow）
+### 桌面端（QAgent）
 
 在聊天窗口发送以下斜杠指令：
 
 | 指令 | 行为 |
 |------|------|
 | `/claude` 或 `/claude-code` | 当前会话切到 Claude Code 直连模式 |
-| `/lead` 或 `/main` | 关闭 Claude Code，切回 EvoFlow 主智能体 |
+| `/lead` 或 `/main` | 关闭 Claude Code，切回 QAgent 主智能体 |
 
 启用后会话顶部会出现「Claude Code」标签，所有后续消息都由 Claude Code 直接处理，无需在 Composer 中额外勾选模型或工具。
 
 ### 飞书 / IM 端
 
-在已绑定 EvoFlow 的飞书会话中同样可用：
+在已绑定 QAgent 的飞书会话中同样可用：
 
 1. 发送 `/claude` 开启 Claude Code 直连
 2. 直接描述需求或贴代码片段，Claude Code 在沙箱内编辑文件、跑命令并回复结果
@@ -74,13 +74,13 @@ Claude Code 模式下可用的工具集（与主智能体的「工作空间」�
 
 ## 多会话并行
 
-Claude Code 支持**同一 EvoFlow 内并行多个会话**：
+Claude Code 支持**同一 QAgent 内并行多个会话**：
 
 - 每个会话拥有独立的 Claude Code session_id，上下文互不污染
 - 适合把大型重构拆成多个子任务并行推进（如：A 会话改后端、B 会话改前端、C 会话写测试）
 - 不同会话可绑定不同工作目录，避免相互覆盖
 
-会话切换通过 EvoFlow 左侧会话列表即可，无需重新 `/claude`。
+会话切换通过 QAgent 左侧会话列表即可，无需重新 `/claude`。
 
 ---
 
@@ -104,10 +104,10 @@ Claude Code 支持**同一 EvoFlow 内并行多个会话**：
 检查面板设置 → 模型 Tab，确认已配置 Anthropic 服务商（或 OpenRouter 等 Claude 兼容网关）且测试连接通过。
 
 **Q：Claude Code 改的文件能不能撤销？**
-推荐每次重大改动前先 `git stash` 或建分支；EvoFlow 不会自动拍快照。
+推荐每次重大改动前先 `git stash` 或建分支；QAgent 不会自动拍快照。
 
 **Q：Claude Code 会不会用我的记忆与项目配置？**
-不会。Claude Code 是**独立 SDK 会话**，仅继承当前工作目录；EvoFlow 记忆、技能、MCP 仅供主智能体使用。
+不会。Claude Code 是**独立 SDK 会话**，仅继承当前工作目录；QAgent 记忆、技能、MCP 仅供主智能体使用。
 
 ---
 

@@ -380,7 +380,7 @@ export interface ThreadPanelState {
   goalProposal: ThreadGoalProposal | null
   /** 子智能体 · 并行输出（仅用于 TODO hover 预览，不在主消息区渲染） */
   subagentTasks?: Record<string, SubagentStreamTask>
-  /** 与当前会话关联的 EvoFlow 主任务（用于侧栏展示，不依赖 plan todos） */
+  /** 与当前会话关联的 QAgent 主任务（用于侧栏展示，不依赖 plan todos） */
   collabTask: CollabTaskSnapshot | null
   /** supervisor 创建的子任务卡片（流式累积） */
   collabSubtasks: CollabSubtaskSnapshot[]

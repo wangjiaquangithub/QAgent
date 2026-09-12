@@ -33,7 +33,7 @@ def test_filter_index_rows_drops_binaries_and_applies_scope() -> None:
 
 def test_search_index_path_scope_prefers_react_hits() -> None:
     data = search_index(
-        r"d:\github\EvoFlow",
+        r"d:\github\QAgent",
         "path:evopanel/src/react MessageRow",
         limit=8,
     )

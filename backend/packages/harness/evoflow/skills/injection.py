@@ -21,7 +21,7 @@ _SKILL_EXECUTION_HINT_EN = (
 )
 
 _SKILL_EXECUTION_HINT_ZH = (
-    "技能执行（安装在 EvoFlow skills 目录，不在用户工作区 — 用 skill: URI，勿搜工作区）：\n"
+    "技能执行（安装在 QAgent skills 目录，不在用户工作区 — 用 skill: URI，勿搜工作区）：\n"
     "- 读文件：read(\"skill:<名>/相对路径\")\n"
     "- 跑脚本：terminal(command=\"python scripts/foo.py\", workdir=\"skill:<名>\") "
     "或 process(action=\"start\", command=..., workdir=\"skill:<名>\")\n"

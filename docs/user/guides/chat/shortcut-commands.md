@@ -11,7 +11,7 @@
 >
 > 所有指令在桌面端和 IM 渠道（飞书、Slack、Telegram）通用，不用记功能页面路径。
 >
-> **功能关系**：快捷指令是 EvoFlow 所有功能的快捷入口——覆盖了[Plan 模式](plan-mode.md) [[plan-mode|Plan 模式]]、[目标智能体](goal-agent.md) [[goal-agent|目标智能体]]、[Claude Code](claude-code.md) [[claude-code|Claude Code]]、[自动化](../tasks/scheduled-tasks.md) [[guides/tasks/scheduled-tasks|自动化]]等核心功能的快速调用，让用户在不同渠道获得一致的操作体验。
+> **功能关系**：快捷指令是 QAgent 所有功能的快捷入口——覆盖了[Plan 模式](plan-mode.md) [[plan-mode|Plan 模式]]、[目标智能体](goal-agent.md) [[goal-agent|目标智能体]]、[Claude Code](claude-code.md) [[claude-code|Claude Code]]、[自动化](../tasks/scheduled-tasks.md) [[guides/tasks/scheduled-tasks|自动化]]等核心功能的快速调用，让用户在不同渠道获得一致的操作体验。
 
 所有斜杠指令在**所有渠道通用**，包括：桌面端聊天窗口、飞书、Slack、Telegram 等 IM 渠道，直接在对话中输入即可执行，无需打开对应功能页面。
 
@@ -31,7 +31,7 @@
 | `/agent [智能体名称]` | `/use` | 切换到指定的智能体 | `/agent 代码专家`<br>`/use 产品经理` |
 | `/claude` | `/code` | 开启Claude Code专属模式，使用原生Claude Code能力 | `/claude` |
 | `/claude [会话ID]` | `/code [会话ID]` | 续接指定ID的历史Claude Code会话 | `/claude sess_123456` |
-| `/lead` | `/main` | 关闭Claude Code模式，切回EvoFlow主智能体 | `/lead`<br>`/main` |
+| `/lead` | `/main` | 关闭Claude Code模式，切回QAgent主智能体 | `/lead`<br>`/main` |
 | `/model [模型名称]` | - | 切换当前会话使用的模型 | `/model Claude 3.7 Sonnet` |
 
 ---
@@ -62,7 +62,7 @@
 ## 使用注意事项
 1. **不区分大小写**：指令大小写不敏感，`/CLAUDE`、`/Claude`、`/claude`效果相同
 2. **参数支持空格**：指令后面的参数可以包含空格，比如`/agent 资深产品经理`可以正常识别
-3. **群聊使用方式**：在飞书/Slack群聊中使用时，需要@机器人后再输入指令，例如`@EvoFlow /goal 每天9点发日报`
+3. **群聊使用方式**：在飞书/Slack群聊中使用时，需要@机器人后再输入指令，例如`@QAgent /goal 每天9点发日报`
 4. **参数可选**：部分指令的参数是可选的，如果没有带参数会提示正确的使用方法
 5. **权限控制**：部分操作需要对应权限，没有权限的话会提示无法操作
 6. **错误提示**：如果输入了不存在的指令或格式错误，系统会自动提示支持的指令列表和正确用法

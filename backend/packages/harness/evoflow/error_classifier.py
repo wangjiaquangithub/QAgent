@@ -1,4 +1,4 @@
-"""Centralized API error classification for EvoFlow.
+"""Centralized API error classification for QAgent.
 
 Maps API errors from various providers (OpenAI, Anthropic, etc.) to
 structured recovery actions. Enables smart retry, credential rotation,
@@ -289,6 +289,16 @@ def classify(exception: Exception, context: dict | None = None) -> Classificatio
             retryable=False,
             should_fallback_provider=True,
             message=f"Model not found: {error_msg[:200]}",
+        )
+
+    # ── Invalid client request ───────────────────────────────────────
+    # Remaining 4xx responses are request/configuration errors. Retrying the
+    # identical request against the same model/credential cannot fix them.
+    if status_code is not None and 400 <= status_code < 500:
+        return Classification(
+            reason=FailoverReason.FORMAT_ERROR,
+            retryable=False,
+            message=f"Invalid request: {error_msg[:200]}",
         )
 
     # ── Overloaded (retryable; prefer same-model retry before fallback) ─

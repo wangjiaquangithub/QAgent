@@ -10,7 +10,7 @@
 >
 > 预设角色是[Plan 模式](plan-mode.md) [[plan-mode|Plan 模式]]和[任务中心](../tasks/task-center.md) [[guides/tasks/task-center|任务中心]]多角色协作的执行单元；自定义角色通过[智能体管理](../configuration/agent-management.md) [[guides/configuration/agent-management|智能体管理]]创建；定时值班用[智能体员工](../configuration/smart-employees.md) [[guides/configuration/smart-employees|智能体员工]]。
 
-EvoFlow 内置一套**预设角色（Agent）**——开箱即用、按场景调好 SOUL / 工具 / 技能 / MCP 的智能体。预设角色按职责聚合成「Agent Teams（团队）」，让你在不同工作场景一键挑到合适的执行者，或在 Plan 模式 / 任务中心把多个角色组合起来跑大工程。
+QAgent 内置一套**预设角色（Agent）**——开箱即用、按场景调好 SOUL / 工具 / 技能 / MCP 的智能体。预设角色按职责聚合成「Agent Teams（团队）」，让你在不同工作场景一键挑到合适的执行者，或在 Plan 模式 / 任务中心把多个角色组合起来跑大工程。
 
 本文讲：四大预设团队的定位、怎么用、与自定义角色和 Plan 模式的关系。新建自己角色的细节流程见 [智能体管理](../configuration/agent-management.md) [[guides/configuration/agent-management|智能体管理]]；若要定时主动上班，见 [智能体员工](../configuration/smart-employees.md) [[guides/configuration/smart-employees|智能体员工]]。
 
@@ -30,7 +30,7 @@ EvoFlow 内置一套**预设角色（Agent）**——开箱即用、按场景调
 
 ## 二、四大预设团队
 
-EvoFlow 把预设角色按职责聚合成四个 Agent Teams，进入「Agent 管理」页面就能看到：
+QAgent 把预设角色按职责聚合成四个 Agent Teams，进入「Agent 管理」页面就能看到：
 
 | 团队 | 定位 | 适合场景 |
 |------|------|---------|
@@ -39,7 +39,7 @@ EvoFlow 把预设角色按职责聚合成四个 Agent Teams，进入「Agent 管
 | **🛠️ 项目** | **软件工程协作团队**，按 SDLC 阶段拆成多个互补角色 | 写代码、改造工程、做架构方案、Plan 模式调度 |
 | **🎬 媒体** | 创意媒体生产链，对接生图 / 生视频 / TTS 模型与脚本技能 | 内容创作、短视频、海报、配图、声音 |
 
-每个团队下挂多个具体角色，名称、SOUL、工具白名单都是 EvoFlow 团队精心调过的。**具体角色清单以你本机「Agent 管理」页面实际展示为准**——版本升级可能新增或调整。
+每个团队下挂多个具体角色，名称、SOUL、工具白名单都是 QAgent 团队精心调过的。**具体角色清单以你本机「Agent 管理」页面实际展示为准**——版本升级可能新增或调整。
 
 
 ---
@@ -127,7 +127,7 @@ EvoFlow 把预设角色按职责聚合成四个 Agent Teams，进入「Agent 管
 
 | 维度 | 预设角色 | 自定义角色 |
 |------|---------|----------|
-| **来源** | EvoFlow 内置，随升级更新 | 你自己创建 |
+| **来源** | QAgent 内置，随升级更新 | 你自己创建 |
 | **能否修改** | 可以编辑覆盖，但**升级时会被还原**；建议复制后改 | 完全你自己的 |
 | **能否删除** | 不可删除（仅可禁用） | 可删除 |
 | **agent_code** | 固定前缀（`project-`、`core-`、`media-`…） | 自由命名（小写 + 连字符） |
@@ -155,7 +155,7 @@ EvoFlow 把预设角色按职责聚合成四个 Agent Teams，进入「Agent 管
 每个角色的工具与技能白名单按职责精细授权。
 ```
 
-主智能体会按 [preset-role-assistant 技能](https://github.com/EvovexAI/EvoFlow/blob/main/skills/public/preset-role-assistant/SKILL.md) 的流程：
+主智能体会按 [preset-role-assistant 技能](https://github.com/wangjiaquangithub/QAgent/blob/main/skills/public/preset-role-assistant/SKILL.md) 的流程：
 
 1. 澄清每个角色的职责、典型任务、绝对不做的事
 2. 检查 `agent_code` 不冲突（`evoflow agents check` / `platform agents.list`）
@@ -170,7 +170,7 @@ EvoFlow 把预设角色按职责聚合成四个 Agent Teams，进入「Agent 管
 ## 八、常见问题
 
 **Q：预设角色里看不到 `project-*` 系列？**
-检查 Agent 管理页面是否按团队分类筛选；再用 `evoflow agents list` 确认库里是否已有。内置 `project-*` 会在 Gateway / 主对话启动时自动物化（`ensure_builtin_agents_materialized`），**没有** `evoflow agents seed` 命令。若列表仍空：重启 Gateway 并开一轮新对话；仍缺失则升级/重装 EvoFlow，或用 [evoflow-admin](https://github.com/EvovexAI/EvoFlow/blob/main/skills/public/evoflow-admin/SKILL.md) / [preset-role-assistant](https://github.com/EvovexAI/EvoFlow/blob/main/skills/public/preset-role-assistant/SKILL.md) 按需重建自定义角色。
+检查 Agent 管理页面是否按团队分类筛选；再用 `evoflow agents list` 确认库里是否已有。内置 `project-*` 会在 Gateway / 主对话启动时自动物化（`ensure_builtin_agents_materialized`），**没有** `evoflow agents seed` 命令。若列表仍空：重启 Gateway 并开一轮新对话；仍缺失则升级/重装 QAgent，或用 [evoflow-admin](https://github.com/wangjiaquangithub/QAgent/blob/main/skills/public/evoflow-admin/SKILL.md) / [preset-role-assistant](https://github.com/wangjiaquangithub/QAgent/blob/main/skills/public/preset-role-assistant/SKILL.md) 按需重建自定义角色。
 
 **Q：项目团队 6 个角色一定要全用吗？**
 不需要。你完全可以只用 `project-software-developer` 写代码，跳过方案 / 审查等阶段。整团队调度只在 Plan 模式 / 任务中心**显式指定时**才走全流程。
@@ -181,8 +181,8 @@ EvoFlow 把预设角色按职责聚合成四个 Agent Teams，进入「Agent 管
 **Q：预设角色的 SOUL 和系统提示词在哪里能看到？**
 「Agent 管理」点开任意角色卡片即可查看完整 SOUL / 系统提示词 / 工具白名单。也可直接看 `~/.evoflow/agents/<code>.toml` 文件。
 
-**Q：升级 EvoFlow 后我的自定义修改会丢吗？**
-**自定义角色不会**——它们存在 `~/.evoflow/agents/` 用户目录，与 EvoFlow 安装包隔离。预设角色会随升级覆盖；想保留改动，按 [六、预设 vs 自定义](#六预设-vs-自定义) 的做法复制副本。
+**Q：升级 QAgent 后我的自定义修改会丢吗？**
+**自定义角色不会**——它们存在 `~/.evoflow/agents/` 用户目录，与 QAgent 安装包隔离。预设角色会随升级覆盖；想保留改动，按 [六、预设 vs 自定义](#六预设-vs-自定义) 的做法复制副本。
 
 ---
 

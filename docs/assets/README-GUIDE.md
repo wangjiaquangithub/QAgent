@@ -8,7 +8,7 @@ This guide tells you **which screenshots / GIFs / videos should go where** so th
 
 ```
 docs/assets/
-├── EvoFlow-LOGO.png                              # hero logo (used in hero)
+├── QAgent-LOGO.png                              # hero logo (used in hero)
 ├── sponsors/wechat.png                           # tip / sponsor QR (README)
 ├── plan-supervisor/
 │   ├── video-01-plan-clarify-to-ready-poster.png # hero demo poster
@@ -35,7 +35,7 @@ docs/assets/
 
 | README section | Asset path | Status |
 | --- | --- | --- |
-| Hero logo | `docs/assets/EvoFlow-LOGO.png` | exists |
+| Hero logo | `docs/assets/QAgent-LOGO.png` | exists |
 | Demo (hero) | `docs/assets/plan-supervisor/video-01-plan-clarify-to-ready-poster.png` | exists |
 | Screenshots / Plan | `docs/assets/plan-supervisor/plan-02-structured-plan-modal.png` | exists |
 | Screenshots / Supervisor | `docs/assets/plan-supervisor/plan-05-supervisor-workflow-panel.png` | exists |

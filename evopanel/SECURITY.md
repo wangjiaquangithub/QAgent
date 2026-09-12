@@ -2,7 +2,7 @@
 
 ## 支持的版本
 
-EvoFlow 处于活跃开发中，请使用最新版本以获取安全更新。
+QAgent 处于活跃开发中，请使用最新版本以获取安全更新。
 
 | 版本 | 支持状态 |
 |------|----------|
@@ -15,8 +15,8 @@ EvoFlow 处于活跃开发中，请使用最新版本以获取安全更新。
 
 ### 报告方式
 
-1. **邮件**：发送详情至 [cloud@evovexai.com](mailto:cloud@evovexai.com)
-2. **GitHub Security Advisory**：使用 [GitHub Private Vulnerability Reporting](https://github.com/EvovexAI/EvoFlow/security/advisories/new)
+1. **邮件**：发送详情至 [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com)
+2. **GitHub Security Advisory**：使用 [GitHub Private Vulnerability Reporting](https://github.com/wangjiaquangithub/QAgent/security/advisories/new)
 
 ### 报告内容应包含
 
@@ -36,7 +36,7 @@ EvoFlow 处于活跃开发中，请使用最新版本以获取安全更新。
 
 ## 本地安装安全实践
 
-EvoFlow 作为本地桌面应用运行，用户应注意以下安全事项：
+QAgent 作为本地桌面应用运行，用户应注意以下安全事项：
 
 - **API 密钥**：模型服务商的 API Key 存储在本地 SQLite 数据库中，请确保设备物理安全。
 - **网络绑定**：桌面端 Gateway 默认绑定 `127.0.0.1`（仅本机），不暴露到网络。

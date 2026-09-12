@@ -2,10 +2,10 @@
 name = "evopanel"
 version = "1.0.0"
 edition = "2021"
-description = "EvoFlow 桌面端 — 面向长任务的原生 Agent Runtime 与控制平面"
-authors = ["EvovexAI"]
-repository = "https://github.com/EvovexAI/EvoFlow"
-homepage = "https://www.evovexai.com"
+description = "QAgent 桌面端 — 面向长任务的原生 Agent Runtime 与控制平面"
+authors = ["Quclouds"]
+repository = "https://github.com/wangjiaquangithub/QAgent"
+homepage = "https://www.quclouds.com"
 license = "LicenseRef-PolyForm-Noncommercial-1.0.0"
 license-file = "../../LICENSE"
 

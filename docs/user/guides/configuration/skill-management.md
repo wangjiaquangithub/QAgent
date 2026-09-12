@@ -8,7 +8,7 @@
 >
 > 系统内置 50+ 个技能，你也可以从技能市场安装社区技能，或者自己写自定义技能。技能安装后需要在「智能体管理」中为角色勾选才能被调用。
 
-技能（Skill）是 EvoFlow 让 Agent 具备**特定领域能力**的标准化打包形式——每个技能是一个文件夹 + 一份 `SKILL.md`，描述用途、触发时机、可用脚本与边界。EvoFlow 内置 50+ 个公开技能，覆盖文档、研究、媒体、开发流程等场景，并支持安装社区技能或上传自定义技能。
+技能（Skill）是 QAgent 让 Agent 具备**特定领域能力**的标准化打包形式——每个技能是一个文件夹 + 一份 `SKILL.md`，描述用途、触发时机、可用脚本与边界。QAgent 内置 50+ 个公开技能，覆盖文档、研究、媒体、开发流程等场景，并支持安装社区技能或上传自定义技能。
 
 ---
 
@@ -105,7 +105,7 @@ skills/custom/my-skill/
 | **媒体** | `byted-ark-seedream-skill`（生图）、`agnes-media-generation`（多模态） |
 | **开发流程** | `superpowers-*` 系列（spec / plan / execute / debug） |
 | **交互** | `agent-browser`（浏览器自动化） |
-| **EvoFlow 自身** | `evoflow-intro`、`evoflow-admin`、`evoflow-admin-external`（发行包见 GitHub Releases / 官网下载）、`evoflow-system-verification`、`evoflow-debugging`、`evoflow-plan-workflow` |
+| **QAgent 自身** | `evoflow-intro`、`evoflow-admin`、`evoflow-admin-external`（发行包见 GitHub Releases / 官网下载）、`evoflow-system-verification`、`evoflow-debugging`、`evoflow-plan-workflow` |
 
 完整清单见面板「技能管理」，或仓库内 `skills/public/`。
 

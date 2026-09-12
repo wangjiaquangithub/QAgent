@@ -262,7 +262,7 @@
 | 智能体员工派发 / 交工 | 「智能体员工」；列表与详情可见 **任务总结**，在此验收 |
 | 应用填参运行（工作流） | 来源 Tab「工作流」；可再跑一次、另存为应用 |
 
-智能体员工侧的「待审批」与任务中心「待确认」分工见 [智能体员工](../configuration/smart-employees.md) [[guides/configuration/smart-employees|智能体员工]]。临时委派可用全局助手小V，交工后仍回到任务中心验收。
+智能体员工侧的「待审批」与任务中心「待确认」分工见 [智能体员工](../configuration/smart-employees.md) [[guides/configuration/smart-employees|智能体员工]]。临时委派可用全局助手小Q，交工后仍回到任务中心验收。
 
 ---
 
@@ -328,4 +328,4 @@ flowchart LR
 - [智能体员工](../configuration/smart-employees.md) [[guides/configuration/smart-employees|智能体员工]] — 定时值班岗与工作汇报
 - [自动化](scheduled-tasks.md) [[guides/tasks/scheduled-tasks|自动化]] — 定时跑固定指令
 - [总控智能体模式案例](../../cases/total-agent-mode.md) [[cases/total-agent-mode|总控智能体模式案例]] — Plan 与任务中心的高级编排
-- [EvoFlow 桌面端使用指南](../configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|EvoFlow 桌面端使用指南]]
+- [QAgent 桌面端使用指南](../configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|QAgent 桌面端使用指南]]

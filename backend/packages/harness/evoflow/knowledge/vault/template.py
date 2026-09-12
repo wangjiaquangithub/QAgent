@@ -1,4 +1,4 @@
-"""Note templates for EvoFlow-created Knowledge Vault notes."""
+"""Note templates for QAgent-created Knowledge Vault notes."""
 
 from __future__ import annotations
 
@@ -69,7 +69,7 @@ def render_inbox_note(
     now = utc_now_iso_z()
     related = related_paths or []
     links = "\n".join(f"- [[{p.rsplit('/', 1)[-1].removesuffix('.md')}]]" for p in related) if related else "_暂无_"
-    src_desc = (source_description or "").strip() or f"Ingested by EvoFlow from {source}"
+    src_desc = (source_description or "").strip() or f"Ingested by QAgent from {source}"
     return (
         NOTE_TEMPLATE.replace("{{generated_id}}", note_id or generate_note_id())
         .replace("{{tags_yaml}}", _yaml_list(list(tags or [])))

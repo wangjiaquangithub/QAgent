@@ -81,7 +81,7 @@ def mount_langgraph_in_process() -> Starlette:
     os.environ.setdefault("N_JOBS_PER_WORKER", "10")
     if checkpointer:
         os.environ.setdefault("LANGGRAPH_CHECKPOINTER", json.dumps(checkpointer))
-    # Durable EvoFlow checkpointer already persists graph state — keep the
+    # Durable QAgent checkpointer already persists graph state — keep the
     # LangGraph inmem pickle store off so ~/.evoflow/.langgraph_api/*.pckl
     # (often multi-GB) is not loaded into Gateway RSS on every start.
     # Opt out with EVOFLOW_KEEP_LG_FILE_PERSISTENCE=1.
@@ -192,6 +192,23 @@ def _filter_response_headers(headers: list[tuple[bytes, bytes]]) -> list[tuple[b
     return [(k, v) for k, v in headers if k.lower() not in _HOP_BY_HOP]
 
 
+def _upstream_path(scope: Scope) -> str:
+    """Return the request path relative to the ``/api/langgraph`` mount.
+
+    Starlette keeps ``scope["path"]`` as the original request path for mounted
+    ASGI apps and records the consumed mount prefix in ``scope["root_path"]``.
+    Forwarding the original path therefore made an external server receive
+    ``/api/langgraph/...`` even though its routes begin at ``/...``.
+    """
+    path = str(scope.get("path") or "")
+    if not path.startswith("/"):
+        path = f"/{path}"
+    mount_path = str(scope.get("root_path") or "").rstrip("/")
+    if mount_path and (path == mount_path or path.startswith(f"{mount_path}/")):
+        path = path[len(mount_path) :] or "/"
+    return path
+
+
 class ExternalLangGraphProxy:
     """Reverse-proxy ``/api/langgraph/*`` to a standalone LangGraph HTTP server."""
 
@@ -215,9 +232,7 @@ class ExternalLangGraphProxy:
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
             return
-        path = str(scope.get("path") or "")
-        if not path.startswith("/"):
-            path = f"/{path}"
+        path = _upstream_path(scope)
         query = scope.get("query_string") or b""
         url = self._upstream_base + path
         if query:

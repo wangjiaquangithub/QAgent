@@ -1,4 +1,4 @@
-"""小V系统工具：名册 / 全局看板 / 派发 / 催办（不问澄清、不代替员工执行）。"""
+"""小Q系统工具：名册 / 全局看板 / 派发 / 催办（不问澄清、不代替员工执行）。"""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def _json(data: Any) -> str:
 
 
 def _active_employee_rows() -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Active roster rows excluding 小V herself + list_roles meta."""
+    """Active roster rows excluding 小Q herself + list_roles meta."""
     from evoflow.admin import employees as emp
 
     data = emp.list_roles(status="active")
@@ -52,9 +52,9 @@ def _active_employee_rows() -> tuple[list[dict[str, Any]], dict[str, Any]]:
 
 @tool("xiaomi_org_status", parse_docstring=True)
 def xiaomi_org_status_tool() -> str:
-    """查看有多少智能体员工、谁在岗/忙碌，供小V决定派给谁、催谁。
+    """查看有多少智能体员工、谁在岗/忙碌，供小Q决定派给谁、催谁。
 
-    只读名册与 runner 状态；不含小V自己。先调本工具再派发/催办。
+    只读名册与 runner 状态；不含小Q自己。先调本工具再派发/催办。
     """
     try:
         rows, meta = _active_employee_rows()
@@ -548,7 +548,7 @@ def xiaomi_dispatch_tool(
     goal: str,
     description: str = "",
 ) -> str:
-    """把新目标派给指定智能体员工（后台值班轮），小V自己不执行。
+    """把新目标派给指定智能体员工（后台值班轮），小Q自己不执行。
 
     Args:
         agent_code: 员工 agent_code，如 code-agent / project-debugger。
@@ -592,7 +592,7 @@ def xiaomi_wake_tool(
 ) -> str:
     """催办/叫醒员工推进已有 Task 或补一句目标（推进卡住进度用）。
 
-    优先传 task_id；没有 Task 时传 goal。小V先看看板，再对本工具催办。
+    优先传 task_id；没有 Task 时传 goal。小Q先看看板，再对本工具催办。
 
     Args:
         agent_code: 目标员工 agent_code 或岗位名。

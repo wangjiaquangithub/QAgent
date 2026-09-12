@@ -1,7 +1,7 @@
 ﻿#requires -Version 5.1
 <#
 .SYNOPSIS
-  更新 EvovexAI/EvoFlow 上**已有** GitHub Release：替换说明文案 + 重新上传 NSIS 安装包（不推私有仓）。
+  更新 Quclouds/QAgent 上**已有** GitHub Release：替换说明文案 + 重新上传 NSIS 安装包（不推私有仓）。
 
 .PARAMETER Tag
   发布标签，如 v0.2.3 或 0.2.3。
@@ -22,8 +22,8 @@
   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\maintainer\windows\republish-public-release.ps1 `
     -Tag v0.2.3 -ProductNotesPath scripts\maintainer\windows\release-notes\PRODUCT-NOTES-0.2.3.md -UpdateLatestJson
 
-  前置：scripts\maintainer\windows\local-publish.env 中配置 GITHUB_TOKEN（EvovexAI/EvoFlow：Contents + Releases 写权限）。
-  可选：GITEE_REPO_TOKEN — 同步创建/上传到 gitee.com/evovexai/EvoFlow Releases（走 attach_files，非 LFS）。
+  前置：scripts\maintainer\windows\local-publish.env 中配置 GITHUB_TOKEN（Quclouds/QAgent：Contents + Releases 写权限）。
+  可选：GITEE_REPO_TOKEN — 同步创建/上传到 gitee.com/Quclouds/QAgent Releases（走 attach_files，非 LFS）。
 #>
 param(
     [string] $Tag = "v0.2.3",
@@ -233,7 +233,7 @@ if (-not $tok) { $tok = $env:GH_TOKEN }
 if (-not $tok) { $tok = $env:PUBLIC_REPO_TOKEN }
 if (-not $tok) {
     throw @"
-需要 GitHub Token（EvovexAI/EvoFlow，Releases 写权限）。
+需要 GitHub Token（Quclouds/QAgent，Releases 写权限）。
   复制 scripts\maintainer\windows\local-publish.env.example -> local-publish.env
   填入 GITHUB_TOKEN=ghp_...
 "@
@@ -263,7 +263,7 @@ if ($Platform -eq 'windows') {
 else {
     if (-not (Test-Path -LiteralPath $DmgDir)) { throw "DmgDir not found: $DmgDir" }
 }
-$releaseName = "EvoFlow $tagName"
+$releaseName = "QAgent $tagName"
 
 $footerPath = Join-Path $PSScriptRoot "public-release-body.txt"
 if (-not (Test-Path -LiteralPath $footerPath)) { throw "Missing $footerPath" }
@@ -280,14 +280,14 @@ $productMd
 $footer
 "@.TrimEnd()
 
-$owner = "EvovexAI"
-$repo = "EvoFlow"
+$owner = "Quclouds"
+$repo = "QAgent"
 $api = "https://api.github.com/repos/$owner/$repo"
 $headers = @{
     Authorization          = "Bearer $tok"
     Accept                 = "application/vnd.github+json"
     "X-GitHub-Api-Version" = "2022-11-28"
-    "User-Agent"           = "EvoFlow-republish-public-release"
+    "User-Agent"           = "QAgent-republish-public-release"
 }
 
 Write-Host "`n=== [1/3] Create or PATCH release body ($tagName) ===" -ForegroundColor Cyan
@@ -424,7 +424,7 @@ else {
 
 Write-Host "`n[republish] Done: https://github.com/$owner/$repo/releases/tag/$tagName" -ForegroundColor Green
 if ($giteeTok -and $giteeTok.Trim().Length -gt 0 -and -not $SkipGitee) {
-    $giteeOwner = if ($env:GITEE_OWNER) { $env:GITEE_OWNER.Trim() } else { "evovexai" }
-    $giteeRepo = if ($env:GITEE_REPO) { $env:GITEE_REPO.Trim() } else { "EvoFlow" }
+    $giteeOwner = if ($env:GITEE_OWNER) { $env:GITEE_OWNER.Trim() } else { "quclouds" }
+    $giteeRepo = if ($env:GITEE_REPO) { $env:GITEE_REPO.Trim() } else { "QAgent" }
     Write-Host "[republish] Gitee: https://gitee.com/$giteeOwner/$giteeRepo/releases/tag/$tagName" -ForegroundColor Green
 }

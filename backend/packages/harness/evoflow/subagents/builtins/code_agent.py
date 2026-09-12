@@ -3,7 +3,7 @@
 专为代码读写、重构、调试优化，与 general-purpose 的区别：
 - system_prompt 内置代码探索最佳实践（rg 精确定位、不读大文件、replace 精确匹配）
 - 步数预算意识（探索 <40%，写代码 >60%）
-- 熟悉 EvoFlow 项目工具链（read/write/replace/rg/terminal/read_lints/search_code_index）
+- 熟悉 QAgent 项目工具链（read/write/replace/rg/terminal/read_lints/search_code_index）
 - 完成后自动跑语法检查（ast.parse / node --check / tsc）
 """
 

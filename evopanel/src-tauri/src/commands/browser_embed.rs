@@ -124,7 +124,7 @@ fn create_embed_window(
     WebviewWindow::builder(app, label, WebviewUrl::External(target_url.clone()))
         .parent(parent)
         .map_err(|e| format!("attach embedded browser parent failed: {e}"))?
-        .title("EvoFlow Browser")
+        .title("QAgent Browser")
         .decorations(false)
         .resizable(false)
         .shadow(false)

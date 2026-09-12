@@ -441,7 +441,7 @@ def media_video_generate_tool(
     Example (image2video, 5s)::
 
         Camera slowly pushes toward the glowing screen; soft blue-violet particles drift outward.
-        Narration (zh): 「智能，如流而动。EvoFlow，一句话唤醒你的 AI 创作团队。」
+        Narration (zh): 「智能，如流而动。QAgent，一句话唤醒你的 AI 创作团队。」
 
     Args:
         prompt: Motion + narration for jimeng (native audio); must match ``first_frame_url``.

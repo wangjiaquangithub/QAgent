@@ -1,11 +1,11 @@
-﻿# Shared helpers for EvoFlow backend (Gateway with LangGraph in-process) on Windows.
+﻿# Shared helpers for QAgent backend (Gateway with LangGraph in-process) on Windows.
 # Keep this file as UTF-8 with BOM; Windows PowerShell 5.1 mis-parses it if the BOM is stripped.
 # Port roles in this repo:
 #   1420 — Tauri 桌面开发时加载的前端地址 (evopanel/src-tauri/tauri.conf.json devUrl)，即「桌面 Web」入口
 #   1421 — Vite 默认端口 (evopanel/vite.config.js)；strictPort=false 时可能被占用后顺延到 1422、1423…
 #   8012 — FastAPI Gateway (REST/SSE 等 /api，LangGraph 内嵌在同一个进程)
 
-function Initialize-EvoFlowBackendPaths {
+function Initialize-QAgentBackendPaths {
     param(
         [Parameter(Mandatory = $true)]
         [string] $RepoRoot
@@ -44,7 +44,7 @@ function Initialize-EvoFlowBackendPaths {
     New-Item -ItemType Directory -Force -Path $script:DFTempDir | Out-Null
 }
 
-function Test-EvoFlowPortFree {
+function Test-QAgentPortFree {
     param([int]$Port)
     if ($Port -le 0) { return $false }
     try {
@@ -57,29 +57,29 @@ function Test-EvoFlowPortFree {
     }
 }
 
-function Resolve-EvoFlowPort {
+function Resolve-QAgentPort {
     param(
         [int]$Preferred,
         [int]$RangeStart,
         [int]$RangeEnd
     )
-    if (Test-EvoFlowPortFree -Port $Preferred) {
+    if (Test-QAgentPortFree -Port $Preferred) {
         return $Preferred
     }
     for ($p = $RangeStart; $p -le $RangeEnd; $p++) {
-        if (Test-EvoFlowPortFree -Port $p) {
+        if (Test-QAgentPortFree -Port $p) {
             return $p
         }
     }
     throw "No free port available in range $RangeStart..$RangeEnd"
 }
 
-function Test-EvoFlowCommandExists {
+function Test-QAgentCommandExists {
     param([string] $Name)
     return $null -ne (Get-Command $Name -ErrorAction SilentlyContinue)
 }
 
-function Stop-EvoFlowProcessTree {
+function Stop-QAgentProcessTree {
     <#
       结束指定 PID 及其**子进程**（taskkill /T 不包含父进程）。
       使用 cmd 包裹 taskkill，避免在 $ErrorActionPreference=Stop 的脚本里触发 NativeCommandError。
@@ -93,7 +93,7 @@ function Stop-EvoFlowProcessTree {
     $null = cmd.exe /c "taskkill /T /F /PID $ProcessId >nul 2>&1"
 }
 
-function Get-EvoFlowListeningPidsMap {
+function Get-QAgentListeningPidsMap {
     <#
       一次 netstat + 按端口 Get-NetTCPConnection，避免每个端口重复扫全表（否则 stop 会卡很久且无输出）。
     #>
@@ -131,15 +131,15 @@ function Get-EvoFlowListeningPidsMap {
     return $out
 }
 
-function Get-EvoFlowListeningPidsOnPort {
+function Get-QAgentListeningPidsOnPort {
     param([int]$Port)
-    $m = Get-EvoFlowListeningPidsMap -PortList @($Port)
+    $m = Get-QAgentListeningPidsMap -PortList @($Port)
     $arr = $m[$Port]
     if ($null -eq $arr) { return @() }
     return @($arr)
 }
 
-function Stop-EvoFlowKillPortListenerRoots {
+function Stop-QAgentKillPortListenerRoots {
     <#
       uvicorn --reload：真正 Listen 的往往是 worker，父进程是 reload 监视器；对 worker 做 taskkill /T
       杀不到父进程，端口会立刻被拉起。沿父链向上找到 start-backend 用的「隐藏 powershell + -Command ... uvicorn/langgraph」
@@ -151,33 +151,33 @@ function Stop-EvoFlowKillPortListenerRoots {
     for ($i = 0; $i -le 20; $i++) {
         $row = @(Get-CimInstance Win32_Process -Filter "ProcessId=$p" -ErrorAction SilentlyContinue)[0]
         if (-not $row) {
-            Stop-EvoFlowProcessTree -ProcessId $ListenPid
+            Stop-QAgentProcessTree -ProcessId $ListenPid
             return
         }
         $name = [string]$row.Name
         $cl = [string]$row.CommandLine
         if (($name -match '(?i)powershell|pwsh') -and ($cl -match '(?i)uvicorn|langgraph_cli')) {
-            Stop-EvoFlowProcessTree -ProcessId $p
+            Stop-QAgentProcessTree -ProcessId $p
             return
         }
         # uvicorn --reload：监听常在子进程 python 上，父链中间是「python -m uvicorn …」而非 powershell
         if (($name -match '(?i)^python(?:w)?\.exe$') -and ($cl -match '(?i)app\.gateway\.app:app')) {
-            Stop-EvoFlowProcessTree -ProcessId $p
+            Stop-QAgentProcessTree -ProcessId $p
             return
         }
         $pp = [int]$row.ParentProcessId
         if ($pp -le 0 -or $pp -eq $p) { break }
         $p = $pp
     }
-    Stop-EvoFlowProcessTree -ProcessId $ListenPid
+    Stop-QAgentProcessTree -ProcessId $ListenPid
 }
 
-function Stop-EvoFlowPortProcess {
+function Stop-QAgentPortProcess {
     param([int] $Port)
     try {
-        foreach ($listenPid in @(Get-EvoFlowListeningPidsOnPort -Port $Port)) {
+        foreach ($listenPid in @(Get-QAgentListeningPidsOnPort -Port $Port)) {
             if ($listenPid -and $listenPid -ne 0) {
-                Stop-EvoFlowKillPortListenerRoots -ListenPid $listenPid
+                Stop-QAgentKillPortListenerRoots -ListenPid $listenPid
             }
         }
     } catch {
@@ -185,7 +185,7 @@ function Stop-EvoFlowPortProcess {
     }
 }
 
-function Stop-EvoFlowPortsSweep {
+function Stop-QAgentPortsSweep {
     <#
       多轮清扫：每轮只跑 1 次 netstat（按端口集合），避免重复全表扫描。
       每轮末尾再用 Get-NetTCPConnection 按端口取 OwningProcess（与 netstat 互补，避免漏掉同端口多 PID）。
@@ -195,11 +195,11 @@ function Stop-EvoFlowPortsSweep {
         [int]$MaxRounds = 10
     )
     for ($r = 0; $r -lt $MaxRounds; $r++) {
-        $map = Get-EvoFlowListeningPidsMap -PortList $Ports
+        $map = Get-QAgentListeningPidsMap -PortList $Ports
         foreach ($port in $Ports) {
             foreach ($procId in @($map[$port])) {
                 if ($procId -and $procId -ne 0) {
-                    Stop-EvoFlowKillPortListenerRoots -ListenPid $procId
+                    Stop-QAgentKillPortListenerRoots -ListenPid $procId
                 }
             }
         }
@@ -208,11 +208,11 @@ function Stop-EvoFlowPortsSweep {
                 $extra = @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
                     ForEach-Object { [int]$_.OwningProcess } | Where-Object { $_ -gt 0 } | Sort-Object -Unique)
                 foreach ($procId in $extra) {
-                    Stop-EvoFlowKillPortListenerRoots -ListenPid $procId
+                    Stop-QAgentKillPortListenerRoots -ListenPid $procId
                 }
             } catch { }
         }
-        $map2 = Get-EvoFlowListeningPidsMap -PortList $Ports
+        $map2 = Get-QAgentListeningPidsMap -PortList $Ports
         $still = $false
         foreach ($port in $Ports) {
             if (@($map2[$port]).Count -gt 0) {
@@ -225,7 +225,7 @@ function Stop-EvoFlowPortsSweep {
     }
 }
 
-function Stop-EvoFlowBruteKillPortListeners {
+function Stop-QAgentBruteKillPortListeners {
     <#
       仅依赖 Get-NetTCPConnection，多轮杀 Listen 的 OwningProcess（reload 子进程反复拉起时用）。
     #>
@@ -242,7 +242,7 @@ function Stop-EvoFlowBruteKillPortListeners {
                     ForEach-Object { [int]$_.OwningProcess } | Where-Object { $_ -gt 0 } | Sort-Object -Unique)
                 foreach ($procId in $pids) {
                     $any = $true
-                    Stop-EvoFlowKillPortListenerRoots -ListenPid $procId
+                    Stop-QAgentKillPortListenerRoots -ListenPid $procId
                 }
             } catch { }
         }
@@ -251,14 +251,14 @@ function Stop-EvoFlowBruteKillPortListeners {
     }
 }
 
-function Wait-EvoFlowPortsClosed {
+function Wait-QAgentPortsClosed {
     param(
         [int[]]$Ports,
         [int]$TimeoutSec = 8
     )
     $deadline = (Get-Date).AddSeconds($TimeoutSec)
     while ((Get-Date) -lt $deadline) {
-        $m = Get-EvoFlowListeningPidsMap -PortList $Ports
+        $m = Get-QAgentListeningPidsMap -PortList $Ports
         $open = $false
         foreach ($pt in $Ports) {
             if (@($m[$pt]).Count -gt 0) {
@@ -272,15 +272,15 @@ function Wait-EvoFlowPortsClosed {
     return $false
 }
 
-function Wait-EvoFlowPortClosed {
+function Wait-QAgentPortClosed {
     param(
         [int] $Port,
         [int] $TimeoutSec = 8
     )
-    return Wait-EvoFlowPortsClosed -Ports @($Port) -TimeoutSec $TimeoutSec
+    return Wait-QAgentPortsClosed -Ports @($Port) -TimeoutSec $TimeoutSec
 }
 
-function Wait-EvoFlowPortReady {
+function Wait-QAgentPortReady {
     param(
         [int] $Port,
         [int] $TimeoutSec = 60
@@ -300,7 +300,7 @@ function Wait-EvoFlowPortReady {
     return $false
 }
 
-function Stop-EvoFlowCimKillByCommandLineRegex {
+function Stop-QAgentCimKillByCommandLineRegex {
     param(
         [string]$RegexPattern,
         [int]$MaxRounds = 3,
@@ -323,32 +323,32 @@ function Stop-EvoFlowCimKillByCommandLineRegex {
         foreach ($p in $hits) {
             $id = [int]$p.ProcessId
             if ($id -gt 0) {
-                Stop-EvoFlowProcessTree -ProcessId $id
+                Stop-QAgentProcessTree -ProcessId $id
             }
         }
         Start-Sleep -Milliseconds 250
     }
 }
 
-function Stop-EvoFlowAllGatewayUvicornProcesses {
+function Stop-QAgentAllGatewayUvicornProcesses {
     <#
       多次重启会在 8012 上堆积多个 uvicorn。含 --reload 时需配合端口清扫杀父进程。
       匹配「-m uvicorn … app.gateway.app:app」与「uvicorn 在前」两种命令行，避免 CIM 扫不到。
     #>
     $port = [int]$script:DFGatewayPort
     if ($port -le 0) { $port = 8012 }
-    Stop-EvoFlowCimKillByCommandLineRegex -RegexPattern '(?i)app\.gateway\.app:app' -MaxRounds 8
-    Stop-EvoFlowCimKillByCommandLineRegex -RegexPattern ('(?i)app\.gateway\.app:app.*--port\s*{0}\b' -f $port) -MaxRounds 5
+    Stop-QAgentCimKillByCommandLineRegex -RegexPattern '(?i)app\.gateway\.app:app' -MaxRounds 8
+    Stop-QAgentCimKillByCommandLineRegex -RegexPattern ('(?i)app\.gateway\.app:app.*--port\s*{0}\b' -f $port) -MaxRounds 5
 }
 
-function Stop-EvoFlowAllLangGraphCliProcesses {
+function Stop-QAgentAllLangGraphCliProcesses {
     <#
       start-backend: python -m langgraph_cli dev（仅扫相关进程名，避免全表 CIM）。
     #>
-    Stop-EvoFlowCimKillByCommandLineRegex -RegexPattern '-m\s+langgraph_cli\s+dev|langgraph_cli(\.exe)?\s+dev' -MaxRounds 6
+    Stop-QAgentCimKillByCommandLineRegex -RegexPattern '-m\s+langgraph_cli\s+dev|langgraph_cli(\.exe)?\s+dev' -MaxRounds 6
 }
 
-function Stop-EvoFlowBackend {
+function Stop-QAgentBackend {
     Write-Host ""
     Write-Host "==> Stopping backend: Gateway (:$script:DFGatewayPort, LangGraph in-process)" -ForegroundColor Yellow
 
@@ -376,17 +376,17 @@ function Stop-EvoFlowBackend {
     if ($stateConsolePids.Count -gt 0) {
         Write-Host "  Stopping console sessions from last-start state file..." -ForegroundColor DarkGray
         foreach ($consolePid in $stateConsolePids | Sort-Object -Unique) {
-            Stop-EvoFlowProcessTree -ProcessId $consolePid
+            Stop-QAgentProcessTree -ProcessId $consolePid
         }
     }
     if (Test-Path -LiteralPath $pidFile) {
-        Write-Host "  Stopping console sessions from PID file (same as closing the two EvoFlow windows)..." -ForegroundColor DarkGray
+        Write-Host "  Stopping console sessions from PID file (same as closing the two QAgent windows)..." -ForegroundColor DarkGray
         foreach ($line in @(Get-Content -LiteralPath $pidFile -ErrorAction SilentlyContinue)) {
             if ($line -match '^\s*langgraph_ps_pid=(\d+)\s*$') {
-                Stop-EvoFlowProcessTree -ProcessId ([int]$Matches[1])
+                Stop-QAgentProcessTree -ProcessId ([int]$Matches[1])
             }
             elseif ($line -match '^\s*gateway_ps_pid=(\d+)\s*$') {
-                Stop-EvoFlowProcessTree -ProcessId ([int]$Matches[1])
+                Stop-QAgentProcessTree -ProcessId ([int]$Matches[1])
             }
         }
         Remove-Item -LiteralPath $pidFile -Force -ErrorAction SilentlyContinue
@@ -395,7 +395,7 @@ function Stop-EvoFlowBackend {
     }
     # 无论是否读过 PID 文件都要做：taskkill 偶发未清干净、或 Gateway 是以前手动起的孤儿进程
     Write-Host "  Command-line sweep (python/pwsh: app.gateway uvicorn)..." -ForegroundColor DarkGray
-    Stop-EvoFlowAllGatewayUvicornProcesses
+    Stop-QAgentAllGatewayUvicornProcesses
 
     $portsToSweep = @($script:DFGatewayPort)
     foreach ($p in $statePorts) {
@@ -413,11 +413,11 @@ function Stop-EvoFlowBackend {
     }
 
     Write-Host "  Port sweep (orphans / old hidden runs): $($portsToSweep -join ', ')..." -ForegroundColor DarkGray
-    Stop-EvoFlowPortsSweep -Ports $portsToSweep -MaxRounds 12
-    $null = Wait-EvoFlowPortsClosed -Ports $portsToSweep -TimeoutSec 5
+    Stop-QAgentPortsSweep -Ports $portsToSweep -MaxRounds 12
+    $null = Wait-QAgentPortsClosed -Ports $portsToSweep -TimeoutSec 5
 
     $left = @()
-    $finalMap = Get-EvoFlowListeningPidsMap -PortList $portsToSweep
+    $finalMap = Get-QAgentListeningPidsMap -PortList $portsToSweep
     foreach ($p in $portsToSweep) {
         $rest = @($finalMap[$p])
         if ($rest.Count -gt 0) {
@@ -426,10 +426,10 @@ function Stop-EvoFlowBackend {
     }
     if ($left.Count -gt 0) {
         Write-Host "  Second pass: brute NetTCP listener cleanup (reload / stacked uvicorn)..." -ForegroundColor DarkGray
-        Stop-EvoFlowBruteKillPortListeners -Ports $portsToSweep -MaxRounds 25 -SleepMs 300
-        $null = Wait-EvoFlowPortsClosed -Ports $portsToSweep -TimeoutSec 6
+        Stop-QAgentBruteKillPortListeners -Ports $portsToSweep -MaxRounds 25 -SleepMs 300
+        $null = Wait-QAgentPortsClosed -Ports $portsToSweep -TimeoutSec 6
         $left = @()
-        $finalMap = Get-EvoFlowListeningPidsMap -PortList $portsToSweep
+        $finalMap = Get-QAgentListeningPidsMap -PortList $portsToSweep
         foreach ($p in $portsToSweep) {
             $rest = @($finalMap[$p])
             if ($rest.Count -gt 0) {
@@ -450,7 +450,7 @@ function Stop-EvoFlowBackend {
     # State file is only for best-effort stop; keep it for postmortem unless explicitly cleaned by user.
 }
 
-function Read-EvoFlowInternalEventsSecret {
+function Read-QAgentInternalEventsSecret {
     $secret = $env:INTERNAL_EVENTS_SECRET
     if (-not [string]::IsNullOrWhiteSpace($secret)) {
         return $secret
@@ -468,7 +468,7 @@ function Read-EvoFlowInternalEventsSecret {
     return $null
 }
 
-function Read-EvoFlowNJobsPerWorker {
+function Read-QAgentNJobsPerWorker {
     $v = $env:N_JOBS_PER_WORKER
     if (-not [string]::IsNullOrWhiteSpace($v)) {
         return $v.Trim()
@@ -486,7 +486,7 @@ function Read-EvoFlowNJobsPerWorker {
     return "10"
 }
 
-function Resolve-EvoFlowDevDeerFlowHome {
+function Resolve-QAgentDevDeerFlowHome {
     <#
       Auto-load EvoPanel's "用户工作空间" for local dev backend (8012/2024),
       so dev backend reads/writes the same data root as the desktop app.
@@ -532,7 +532,7 @@ function Resolve-EvoFlowDevDeerFlowHome {
     }
 }
 
-function Start-EvoFlowBackend {
+function Start-QAgentBackend {
     $pyExe = Join-Path $script:DFBackendDir ".venv\Scripts\python.exe"
     if (-not (Test-Path $pyExe)) {
         throw "Python venv not found: $pyExe (run: cd backend; uv sync)"
@@ -553,7 +553,7 @@ function Start-EvoFlowBackend {
         $gwHigh = [Math]::Min(65535, $preferredGatewayPort + 40)
     }
 
-    $resolvedGatewayPort = Resolve-EvoFlowPort -Preferred $preferredGatewayPort -RangeStart $gwLow -RangeEnd $gwHigh
+    $resolvedGatewayPort = Resolve-QAgentPort -Preferred $preferredGatewayPort -RangeStart $gwLow -RangeEnd $gwHigh
     if (-not $resolvedGatewayPort) { $resolvedGatewayPort = 8012 }
 
     $script:DFGatewayPort = $resolvedGatewayPort
@@ -567,8 +567,8 @@ function Start-EvoFlowBackend {
             Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
-    $internalEventsSecret = Read-EvoFlowInternalEventsSecret
-    $nJobsPerWorker = Read-EvoFlowNJobsPerWorker
+    $internalEventsSecret = Read-QAgentInternalEventsSecret
+    $nJobsPerWorker = Read-QAgentNJobsPerWorker
     Write-Host "  N_JOBS_PER_WORKER (LangGraph in-process): $nJobsPerWorker" -ForegroundColor DarkGray
 
     $venvScripts = Join-Path $script:DFBackendDir ".venv\Scripts"
@@ -584,7 +584,7 @@ function Start-EvoFlowBackend {
     $pythonPathValue = "$($script:DFBackendDir);$($script:DFBackendDir)\packages\harness"
 
     # Auto-read EvoPanel desktop workspace root and apply to dev backend.
-    $devDeerFlowHome = Resolve-EvoFlowDevDeerFlowHome
+    $devDeerFlowHome = Resolve-QAgentDevDeerFlowHome
     $configYaml = Join-Path $script:DFRepoRoot "config.yaml"
     $fixedEnv = ""
     if (-not [string]::IsNullOrWhiteSpace($devDeerFlowHome)) {
@@ -649,7 +649,7 @@ function Start-EvoFlowBackend {
         $gatewayEventsEnv += "`$env:INTERNAL_EVENTS_SECRET='$escaped'; "
     }
 
-    $gwTitle = "EvoFlow Gateway :$gatewayPortInt [LangGraph in-process] [close window = stop]"
+    $gwTitle = "QAgent Gateway :$gatewayPortInt [LangGraph in-process] [close window = stop]"
 
     # LangGraph CLI may print UTF-8 / symbols; default GBK consoles throw UnicodeEncodeError and look like a stuck black window.
     # PYTHONUNBUFFERED surfaces early logs while the agent graph imports (can take 30–90s on cold start).
@@ -702,7 +702,7 @@ $OutputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
     Write-Host ""
     Write-Host "==> Waiting for Gateway port (this window stays open)..." -ForegroundColor Cyan
-    $okGw = Wait-EvoFlowPortReady -Port $script:DFGatewayPort -TimeoutSec 120
+    $okGw = Wait-QAgentPortReady -Port $script:DFGatewayPort -TimeoutSec 120
 
     # Persist last-start runtime state for easier stopping next time (auto port selection, reload workers, etc.)
     try {
@@ -740,12 +740,12 @@ $OutputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
     Write-Host "Desktop web (Tauri devUrl): http://localhost:$($script:DFEvoPanelWebPorts[0]) | start separately: scripts\windows\start-evopanel-web.ps1" -ForegroundColor DarkYellow
 }
 
-function Stop-EvoFlowEvoPanelWeb {
+function Stop-QAgentEvoPanelWeb {
     Write-Host ""
     Write-Host "==> Stopping EvoPanel dev listeners (ports $($script:DFEvoPanelWebPorts -join ', '))" -ForegroundColor Yellow
     foreach ($p in $script:DFEvoPanelWebPorts) {
-        Stop-EvoFlowPortProcess -Port $p
-        $null = Wait-EvoFlowPortClosed -Port $p -TimeoutSec 15
+        Stop-QAgentPortProcess -Port $p
+        $null = Wait-QAgentPortClosed -Port $p -TimeoutSec 15
     }
     Write-Host "    Done. (若 Vite 落在 1422+，请用任务管理器结束 node 或再执行一次带 -ExtraPorts)" -ForegroundColor DarkGray
 }

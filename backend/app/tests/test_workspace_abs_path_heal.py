@@ -68,11 +68,11 @@ def test_resolve_does_not_join_colon_stripped_path(tmp_path: Path) -> None:
 
 
 def test_normalize_keeps_windows_drive() -> None:
-    assert _normalize_rel_path("D:/dev/github/EvoFlow/output/x") == "D:/dev/github/EvoFlow/output/x"
+    assert _normalize_rel_path("D:/dev/github/QAgent/output/x") == "D:/dev/github/QAgent/output/x"
 
 
 def test_strip_embedded_workspace_root_prefix() -> None:
-    root = r"D:\dev\github\EvoFlow\outputs\smart-employee-test\workspace\qa-engineer"
+    root = r"D:\dev\github\QAgent\outputs\smart-employee-test\workspace\qa-engineer"
     key = (
         "outputs/smart-employee-test/workspace/qa-engineer/"
         "docs/roles/qa-engineer/20260808-17/test_report.md"
@@ -164,7 +164,7 @@ def test_http_preview_outside_abs_path_like_chat_click(tmp_path: Path) -> None:
 
     from app.gateway.routers.workspaces import router
 
-    bound = tmp_path / "EvoFlow"
+    bound = tmp_path / "QAgent"
     bound.mkdir()
     (bound / "README.md").write_text("bound", encoding="utf-8")
     outside = tmp_path / "github" / "temp" / "doc" / "direct-model-call"

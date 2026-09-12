@@ -1,4 +1,4 @@
-"""Shared argparse helpers for EvoFlow CLI."""
+"""Shared argparse helpers for QAgent CLI."""
 
 from __future__ import annotations
 

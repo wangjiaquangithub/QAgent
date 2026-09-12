@@ -20,7 +20,7 @@ def register_active_agent(task_id: str, agent: "BaseExternalAgent") -> None:
     """Register an active agent instance.
 
     Args:
-        task_id: EvoFlow task ID
+        task_id: QAgent task ID
         agent: Agent instance
     """
     _active_agents[task_id] = agent
@@ -31,7 +31,7 @@ def get_active_agent(task_id: str) -> "BaseExternalAgent | None":
     """Get an active agent instance by task ID.
 
     Args:
-        task_id: EvoFlow task ID
+        task_id: QAgent task ID
 
     Returns:
         Agent instance or None if not found
@@ -46,7 +46,7 @@ def unregister_active_agent(task_id: str) -> bool:
     """Unregister an agent instance.
 
     Args:
-        task_id: EvoFlow task ID
+        task_id: QAgent task ID
 
     Returns:
         True if agent was found and removed

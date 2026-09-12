@@ -17,13 +17,13 @@
 ## 前置条件
 
 - 已完成 [5 分钟快速上手](quick-start.md)
-- EvoFlow 正在运行
+- QAgent 正在运行
 
 ## 步骤
 
 ### 1. 发起任务
 
-在 EvoFlow 聊天界面输入：
+在 QAgent 聊天界面输入：
 
 ```
 帮我调研当前主流的 AI Agent 框架，写一份对比报告
@@ -37,7 +37,7 @@ Agent 会：
 3. （如果启用了子 Agent）委派子 Agent 并行调研不同框架
 4. 综合结果，生成报告
 
-你可以在 EvoFlow 的**任务中心**看到：
+你可以在 QAgent 的**任务中心**看到：
 - 实时进度
 - 子任务状态
 - Agent 的工具调用记录
@@ -46,7 +46,7 @@ Agent 会：
 
 任务完成后，Agent 会将报告保存在沙箱的 `/mnt/user-data/outputs/` 目录中。
 
-在 EvoFlow 中，你可以直接在对话中看到和下载产出的文件。
+在 QAgent 中，你可以直接在对话中看到和下载产出的文件。
 
 ### 4. 尝试 Plan 模式
 
@@ -62,7 +62,7 @@ Plan 模式的完整说明见 [Plan 模式](../guides/chat/plan-mode.md) [[guide
 
 ## 你完成了！
 
-现在你已经体验了 EvoFlow 的核心能力。
+现在你已经体验了 QAgent 的核心能力。
 
 ## 下一步
 

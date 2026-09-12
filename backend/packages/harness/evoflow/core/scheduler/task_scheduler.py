@@ -61,7 +61,7 @@ class ParallelTaskScheduler:
         self._cancelled_tasks: set[str] = set()
 
         # 历史记录目录
-        self._history_dir = Path(r"d:\github\EvoFlow\temp\scheduler_history")
+        self._history_dir = Path(r"d:\github\QAgent\temp\scheduler_history")
         self._history_dir.mkdir(parents=True, exist_ok=True)
 
     def _is_task_cancelled(self, task_id: str) -> bool:

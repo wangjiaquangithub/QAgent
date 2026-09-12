@@ -22,7 +22,7 @@ describe('web-embed-url', () => {
   })
 
   it('maps file:// to filesystem path', () => {
-    const p = localUrlToFsPath('file:///D:/dev/github/EvoFlow/docs/a.html')
+    const p = localUrlToFsPath('file:///D:/dev/github/QAgent/docs/a.html')
     expect(p.replace(/\\/g, '/').toLowerCase()).toBe('d:/dev/github/evoflow/docs/a.html')
   })
 

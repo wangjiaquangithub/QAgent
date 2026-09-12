@@ -1,8 +1,8 @@
 # 贡献者许可协议（Contributor License Agreement, CLA）
 
-> 本协议适用于向 **EvoFlow** 项目（以下简称「本项目」）提交的全部贡献（代码、文档、技能包、资产等）。
-> 版权人：**景银泰（EvovexAI）**，以下简称「版权人」。
-> 提交贡献即视为签署本协议（无需纸质签署）；如贵司要求纸质/正式签署，请联系 [cloud@evovexai.com](mailto:cloud@evovexai.com)。
+> 本协议适用于向 **QAgent** 项目（以下简称「本项目」）提交的全部贡献（代码、文档、技能包、资产等）。
+> 版权人：**王佳全（WangJiaquan）/ Quclouds**，以下简称「版权人」。
+> 提交贡献即视为签署本协议（无需纸质签署）；如贵司要求纸质/正式签署，请联系 [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com)。
 
 ---
 
@@ -10,7 +10,7 @@
 
 1.1 **「贡献」**：指你通过 Pull Request、Issue 附件、Discussion 上传或其它方式，向本项目提交的任何原创代码、文本、图形、文档、技能包、配置或其它材料。
 
-1.2 **「本项目」**：指版权人维护的 EvoFlow 项目，含其源码、文档、技能与发行物。
+1.2 **「本项目」**：指版权人维护的 QAgent 项目，含其源码、文档、技能与发行物。
 
 1.3 **「授权」**：指本协议项下你授予版权人的权利。
 
@@ -76,7 +76,7 @@
 
 ## 8. 联系我们
 
-如需正式签署、企业贡献授权，或有任何疑问，请联系：[cloud@evovexai.com](mailto:cloud@evovexai.com)。
+如需正式签署、企业贡献授权，或有任何疑问，请联系：[wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com)。
 
 ---
 

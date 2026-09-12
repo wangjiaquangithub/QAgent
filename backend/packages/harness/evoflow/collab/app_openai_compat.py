@@ -313,7 +313,7 @@ def publicize_step_response(step: dict[str, Any]) -> dict[str, Any]:
         # FastGPT-shaped fields
         "moduleName": module_name,
         "moduleType": "agentStep",
-        # EvoFlow explicit identity
+        # QAgent explicit identity
         "ref": ref,
         "assigned_agent": agent,
         "agent": agent,

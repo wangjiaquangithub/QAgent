@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
-- 发布 EvoFlow **1.0.0** 首个公开源码可见版本（桌面端 / 面板 / 后端统一版本）
+- 发布 QAgent **1.0.0** 首个公开源码可见版本（桌面端 / 面板 / 后端统一版本）
 - 原生 Agent Teams：长任务规划、拆解、执行、恢复与验收
 - 对话 / Plan / Goal 主流程，以及任务中心、工作流、自动化与 IM 渠道
 - 技能包与 MCP 连接器扩展能力；知识库、沙箱执行与可观测
@@ -64,7 +64,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - 对话结束后贴底跟随不再被 ResizeObserver / rows 抖动无限续期，避免消息区上下抢滚动
 - 上滑阅读时：折叠误判回贴底收紧、用户上滑意图优先、虚拟列表手势中不改 scrollTop、跳转按钮频率加滞回，减少卡顿抖动
 - 侧边「网页」面板可内嵌打开本地 `file://` / 磁盘路径 HTML（不再一直「加载中」）；系统打开也支持本地文件
-- 小V 工作台轮询岗位 busy 时对 422 按空闲处理，避免控制台刷 HTTP 422
+- 小Q 工作台轮询岗位 busy 时对 422 按空闲处理，避免控制台刷 HTTP 422
 - 写入文件流式进度在模型先推 content、后推 path 时也会补发带路径的 `write_file_progress`，不再一直 `path=""`
 - 替换文件（replace）流式参数同样补齐路径：根对象键提取、path 后到仍会推送进度；工具行优先用 `_writeProgress.path`
 - 多次 replace 的 +/- 行数以最新进度为准（writing/done 重置），不再 Math.max 保留历史大数字
@@ -104,8 +104,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### Fixed
 
 - 模型页嵌在设置里时，删除确认框不再被设置弹层挡住
-- 小V 协助在深色与液态玻璃下不再出现实心白底；对话气泡使用真实头像
-- 小V 页面上下文更干净，减少路过路由等噪声
+- 小Q 协助在深色与液态玻璃下不再出现实心白底；对话气泡使用真实头像
+- 小Q 页面上下文更干净，减少路过路由等噪声
 - 桌面端「引擎加载中」提示不再挡住标题栏拖动区
 
 - Gateway `/health/ready` 在 **core routers 注册后即就绪**；停 sidecar 时强制清端口并等待释放，避免多实例 SQLite `database is locked` 把 `create_app` 卡到数十秒。
@@ -134,7 +134,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - 最新一轮对话过程聚焦：思考一行摘要、正文正常阅读、更早轮次收入「明细」；折叠与贴底滚动更稳
 - 壳层工作台视觉：新建对话并入主导航；会话列表更易扫读；顶栏窗口按钮更接近系统习惯；后台暂停动画与轮询
-- 默认主智能体对外统一为 EvoFlow（名称与头像）
+- 默认主智能体对外统一为 QAgent（名称与头像）
 - 任务详情状态轮询与协作执行图更及时；有汇总节点时交付物去噪
 - 应用列表按最近更新排序并显示更新时间
 - 「停止当前工作」会暂停自动值班；单次思考默认不再被短超时掐断
@@ -293,7 +293,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### Added
 
 - 模型容错中间件：自动检测模型调用失败并切换备选模型
-- 小V全局调度：前台智能体可跨岗位协调资源
+- 小Q全局调度：前台智能体可跨岗位协调资源
 - Stream Mirror Lane：SSE 归一化与流式稳定性增强
 
 ### Fixed
@@ -326,7 +326,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Changed
 
-- 小V / 超级助手路由文案：明确 items（用户备忘）、tasks（协作工单）、todo（对话清单）分工
+- 小Q / 超级助手路由文案：明确 items（用户备忘）、tasks（协作工单）、todo（对话清单）分工
 - 智能体员工工作过程与面板展示增强
 
 ## [0.4.0] - 2026-08-08
@@ -366,7 +366,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - 修复桌面端密码框等输入框 Ctrl+V / 右键粘贴经常无效的问题（聊天主输入仍保留图片粘贴）
 - 修复首次添加知识库时长时间卡在「保存中」、并可能弹出控制台窗口的问题；安装检索组件与建索引改为后台任务，页面可看进度
-- 升级后内置「EvoFlow 用户指南」会随版本自动同步最新文档并后台重建索引，避免检索仍是旧内容
+- 升级后内置「QAgent 用户指南」会随版本自动同步最新文档并后台重建索引，避免检索仍是旧内容
 
 - Gateway `/health/ready` 在 **core routers 注册后即就绪**；停 sidecar 时强制清端口并等待释放，避免多实例 SQLite `database is locked` 把 `create_app` 卡到数十秒。
 
@@ -399,7 +399,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
-- 小V 支持微信式「一员工一会话」：左侧联系人、右侧直接委派，并查看进行中进度与最新汇报
+- 小Q 支持微信式「一员工一会话」：左侧联系人、右侧直接委派，并查看进行中进度与最新汇报
 - 员工会话可按需打开工作轨迹；历史完成默认折叠，最新汇报按时间正序展示
 
 ### Fixed
@@ -472,7 +472,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Changed
 
-- 官网品牌、文档与导航统一为 EvoFlow，入门与教程入口已对齐
+- 官网品牌、文档与导航统一为 QAgent，入门与教程入口已对齐
 - 对话流式输出与消息展示进一步优化，长回复阅读更顺畅
 - 模型连接在多端点场景下的匹配与列表展示更稳定
 
@@ -535,7 +535,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Changed
 
-- EvoFlow 0.3.x 正式版发布，桌面端功能与体验达到对外正式发布标准
+- QAgent 0.3.x 正式版发布，桌面端功能与体验达到对外正式发布标准
 
 ## [0.1.9] - 2026-05-18
 

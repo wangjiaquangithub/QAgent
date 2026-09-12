@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Literal
 
 BUILTIN_ASSET_VAULT_ID = "evoflow-assets"
-BUILTIN_ASSET_VAULT_NAME = "EvoFlow 资产中心"
+BUILTIN_ASSET_VAULT_NAME = "QAgent 资产中心"
 
 EntityType = Literal["user", "agent", "employee", "workspace"]
 
@@ -140,7 +140,7 @@ def default_user_profile_md() -> str:
 def default_index_md() -> str:
     return (
         "# 资产中心索引\n\n"
-        "本目录由 EvoFlow 资产中心管理。画像、记忆、专长均以 Markdown 存放，可直接复制导出。\n\n"
+        "本目录由 QAgent 资产中心管理。画像、记忆、专长均以 Markdown 存放，可直接复制导出。\n\n"
         "- `user/` — 用户资产\n"
         "- `agents/` — 智能体资产\n"
         "- `employees/` — 智能体员工资产\n"

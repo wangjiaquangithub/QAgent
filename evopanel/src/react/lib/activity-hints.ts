@@ -1,9 +1,9 @@
 /**
- * EvoFlow 运行状态提示话术
+ * QAgent 运行状态提示话术
  * 根据当前活动类型和上下文，生成有趣、有用、定制化的提示文字
  */
 
-// 工具调用话术池 - EvoFlow 定制版
+// 工具调用话术池 - QAgent 定制版
 const TOOL_HINTS: Record<string, string[]> = {
   // 文件操作
   'write_file': [
@@ -11,7 +11,7 @@ const TOOL_HINTS: Record<string, string[]> = {
     '敲键盘中，别催 🚀',
     '正在写文件，稍等片刻~',
     '代码在指尖流淌… ✨',
-    'EvoFlow 正在创作中~',
+    'QAgent 正在创作中~',
   ],
   'read_file': [
     '翻阅文档中… 📖',
@@ -99,7 +99,7 @@ const TOOL_HINTS: Record<string, string[]> = {
     '正在处理中… ⚡',
     '干活ing…',
     '稍等，正在执行~',
-    'EvoFlow 在忙~',
+    'QAgent 在忙~',
   ]
 }
 

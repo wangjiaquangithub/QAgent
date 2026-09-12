@@ -66,7 +66,7 @@ class TraeAgent(BaseExternalAgent):
         """Launch Trae agent by creating an HTTP session.
 
         Args:
-            task_id: EvoFlow task ID
+            task_id: QAgent task ID
             prompt: Initial task description
             cwd: Working directory (project path)
 
@@ -114,7 +114,7 @@ class TraeAgent(BaseExternalAgent):
 
         # Step 2: Initialize runtime
         self.runtime = ExternalAgentRuntime(
-            session_id=task_id,  # Use task_id as session_id for EvoFlow tracking
+            session_id=task_id,  # Use task_id as session_id for QAgent tracking
             task_id=task_id,
             agent_type="trae",
             state=AgentState.STARTING,

@@ -3,7 +3,7 @@
  * 文件：evopanel/src/lib/api-client.js
  * 
  * 封装所有与任务管理相关的后端 API 调用
- * 参考文档：EvoFlow 前端实现进度.md - Task 1.1
+ * 参考文档：QAgent 前端实现进度.md - Task 1.1
  */
 
 /**

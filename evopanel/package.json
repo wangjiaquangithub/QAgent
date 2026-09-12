@@ -2,17 +2,17 @@
   "name": "evopanel",
   "version": "1.0.0",
   "private": true,
-  "description": "EvoFlow — 面向长任务的原生 Agent Runtime 与控制平面（桌面端）",
+  "description": "QAgent — 面向长任务的原生 Agent Runtime 与控制平面（桌面端）",
   "type": "module",
-  "author": "EvovexAI",
+  "author": "QAgent",
   "license": "SEE LICENSE IN ../LICENSE",
-  "homepage": "https://www.evovexai.com",
+  "homepage": "https://github.com/wangjiaquangithub/QAgent",
   "repository": {
     "type": "git",
-    "url": "https://github.com/EvovexAI/EvoFlow.git"
+    "url": "https://github.com/wangjiaquangithub/QAgent.git"
   },
   "bugs": {
-    "url": "https://github.com/EvovexAI/EvoFlow/issues"
+    "url": "https://github.com/wangjiaquangithub/QAgent/issues"
   },
   "keywords": [
     "evopanel",
@@ -37,8 +37,8 @@
     "serve:win": "powershell -ExecutionPolicy Bypass -File ./scripts/serve.ps1",
     "preview": "vite preview",
     "tauri": "node ./node_modules/@tauri-apps/cli/tauri.js",
-    "icon:round": "python scripts/round-app-icon.py docs/assets/evoflow-app-icon-square.png docs/assets/evoflow-app-icon.png",
-    "icon:regen": "npm run icon:round && node ./node_modules/@tauri-apps/cli/tauri.js icon docs/assets/evoflow-app-icon.png -o src-tauri/icons",
+    "icon:round": "python3 scripts/round-app-icon.py docs/assets/qagent-app-icon-square.png docs/assets/qagent-app-icon.png",
+    "icon:regen": "npm run icon:round && node ./node_modules/@tauri-apps/cli/tauri.js icon docs/assets/qagent-app-icon.png -o src-tauri/icons",
     "icon:generate": "npm run icon:regen && node -e \"require('fs').copyFileSync('src-tauri/icons/icon.ico','public/favicon.ico')\"",
     "version": "node scripts/sync-version.js",
     "version:sync": "node scripts/sync-version.js",

@@ -120,7 +120,7 @@ def test_delete_config_only_message(client):
                 "success": True,
                 "vaultId": "personal",
                 "deletedConfigOnly": True,
-                "message": "已删除 EvoFlow 中的知识库连接配置，未删除 Obsidian Vault 内任何文件。",
+                "message": "已删除 QAgent 中的知识库连接配置，未删除 Obsidian Vault 内任何文件。",
             }
         ),
     ):

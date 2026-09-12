@@ -15,7 +15,7 @@ from evoflow.proactive.employee_prompt import (
 def _fake_role(**kwargs):
     defaults = {
         "agent_code": "evoflow-fullstack-lead",
-        "role_name": "EvoFlow全栈工程师",
+        "role_name": "QAgent全栈工程师",
         "department": "工程",
         "status": "active",
         "config": SimpleNamespace(
@@ -46,7 +46,7 @@ def test_normalize_strips_task_session_suffix():
 def test_build_employee_chat_v2_structure():
     identity = {
         "code": "evoflow-fullstack-lead",
-        "role_name": "EvoFlow全栈工程师",
+        "role_name": "QAgent全栈工程师",
         "department": "工程",
         "responsibilities": ["修 bug", "加功能"],
         "workspace_path": "D:/dev/github/evoflow",
@@ -54,7 +54,7 @@ def test_build_employee_chat_v2_structure():
     }
     prompt = build_employee_chat_system_prompt(
         identity=identity,
-        soul="只改 EvoFlow 仓库内的代码。",
+        soul="只改 QAgent 仓库内的代码。",
         skills_section="<available_skills>\n</available_skills>",
         workspace_root_hint="D:/dev/github/evoflow",
         runtime_os="Windows",
@@ -66,7 +66,7 @@ def test_build_employee_chat_v2_structure():
     assert "<employee" not in prompt
     assert 'version="2"' not in prompt
     assert "<identity>" in prompt
-    assert "EvoFlow全栈工程师" in prompt
+    assert "QAgent全栈工程师" in prompt
     assert "agent_code=`evoflow-fullstack-lead`" in prompt
     assert ":task:" not in prompt
     assert "2608280500_e6e3" not in prompt
@@ -85,16 +85,16 @@ def test_build_employee_chat_v2_structure():
     assert "用户画像" in prompt
     # No stacked generic assistant role / legacy framing
     assert "<role>" not in prompt
-    assert "EvoFlow助手" not in prompt
+    assert "QAgent助手" not in prompt
     assert "<employee_posting>" not in prompt
     assert "<employee_chat_frame" not in prompt
-    assert prompt.count("你是「EvoFlow全栈工程师」") == 1
+    assert prompt.count("你是「QAgent全栈工程师」") == 1
 
 
 def test_panel_set_never_in_employee_system_prompt():
     identity = {
         "code": "evoflow-fullstack-lead",
-        "role_name": "EvoFlow全栈工程师",
+        "role_name": "QAgent全栈工程师",
         "department": "工程",
         "responsibilities": [],
         "workspace_path": "",
@@ -135,14 +135,14 @@ def test_is_employee_chat_session_with_task_key():
     assert ok is True
     assert info is not None
     assert info["code"] == "evoflow-fullstack-lead"
-    assert info["role_name"] == "EvoFlow全栈工程师"
+    assert info["role_name"] == "QAgent全栈工程师"
 
 
 def test_is_employee_chat_session_rejects_main_and_xiaomi():
     assert is_employee_chat_session("thread-abc", "main")[0] is False
     with patch(
         "evoflow.proactive.repositories.ProactiveRepository.get_role",
-        return_value=_fake_role(agent_code="xiaomi", role_name="小V"),
+        return_value=_fake_role(agent_code="xiaomi", role_name="小Q"),
     ):
         # xiaomi filtered before role lookup via is_xiaomi_agent
         ok, _ = is_employee_chat_session("proactive:xiaomi:chat:stamp", "xiaomi")
@@ -160,7 +160,7 @@ def test_apply_prompt_template_employee_chat_v2():
         ),
         patch(
             "evoflow.agents.lead_agent.prompt._load_agent_soul_text",
-            return_value="专职负责 EvoFlow。",
+            return_value="专职负责 QAgent。",
         ),
         patch(
             "evoflow.agents.lead_agent.prompt.get_skills_prompt_section",
@@ -185,11 +185,11 @@ def test_apply_prompt_template_employee_chat_v2():
             loaded_tool_names=["bash", "panel_set"],
         )
     assert "<employee" not in prompt
-    assert "EvoFlow全栈工程师" in prompt
+    assert "QAgent全栈工程师" in prompt
     assert "agent_code=`evoflow-fullstack-lead`" in prompt
     assert ":task:" not in prompt
     assert "<role>" not in prompt
-    assert "EvoFlow助手" not in prompt
+    assert "QAgent助手" not in prompt
     assert "<employee_posting>" not in prompt
     assert "<employee_chat_frame" not in prompt
     assert "<stance>" not in prompt

@@ -1,5 +1,5 @@
 /**
- * 小V全局助手 · 纯函数（角标、问候、建议、状态映射）— 供 UI 与 vitest 共用
+ * 小Q全局助手 · 纯函数（角标、问候、建议、状态映射）— 供 UI 与 vitest 共用
  */
 import { toTaskStatusGroup, normalizeTaskStatusKey } from '../../lib/task-status-label.js'
 

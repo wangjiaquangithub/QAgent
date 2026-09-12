@@ -1,6 +1,6 @@
 # Asset Hub memory prompts
 
-Provenance: upstream memory-template patterns, path-mapped to EvoFlow
+Provenance: upstream memory-template patterns, path-mapped to QAgent
 `~/.evoflow/assets/{entity}/`.
 
 | File | Role | When used |

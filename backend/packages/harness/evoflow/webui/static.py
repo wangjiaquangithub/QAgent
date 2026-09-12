@@ -62,7 +62,7 @@ def resolve_evopanel_dist_dir() -> Path | None:
         candidate = ancestor / "evopanel" / "dist"
         if (candidate / "index.html").is_file():
             return candidate
-        if ancestor.name in {"EvoFlow", "evoflow", "haze-ctrl", "github"}:  # haze-ctrl: historical private name
+        if ancestor.name in {"QAgent", "evoflow", "haze-ctrl", "github"}:  # haze-ctrl: historical private name
             break
 
     return None

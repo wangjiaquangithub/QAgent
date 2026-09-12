@@ -30,8 +30,8 @@ def test_builtin_ui_names_cover_core_and_knowledge() -> None:
         ("code-agent", "代码助手"),
         ("knowledge-retriever", "知识检索"),
         ("knowledge-curator", "知识整理"),
-        ("xiaomi", "小V"),
-        ("main", "EvoFlow"),
+        ("xiaomi", "小Q"),
+        ("main", "QAgent"),
     ):
         if code in {"main", "xiaomi"}:
             assert BUILTIN_AGENT_UI_NAMES.get(code) == label

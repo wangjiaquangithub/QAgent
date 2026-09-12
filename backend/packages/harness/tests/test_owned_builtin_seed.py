@@ -19,7 +19,7 @@ def owned_seed_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     home.mkdir()
     src = tmp_path / "docs_user"
     src.mkdir()
-    (src / "README.md").write_text("# User guide\n\nHow to use EvoFlow.\n", encoding="utf-8")
+    (src / "README.md").write_text("# User guide\n\nHow to use QAgent.\n", encoding="utf-8")
     (src / "guides").mkdir()
     (src / "guides" / "quick.md").write_text("# Quick start\n\nInstall then open panel.\n", encoding="utf-8")
 
@@ -79,7 +79,7 @@ def test_builtin_owned_kb_cannot_be_deleted(owned_seed_home):
 
 
 def test_ensure_adopts_migrated_user_guide_and_dedupes(owned_seed_home):
-    """Migration-created「EvoFlow 用户指南」should be adopted; no second builtin."""
+    """Migration-created「QAgent 用户指南」should be adopted; no second builtin."""
     migrated = owned_service.create_base(
         {
             "name": bv.BUILTIN_USER_GUIDE_VAULT_NAME,

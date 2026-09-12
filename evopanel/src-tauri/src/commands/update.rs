@@ -13,7 +13,7 @@ pub fn update_dir() -> PathBuf {
 
 /// 更新清单 URL（公共仓库 `update/latest.json`，由 Windows 发版 `-UpdateLatestJson` 推送）
 const LATEST_JSON_URL: &str =
-    "https://raw.githubusercontent.com/EvovexAI/EvoFlow/main/update/latest.json";
+    "https://raw.githubusercontent.com/wangjiaquangithub/QAgent/main/update/latest.json";
 
 /// 检查是否有新版本可用
 #[tauri::command]

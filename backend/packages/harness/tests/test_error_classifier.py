@@ -144,3 +144,13 @@ def test_ark_image_text_token_exceed_is_overflow_not_auth() -> None:
     assert result.reason == FailoverReason.CONTEXT_OVERFLOW
     assert result.should_compress is True
     assert result.should_rotate_credential is False
+
+
+def test_invalid_parameter_400_is_non_retryable_format_error() -> None:
+    msg = (
+        "Error code: 400 - {'error': {'code': 'InvalidParameter', "
+        "'message': 'thinking.type `disabled` is not supported by this model'}}"
+    )
+    result = classify(_StatusError(msg, 400))
+    assert result.reason == FailoverReason.FORMAT_ERROR
+    assert result.retryable is False

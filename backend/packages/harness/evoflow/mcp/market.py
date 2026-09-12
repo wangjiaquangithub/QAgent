@@ -19,7 +19,7 @@ HTTP_TIMEOUT = httpx.Timeout(20.0, connect=8.0)
 
 
 def _ua_headers() -> dict[str, str]:
-    return {"User-Agent": "EvoFlow-Gateway/1.0", "Accept": "application/json"}
+    return {"User-Agent": "QAgent-Gateway/1.0", "Accept": "application/json"}
 
 
 def _glama_api_key() -> str:
@@ -218,7 +218,7 @@ def _github_ts_entry(package: dict[str, Any]) -> str | None:
 
 async def _fetch_raw_text(url: str) -> str | None:
     async with httpx.AsyncClient(timeout=HTTP_TIMEOUT) as client:
-        resp = await client.get(url, headers={"User-Agent": "EvoFlow-Gateway/1.0"})
+        resp = await client.get(url, headers={"User-Agent": "QAgent-Gateway/1.0"})
         if resp.status_code == 404:
             return None
         resp.raise_for_status()
@@ -602,7 +602,7 @@ def _remote_from_server(server_obj: dict[str, Any]) -> dict[str, Any] | None:
 
 
 def registry_server_to_mcp_config(server_payload: dict[str, Any]) -> dict[str, Any] | None:
-    """Convert official Registry ``server`` JSON to EvoFlow ``extensions_config`` MCP entry."""
+    """Convert official Registry ``server`` JSON to QAgent ``extensions_config`` MCP entry."""
     server_obj = server_payload.get("server") if isinstance(server_payload.get("server"), dict) else server_payload
     if not isinstance(server_obj, dict):
         return None

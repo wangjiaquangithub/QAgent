@@ -1,4 +1,4 @@
-# EvoFlow - Unified Development Environment
+# QAgent - Unified Development Environment
 
 .PHONY: help config config-upgrade check install setup-agent-browser setup-kb-mcp setup-sandbox dev dev-daemon start stop up down clean docker-init docker-start docker-stop docker-logs docker-logs-frontend docker-logs-gateway docs-install docs-serve docs-build openapi-export ci-local setup-git-hooks
 
@@ -11,7 +11,7 @@ ifeq ($(OS),Windows_NT)
 endif
 
 help:
-	@echo "EvoFlow Development Commands:"
+	@echo "QAgent Development Commands:"
 	@echo "  make config          - Generate local config files (aborts if config already exists)"
 	@echo "  make config-upgrade  - Merge new fields from config.example.yaml into config.yaml"
 	@echo "  make check           - Check if all required tools are installed"

@@ -1943,6 +1943,177 @@ def _table_exists(conn: sqlite3.Connection, name: str) -> bool:
     return row is not None
 
 
+def _column_exists(conn: sqlite3.Connection, table: str, column: str) -> bool:
+    """Return whether a known application table has ``column``."""
+    if not _table_exists(conn, table):
+        return False
+    escaped_table = table.replace('"', '""')
+    return any(
+        str(row[1]) == column
+        for row in conn.execute(f'PRAGMA table_info("{escaped_table}")')
+    )
+
+
+_AUTHZ_SCHEMA_TABLES = (
+    "evoflow_acl_grants",
+    "evoflow_admin_grants",
+    "evoflow_principal_identities",
+    "evoflow_principals",
+)
+
+
+def _authz_schema_complete(conn: sqlite3.Connection) -> bool:
+    return all(_table_exists(conn, table) for table in _AUTHZ_SCHEMA_TABLES)
+
+
+def _ensure_authz_schema(conn: sqlite3.Connection) -> None:
+    """Backfill authz tables omitted by legacy schema-version snaps.
+
+    Some pre-1.0 databases were marked as the public schema epoch without
+    receiving the authz tables. Do not run the complete baseline here: legacy
+    tables can predate columns referenced by newer baseline indexes.
+    """
+    if not _table_exists(conn, "evoflow_acl_grants"):
+        conn.executescript(
+            """
+            CREATE TABLE evoflow_acl_grants (
+                org_id TEXT NOT NULL,
+                owner_scope_id TEXT NOT NULL,
+                ref TEXT NOT NULL,
+                grantee_scope_id TEXT NOT NULL,
+                permission TEXT NOT NULL,
+                granted_by TEXT NOT NULL,
+                created_at REAL NOT NULL,
+                PRIMARY KEY (org_id, owner_scope_id, ref, grantee_scope_id, permission)
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_evo_acl_grants_grantee
+                ON evoflow_acl_grants(org_id, grantee_scope_id);
+
+            CREATE INDEX IF NOT EXISTS idx_evo_acl_grants_ref
+                ON evoflow_acl_grants(org_id, owner_scope_id, ref);
+            """
+        )
+
+    if not _table_exists(conn, "evoflow_admin_grants"):
+        conn.execute(
+            """
+            CREATE TABLE evoflow_admin_grants (
+                org_id TEXT NOT NULL,
+                principal_id TEXT NOT NULL,
+                scope_id TEXT NOT NULL,
+                role TEXT NOT NULL,
+                granted_by TEXT,
+                created_at REAL NOT NULL,
+                PRIMARY KEY (org_id, principal_id, scope_id, role)
+            )
+            """
+        )
+
+    if not _table_exists(conn, "evoflow_principal_identities"):
+        conn.executescript(
+            """
+            CREATE TABLE evoflow_principal_identities (
+                org_id TEXT NOT NULL,
+                provider TEXT NOT NULL,
+                external_id TEXT NOT NULL,
+                principal_id TEXT NOT NULL,
+                PRIMARY KEY (org_id, provider, external_id)
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_evo_principal_identities_uid
+                ON evoflow_principal_identities(principal_id);
+            """
+        )
+
+    if not _table_exists(conn, "evoflow_principals"):
+        conn.executescript(
+            """
+            CREATE TABLE evoflow_principals (
+                principal_id TEXT PRIMARY KEY,
+                org_id TEXT NOT NULL,
+                principal_type TEXT NOT NULL,
+                display_name TEXT NOT NULL DEFAULT '',
+                primary_email TEXT,
+                status TEXT NOT NULL DEFAULT 'active',
+                team_ids_json TEXT NOT NULL DEFAULT '[]',
+                attrs_json TEXT NOT NULL DEFAULT '{}',
+                created_at REAL NOT NULL,
+                updated_at REAL NOT NULL
+            );
+
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_evo_principals_email
+                ON evoflow_principals(org_id, primary_email)
+                WHERE primary_email IS NOT NULL AND primary_email != '';
+
+            CREATE INDEX IF NOT EXISTS idx_evo_principals_org
+                ON evoflow_principals(org_id, status);
+            """
+        )
+
+    conn.commit()
+
+
+def _ensure_legacy_authz_schema(conn: sqlite3.Connection) -> None:
+    if _authz_schema_complete(conn):
+        return
+    logger.warning("Backfilling missing authz schema on existing database")
+    _ensure_authz_schema(conn)
+
+
+def _ensure_legacy_chat_sessions_schema(conn: sqlite3.Connection) -> None:
+    """Backfill chat-session columns absent from pre-public databases.
+
+    Legacy databases can already carry public epoch ``user_version = 1`` while
+    their ``evoflow_chat_sessions`` table predates current fields.  Add only
+    missing columns instead of replaying the baseline, because unrelated legacy
+    tables may not satisfy newer baseline indexes.
+    """
+    table = "evoflow_chat_sessions"
+    if not _table_exists(conn, table):
+        return
+
+    required_columns = (
+        ("hidden_from_list", "INTEGER NOT NULL DEFAULT 0"),
+        ("permission_preset", "TEXT"),
+        ("org_id", "TEXT"),
+        ("scope_id", "TEXT"),
+        ("created_by", "TEXT"),
+    )
+    missing_columns = [
+        (name, definition)
+        for name, definition in required_columns
+        if not _column_exists(conn, table, name)
+    ]
+    if missing_columns:
+        logger.warning(
+            "Backfilling %s columns on existing database: %s",
+            table,
+            ", ".join(name for name, _ in missing_columns),
+        )
+        for name, definition in missing_columns:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {name} {definition}")
+
+    # These indexes are part of the baseline but CREATE TABLE IF NOT EXISTS
+    # cannot apply them to an already-created legacy table.
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_evo_chat_sessions_hidden_from_list "
+        "ON evoflow_chat_sessions(hidden_from_list, updated_at) "
+        "WHERE is_deleted = 0 AND COALESCE(hidden_from_list, 0) != 0"
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_evo_chat_sessions_created_by "
+        "ON evoflow_chat_sessions(created_by) WHERE is_deleted = 0"
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_evo_chat_sessions_scope "
+        "ON evoflow_chat_sessions(org_id, scope_id) WHERE is_deleted = 0"
+    )
+    # sqlite3 DDL is transactional; commit even when only a missing index was
+    # created, so compatibility work is durable before the connection closes.
+    conn.commit()
+
+
 def _apply_baseline(conn: sqlite3.Connection) -> None:
     conn.executescript(_BASELINE_DDL)
     conn.execute(f"PRAGMA user_version = {APP_SCHEMA_VERSION}")
@@ -1993,12 +2164,11 @@ def ensure_app_schema(conn: sqlite3.Connection) -> None:
         _snap_legacy_user_version(conn, version)
         # After snap, physical schema should already match; avoid re-executing
         # the full baseline on every connection open.
-        if int(conn.execute("PRAGMA user_version").fetchone()[0] or 0) == APP_SCHEMA_VERSION:
+        if int(conn.execute("PRAGMA user_version").fetchone()[0] or 0) != APP_SCHEMA_VERSION:
+            _apply_baseline(conn)
             return
-        _apply_baseline(conn)
-        return
-    # version == APP_SCHEMA_VERSION: already current.
-    return
+    _ensure_legacy_authz_schema(conn)
+    _ensure_legacy_chat_sessions_schema(conn)
 
 
 def ensure_chat_messages_thread_index(conn: sqlite3.Connection) -> None:

@@ -115,7 +115,7 @@ def run_retention_once() -> dict[str, Any]:
 
 
 def _run_wal_checkpoint_all() -> dict[str, Any]:
-    """Run ``PRAGMA wal_checkpoint(TRUNCATE)`` on all EvoFlow SQLite databases.
+    """Run ``PRAGMA wal_checkpoint(TRUNCATE)`` on all QAgent SQLite databases.
 
     Called periodically (default ~hourly) by the data retention scheduler to
     prevent WAL files from growing unbounded between full retention passes.

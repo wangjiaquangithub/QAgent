@@ -3,7 +3,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Share a product idea. Large / breaking designs should follow the [RFC guide](https://github.com/EvovexAI/EvoFlow/blob/main/docs/contribute/rfc.md) (title with `[RFC]`).
+        Share a product idea. Large / breaking designs should follow the [RFC guide](https://github.com/wangjiaquangithub/QAgent/blob/main/docs/contribute/rfc.md) (title with `[RFC]`).
   - type: textarea
     id: problem
     attributes:
@@ -15,7 +15,7 @@ body:
     id: proposal
     attributes:
       label: Proposal
-      description: What should EvoFlow do?
+      description: What should QAgent do?
     validations:
       required: true
   - type: textarea

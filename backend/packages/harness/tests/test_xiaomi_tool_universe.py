@@ -75,7 +75,7 @@ def test_proactive_allowlist_includes_xiaomi_tools(sqlite_tmp: Path) -> None:
 
     tools = [_T(n) for n in sorted(XIAOMI_SYSTEM_TOOL_NAMES)] + [_T("read"), _T("terminal")]
     patched = patch_proactive_tools(tools, allow_names=allow)
-    # Duty finalize always injects tasks (+ mind_map allow) even for 小V catalog
+    # Duty finalize always injects tasks (+ mind_map allow) even for 小Q catalog
     patched_names = {t.name for t in patched}
     assert set(XIAOMI_SYSTEM_TOOL_NAMES).issubset(patched_names)
     assert "tasks" in patched_names

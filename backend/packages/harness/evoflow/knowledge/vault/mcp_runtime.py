@@ -530,7 +530,7 @@ def build_search_stdio_config(cfg: KnowledgeVaultConfig) -> dict[str, Any]:
         overrides["OPENAI_BASE_URL"] = ""
         overrides["OPENAI_API_KEY"] = ""
         overrides["OPENAI_EMBEDDING_MODEL"] = ""
-    # Local Xenova models: cache under EvoFlow runtime; mirror helps first-time download in CN.
+    # Local Xenova models: cache under QAgent runtime; mirror helps first-time download in CN.
     hf_cache = str(resolve_kb_runtime_root() / "hf-cache")
     overrides.setdefault("TRANSFORMERS_CACHE", hf_cache)
     overrides.setdefault("HF_HOME", hf_cache)

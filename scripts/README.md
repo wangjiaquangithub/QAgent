@@ -1,6 +1,6 @@
 # scripts/
 
-Contributor helpers for building, checking, and running EvoFlow.
+Contributor helpers for building, checking, and running QAgent.
 
 | Script | Purpose |
 |--------|---------|

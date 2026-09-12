@@ -11,7 +11,7 @@
 | 破坏性配置 / 迁移 | 局部 UI 文案或样式 |
 | 跨 `app` 与 `evoflow` 的边界调整 | 明确复现的小 bugfix |
 
-不确定时：先开 [Discussion](https://github.com/EvovexAI/EvoFlow/discussions)，维护者会告诉你要不要升格为 RFC Issue。
+不确定时：先开 [Discussion](https://github.com/wangjiaquangithub/QAgent/discussions)，维护者会告诉你要不要升格为 RFC Issue。
 
 ## 流程
 

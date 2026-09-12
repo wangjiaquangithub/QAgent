@@ -65,7 +65,7 @@ def test_create_upload_and_keyword_search(owned_home: Path, monkeypatch: pytest.
     doc = owned_service.upload_manual_markdown(
         base["id"],
         title="产品说明",
-        content="# 产品说明\n\nEvoFlow 自有知识库支持本地检索与分块。\n\n第二段：混合检索使用 RRF。\n",
+        content="# 产品说明\n\nQAgent 自有知识库支持本地检索与分块。\n\n第二段：混合检索使用 RRF。\n",
     )
     job = jobs.get_job(doc["latestJobId"])
     assert job is not None
@@ -590,7 +590,7 @@ def test_kg_extract_and_search_boost(owned_home: Path, monkeypatch: pytest.Monke
     doc = owned_service.upload_manual_markdown(
         base["id"],
         title="关系样例",
-        content="# 总览\n\nEvoFlow是知识库平台。\n\n「混合检索」与「实体图」相关。\n\n## 实体图\n\n实体图依赖分块。\n",
+        content="# 总览\n\nQAgent是知识库平台。\n\n「混合检索」与「实体图」相关。\n\n## 实体图\n\n实体图依赖分块。\n",
     )
     job = jobs.get_job(doc["latestJobId"])
     asyncio.run(run_parse_index(job))

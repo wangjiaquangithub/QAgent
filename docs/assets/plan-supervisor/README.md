@@ -1,6 +1,6 @@
 # Plan 模式 · Supervisor / Agent Teams 演示素材
 
-供根目录 [README.md](https://github.com/EvovexAI/EvoFlow/blob/main/README.md) **演示 / 截图** 章节引用。
+供根目录 [README.md](https://github.com/wangjiaquangithub/QAgent/blob/main/README.md) **演示 / 截图** 章节引用。
 
 公开仓库**不附带**大体积演示 MP4（避免 LFS/克隆成本）；README 使用海报图即可。本地录制素材可放本目录但勿提交 `*.mp4`。
 

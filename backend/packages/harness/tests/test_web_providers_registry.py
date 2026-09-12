@@ -1,4 +1,4 @@
-"""EvoFlow pluggable web provider registry + dispatch."""
+"""QAgent pluggable web provider registry + dispatch."""
 
 from __future__ import annotations
 

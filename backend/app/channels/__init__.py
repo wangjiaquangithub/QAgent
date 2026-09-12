@@ -1,7 +1,7 @@
-"""IM Channel integration for EvoFlow.
+"""IM Channel integration for QAgent.
 
 Provides a pluggable channel system that connects external messaging platforms
-(Feishu/Lark, Slack, Telegram) to the EvoFlow agent via the ChannelManager,
+(Feishu/Lark, Slack, Telegram) to the QAgent agent via the ChannelManager,
 which uses ``langgraph-sdk`` to communicate with the underlying LangGraph Server.
 
 飞书/Feishu 集成快速开始:

@@ -13,7 +13,7 @@
 
 ## 前置条件
 
-- EvoFlow 正在运行
+- QAgent 正在运行
 - 已配置至少一个模型
 
 ## 调度器工作原理
@@ -88,7 +88,7 @@ curl -X POST http://localhost:8001/api/automation/{id}/run
 
 ### 如何手动触发任务？
 
-在 EvoFlow 中点击任务的"立即执行"按钮，或通过 Gateway API `POST /api/automation/{id}/run`。
+在 QAgent 中点击任务的"立即执行"按钮，或通过 Gateway API `POST /api/automation/{id}/run`。
 
 ### 并发执行会怎样？
 

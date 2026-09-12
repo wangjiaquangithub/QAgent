@@ -92,3 +92,17 @@ def test_explicit_reject_kept_for_interactive():
     assert out["multitask_strategy"] == "reject"
     assert meta["changed"] is False
     assert meta["reason"] == "already_set"
+
+
+def test_resolve_langgraph_base_url_defaults_to_in_process_gateway(monkeypatch):
+    monkeypatch.delenv("EVOFLOW_LANGGRAPH_URL", raising=False)
+    from evoflow.langgraph_run_config import resolve_langgraph_base_url
+
+    assert resolve_langgraph_base_url() == "http://127.0.0.1:8012/api/langgraph"
+
+
+def test_resolve_langgraph_base_url_keeps_explicit_external_override(monkeypatch):
+    monkeypatch.setenv("EVOFLOW_LANGGRAPH_URL", "http://127.0.0.1:2024/api/langgraph/")
+    from evoflow.langgraph_run_config import resolve_langgraph_base_url
+
+    assert resolve_langgraph_base_url() == "http://127.0.0.1:2024/api/langgraph"

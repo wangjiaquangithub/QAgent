@@ -8,8 +8,8 @@ from unittest.mock import MagicMock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent))
 
-# The workspace root is D:\example\EvoFlow (NOT backend/)
-root = "D:\\example\\EvoFlow"
+# The workspace root is D:\example\QAgent (NOT backend/)
+root = "D:\\example\\QAgent"
 print(f"Workspace root: {root}")
 
 from evoflow.code_index.store import _connect, _ensure_schema  # noqa: E402
@@ -29,7 +29,7 @@ print(f"DB exists: {os.path.exists(dbp)}")
 
 if not os.path.exists(dbp):
     print("ERROR: Index DB not found. Trying alternate roots...")
-    for alt_root in ["D:\\example\\EvoFlow\\backend", "C:\\Users\\example\\EvoFlow"]:
+    for alt_root in ["D:\\example\\QAgent\\backend", "C:\\Users\\example\\QAgent"]:
         alt_h = hashlib.sha256(alt_root.encode("utf-8")).hexdigest()[:16]
         alt_dbp = os.path.join(data_dir, "code_index", f"{alt_h}.db")
         print(f"  Trying {alt_root} -> {alt_dbp} exists={os.path.exists(alt_dbp)}")

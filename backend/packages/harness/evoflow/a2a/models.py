@@ -72,7 +72,7 @@ class A2ATask(BaseModel):
     status: TaskStatus = Field(default_factory=TaskStatus)
     messages: list[A2AMessage] = Field(default_factory=list)
     artifacts: list[A2AArtifact] = Field(default_factory=list)
-    # EvoFlow extensions (non-standard, prefixed)
+    # QAgent extensions (non-standard, prefixed)
     agent_code: str = ""
     role_name: str = ""
     subscribeUrl: str = ""
@@ -108,7 +108,7 @@ class AgentCard(BaseModel):
         default_factory=lambda: ["text/plain", "application/json"]
     )
     skills: list[AgentSkill] = Field(default_factory=list)
-    # EvoFlow extensions
+    # QAgent extensions
     agent_code: str = ""
     department: str = ""
     workspace: str = ""

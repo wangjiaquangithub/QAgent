@@ -55,9 +55,36 @@ def _redact_value(value: Any) -> Any:
     return value
 
 
+def _header_items(headers: Any) -> list[tuple[Any, Any]]:
+    """Return header pairs without treating ``Headers`` as a plain mapping.
+
+    Starlette's ``Headers`` exposes case-insensitive ``get``/``items`` methods,
+    but ``dict(headers)`` may enumerate title-cased keys and then look them up
+    verbatim, raising ``KeyError``. Gateway observability must never turn an
+    otherwise valid upstream response into a 500 while recording it.
+    """
+    if headers is None:
+        return []
+    items = getattr(headers, "items", None)
+    if callable(items):
+        return list(items())
+    try:
+        return list(dict(headers).items())
+    except (TypeError, ValueError):
+        return []
+
+
+def _header_value(headers: Any, name: str) -> Any:
+    target = name.lower()
+    for key, value in _header_items(headers):
+        if str(key).lower() == target:
+            return value
+    return None
+
+
 def _redact_headers(headers: Any) -> dict[str, str]:
     out: dict[str, str] = {}
-    for k, v in dict(headers or {}).items():
+    for k, v in _header_items(headers):
         key = str(k)
         out[key] = "[REDACTED]" if _is_sensitive_name(key) else str(v)
     return out
@@ -76,12 +103,12 @@ def _is_streaming_request_path(path: str) -> bool:
 
 def _skip_response_body(content_type: str | None, headers: Any) -> bool:
     ct = (content_type or "").lower()
-    disp = str(dict(headers or {}).get("content-disposition") or "").lower()
+    disp = str(_header_value(headers, "content-disposition") or "").lower()
     return "text/event-stream" in ct or "attachment" in disp or not _sampleable_content_type(ct)
 
 
 def _content_length(headers: Any) -> int | None:
-    raw = dict(headers or {}).get("content-length")
+    raw = _header_value(headers, "content-length")
     try:
         return int(raw) if raw is not None else None
     except (TypeError, ValueError):

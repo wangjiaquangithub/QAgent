@@ -279,7 +279,7 @@ function isXiaomiFrontDesk(agent) {
 /** 与卡片 / 详情 / 编辑器共用的可配置工具计数 */
 function resolveAgentConfigurableTools(agent, metaTools) {
   const catalog = metaTools || []
-  // 小V：系统前台，不挂角色可配置工具（运行时另挂 xiaomi_*）
+  // 小Q：系统前台，不挂角色可配置工具（运行时另挂 xiaomi_*）
   if (isXiaomiFrontDesk(agent)) {
     return { selected: [], isAll: false, total: catalog.length, frontDesk: true }
   }
@@ -2082,7 +2082,7 @@ export async function showEditRoleDialog(page, state, id) {
 
   // editState 初始化：
   //   tools/mcp：未配置时默认全选（与后端 None=全量一致）；skills 未配置时默认不选任何技能
-  //   小V：固定空能力面，不可编辑
+  //   小Q：固定空能力面，不可编辑
   const editState = {
     description: agent.description || '',
     tags: normalizeAgentTags(agent.tags),

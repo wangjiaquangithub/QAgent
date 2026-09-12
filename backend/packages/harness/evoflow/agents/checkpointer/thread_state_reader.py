@@ -1,7 +1,7 @@
 """Read thread checkpoint state without compiling the lead agent graph.
 
 LangGraph ``GET /threads/{id}/state`` normally invokes the graph factory (``make_lead_agent``),
-which loads tools, middleware, and config — seconds per request. EvoFlow Gateway can serve the
+which loads tools, middleware, and config — seconds per request. QAgent Gateway can serve the
 same ``values`` payload from the SQLite checkpointer in milliseconds.
 """
 

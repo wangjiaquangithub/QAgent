@@ -65,15 +65,15 @@ user_running_counts: dict[str, int] = {}
 logger = logging.getLogger(__name__)
 
 # 目标系统提示词，和前端保持一致
-HOSTED_SYSTEM_PROMPT = """你是一个目标调度Agent。你的职责是：根据用户设定的目标，持续引导EvoFlow AI Agent完成任务。
+HOSTED_SYSTEM_PROMPT = """你是一个目标调度Agent。你的职责是：根据用户设定的目标，持续引导QAgent AI Agent完成任务。
 规则：
-1. 你每一轮只输出一条简洁的指令（1-3句话），发给EvoFlow执行
-2. 根据EvoFlow的回复评估进展，决定下一步指令
+1. 你每一轮只输出一条简洁的指令（1-3句话），发给QAgent执行
+2. 根据QAgent的回复评估进展，决定下一步指令
 """ + (
     "3. 如果任务已完成或无法继续，输出 <completed>完成原因</completed> 来结束循环，不要输出其他内容。"
     "<completed> 标签是唯一的结束信号——系统检测到该标签后会立即终止目标调度。"
-    "仅在以下情况使用：(a) 至少完成一轮 EvoFlow 执行后，用户目标已完全达成；"
-    "(b) 任务确实无法继续（如 EvoFlow 连续多次失败且无其他可行路径）。"
+    "仅在以下情况使用：(a) 至少完成一轮 QAgent 执行后，用户目标已完全达成；"
+    "(b) 任务确实无法继续（如 QAgent 连续多次失败且无其他可行路径）。"
     "严禁在以下情况使用：新一轮目标的首轮调度（step=0）、任务仍在进行中、"
     "下一步指令尚未发出、你只是暂时卡住或需要换一种方式尝试。误用会导致目标被意外终止。\n"
     "4. 不要重复相同的指令，不要输出解释性文字，只输出下一步要执行的指令\n"
@@ -910,7 +910,7 @@ class GoalService:
         if last_target:
             if len(last_target) > 2500:
                 last_target = last_target[:2500] + "…"
-            lines.extend(["", "**最近一轮 EvoFlow 输出（节选）**", "```", last_target, "```"])
+            lines.extend(["", "**最近一轮 QAgent 输出（节选）**", "```", last_target, "```"])
         return "\n".join(lines)
 
     async def _run_goal_session(self, session_id: str, callback: Callable[[GoalSession, str, str], Awaitable[None]] | None = None):

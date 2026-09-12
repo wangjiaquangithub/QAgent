@@ -45,7 +45,7 @@ def test_read_path_guidance_root_once(assets_home: Path) -> None:
     ensure_entity_tree(ref)
     standing = assets_home / "assets" / "workspaces" / ref.entity_id / "memory" / "standing.md"
     standing.parent.mkdir(parents=True, exist_ok=True)
-    standing.write_text("# 项目\n\nEvoFlow backend harness\n", encoding="utf-8")
+    standing.write_text("# 项目\n\nQAgent backend harness\n", encoding="utf-8")
 
     block = build_read_path_guidance(ref)
     root = f"assets/workspaces/{ref.entity_id}"

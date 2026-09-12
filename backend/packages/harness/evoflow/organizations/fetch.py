@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 # Official public market index (override with EVOFLOW_RESOURCE_MARKET_CATALOG_URL;
 # set the env to empty string to disable remote market).
 DEFAULT_MARKET_CATALOG_URL = (
-    "https://raw.githubusercontent.com/EvovexAI/evoflow-resource-market/main/catalog.json"
+    "https://raw.githubusercontent.com/Quclouds/evoflow-resource-market/main/catalog.json"
 )
 
 _RAW_GH = re.compile(
@@ -53,7 +53,7 @@ def parse_github_raw_repo(catalog_url: str) -> dict[str, str] | None:
 
 
 def _download_bytes(url: str, *, timeout: int = 60) -> bytes:
-    req = Request(url, headers={"User-Agent": "EvoFlow-OrgPack/1.0"})
+    req = Request(url, headers={"User-Agent": "QAgent-OrgPack/1.0"})
     with urlopen(req, timeout=timeout) as resp:  # noqa: S310 — caller-controlled market/zip URL
         return resp.read()
 
@@ -105,7 +105,7 @@ def load_pack_from_market_path(
     if not info:
         raise PackManifestError(
             "market_path requires a GitHub raw catalog URL "
-            "(default EvovexAI/evoflow-resource-market, or EVOFLOW_RESOURCE_MARKET_CATALOG_URL / source.repo=owner/repo@branch)"
+            "(default Quclouds/evoflow-resource-market, or EVOFLOW_RESOURCE_MARKET_CATALOG_URL / source.repo=owner/repo@branch)"
         )
 
     zip_url = (

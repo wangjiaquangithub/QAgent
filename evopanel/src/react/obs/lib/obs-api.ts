@@ -142,7 +142,7 @@ export async function fetchAgents(): Promise<{ id?: string; name?: string; displ
 export async function checkObsEnabled(): Promise<boolean> {
   try {
     const st = (await api.observabilityStatus()) as { enabled?: boolean }
-    // Strict: missing/failed status must not look "enabled" (debug tab / 小V 调试).
+    // Strict: missing/failed status must not look "enabled" (debug tab / 小Q 调试).
     return st?.enabled === true
   } catch {
     return false

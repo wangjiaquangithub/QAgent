@@ -1043,8 +1043,8 @@ class FeishuChannel(Channel):
         """Pick which Feishu app credentials send this outbound.
 
         When inbound stamped ``metadata.account_id`` (including empty primary), trust it.
-        Never fall back to ``_chat_account`` in that case — a prior @小V in the same
-        group would otherwise steal EvoFlow助手 replies.
+        Never fall back to ``_chat_account`` in that case — a prior @小Q in the same
+        group would otherwise steal QAgent助手 replies.
         """
         meta = msg.metadata if isinstance(msg.metadata, dict) else {}
         if "account_id" in meta:
@@ -1110,7 +1110,7 @@ class FeishuChannel(Channel):
 
         We intentionally avoid ``lark.ws.Client.start()``: on handshake failure it
         enters the SDK's infinite ``_reconnect()`` loop and spams ERROR logs while
-        holding the thread. EvoFlow treats Feishu IM as optional at boot.
+        holding the thread. QAgent treats Feishu IM as optional at boot.
         """
         import lark_oapi as lark
 
@@ -3145,7 +3145,7 @@ class FeishuChannel(Channel):
             sender_id = event.event.sender.sender_id.open_id
             account_id = str(account_id or "").strip()
             if chat_id:
-                # Always refresh ("" = primary) so a prior @小V does not stick on this chat.
+                # Always refresh ("" = primary) so a prior @小Q does not stick on this chat.
                 self._chat_account[str(chat_id)] = account_id
 
             chat_type = str(getattr(message, "chat_type", None) or "").strip().lower()

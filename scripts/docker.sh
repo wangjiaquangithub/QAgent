@@ -87,7 +87,7 @@ docker_available() {
 # Initialize: pre-pull the sandbox image so first Pod startup is fast
 init() {
     echo "=========================================="
-    echo "  EvoFlow Init — Pull Sandbox Image"
+    echo "  QAgent Init — Pull Sandbox Image"
     echo "=========================================="
     echo ""
 
@@ -153,7 +153,7 @@ start() {
     local services
 
     echo "=========================================="
-    echo "  Starting EvoFlow Docker Development"
+    echo "  Starting QAgent Docker Development"
     echo "=========================================="
     echo ""
 
@@ -188,7 +188,7 @@ start() {
             echo -e "${YELLOW}============================================================${NC}"
             echo -e "${YELLOW}  config.yaml has been created from config.example.yaml.${NC}"
             echo -e "${YELLOW}  Please edit config.yaml to set your API keys and model   ${NC}"
-            echo -e "${YELLOW}  configuration before starting EvoFlow.                  ${NC}"
+            echo -e "${YELLOW}  configuration before starting QAgent.                  ${NC}"
             echo -e "${YELLOW}============================================================${NC}"
             echo ""
             echo -e "${YELLOW}  Edit the file:  $PROJECT_ROOT/config.yaml${NC}"
@@ -217,7 +217,7 @@ start() {
     cd "$DOCKER_DIR" && $COMPOSE_CMD up --build -d --remove-orphans $services
     echo ""
     echo "=========================================="
-    echo "  EvoFlow Docker is starting!"
+    echo "  QAgent Docker is starting!"
     echo "=========================================="
     echo ""
     echo "  🌐 LangGraph:   http://localhost:2024"
@@ -271,7 +271,7 @@ stop() {
 # Restart Docker development environment
 restart() {
     echo "========================================"
-    echo "  Restarting EvoFlow Docker Services"
+    echo "  Restarting QAgent Docker Services"
     echo "========================================"
     echo ""
     echo -e "${BLUE}Restarting containers...${NC}"
@@ -286,7 +286,7 @@ restart() {
 
 # Show help
 help() {
-    echo "EvoFlow Docker Management Script"
+    echo "QAgent Docker Management Script"
     echo ""
     echo "Usage: $0 <command> [options]"
     echo ""

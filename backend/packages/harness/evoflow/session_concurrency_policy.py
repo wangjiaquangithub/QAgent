@@ -1,4 +1,4 @@
-"""EvoFlow session concurrency policy (Python / LangGraph).
+"""QAgent session concurrency policy (Python / LangGraph).
 
 Rules (hard):
 1. Same ``thread_id``: interrupt / multitask replace of the prior run is allowed

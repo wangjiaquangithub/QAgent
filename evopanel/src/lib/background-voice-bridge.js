@@ -1,8 +1,8 @@
 /**
  * 后台语音发消息桥接。
  * - 主对话：ChatApp 挂载时注册 voiceSendHandler
- * - 「小V小V」唤醒：走全局小V面板（xiaomiVoiceSendHandler）
- * 持续监听模式下，partial 文字也通过此桥接实时推到 ChatComposer / 小V面板。
+ * - 「小Q小Q」唤醒：走全局小Q面板（xiaomiVoiceSendHandler）
+ * 持续监听模式下，partial 文字也通过此桥接实时推到 ChatComposer / 小Q面板。
  */
 
 /** @type {((text: string, opts?: { global?: boolean, xiaomi?: boolean }) => void | Promise<void>) | null} */
@@ -26,7 +26,7 @@ let voicePartialBeginHandler = null
 /** @type {((opts: { cancelled?: boolean }) => void) | null} */
 let voicePartialEndHandler = null
 let voicePartialSessionActive = false
-/** 唤醒会话期间：partial / send 优先小V */
+/** 唤醒会话期间：partial / send 优先小Q */
 let preferXiaomiVoice = false
 /** AI员工聊天室打开时：全局 PTT / 快捷键优先会议室 */
 let preferMeetingVoice = false
@@ -35,7 +35,7 @@ export const VOICE_CAPTURE_SESSION_END = 'evopanel:voice-capture-session-end'
 export const VOICE_CAPTURE_SESSION_BEGIN = 'evopanel:voice-capture-session-begin'
 
 /**
- * 「小V小V」唤醒回合：后续 transcript / partial 走全局小V。
+ * 「小Q小Q」唤醒回合：后续 transcript / partial 走全局小Q。
  * @param {boolean} on
  */
 export function setPreferXiaomiVoice(on) {
@@ -145,12 +145,12 @@ export function endVoicePartialSession(opts = {}) {
 }
 
 /**
- * 推送 partial 文字到 ChatComposer 或小V草稿区。
+ * 推送 partial 文字到 ChatComposer 或小Q草稿区。
  * @param {string} text
  */
 export function updateVoicePartialText(text) {
   const t = String(text || '')
-  // 会议室打开时优先（唤醒小V 仍可抢占）
+  // 会议室打开时优先（唤醒小Q 仍可抢占）
   if (!preferXiaomiVoice && preferMeetingVoice && typeof meetingVoicePartialHandler === 'function') {
     meetingVoicePartialHandler(t)
     return
@@ -181,7 +181,7 @@ export function unregisterVoiceSendHandler() {
 }
 
 /**
- * 全局小V面板注册（mountGlobalAssistant）。
+ * 全局小Q面板注册（mountGlobalAssistant）。
  * @param {(text: string, opts?: { global?: boolean, xiaomi?: boolean }) => void | Promise<void>} fn
  */
 export function registerXiaomiVoiceSendHandler(fn) {
@@ -226,7 +226,7 @@ export async function sendVoiceTranscript(text, opts = {}) {
       ? meetingVoiceSendHandler
       : voiceSendHandler
   if (!handler) {
-    if (useXiaomi) throw new Error('小V尚未就绪，请稍候再试')
+    if (useXiaomi) throw new Error('小Q尚未就绪，请稍候再试')
     if (useMeeting) throw new Error('会议室尚未就绪，请稍候再试')
     throw new Error('ChatApp 尚未就绪，请稍候再试')
   }

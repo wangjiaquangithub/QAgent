@@ -4,7 +4,7 @@ Private draft for the desktop updater. **Not** part of the product source tree.
 
 - Local draft: `scripts/maintainer/update/latest.json` (this directory)
 - Public channel (clients poll this):  
-  `https://raw.githubusercontent.com/EvovexAI/EvoFlow/main/update/latest.json`
+  `https://raw.githubusercontent.com/Quclouds/QAgent/main/update/latest.json`
 
 `npm run version:set` bumps the draft here. After the Windows installer is uploaded, `republish-public-release.ps1 -UpdateLatestJson` writes real `hash` / `size` / `platforms` and pushes **only** to the public repo path `update/latest.json`.
 

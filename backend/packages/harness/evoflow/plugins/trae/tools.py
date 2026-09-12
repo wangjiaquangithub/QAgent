@@ -399,7 +399,7 @@ def trae_status_tool() -> str:
 @tool("trae_new_chat", parse_docstring=False)
 def trae_new_chat_tool() -> str:
     """Create a fresh chat session in Trae."""
-    payload = {"metadata": {"caller": "EvoFlow"}, "prepare": True}
+    payload = {"metadata": {"caller": "QAgent"}, "prepare": True}
     ok, raw = _request_json("/v1/sessions", payload, method="POST")
     if ok:
         return raw
@@ -539,7 +539,7 @@ def trae_delegate_tool(
     if new_chat:
         sess_ok, sess_raw = _request_json(
             "/v1/sessions",
-            {"metadata": {"caller": "EvoFlow"}, "prepare": True},
+            {"metadata": {"caller": "QAgent"}, "prepare": True},
             method="POST",
             timeout_seconds_override=bridge_timeout,
         )
@@ -554,7 +554,7 @@ def trae_delegate_tool(
 
     body: dict[str, object] = {
         "content": str(payload["prompt"]),
-        "metadata": {"caller": "EvoFlow"},
+        "metadata": {"caller": "QAgent"},
     }
     if workspace and workspace.strip():
         body["sessionMetadata"] = {"workspace": workspace.strip()}
@@ -618,7 +618,7 @@ def trae_delegate_tool(
                     logger.warning("trae_delegate recovery switch to solo failed: %s", mode_raw)
             rec_ok, rec_raw = _request_json(
                 "/v1/sessions",
-                {"metadata": {"caller": "EvoFlow"}, "prepare": True},
+                {"metadata": {"caller": "QAgent"}, "prepare": True},
                 method="POST",
                 timeout_seconds_override=bridge_timeout,
             )

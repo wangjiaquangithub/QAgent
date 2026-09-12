@@ -29,9 +29,9 @@ const MALFORMED_ID =
 
 describe('coerceClarifyOptionsList', () => {
   it('parses JSON string array from model tool args', () => {
-    const raw = '["EvoFlow 自动化营销系统架构详解", "即梦 AI (Jimeng) 视觉生成 API 集成指南", "其他"]'
+    const raw = '["QAgent 自动化营销系统架构详解", "即梦 AI (Jimeng) 视觉生成 API 集成指南", "其他"]'
     expect(coerceClarifyOptionsList(raw)).toEqual([
-      'EvoFlow 自动化营销系统架构详解',
+      'QAgent 自动化营销系统架构详解',
       '即梦 AI (Jimeng) 视觉生成 API 集成指南',
       '其他',
     ])
@@ -43,7 +43,7 @@ describe('tryParseClarifyPreviewJson', () => {
     const input = {
       question: '请明确 AI 技术文档的具体方向或主题',
       options:
-        '["EvoFlow 自动化营销系统架构详解", "即梦 AI (Jimeng) 视觉生成 API 集成指南", "基于 RPA 的跨平台内容自动分发实现", "其他（请在回复中说明）"]',
+        '["QAgent 自动化营销系统架构详解", "即梦 AI (Jimeng) 视觉生成 API 集成指南", "基于 RPA 的跨平台内容自动分发实现", "其他（请在回复中说明）"]',
     }
     const parsed = tryParseClarifyPreviewJson(
       JSON.stringify({

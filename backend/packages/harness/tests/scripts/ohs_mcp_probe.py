@@ -113,7 +113,7 @@ async def mcp_session():
             ("hybrid_zh", {"query": "怎么让 AI 记住以前项目？", "mode": "hybrid", "limit": 5}),
             ("title", {"query": "Agent Memory", "mode": "title", "limit": 5}),
             ("tag", {"query": "memory", "mode": "hybrid", "tags": ["agent"], "limit": 5}),
-            ("scope", {"query": "EvoFlow", "mode": "fulltext", "scopes": ["Knowledge"], "limit": 5}),
+            ("scope", {"query": "QAgent", "mode": "fulltext", "scopes": ["Knowledge"], "limit": 5}),
         ]:
             mid += 1
             try:
@@ -124,7 +124,7 @@ async def mcp_session():
         mid += 1
         results["read"] = await call(
             read_name,
-            {"paths": ["Knowledge/EvoFlow.md"]},
+            {"paths": ["Knowledge/QAgent.md"]},
             mid,
         )
 

@@ -201,7 +201,7 @@ test.describe('Knowledge Vault GUI', () => {
         body: JSON.stringify({
           total: 1,
           count: 1,
-          items: [{ path: 'Knowledge/EvoFlow.md', title: 'EvoFlow' }],
+          items: [{ path: 'Knowledge/QAgent.md', title: 'QAgent' }],
         }),
       })
     })
@@ -224,10 +224,10 @@ test.describe('Knowledge Vault GUI', () => {
         body: JSON.stringify({
           items: [
             {
-              path: 'Knowledge/EvoFlow.md',
-              title: 'EvoFlow',
+              path: 'Knowledge/QAgent.md',
+              title: 'QAgent',
               score: 0.9,
-              snippet: 'EvoFlow 桌面 Agent',
+              snippet: 'QAgent 桌面 Agent',
               tags: ['product'],
             },
           ],
@@ -239,7 +239,7 @@ test.describe('Knowledge Vault GUI', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          items: [{ path: 'Knowledge/EvoFlow.md', title: 'EvoFlow', content: '# EvoFlow\n\n预览正文', tags: ['product'] }],
+          items: [{ path: 'Knowledge/QAgent.md', title: 'QAgent', content: '# QAgent\n\n预览正文', tags: ['product'] }],
         }),
       })
     })
@@ -248,13 +248,13 @@ test.describe('Knowledge Vault GUI', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          centerPath: 'Knowledge/EvoFlow.md',
+          centerPath: 'Knowledge/QAgent.md',
           depth: 1,
           nodes: [
-            { id: 'Knowledge/EvoFlow.md', path: 'Knowledge/EvoFlow.md', title: 'EvoFlow' },
+            { id: 'Knowledge/QAgent.md', path: 'Knowledge/QAgent.md', title: 'QAgent' },
             { id: 'Knowledge/Agent Memory.md', path: 'Knowledge/Agent Memory.md', title: 'Agent Memory' },
           ],
-          edges: [{ source: 'Knowledge/EvoFlow.md', target: 'Knowledge/Agent Memory.md', type: 'wikilink' }],
+          edges: [{ source: 'Knowledge/QAgent.md', target: 'Knowledge/Agent Memory.md', type: 'wikilink' }],
           unresolved: [],
           truncated: false,
         }),
@@ -273,13 +273,13 @@ test.describe('Knowledge Vault GUI', () => {
 
     await page.locator('[data-testid="kv-tab-search"]').click()
     await expect(page.locator('[data-testid="kv-search-input"]')).toBeVisible()
-    await page.locator('[data-testid="kv-search-input"]').fill('EvoFlow')
+    await page.locator('[data-testid="kv-search-input"]').fill('QAgent')
     await page.locator('[data-testid="kv-search-btn"]').click()
     await expect(page.locator('[data-testid="kv-result-0"]')).toBeVisible()
     await page.screenshot({ path: path.join(SHOT_DIR, '06-search-results.png'), fullPage: true })
 
     await page.locator('[data-testid="kv-result-0"]').click()
-    await expect(page.locator('[data-testid="kv-preview-title"]')).toContainText('EvoFlow')
+    await expect(page.locator('[data-testid="kv-preview-title"]')).toContainText('QAgent')
     await page.screenshot({ path: path.join(SHOT_DIR, '07-note-preview.png'), fullPage: true })
 
     await expect(page.locator('[data-testid="kv-graph-title"]')).toHaveCount(0)

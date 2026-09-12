@@ -9,7 +9,7 @@
 > 比如你让 AI"跑个 Python 脚本处理数据"——本地沙箱就在你电脑上直接跑，Docker 沙箱先起个容器再跑。切换沙箱模式后需重启服务。
 
 ## 适用场景
-配置 Agent 的代码执行环境。EvoFlow 提供三种沙箱模式，从最简单的本地执行到完全隔离的 Kubernetes Pod。
+配置 Agent 的代码执行环境。QAgent 提供三种沙箱模式，从最简单的本地执行到完全隔离的 Kubernetes Pod。
 
 ## 前置条件
 - 已创建 `config.yaml`

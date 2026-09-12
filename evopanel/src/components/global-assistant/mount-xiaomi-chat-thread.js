@@ -1,5 +1,5 @@
 /**
- * 小V 对话区：挂载与主对话相同的 MessageRow（Markdown / 思考 / 工具过程 / 最终回复）。
+ * 小Q 对话区：挂载与主对话相同的 MessageRow（Markdown / 思考 / 工具过程 / 最终回复）。
  */
 import { createElement } from 'react'
 import { createRoot } from 'react-dom/client'

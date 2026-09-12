@@ -1,4 +1,4 @@
-"""InfoQuest search provider (EvoFlow-specific, Hermes-shaped envelope)."""
+"""InfoQuest search provider (QAgent-specific, Hermes-shaped envelope)."""
 
 from __future__ import annotations
 

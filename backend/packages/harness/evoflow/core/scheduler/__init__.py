@@ -1,4 +1,4 @@
-"""EvoFlow Scheduler — lightweight automation scheduling engine.
+"""QAgent Scheduler — lightweight automation scheduling engine.
 
 Modules:
 - engine:   RRULE parser, next-trigger calculator, timer wrapper

@@ -1,6 +1,6 @@
 # 面板设置
 
-> **设置弹窗是 EvoFlow 的"控制面板"——7 个 Tab 管所有偏好，每个 Tab 里的每个选项都有它的作用。**
+> **设置弹窗是 QAgent 的"控制面板"——7 个 Tab 管所有偏好，每个 Tab 里的每个选项都有它的作用。**
 >
 > 左下角齿轮图标打开，所有变更自动保存，按实例（本机/Docker/远程）独立存储。
 
@@ -14,7 +14,7 @@
 
 ## 一、通用 Tab
 
-控制 EvoFlow 的"长相"和"安全策略"。
+控制 QAgent 的"长相"和"安全策略"。
 
 ### 主题与外观
 
@@ -104,7 +104,7 @@ GIT_COMMITTER_NAME=Alice
 | **凭证配置** | 填写对应渠道的 Bot Token、App ID、Secret 等 |
 | **连接状态** | 显示渠道是否配置成功 |
 
-> **不配的话**：自动化任务跑完了，结果只能留在 EvoFlow 面板里看，不会主动推送到你的飞书或 Slack。智能体员工的待审批事项也需要你打开 EvoFlow 才能看到。
+> **不配的话**：自动化任务跑完了，结果只能留在 QAgent 面板里看，不会主动推送到你的飞书或 Slack。智能体员工的待审批事项也需要你打开 QAgent 才能看到。
 >
 > 具体每个渠道的配置步骤，见 [IM 消息渠道配置](../integration/im-channels.md) [[guides/integration/im-channels|IM 消息渠道配置]]。
 
@@ -139,7 +139,7 @@ GIT_COMMITTER_NAME=Alice
 
 > 每个动作可以绑定一个快捷键组合（如 `Ctrl+Shift+P`）。如果跟系统级快捷键冲突，会有告警提示。
 >
-> **不配也行**：所有操作都能用鼠标完成。但如果你每天用 EvoFlow 很长时间，绑几个常用快捷键能省不少时间。
+> **不配也行**：所有操作都能用鼠标完成。但如果你每天用 QAgent 很长时间，绑几个常用快捷键能省不少时间。
 >
 > 一键恢复默认可以回到初始设置。
 
@@ -147,11 +147,11 @@ GIT_COMMITTER_NAME=Alice
 
 ## 七、关于 Tab
 
-查看 EvoFlow 的版本信息。
+查看 QAgent 的版本信息。
 
 | 选项 | 作用 |
 |------|------|
-| **版本号** | 当前安装的 EvoFlow 版本 |
+| **版本号** | 当前安装的 QAgent 版本 |
 | **检查更新** | 联网检查是否有新版本 |
 | **许可证** | 查看当前使用的许可证信息 |
 | **致谢** | 第三方组件与贡献者列表 |
@@ -176,13 +176,13 @@ GIT_COMMITTER_NAME=Alice
 
 ## 多实例支持
 
-EvoFlow 支持同时管理**本机**、**Docker**、**远程**三类实例。
+QAgent 支持同时管理**本机**、**Docker**、**远程**三类实例。
 
 | 特性 | 说明 |
 |------|------|
 | **设置独立存储** | 本机配的快捷键、环境变量、主题等，和远程实例互不冲突 |
 | **实例切换** | 左侧菜单顶部切换器，随时切到另一个实例 |
-| **远程实例添加** | 见 [EvoFlow 桌面端使用指南](evopanel-guide.md) [[guides/configuration/evopanel-guide|EvoFlow 桌面端使用指南]] |
+| **远程实例添加** | 见 [QAgent 桌面端使用指南](evopanel-guide.md) [[guides/configuration/evopanel-guide|QAgent 桌面端使用指南]] |
 
 > 比如你在公司电脑上配了深色主题 + 一组快捷键，回到家连远程服务器，远程实例有自己的设置，互不影响。
 
@@ -192,7 +192,7 @@ EvoFlow 支持同时管理**本机**、**Docker**、**远程**三类实例。
 
 - [[guides/configuration/resource-packs|资源包与资源市场]] — 资源中心、资源包导出与安装
 - [[guides/configuration/asset-center|资产中心]] — 画像 / 记忆 / 专长
-- [[guides/configuration/evopanel-guide|EvoFlow 桌面端使用指南]] — 桌面端全部功能详解
+- [[guides/configuration/evopanel-guide|QAgent 桌面端使用指南]] — 桌面端全部功能详解
 - [[guides/configuration/memory-management|记忆管理]] — 记忆系统的详细机制
 - [[guides/configuration/tools-mcp|工具与 MCP]] — 工具审批策略说明
 - [[guides/integration/im-channels|IM 消息渠道配置]] — 各渠道具体配置步骤

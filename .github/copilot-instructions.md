@@ -1,10 +1,10 @@
-# Copilot Onboarding Instructions for EvoFlow
+# Copilot Onboarding Instructions for QAgent
 
 Use this file as the default operating guide for this repository. Follow it first, and only search the codebase when this file is incomplete or incorrect.
 
 ## 1) Repository Summary
 
-EvoFlow is a full-stack "super agent harness".
+QAgent is a full-stack "super agent harness".
 
 - Backend: Python 3.12, LangGraph + FastAPI gateway, sandbox/tool system, memory, MCP integration.
 - Frontend: Next.js 16 + React 19 + TypeScript + pnpm.

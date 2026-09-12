@@ -10,16 +10,16 @@
 
 ---
 ## 1. 安装
-[Releases 页](https://github.com/EvovexAI/EvoFlow/releases) 下载对应系统安装包直接安装即可。
+[Releases 页](https://github.com/wangjiaquangithub/QAgent/releases) 下载对应系统安装包直接安装即可。
 
 > **下载哪个文件？** 在 Releases 页找到最新版本，展开 Assets 列表：
-> - Windows：`EvoFlow_Setup_x.x.x_x64.exe`
-> - macOS：`EvoFlow_x.x.x_x64.dmg`
-> - Linux：`EvoFlow_x.x.x_x64.AppImage`
+> - Windows：`QAgent_Setup_x.x.x_x64.exe`
+> - macOS：`QAgent_x.x.x_x64.dmg`
+> - Linux：`QAgent_x.x.x_x64.AppImage`
 
 ---
 ## 2. 配置模型
-1. 打开 EvoFlow，进入「设置」→「模型管理」，点击「添加模型」
+1. 打开 QAgent，进入「设置」→「模型管理」，点击「添加模型」
 2. 「厂商」下拉选你要用的 AI 服务商，「模型名称」选对应型号
 3. 填入你从服务商官网获取的 API 密钥
 4. 点击「测试连接」成功后，勾选「设为默认模型」保存即可
@@ -38,7 +38,7 @@
 ---
 ## 4. 进阶：让 AI 读写文件、跑命令
 
-EvoFlow 的 AI 默认只聊天、不碰文件。要让 AI 能读写代码、跑命令，需要切换到**工作空间**场景：
+QAgent 的 AI 默认只聊天、不碰文件。要让 AI 能读写代码、跑命令，需要切换到**工作空间**场景：
 
 1. 点击聊天页**顶栏的「场景」按钮**（默认显示"日常对话"）
 2. 在下拉菜单中选 **「工作空间」**

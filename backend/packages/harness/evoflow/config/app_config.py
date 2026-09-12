@@ -92,7 +92,7 @@ def _ensure_tool_search_defaults(config_data: dict[str, Any]) -> None:
 
 
 class AppConfig(BaseModel):
-    """Config for the EvoFlow application"""
+    """Config for the QAgent application"""
 
     log_level: str = Field(default="info", description="Logging level for evoflow modules (debug/info/warning/error)")
     token_usage: TokenUsageConfig = Field(default_factory=TokenUsageConfig, description="Token usage tracking configuration")
@@ -513,7 +513,7 @@ def _load_and_cache_app_config(config_path: str | None = None) -> AppConfig:
 
 
 def get_app_config() -> AppConfig:
-    """Get the EvoFlow config instance.
+    """Get the QAgent config instance.
 
     Returns a cached singleton instance and automatically reloads it when the
     underlying config file path or modification time changes. Use
@@ -932,7 +932,7 @@ def _apply_default_thinking_payload(model_data: dict[str, Any]) -> dict[str, Any
         # DashScope OpenAI-compatible: non-standard switch
         data["when_thinking_enabled"] = {"extra_body": {"enable_thinking": True}}
     elif _is_minimax_like_model(data):
-        # MiniMax OpenAI-compatible: enable split reasoning so EvoFlow can map reasoning_details -> reasoning_content
+        # MiniMax OpenAI-compatible: enable split reasoning so QAgent can map reasoning_details -> reasoning_content
         data["when_thinking_enabled"] = {"extra_body": {"thinking": {"type": "enabled"}, "reasoning_split": True}}
     else:
         # Generic OpenAI-compatible thinking switch (Moonshot/DeepSeek/Novita/most gateways)

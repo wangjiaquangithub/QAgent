@@ -192,7 +192,7 @@ describe('message-row-stream-display', () => {
 
   it('streamLiveTailContainedInDisplay treats duplicate intro bodies as contained', () => {
     const intro =
-      '## EvoFlow 是什么\n\nEvoFlow 是一个会动脑子的智能办事助手平台。\n\n| 类别 | 典型能力 |\n|------|----------|'
+      '## QAgent 是什么\n\nQAgent 是一个会动脑子的智能办事助手平台。\n\n| 类别 | 典型能力 |\n|------|----------|'
     expect(streamLiveTailContainedInDisplay(intro, intro, '')).toBe(true)
   })
 

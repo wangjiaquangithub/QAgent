@@ -36,7 +36,7 @@ def _auth_header() -> dict[str, str]:
         return {"Authorization": f"Bearer {token}"}
     if key_id:
         return {"Authorization": f"Bearer {key_id}"}
-    raise ValueError("可灵凭据未配置。请在 EvoFlow → 设置 → 模型 → 创意媒体 → 可灵 填写并启用。")
+    raise ValueError("可灵凭据未配置。请在 QAgent → 设置 → 模型 → 创意媒体 → 可灵 填写并启用。")
 
 
 def _request(method: str, path: str, body: dict[str, Any] | None = None) -> dict[str, Any]:

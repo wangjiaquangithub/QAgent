@@ -1,4 +1,4 @@
-"""Retention helpers for EvoFlow SQLite databases and logs."""
+"""Retention helpers for QAgent SQLite databases and logs."""
 
 from __future__ import annotations
 

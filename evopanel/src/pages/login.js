@@ -42,13 +42,13 @@ function brandPanelHtml(switchMode) {
     ? '使用组织账号登录，会话、技能与工作目录将按身份隔离。'
     : '统一入口接入组织协作、智能体与知识资产，安全可控。'
   return `
-    <aside class="webui-login-brand-panel" aria-label="EvoFlow">
+    <aside class="webui-login-brand-panel" aria-label="QAgent">
       <div class="webui-login-brand-inner">
         <div class="webui-login-brand-markrow">
           ${ENTERPRISE_MARK}
         </div>
         <p class="webui-login-brand-kicker">${kicker}</p>
-        <h1 class="webui-login-brand-title">EvoFlow</h1>
+        <h1 class="webui-login-brand-title">QAgent</h1>
         <p class="webui-login-brand-lead">${lead}</p>
         <ul class="webui-login-brand-points">
           <li>组织账号与权限隔离</li>
@@ -56,7 +56,7 @@ function brandPanelHtml(switchMode) {
           <li>会话与工作区按身份归属</li>
         </ul>
       </div>
-      <p class="webui-login-brand-foot">EvoFlow Enterprise Access</p>
+      <p class="webui-login-brand-foot">QAgent Enterprise Access</p>
     </aside>`
 }
 
@@ -150,7 +150,7 @@ function loginPanelBody(opts) {
     ${passwordBlock}
     <div id="login-error" class="webui-login-error" ${error ? '' : 'hidden'}>${error || ''}</div>
     ${footer}
-    <div class="webui-login-version">EvoFlow v${APP_VERSION}</div>`
+    <div class="webui-login-version">QAgent v${APP_VERSION}</div>`
 }
 
 function loginHtml(opts) {

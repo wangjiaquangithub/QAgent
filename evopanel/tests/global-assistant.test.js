@@ -81,9 +81,9 @@ describe('xiaomi stream / history text extract', () => {
     expect(
       payloadAssistantText({
         state: 'final',
-        message: { role: 'assistant', content: [{ type: 'text', text: '你好，我是小V' }] },
+        message: { role: 'assistant', content: [{ type: 'text', text: '你好，我是小Q' }] },
       }),
-    ).toBe('你好，我是小V')
+    ).toBe('你好，我是小Q')
     expect(
       payloadAssistantText({
         state: 'delta',

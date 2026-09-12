@@ -36,7 +36,7 @@ describe('work process live progress', () => {
   it('annotates last model as running when the round is live', () => {
     const out = annotateLiveWorkProcessEvents(
       [
-        ev({ id: 'u', action: '值班节拍', kind: 'step', summary: '本轮值班开始 · 小V' }),
+        ev({ id: 'u', action: '值班节拍', kind: 'step', summary: '本轮值班开始 · 小Q' }),
         ev({
           id: 'm',
           kind: 'model',

@@ -1,6 +1,6 @@
 """Discover OS sandbox helper binaries for the current platform.
 
-EvoFlow does **not** depend on runtime CLI as a product upstream.
+QAgent does **not** depend on runtime CLI as a product upstream.
 
 We optionally reuse Apache-2.0 sandbox *crates* (linux-sandbox / windows-sandbox)
 as a build source for thin helpers. Preferred runtime names:

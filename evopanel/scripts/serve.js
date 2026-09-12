@@ -14,7 +14,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { homedir } from 'os'
 import net from 'net'
-import { _initApi, _apiMiddleware } from './dev-api.js'
+import { _apiMiddleware } from './dev-api.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DIST_DIR = path.resolve(__dirname, '..', 'dist')
@@ -91,7 +91,8 @@ function serveStatic(req, res) {
   const urlPath = req.url.split('?')[0]
   let filePath = path.join(DIST_DIR, urlPath === '/' ? 'index.html' : urlPath)
 
-  // å®å¨æ£æ¥ï¼ä¸åè®¸ç®å½éå?  if (!filePath.startsWith(DIST_DIR)) {
+  // å®å¨æ£æ¥ï¼ä¸åè®¸ç®å½éå?
+  if (!filePath.startsWith(DIST_DIR)) {
     res.statusCode = 403
     res.end('Forbidden')
     return
@@ -119,7 +120,8 @@ function sendFile(res, filePath) {
   const ext = path.extname(filePath)
   const contentType = MIME_TYPES[ext] || 'application/octet-stream'
 
-  // ç¼å­ç­ç¥ï¼èµæºæä»¶é¿ç¼å­ï¼HTML ä¸ç¼å­?  if (ext === '.html') {
+  // ç¼å­ç­ç¥ï¼èµæºæä»¶é¿ç¼å­ï¼HTML ä¸ç¼å­?
+  if (ext === '.html') {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
   } else if (filePath.includes(`${path.sep}assets${path.sep}`)) {
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
@@ -140,7 +142,6 @@ async function main() {
   const { host, port } = parseArgs()
 
   // åå§å?API
-  _initApi()
 
   const server = http.createServer(async (req, res) => {
     // CORS å¤´ï¼æ¹ä¾¿å¼åè°è¯ï¼
@@ -151,7 +152,8 @@ async function main() {
 
     // API è¯·æ±
     await _apiMiddleware(req, res, () => {
-      // é?API â?éææä»?      serveStatic(req, res)
+      // é?API â?éææä»?
+      serveStatic(req, res)
     })
   })
 
@@ -185,24 +187,18 @@ async function main() {
   })
 
   server.listen(port, host, () => {
-    console.log('')
-    console.log('  âââââââââââââââââââââââââââââââââââââââââââ?)
-    console.log('  â?                                        â?)
-    console.log('  â?  ð¦ EvoPanel Web Server (Headless)    â?)
-    console.log('  â?                                        â?)
-    console.log(`  â?  http://${host === '0.0.0.0' ? 'localhost' : host}:${port}/`.padEnd(44) + 'â?)
-    if (host === '0.0.0.0') {
-      console.log(`  â?  http://0.0.0.0:${port}/`.padEnd(44) + 'â?)
-    }
-    console.log('  â?                                        â?)
-    console.log('  âââââââââââââââââââââââââââââââââââââââââââ?)
-    console.log('')
-    console.log('  æ?Ctrl+C åæ­¢æå¡')
-    console.log('')
+    const displayHost = host === '0.0.0.0' ? 'localhost' : host
+    console.log(`EvoPanel Web Server listening at http://${displayHost}:${port}/`)
   })
 
-  // ä¼ééå?  process.on('SIGINT', () => { console.log('\n  ð æå¡å·²åæ­?); process.exit(0) })
-  process.on('SIGTERM', () => { console.log('\n  ð æå¡å·²åæ­?); process.exit(0) })
+  // Graceful shutdown
+  const shutdown = () => {
+    console.log('EvoPanel Web Server stopped')
+    server.close(() => process.exit(0))
+    setTimeout(() => process.exit(0), 1000).unref()
+  }
+  process.on('SIGINT', shutdown)
+  process.on('SIGTERM', shutdown)
 }
 
 main().catch(e => { console.error('å¯å¨å¤±è´¥:', e); process.exit(1) })

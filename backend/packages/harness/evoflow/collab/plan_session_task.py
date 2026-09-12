@@ -671,7 +671,7 @@ def bind_plan_to_thread_task(
     if not saved:
         out["bindError"] = (
             "无法保存计划到任务表（常见原因：数据库缺少 plan_goal 等列）。"
-            "请完全重启 EvoFlow Gateway 后再提交 plan；若仍失败，请检查 data/evoflow.db 是否可写。"
+            "请完全重启 QAgent Gateway 后再提交 plan；若仍失败，请检查 data/evoflow.db 是否可写。"
         )
         return out
     out["planRevised"] = plan_revised

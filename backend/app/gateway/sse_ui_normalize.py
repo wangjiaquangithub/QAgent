@@ -1,4 +1,4 @@
-"""Normalize LangGraph SSE into ordered EvoFlow UI events (``event: evf``).
+"""Normalize LangGraph SSE into ordered QAgent UI events (``event: evf``).
 
 Single channel for the browser: delta / tool_call / tool_call_chunk / tool_result / thread_state / activity / usage / custom / run_end.
 Server-side anchoring prevents previous-turn text/tools from leaking; assistant text and tool chunks are passthrough.

@@ -49,7 +49,7 @@ export function Sidebar({ active, onChange }: { active: NavKey; onChange: (key: 
       <div className="brand">
         <div className="brand-mark">E</div>
         <div>
-          <strong>EvoFlow</strong>
+          <strong>QAgent</strong>
           <span>Observability</span>
         </div>
       </div>
@@ -69,7 +69,7 @@ export function Sidebar({ active, onChange }: { active: NavKey; onChange: (key: 
       <div className="team-card">
         <div className="team-avatar">E</div>
         <div>
-          <strong>EvoFlow Team</strong>
+          <strong>QAgent Team</strong>
           <span>Enterprise Plan</span>
         </div>
         <span className="chevron">⌄</span>

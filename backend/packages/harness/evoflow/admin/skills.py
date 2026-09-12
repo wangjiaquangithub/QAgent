@@ -148,7 +148,7 @@ def install_skill_from_market(slug: str, owner_handle: str | None = None) -> dic
     tmp_path: str | None = None
     try:
         with httpx.Client(timeout=60.0) as client:
-            resp = client.get(url, headers={"User-Agent": "EvoFlow-CLI/1.0"})
+            resp = client.get(url, headers={"User-Agent": "QAgent-CLI/1.0"})
             resp.raise_for_status()
             data = resp.content
         if len(data) < 64:

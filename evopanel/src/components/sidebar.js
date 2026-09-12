@@ -125,9 +125,9 @@ export function renderSidebar(el) {
   let html = `
     <div class="sidebar-header">
       <div class="sidebar-logo">
-        <img src="/images/logo.png" alt="EvoFlow">
+        <img src="/images/logo.png" alt="QAgent">
       </div>
-      <span class="sidebar-title">EvoFlow</span>
+      <span class="sidebar-title">QAgent</span>
       <button class="sidebar-collapse-btn" id="btn-sidebar-collapse" title="折叠/展开">${collapsed ? '»' : '«'}</button>
       <button class="sidebar-close-btn" id="btn-sidebar-close" title="关闭菜单">&times;</button>
     </div>
@@ -362,7 +362,7 @@ async function _showAddInstanceDialog(sidebarEl) {
         <input class="form-input" id="inst-gw-port" type="number" value="18789" />
       </div>
       <div class="docker-dialog-hint">
-        远程服务器需要运行 EvoFlow (serve.js)。<br/>
+        远程服务器需要运行 QAgent (serve.js)。<br/>
         示例: <code>http://192.168.1.100:1420</code>
       </div>
       <div id="inst-add-error" style="color:var(--error);font-size:12px;margin-top:var(--space-sm)"></div>

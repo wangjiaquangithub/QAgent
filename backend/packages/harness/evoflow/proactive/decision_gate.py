@@ -726,7 +726,7 @@ class DecisionGate:
                     )
 
             # Prefer the bot that already owns this chat (same as normal Feishu replies).
-            # Learned default often comes from 小V/私聊 inbound — sending as Settings
+            # Learned default often comes from 小Q/私聊 inbound — sending as Settings
             # primary into that chat causes 230002. Only use role agent for open_id DM.
             if receive_id_type == "open_id":
                 send_account = str(role.agent_code or "").strip()

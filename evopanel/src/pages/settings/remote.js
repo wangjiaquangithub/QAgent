@@ -91,7 +91,7 @@ function enableSectionHtml() {
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
       WebUI 远程访问
     </div>
-    <p class="form-hint">启用后，手机、平板或远程浏览器可以访问 EvoPanel，需使用下方账号密码登录。</p>
+    <p class="form-hint">启用后，手机、平板或远程浏览器可以访问 QAgent，需使用下方账号密码登录。</p>
 
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0">
       <div style="display:flex;align-items:center;gap:8px">
@@ -127,7 +127,7 @@ function accessSectionHtml() {
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
       访问地址
     </div>
-    <p class="form-hint">通过以下地址在手机或远程浏览器中访问 EvoPanel（桌面安装版为 Gateway 端口，与开发环境 Vite 端口不同）。启用后会自动重启后端并监听局域网。</p>
+    <p class="form-hint">通过以下地址在手机或远程浏览器中访问 QAgent（桌面安装版为 Gateway 端口，与开发环境 Vite 端口不同）。启用后会自动重启后端并监听局域网。</p>
     <div id="remote-url-list" style="margin-top:8px">${urlList || '<p style="color:var(--text-muted,#888)">未检测到可用地址</p>'}</div>
   </div>`
 }

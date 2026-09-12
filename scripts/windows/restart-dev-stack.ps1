@@ -1,4 +1,4 @@
-# Start full EvoFlow dev stack (backend + frontend).
+# Start full QAgent dev stack (backend + frontend).
 # Forcibly killing prior LangGraph/Gateway/EvoPanel processes is intentionally not done here;
 # close old dev windows or free ports yourself if you hit "address already in use".
 

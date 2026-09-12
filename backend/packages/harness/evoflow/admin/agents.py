@@ -275,7 +275,7 @@ def _main_agent_row(*, include_soul: bool = False) -> dict[str, Any]:
     if agent_cfg is None:
         return {
             "agent_code": "main",
-            "agent_name": "EvoFlow",
+            "agent_name": "QAgent",
             "description": "",
             "model": None,
             "tool_groups": None,
@@ -290,7 +290,7 @@ def _main_agent_row(*, include_soul: bool = False) -> dict[str, Any]:
     row = _agent_row(agent_cfg, include_soul=include_soul)
     row["agent_code"] = "main"
     if not row.get("agent_name"):
-        row["agent_name"] = "EvoFlow"
+        row["agent_name"] = "QAgent"
     # ``main`` is the lead session agent; it carries no tags.
     row["tags"] = []
     return row

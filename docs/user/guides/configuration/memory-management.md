@@ -7,7 +7,7 @@
 
 ## 前置条件
 
-- EvoFlow 已运行
+- QAgent 已运行
 - 记忆 / 资产整理默认开启（见仓库根目录 `.env.example` 中 `EVOFLOW_ASSET_*`；一般无需改）
 
 ## 记忆是什么

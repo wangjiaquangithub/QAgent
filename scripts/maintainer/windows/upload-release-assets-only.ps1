@@ -1,7 +1,7 @@
 ﻿#requires -Version 5.1
 <#
 .SYNOPSIS
-  Upload NSIS installer + checksums to an existing GitHub Release on EvovexAI/EvoFlow.
+  Upload NSIS installer + checksums to an existing GitHub Release on Quclouds/QAgent.
 
 .PARAMETER Replace
   Delete same-named release assets before upload (use when replacing a rebuilt installer on the same tag).
@@ -81,14 +81,14 @@ $files += Get-ChildItem -LiteralPath $NsisDir -Filter "*.sha256" -File -ErrorAct
 $files += Get-ChildItem -LiteralPath $NsisDir -Filter "SHA256SUMS.txt" -File -ErrorAction SilentlyContinue
 if ($files.Count -eq 0) { throw "No artifacts under $NsisDir for version $ver" }
 
-$owner = "EvovexAI"
-$repo = "EvoFlow"
+$owner = "Quclouds"
+$repo = "QAgent"
 $tagName = if ($Tag.StartsWith('v')) { $Tag } else { "v$Tag" }
 $headers = @{
     Authorization          = "Bearer $tok"
     Accept                 = "application/vnd.github+json"
     "X-GitHub-Api-Version" = "2022-11-28"
-    "User-Agent"           = "EvoFlow-upload-assets-only"
+    "User-Agent"           = "QAgent-upload-assets-only"
 }
 $rel = Invoke-RestMethod -Uri "https://api.github.com/repos/$owner/$repo/releases/tags/$tagName" -Headers $headers
 $namesToUpload = @($files | ForEach-Object { $_.Name })

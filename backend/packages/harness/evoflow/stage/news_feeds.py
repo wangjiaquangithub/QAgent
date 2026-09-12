@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_REFRESH_MINUTES = 30
 DEFAULT_TIMEOUT_SEC = 10.0
-USER_AGENT = "EvoFlow/1.0 (+https://localhost)"
+USER_AGENT = "QAgent/1.0 (+https://localhost)"
 # HotData 热点榜 API Key：从环境变量读取，不硬编码密钥。
 PUBLIC_HOTDATA_API_KEY = os.environ.get("HOTDATA_API_KEY", "") or ""
 

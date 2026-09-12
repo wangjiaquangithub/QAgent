@@ -1,4 +1,4 @@
-# EvoFlow 智能体员工 · 下载与 10 分钟上手（飞书落地页文稿）
+# QAgent 智能体员工 · 下载与 10 分钟上手（飞书落地页文稿）
 
 > **用法**：整页复制到飞书文档；把「下载链接」换成你的网盘地址；GitHub 放文末即可。  
 > 抖音主页 / 评论置顶只放**本飞书文档链接**。
@@ -20,8 +20,8 @@
 | Windows | 【粘贴网盘链接 · 安装包】 |
 | macOS | 【粘贴网盘链接 · 安装包】 |
 
-装好后打开 EvoFlow。  
-（开发者也可从 GitHub Releases 获取：https://github.com/EvovexAI/EvoFlow/releases ）
+装好后打开 QAgent。  
+（开发者也可从 GitHub Releases 获取：https://github.com/wangjiaquangithub/QAgent/releases ）
 
 ---
 

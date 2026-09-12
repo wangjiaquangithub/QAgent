@@ -19,7 +19,7 @@ WRITE_SERVER_NAME_PREFIX = "evoflow-kb-write-"
 # MCP tools exposed by search provider (after OBSIDIAN_PREFIX).
 REQUIRED_SEARCH_TOOLS = frozenset({"search", "read", "reindex", "status"})
 
-# Write MCP tools exposed to EvoFlow (MVP — no delete / execute_command).
+# Write MCP tools exposed to QAgent (MVP — no delete / execute_command).
 ALLOWED_WRITE_TOOLS = frozenset(
     {
         "obsidian_get_note",

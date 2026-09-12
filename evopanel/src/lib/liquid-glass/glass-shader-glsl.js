@@ -1,4 +1,4 @@
-/** GLSL sources for EvoFlow liquid glass */
+/** GLSL sources for QAgent liquid glass */
 export const VS_SRC = `
   attribute vec2 a_pos;
   void main() {

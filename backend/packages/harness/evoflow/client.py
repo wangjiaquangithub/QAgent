@@ -1,12 +1,12 @@
-"""EvoFlowClient — Embedded Python client for EvoFlow agent system.
+"""QAgentClient — Embedded Python client for QAgent agent system.
 
-Provides direct programmatic access to EvoFlow's agent capabilities
+Provides direct programmatic access to QAgent's agent capabilities
 without requiring LangGraph Server or Gateway API processes.
 
 Usage:
-    from evoflow.client import EvoFlowClient
+    from evoflow.client import QAgentClient
 
-    client = EvoFlowClient()
+    client = QAgentClient()
     response = client.chat("Analyze this paper for me", thread_id="my-thread")
     print(response)
 
@@ -76,10 +76,10 @@ class StreamEvent:
     data: dict[str, Any] = field(default_factory=dict)
 
 
-class EvoFlowClient:
-    """Embedded Python client for EvoFlow agent system.
+class QAgentClient:
+    """Embedded Python client for QAgent agent system.
 
-    Provides direct programmatic access to EvoFlow's agent capabilities
+    Provides direct programmatic access to QAgent's agent capabilities
     without requiring LangGraph Server or Gateway API processes.
 
     Note:
@@ -94,9 +94,9 @@ class EvoFlowClient:
 
     Example::
 
-        from evoflow.client import EvoFlowClient
+        from evoflow.client import QAgentClient
 
-        client = EvoFlowClient()
+        client = QAgentClient()
 
         # Simple one-shot
         print(client.chat("hello"))
@@ -305,7 +305,7 @@ class EvoFlowClient:
         if isinstance(msg, ToolMessage):
             return {
                 "type": "tool",
-                "content": EvoFlowClient._extract_text(msg.content),
+                "content": QAgentClient._extract_text(msg.content),
                 "name": getattr(msg, "name", None),
                 "tool_call_id": getattr(msg, "tool_call_id", None),
                 "id": getattr(msg, "id", None),

@@ -20,7 +20,7 @@ def _base_url() -> str:
 def _headers(*, resolve_oss: bool = False) -> dict[str, str]:
     key = dashscope_api_key()
     if not key:
-        raise ValueError("通义万相凭据未配置。请在 EvoFlow → 设置 → 模型 → 创意媒体 → 通义万相 填写并启用。")
+        raise ValueError("通义万相凭据未配置。请在 QAgent → 设置 → 模型 → 创意媒体 → 通义万相 填写并启用。")
     headers = {
         "Authorization": f"Bearer {key}",
         "Content-Type": "application/json",

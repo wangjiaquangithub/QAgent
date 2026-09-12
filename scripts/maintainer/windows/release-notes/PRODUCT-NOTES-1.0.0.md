@@ -1,4 +1,4 @@
-**EvoFlow v1.0.0 — 首个公开源码可见版本**
+**QAgent v1.0.0 — 首个公开源码可见版本**
 
 面向长任务的原生 Agent Runtime 与控制平面：规划、拆解、执行、恢复与交付，多 Agent 协作全程可观测、可干预。
 
@@ -18,7 +18,7 @@
 
 ### 升级说明
 
-- 建议下载 `EvoFlow_1.0.0_x64-setup.exe` 覆盖安装
+- 建议下载 `QAgent_1.0.0_x64-setup.exe` 覆盖安装
 - 模型与 API Key 请在安装后于「设置 → 模型」配置
-- 商用授权与定制：cloud@evovexai.com
-- 文档：https://www.evovexai.com/docs/chat/evopanel
+- 商用授权与定制：wangjiaquan@quclouds.com
+- 文档：https://www.quclouds.com/docs/chat/evopanel

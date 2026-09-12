@@ -1,9 +1,9 @@
 # EvoPanel 贡献指南
 
-EvoPanel 是 EvoFlow 的桌面/Web 管理面板（`evopanel/`）。  
+EvoPanel 是 QAgent 的桌面/Web 管理面板（`evopanel/`）。  
 仓库级流程（分支、CLA、PR、全仓 CI）以根目录 [CONTRIBUTING.md](../CONTRIBUTING.md) 为准；本文只写**面板相关**约定。
 
-> 官网：[www.evovexai.com](https://www.evovexai.com/) · 仓库：[EvovexAI/EvoFlow](https://github.com/EvovexAI/EvoFlow) · 许可：[PolyForm Noncommercial 1.0.0](../LICENSE)
+> 官网：[www.www.quclouds.com](https://www.quclouds.com/) · 仓库：[Quclouds/QAgent](https://github.com/wangjiaquangithub/QAgent) · 许可：[PolyForm Noncommercial 1.0.0](../LICENSE)
 
 ---
 
@@ -19,8 +19,8 @@ EvoPanel 是 EvoFlow 的桌面/Web 管理面板（`evopanel/`）。
 - **macOS / Linux**：`./scripts/dev.sh` 或 `npm run dev:tauri`
 
 ```bash
-git clone https://github.com/EvovexAI/EvoFlow.git
-cd EvoFlow/evopanel
+git clone https://github.com/wangjiaquangithub/QAgent.git
+cd QAgent/evopanel
 npm install
 ```
 
@@ -115,5 +115,5 @@ npm run version:sync        # 仅按当前 package.json 同步
 
 ## 问题反馈
 
-Bug / 需求：[GitHub Issues](https://github.com/EvovexAI/EvoFlow/issues)  
+Bug / 需求：[GitHub Issues](https://github.com/wangjiaquangithub/QAgent/issues)  
 安全问题：见仓库 [SECURITY.md](../SECURITY.md)（若面板侧有 `evopanel/SECURITY.md` 也可对照）。

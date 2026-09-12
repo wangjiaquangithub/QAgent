@@ -199,7 +199,7 @@ def create_managed_vault(
         # Minimal markdown so the folder is a usable vault root
         readme = root / "README.md"
         if not readme.exists():
-            readme.write_text(f"# {title}\n\n由小V平台行政创建。\n", encoding="utf-8")
+            readme.write_text(f"# {title}\n\n由小Q平台行政创建。\n", encoding="utf-8")
         path_s = str(root)
 
     path = Path(path_s).expanduser()
@@ -437,7 +437,7 @@ def remember(data: dict[str, Any], *, vault_id: str | None = None) -> dict[str, 
         result = _run_async(vault_service.ingest_vault(vid, payload))
         return {"provider": "vault", "vaultId": vid, "ok": True, "result": result, "via": "obsidian"}
     except Exception as exc:
-        # Headless / no Local REST API — still allow 小V 平台行政写入本地目录
+        # Headless / no Local REST API — still allow 小Q 平台行政写入本地目录
         fs = _remember_filesystem(vid, cfg, title=title, content=content, summary=str(payload.get("summary") or ""))
         fs["fallback_error"] = str(exc)
         return fs

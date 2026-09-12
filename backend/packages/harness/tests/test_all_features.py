@@ -1,5 +1,5 @@
 """
-Comprehensive Static Analysis Test Suite for EvoFlow Refactoring
+Comprehensive Static Analysis Test Suite for QAgent Refactoring
 =================================================================
 Validates 12 completed refactoring items via AST parsing + source inspection.
 No runtime imports needed — works without langchain/agent-client dependencies.

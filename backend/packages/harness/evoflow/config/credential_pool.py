@@ -1,4 +1,4 @@
-"""Credential pool — multi-key rotation and status tracking for EvoFlow providers.
+"""Credential pool — multi-key rotation and status tracking for QAgent providers.
 
 Enables multiple API keys per provider with automatic rotation on failure,
 rate-limit cooldown, and exhausted-key recovery.

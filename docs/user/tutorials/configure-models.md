@@ -1,17 +1,17 @@
 # 配置你的第一个模型
 
-> **没有模型，EvoFlow 什么都干不了。你得先接一个 AI 模型。**
+> **没有模型，QAgent 什么都干不了。你得先接一个 AI 模型。**
 >
 > 比如你用 DeepSeek：
 > 1. 去 DeepSeek 官网申请一个 API Key
-> 2. 在 EvoFlow「设置→模型管理」里点"添加模型"，选 DeepSeek，填上 Key
+> 2. 在 QAgent「设置→模型管理」里点"添加模型"，选 DeepSeek，填上 Key
 > 3. 点"测试连接"——通了，搞定
 >
 > 之后聊天、任务、自动化全用这个模型。你也可以加多个模型，比如让"写代码"用 Claude、"聊天"用 DeepSeek，不同角色用不同模型。
 
 ## 你将学到什么
 
-- 在 EvoFlow 中添加对话模型
+- 在 QAgent 中添加对话模型
 - 配置 OpenAI 兼容服务商
 - 设置主模型与 `max_tokens`
 
@@ -32,7 +32,7 @@
 
 ### 1. 打开模型设置
 
-EvoFlow → **设置 → 模型**（或访问 Gateway `GET /api/models` 查看当前列表）。
+QAgent → **设置 → 模型**（或访问 Gateway `GET /api/models` 查看当前列表）。
 
 ### 2. 添加服务商与模型
 

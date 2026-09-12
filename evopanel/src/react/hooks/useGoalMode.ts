@@ -167,7 +167,7 @@ export function useGoalMode({
   onGoalClosureReport?: (p: { sessionKey: string; outcome: string; body: string; ts?: number }) => void
   onGoalRunningChange?: (running: boolean, sessionKey: string) => void
   onGoalSendingChange?: (sending: boolean) => void
-  /** 目标步进或 EvoFlow run 推进时刷新 chat 历史（仅步完成/结束时） */
+  /** 目标步进或 QAgent run 推进时刷新 chat 历史（仅步完成/结束时） */
   onRefreshChatHistory?: () => void | Promise<void>
   /** Web 目标模式：与普通 chatSend 同链路发出首条目标 */
   onSendGoalMessage?: (prompt: string, sessionKey: string) => void | Promise<void>
@@ -606,7 +606,7 @@ export function useGoalMode({
         if (prevStatus !== HOSTED_STATUS.IDLE) {
           toast(outcome, status === HOSTED_STATUS.ERROR ? 'error' : 'success')
           void notifyDesktopCompletion({
-            title: 'EvoFlow · 目标完成',
+            title: 'QAgent · 目标完成',
             body: `${cfg?.prompt?.slice(0, 80) || '目标任务'}：${outcome}`,
             tag: `hosted:${sk}:done`,
           })
@@ -1003,7 +1003,7 @@ export function useGoalMode({
     if (toastDone) {
       const goalLabel = cfg?.prompt ? cfg.prompt.slice(0, 80) : '目标任务'
       void notifyDesktopCompletion({
-        title: 'EvoFlow · 目标完成',
+        title: 'QAgent · 目标完成',
         body: `${goalLabel}：${reason}`,
         tag: `hosted:${targetSk}:done`,
       })

@@ -1,5 +1,5 @@
 """
-Web Search Tool — Hermes-style pluggable backends + EvoFlow AI modes.
+Web Search Tool — Hermes-style pluggable backends + QAgent AI modes.
 
 设计约定：
 - 泛搜走 Hermes 同款 provider 注册表（Tavily / InfoQuest / Firecrawl / SearXNG / Brave / DDGS）。
@@ -472,7 +472,7 @@ def web_search_tool(
             "total_results": len(normalized_results),
             "engines": sorted({str(x.get("_engine") or "") for x in merged_fast if str(x.get("_engine") or "").strip()}),
             "results": normalized_results,
-            "_engine_version": "EvoFlowProviderSearch",
+            "_engine_version": "QAgentProviderSearch",
             "ai_daily": ai_daily_effective,
             "news_53ai": news_53ai_effective,
         }

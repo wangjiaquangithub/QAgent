@@ -1103,7 +1103,7 @@
   #app.evopanel-mobile-tabbar-visible #content {
     min-height: 0;
   }
-  /* 小V 悬浮钮：列表有底栏时抬高；对话中仍显示（抬高避开输入条） */
+  /* 小Q 悬浮钮：列表有底栏时抬高；对话中仍显示（抬高避开输入条） */
   #app.evopanel-mobile-tabbar-visible:not(.evopanel-mobile-chat-thread) .xm-fab:not(.xm-fab--custom) {
     bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }

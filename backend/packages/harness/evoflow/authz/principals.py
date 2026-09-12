@@ -324,50 +324,85 @@ def ensure_webui_principal(
     return p
 
 
-def get_or_create_local_admin(*, org_id: str = DEFAULT_ORG_ID) -> Principal:
-    """Resolve the bootstrap local admin (localhost / no JWT)."""
-    p = resolve_principal_by_identity("local", "admin", org_id=org_id)
-    if p:
-        try:
-            from evoflow.authz.scope_paths import ensure_principal_home
+def _ensure_local_admin_bindings(principal_id: str, *, org_id: str) -> None:
+    """Repair the durable identity and admin grant for the local bootstrap user."""
+    pid = str(principal_id or "").strip()
+    if not pid:
+        raise ValueError("principal_id required")
 
-            ensure_principal_home(p)
-        except Exception:
-            logger.debug("ensure_principal_home for local admin failed", exc_info=True)
-        return p
-    # Prefer primary webui admin if present
-    row = (
-        get_db()
-        .execute(
+    def _write(db: Any) -> None:
+        db.execute(
             """
-            SELECT p.*
-            FROM evoflow_admin_grants g
-            JOIN evoflow_principals p ON p.principal_id = g.principal_id
-            WHERE g.org_id = ? AND g.role = 'org_admin' AND g.scope_id = ?
-            ORDER BY g.created_at ASC
-            LIMIT 1
+            INSERT OR IGNORE INTO evoflow_principal_identities
+                (org_id, provider, external_id, principal_id)
+            VALUES (?, 'local', 'admin', ?)
             """,
-            (org_id, org_scope(org_id)),
+            (org_id, pid),
         )
-        .fetchone()
-    )
-    if row:
-        found = principal_from_row(row)
-        try:
-            from evoflow.authz.scope_paths import ensure_principal_home
 
-            ensure_principal_home(found)
+    run_db_transaction(_write)
+    from evoflow.authz import admin_grants as admin_mod
+
+    admin_mod.promote_org_admin(pid, granted_by=None, org_id=org_id)
+
+
+def _ensure_principal_home_best_effort(principal: Principal, *, label: str) -> None:
+    try:
+        from evoflow.authz.scope_paths import ensure_principal_home
+
+        ensure_principal_home(principal)
+    except Exception:
+        logger.debug("ensure_principal_home for %s failed", label, exc_info=True)
+
+
+def get_or_create_local_admin(*, org_id: str = DEFAULT_ORG_ID) -> Principal:
+    """Resolve and repair the bootstrap local admin (localhost / no JWT)."""
+    p = resolve_principal_by_identity("local", "admin", org_id=org_id)
+    if not p:
+        # A partially initialized legacy database can already have this row but
+        # lack its local identity and org-admin grant. Reuse it rather than
+        # retrying the fixed principal id and raising a UNIQUE constraint error.
+        p = get_principal("local-admin", org_id=org_id)
+
+    if not p:
+        # Prefer primary webui admin if present.
+        row = (
+            get_db()
+            .execute(
+                """
+                SELECT p.*
+                FROM evoflow_admin_grants g
+                JOIN evoflow_principals p ON p.principal_id = g.principal_id
+                WHERE g.org_id = ? AND g.role = 'org_admin' AND g.scope_id = ?
+                ORDER BY g.created_at ASC
+                LIMIT 1
+                """,
+                (org_id, org_scope(org_id)),
+            )
+            .fetchone()
+        )
+        if row:
+            p = principal_from_row(row)
+
+    if not p:
+        try:
+            p = create_principal(
+                display_name="Local Admin",
+                org_id=org_id,
+                principal_id="local-admin",
+                attrs={"bootstrap": True},
+            )
         except Exception:
-            logger.debug("ensure_principal_home for admin failed", exc_info=True)
-        return found
-    # Last resort create
-    created = create_principal(
-        display_name="Local Admin",
-        org_id=org_id,
-        principal_id="local-admin",
-        attrs={"bootstrap": True},
-    )
-    return created
+            # Concurrent bootstrap may have inserted the fixed id after our
+            # lookup. Recover the durable row and preserve the original error
+            # for failures unrelated to that race.
+            p = get_principal("local-admin", org_id=org_id)
+            if not p:
+                raise
+
+    _ensure_local_admin_bindings(str(p["principal_id"]), org_id=org_id)
+    _ensure_principal_home_best_effort(p, label="local admin")
+    return p
 
 
 def personal_scope_for(principal: Principal) -> str:

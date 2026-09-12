@@ -1,4 +1,4 @@
-"""Built-in guardrail providers that ship with EvoFlow."""
+"""Built-in guardrail providers that ship with QAgent."""
 
 from evoflow.guardrails.provider import GuardrailDecision, GuardrailReason, GuardrailRequest
 

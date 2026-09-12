@@ -1,4 +1,4 @@
-"""External Agent execution module for EvoFlow."""
+"""External Agent execution module for QAgent."""
 
 from .base import BaseExternalAgent
 from .models import (

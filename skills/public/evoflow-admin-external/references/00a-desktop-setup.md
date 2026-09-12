@@ -2,7 +2,7 @@
 
 外部 Agent / 用户在装治理技能包之前，必须先有 **可运行的 EvoFlow + `evoflow` CLI**。本页按顺序做完即可。
 
-官网文档对照：[快速开始](/docs/getting-started) · 发行版：[GitHub Releases](https://github.com/EvovexAI/EvoFlow/releases/latest)
+官网文档对照：[快速开始](/docs/getting-started) · 发行版：[GitHub Releases](https://github.com/wangjiaquangithub/EvoFlow/releases/latest)
 
 ---
 
@@ -12,7 +12,7 @@
 |------|------|
 | 官网首页顶部按钮 **「下载桌面端」** | 跳到 GitHub Releases |
 | 顶栏 **下载** | 同上 |
-| 直链 | https://github.com/EvovexAI/EvoFlow/releases/latest |
+| 直链 | https://github.com/wangjiaquangithub/EvoFlow/releases/latest |
 
 按系统选安装包（Windows `.exe` 等），运行安装向导。
 
@@ -115,7 +115,7 @@ CLI 冒烟通过后：
 ## 5. 给 runtime / Work Body 的最短指令
 
 ```text
-1. 从 https://github.com/EvovexAI/EvoFlow/releases/latest 下载并安装 EvoFlow 桌面端（勾选 Add PATH，新开终端）
+1. 从 https://github.com/wangjiaquangithub/EvoFlow/releases/latest 下载并安装 EvoFlow 桌面端（勾选 Add PATH，新开终端）
 2. 打开客户端，在「设置 → 模型」配置主模型并确认能对话
 3. 运行：evoflow models list ；失败则用安装目录 binaries/.../evoflow.cmd
 4. 从官网 /#skill-pack 下载 evoflow-admin-external zip，evoflow skills install 后按包内 00/03/examples 管理平台

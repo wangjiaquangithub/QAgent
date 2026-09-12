@@ -1,4 +1,4 @@
-"""System diagnostics over known EvoFlow log sources.
+"""System diagnostics over known QAgent log sources.
 
 Catalog + anomaly scan + shareable timeline. Used by ``platform diagnostics.*``
 and ``evoflow logs …``. Path resolution mirrors desktop Gateway
@@ -406,7 +406,7 @@ def anomaly_timeline(
     events = scan.get("events") or []
 
     lines = [
-        "### EvoFlow 异常时间线",
+        "### QAgent 异常时间线",
         f"- 范围：最近 {scan['hours']} 小时",
         f"- 日志目录：`{logs_dir}`",
         f"- 生成时间：{now}",
@@ -433,7 +433,7 @@ def anomaly_timeline(
     if not with_err:
         conclusion = "最近窗口内未发现匹配的 ERROR/异常行。若仍有问题，说明现象与大概时间以便扩大检索。"
         suggestions = [
-            "确认 EvoFlow 已启动并写过日志（目录存在且有当日文件）",
+            "确认 QAgent 已启动并写过日志（目录存在且有当日文件）",
             "用 diagnostics.scan 指定 source=gateway 并加大 hours",
         ]
     else:

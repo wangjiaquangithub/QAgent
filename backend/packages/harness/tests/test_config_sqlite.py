@@ -206,7 +206,7 @@ def test_merge_baseline_skills_into_existing_main(sqlite_tmp: Path, monkeypatch:
         "main",
         {
             "agent_type": "custom",
-            "agent_name": "EvoFlow",
+            "agent_name": "QAgent",
             "skills": ["deep-research", "preset-role-assistant"],
         },
     )

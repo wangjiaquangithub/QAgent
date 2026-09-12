@@ -232,11 +232,11 @@ def create_app(*, defer_routers: bool = True) -> FastAPI:
     startup_set_meta(defer_routers=defer_routers, frozen=bool(getattr(sys, "frozen", False)))
 
     app = FastAPI(
-        title="EvoFlow API Gateway",
+        title="QAgent API Gateway",
         description="""
-## EvoFlow API Gateway
+## QAgent API Gateway
 
-Control-plane API for EvoFlow — a native Agent Runtime for long-running Agent Teams
+Control-plane API for QAgent — a native Agent Runtime for long-running Agent Teams
 (plan → execute → recover → deliver) with sandboxed tools and observability.
 
 ### Features
@@ -285,7 +285,7 @@ This gateway provides custom endpoints for models, MCP configuration, skills, ar
             },
             {
                 "name": "threads",
-                "description": "Manage EvoFlow thread-local filesystem data",
+                "description": "Manage QAgent thread-local filesystem data",
             },
             {
                 "name": "agents",

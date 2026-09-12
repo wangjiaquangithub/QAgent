@@ -42,7 +42,7 @@ export function inferWorkspaceRootFromFilePath(filePath) {
 /**
  * Normalize local paths for markdown / img src.
  * - ``D:\foo\bar.png`` → ``D:/foo/bar.png`` (markdown eats ``\``)
- * - ``D:githubEvoFlowoutputsfile.png`` → recover slashes before ``outputs/``
+ * - ``D:githubQAgentoutputsfile.png`` → recover slashes before ``outputs/``
  */
 export function normalizeLocalImagePath(raw) {
   const s = String(raw || '').trim()

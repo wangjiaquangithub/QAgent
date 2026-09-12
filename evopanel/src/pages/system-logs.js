@@ -126,7 +126,7 @@ async function loadViaTauriFallback() {
   }
 
   const mdLines = [
-    '### EvoFlow 异常时间线',
+    '### QAgent 异常时间线',
     `- 范围：最近（Tauri 兜底，约末尾若干行）`,
     `- 模式：桌面兜底（Gateway 不可用）`,
     `- 有报错的源：${withErrors.length ? withErrors.join(', ') : '无'}`,

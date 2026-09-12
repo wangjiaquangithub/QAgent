@@ -48,7 +48,7 @@ def _write_vault(vault: Path) -> None:
     (knowledge / "Agent Memory.md").write_text(
         "---\ntags: [memory, agent]\naliases: [智能体记忆]\n---\n"
         "# Agent Memory\n\n智能体长期记忆用于保存跨任务可复用的信息。\n\n"
-        "See also [[RAG]] and [[EvoFlow]].\n",
+        "See also [[RAG]] and [[QAgent]].\n",
         encoding="utf-8",
     )
     (knowledge / "RAG.md").write_text(
@@ -57,9 +57,9 @@ def _write_vault(vault: Path) -> None:
         "Back to [[Agent Memory]].\n",
         encoding="utf-8",
     )
-    (knowledge / "EvoFlow.md").write_text(
+    (knowledge / "QAgent.md").write_text(
         "---\ntags: [product]\naliases: [进化流]\n---\n"
-        "# EvoFlow\n\nEvoFlow 桌面 Agent 工作台。关联 [[Agent Memory]]。\n",
+        "# QAgent\n\nQAgent 桌面 Agent 工作台。关联 [[Agent Memory]]。\n",
         encoding="utf-8",
     )
 
@@ -205,9 +205,9 @@ async def _main() -> int:
             assert hits_hyb, "hybrid Chinese search returned no hits"
 
             hits_title = await _search(
-                "title_match", sess, search_tool, search_schema, query="EvoFlow", mode="title", top_k=5
+                "title_match", sess, search_tool, search_schema, query="QAgent", mode="title", top_k=5
             )
-            assert any("EvoFlow" in (h.path or "") for h in hits_title), hits_title
+            assert any("QAgent" in (h.path or "") for h in hits_title), hits_title
 
             await _search(
                 "tag_filter", sess, search_tool, search_schema, query="", mode="fulltext", top_k=5, tags=["memory"]
@@ -260,7 +260,7 @@ async def _main() -> int:
             assert graph.edges, "expected wikilink edges from related search"
 
             # incremental: update one file then reindex
-            target = vault / "Knowledge" / "EvoFlow.md"
+            target = vault / "Knowledge" / "QAgent.md"
             target.write_text(
                 target.read_text(encoding="utf-8") + "\n\n增量更新：中文索引验证段落。\n",
                 encoding="utf-8",
@@ -308,7 +308,7 @@ async def _main() -> int:
             sess_again = get_session("e2e")
             assert sess_again is sess2
             for i in range(10):
-                await _search(f"reuse_{i}", sess2, search_tool2, search_schema2, query="EvoFlow", mode="title", top_k=3)
+                await _search(f"reuse_{i}", sess2, search_tool2, search_schema2, query="QAgent", mode="title", top_k=3)
             sess_final = get_session("e2e")
             evidence["steps"]["singleton"] = {
                 "sameObject": sess_final is sess2,

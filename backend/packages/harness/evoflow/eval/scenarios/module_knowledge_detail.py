@@ -21,7 +21,7 @@ def _run(home: Path) -> dict:
     enabled_flag = bool((disabled.get("vault") or {}).get("enabled", disabled.get("enabled")))
     reenabled = knowledge_admin.set_vault_enabled(vault_id, True)
 
-    token = "EvoFlowKbL2Token99"
+    token = "QAgentKbL2Token99"
     saved = knowledge_admin.remember(
         {
             "title": "L2知识评测笔记",

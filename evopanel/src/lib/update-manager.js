@@ -98,7 +98,7 @@ export async function resolveUpdateOffer() {
   return {
     ver,
     changelog: info.manifest?.changelog || info.manifest?.notes || '',
-    manualUrl: info.manifest?.url || 'https://github.com/EvovexAI/EvoFlow/releases',
+    manualUrl: info.manifest?.url || 'https://github.com/wangjiaquangithub/QAgent/releases',
     oneClick: false,
     kind: 'manual',
     update: null,

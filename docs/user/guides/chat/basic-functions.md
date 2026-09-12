@@ -13,7 +13,7 @@
 
 ## 1. 对话功能
 
-EvoFlow 的核心交互方式就是聊天。你可以在输入框中发消息，AI 实时回复，支持多轮对话。
+QAgent 的核心交互方式就是聊天。你可以在输入框中发消息，AI 实时回复，支持多轮对话。
 
 **你能做什么：**
 - 发文本、贴图片、拖文件，AI 自动理解并回复
@@ -98,7 +98,7 @@ AI 能记住你的偏好、过程与经验，跨会话复用。日常在对话�
 作为一个新用户，你可能会疑惑这些功能之间是什么关系。这里帮你理清：
 
 ```
-你打开 EvoFlow → 进入聊天界面
+你打开 QAgent → 进入聊天界面
   ├── Ask 模式：问问题、查资料
   ├── Agent 模式：让 AI 干活（默认）
   │   ├── 可上传文件让 AI 分析
@@ -119,7 +119,7 @@ AI 能记住你的偏好、过程与经验，跨会话复用。日常在对话�
 
 **想要更系统的学习路径？** 建议按以下顺序阅读：
 
-1. [项目介绍](../getting-started/introduction.md) [[getting-started/introduction|项目介绍]] → 了解 EvoFlow 是什么
+1. [项目介绍](../getting-started/introduction.md) [[getting-started/introduction|项目介绍]] → 了解 QAgent 是什么
 2. [5 分钟快速上手](../getting-started/quick-start.md) [[getting-started/quick-start|5 分钟快速上手]] → 马上用起来
 3. 本文 → 了解基础功能全局
 4. [Plan 模式](plan-mode.md) [[plan-mode|Plan 模式]] → 学会多步协作
@@ -130,7 +130,7 @@ AI 能记住你的偏好、过程与经验，跨会话复用。日常在对话�
 
 ## 相关阅读
 
-- [[getting-started/product-overview|产品总览]] — 了解 EvoFlow 功能全貌
+- [[getting-started/product-overview|产品总览]] — 了解 QAgent 功能全貌
 - [[guides/chat/plan-mode|Plan 模式]] — 多步骤任务先对齐方案再执行
 - [[guides/chat/file-upload|文件上传]] — 上传文档让 AI 分析
 - [[guides/configuration/agent-management|智能体管理]] — 自定义角色配置详解

@@ -277,7 +277,7 @@ def test_attach_stream_anchors_without_post_user_input():
         "values",
         {
             "messages": [
-                {"type": "HumanMessage", "role": "user", "content": "请介绍 EvoFlow"},
+                {"type": "HumanMessage", "role": "user", "content": "请介绍 QAgent"},
             ]
         },
     )
@@ -289,7 +289,7 @@ def test_attach_stream_anchors_without_post_user_input():
             "type": "AIMessageChunk",
             "role": "assistant",
             "id": "live-chunk-attach",
-            "content": "EvoFlow 是…",
+            "content": "QAgent 是…",
         },
     )
     delta_texts = [
@@ -297,7 +297,7 @@ def test_attach_stream_anchors_without_post_user_input():
         for f in frames
         if _decode_evf_payload(f).get("type") == "delta"
     ]
-    assert delta_texts == ["EvoFlow 是…"]
+    assert delta_texts == ["QAgent 是…"]
 
 
 def test_preanchor_replay_stripped_with_prior_turn_isolation():

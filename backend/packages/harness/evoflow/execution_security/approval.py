@@ -1,8 +1,8 @@
-"""AskForApproval semantics + bridge from EvoFlow tool_approval policies.
+"""AskForApproval semantics + bridge from QAgent tool_approval policies.
 
 Phase 0 only defines the decision surface. Shell still goes through the
 existing tool_approval middleware; this module is the single place to map
-EvoFlow policy names onto native-style approval intensity so Phase 1–2 can
+QAgent policy names onto native-style approval intensity so Phase 1–2 can
 route all shell decisions here without double-prompting.
 """
 
@@ -52,7 +52,7 @@ def normalize_ask(raw: AskForApproval | str | None) -> AskForApproval:
 
 
 def map_evoflow_policy_to_ask(policy: str | None) -> AskForApproval:
-    """Map legacy EvoFlow ``tool_approval`` modes to AskForApproval."""
+    """Map legacy QAgent ``tool_approval`` modes to AskForApproval."""
     m = str(policy or "").strip().lower()
     if m in ("grant_all", "grant-all"):
         return AskForApproval.NEVER

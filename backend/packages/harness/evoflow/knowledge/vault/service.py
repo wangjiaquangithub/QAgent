@@ -194,7 +194,7 @@ def update_vault(
 
 
 async def delete_vault(vault_id: str) -> dict[str, Any]:
-    """Delete EvoFlow config + stop MCP — never delete vault files."""
+    """Delete QAgent config + stop MCP — never delete vault files."""
     cfg = vault_store.get_vault_config(vault_id)
     if cfg is None:
         raise VaultNotFoundError(f"vault not found: {vault_id}")
@@ -213,7 +213,7 @@ async def delete_vault(vault_id: str) -> dict[str, Any]:
         "success": True,
         "vaultId": vault_id,
         "deletedConfigOnly": True,
-        "message": "已删除 EvoFlow 中的知识库连接配置，未删除 Obsidian Vault 内任何文件。",
+        "message": "已删除 QAgent 中的知识库连接配置，未删除 Obsidian Vault 内任何文件。",
     }
 
 

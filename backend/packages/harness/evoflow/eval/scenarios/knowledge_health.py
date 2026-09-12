@@ -17,7 +17,7 @@ def _run(home: Path) -> dict:
     vault = created.get("vault") or created
     vault_id = str(vault.get("id") or created.get("vault_id") or created.get("id") or "").strip()
 
-    unique = "EvoFlowEvalUniqueToken42"
+    unique = "QAgentEvalUniqueToken42"
     remember_payload = {
         "title": "评测笔记",
         "knowledge": f"本笔记包含唯一检索词 {unique} 用于评测。",

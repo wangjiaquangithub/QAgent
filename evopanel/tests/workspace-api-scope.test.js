@@ -58,7 +58,7 @@ describe('workspace path normalization', () => {
   })
 
   it('keeps chat @@绝对路径@@ outside the bound workspace for preview read', () => {
-    const bound = 'D:/dev/github/EvoFlow'
+    const bound = 'D:/dev/github/QAgent'
     const cited =
       'D:/github/temp/doc/direct-model-call/FastGPT LLM 驱动智能文档拆分方案设计文档.md'
     expect(absoluteHostPathToWorkspaceRel(cited, bound)).toBe(null)
@@ -78,9 +78,9 @@ describe('workspace path normalization', () => {
   })
 
   it('does not re-embed employee root via /outputs/ heuristic', () => {
-    const root = 'D:/dev/github/EvoFlow/outputs/smart-employee-test/workspace/qa-engineer'
+    const root = 'D:/dev/github/QAgent/outputs/smart-employee-test/workspace/qa-engineer'
     const abs =
-      'D:/dev/github/EvoFlow/outputs/smart-employee-test/workspace/qa-engineer/docs/roles/qa-engineer/20260808-17/test_report.md'
+      'D:/dev/github/QAgent/outputs/smart-employee-test/workspace/qa-engineer/docs/roles/qa-engineer/20260808-17/test_report.md'
     // Must stay absolute — never become outputs/smart-employee-test/workspace/…
     expect(normalizeWorkspaceReadPath(abs, root)).toBe(abs)
     expect(absoluteHostPathToWorkspaceRel(abs, root)).toBe(
@@ -99,29 +99,29 @@ describe('workspace path normalization', () => {
   it('heals drive-stripped Windows absolute paths instead of joining root', async () => {
     const { setChatWorkspaceRoot } = await import('../src/lib/chat-workspace-context.js')
     const { healStrippedAbsolutePath } = await import('../src/lib/workspace-abs-path.js')
-    const root = 'D:/dev/github/EvoFlow'
+    const root = 'D:/dev/github/QAgent'
     setChatWorkspaceRoot(root)
-    expect(healStrippedAbsolutePath(':/dev/github/EvoFlow/output/smart-employee-test/', root)).toBe(
-      'D:/dev/github/EvoFlow/output/smart-employee-test/',
+    expect(healStrippedAbsolutePath(':/dev/github/QAgent/output/smart-employee-test/', root)).toBe(
+      'D:/dev/github/QAgent/output/smart-employee-test/',
     )
-    expect(healStrippedAbsolutePath('/dev/github/EvoFlow/output/x', root)).toBe(
-      'D:/dev/github/EvoFlow/output/x',
+    expect(healStrippedAbsolutePath('/dev/github/QAgent/output/x', root)).toBe(
+      'D:/dev/github/QAgent/output/x',
     )
-    expect(normalizeWorkspaceReadPath(':/dev/github/EvoFlow/output/smart-employee-test/', root)).toBe(
-      'D:/dev/github/EvoFlow/output/smart-employee-test/',
+    expect(normalizeWorkspaceReadPath(':/dev/github/QAgent/output/smart-employee-test/', root)).toBe(
+      'D:/dev/github/QAgent/output/smart-employee-test/',
     )
-    expect(normalizeWorkspaceReadPath('D:/dev/github/EvoFlow/output/smart-employee-test/', root)).toBe(
-      'D:/dev/github/EvoFlow/output/smart-employee-test/',
+    expect(normalizeWorkspaceReadPath('D:/dev/github/QAgent/output/smart-employee-test/', root)).toBe(
+      'D:/dev/github/QAgent/output/smart-employee-test/',
     )
-    expect(normalizeWorkspaceRelPath('D:/dev/github/EvoFlow/output/x', root)).toBe(
-      'D:/dev/github/EvoFlow/output/x',
+    expect(normalizeWorkspaceRelPath('D:/dev/github/QAgent/output/x', root)).toBe(
+      'D:/dev/github/QAgent/output/x',
     )
-    expect(resolveWorkspacePreviewTarget(':/dev/github/EvoFlow/output/smart-employee-test/')).toEqual({
-      path: 'D:/dev/github/EvoFlow/output/smart-employee-test/',
+    expect(resolveWorkspacePreviewTarget(':/dev/github/QAgent/output/smart-employee-test/')).toEqual({
+      path: 'D:/dev/github/QAgent/output/smart-employee-test/',
       name: 'smart-employee-test',
     })
-    expect(resolveWorkspacePreviewTarget('D:/dev/github/EvoFlow/output/x.md')).toEqual({
-      path: 'D:/dev/github/EvoFlow/output/x.md',
+    expect(resolveWorkspacePreviewTarget('D:/dev/github/QAgent/output/x.md')).toEqual({
+      path: 'D:/dev/github/QAgent/output/x.md',
       name: 'x.md',
     })
     setChatWorkspaceRoot('')

@@ -1,6 +1,6 @@
 # 给谁用 · 解决什么 · 功能怎么串
 
-> **比如你刚知道 EvoFlow，想搞清"这玩意儿到底能帮我干嘛？"**：
+> **比如你刚知道 QAgent，想搞清"这玩意儿到底能帮我干嘛？"**：
 >
 > - **写代码**：你让 AI"重构飞书渠道的消息格式化模块，拆文件、补单测、跑通过"——AI 自己拆步骤、写代码、跑测试
 > - **盯服务器**：设个目标"每小时检查 gateway 和 langgraph 是否健康，异常就推飞书"——跑 7 天自动停，中间不用管
@@ -9,13 +9,13 @@
 >
 > 读完本页你会搞清三个问题：**这个产品适合谁？我的问题该用哪条能力？几条能力怎么配合，而不是互相当成同一功能？**
 >
-> 操作细节见各指南；设计理念见 [为什么是 EvoFlow](../explanation/why-evoflow.md) [[explanation/why-evoflow|为什么是 EvoFlow]]；安装上手见 [快速上手](quick-start.md) [[quick-start|快速上手]]。
+> 操作细节见各指南；设计理念见 [为什么是 QAgent](../explanation/why-evoflow.md) [[explanation/why-evoflow|为什么是 QAgent]]；安装上手见 [快速上手](quick-start.md) [[quick-start|快速上手]]。
 
 ---
 
 ## 一、产品一句话
 
-EvoFlow 是让 **Agent 把事做完** 的桌面/Web 产品：不只聊天，还能规划、授权执行、看板观测、定时值班、沉淀成可再跑的应用，并可接到飞书等 IM。
+QAgent 是让 **Agent 把事做完** 的桌面/Web 产品：不只聊天，还能规划、授权执行、看板观测、定时值班、沉淀成可再跑的应用，并可接到飞书等 IM。
 
 特别适合两类用法：
 1. **个人固定业务** — 多节点工作流在应用中心产品化，填参再跑；  
@@ -72,7 +72,7 @@ EvoFlow 是让 **Agent 把事做完** 的桌面/Web 产品：不只聊天，还�
 ├── 任务中心 ── 多任务看板、详情、工作流 DAG、任务总结验收
 ├── 应用中心 ── 多节点画布编排 → 发布 → ▶ 填参再跑（个人固定业务）
 ├── 自动化   ── 到点 / 一次性固定 Prompt
-├── 智能体员工 ── 雇佣岗位、值班、关键审批、工作汇报；小V 可临时委派
+├── 智能体员工 ── 雇佣岗位、值班、关键审批、工作汇报；小Q 可临时委派
 ├── 智能体   ── 角色 / 技能 / 连接器（MCP）
 ├── 资产中心 ── 画像 / 记忆 / 经验沉淀 / 反思过程 / 专长（`#/assets`）
 ├── 知识库   ── Obsidian / 本地 Markdown Vault
@@ -81,7 +81,7 @@ EvoFlow 是让 **Agent 把事做完** 的桌面/Web 产品：不只聊天，还�
     ├── 安全中心 · 用户权限 · 企业 SSO（多账号体系）
     ├── 使用统计（费用）· 代码索引 · 资源中心 / 资源市场
     └── （运维观测面板另见 `#/observability`）
-全局助手小V ── 一员工一会话委派、进度与汇报、按需工作轨迹
+全局助手小Q ── 一员工一会话委派、进度与汇报、按需工作轨迹
 ```
 
 | 能力 | 一句话 | 操作指南 |
@@ -93,7 +93,7 @@ EvoFlow 是让 **Agent 把事做完** 的桌面/Web 产品：不只聊天，还�
 | 任务中心 | 观测与验收任务 | [任务中心](../guides/tasks/task-center.md) [[guides/tasks/task-center|任务中心]] |
 | 应用中心 | 多节点工作流产品化 | [应用中心](../guides/configuration/app-center.md) [[guides/configuration/app-center|应用中心]] |
 | 自动化 | 定时触发 | [自动化](../guides/tasks/scheduled-tasks.md) [[guides/tasks/scheduled-tasks|自动化]] |
-| 智能体员工 | 编内值班岗 + 关键审批；可用小V 委派 | [指南](../guides/configuration/smart-employees.md) [[guides/configuration/smart-employees|指南]] · [教程](../tutorials/hire-first-smart-employee.md) [[tutorials/hire-first-smart-employee|教程]] · [概念](../explanation/smart-employees.md) [[explanation/smart-employees|概念]] |
+| 智能体员工 | 编内值班岗 + 关键审批；可用小Q 委派 | [指南](../guides/configuration/smart-employees.md) [[guides/configuration/smart-employees|指南]] · [教程](../tutorials/hire-first-smart-employee.md) [[tutorials/hire-first-smart-employee|教程]] · [概念](../explanation/smart-employees.md) [[explanation/smart-employees|概念]] |
 | 智能体 | 能力包配置 | [智能体管理](../guides/configuration/agent-management.md) [[guides/configuration/agent-management|智能体管理]] |
 | 资产中心 | 画像 / 记忆 / 经验 / 反思（自我进化） | [概念](../explanation/asset-center.md) [[explanation/asset-center|资产中心概念]] · [操作](../guides/configuration/asset-center.md) [[guides/configuration/asset-center|资产中心]] |
 | 知识库 / 上传文档 | 文档型「知道」 | [知识库](../guides/configuration/knowledge-vault.md) [[guides/configuration/knowledge-vault|知识库]] · [上传文档](../guides/configuration/document-knowledge-base.md) [[guides/configuration/document-knowledge-base|上传文档]] |
@@ -130,7 +130,7 @@ flowchart TD
 | **聊天 Plan → 任务中心** | 底部选 Plan → 定稿 →「开始执行」→ 右侧工作流；需要看板时打开任务中心「对话」 |
 | **Plan → 另存为应用** | 确认条「另存为应用」或任务详情沉淀 → 以后填参再跑 |
 | **智能体 → 智能体员工** | 先在「智能体」配好人设/工具 →「智能体员工」雇佣并绑工作区 → 开值班 |
-| **小V → 员工委派** | 打开小V → 左侧选员工 → 输入目标；进度与汇报在会话内，细节按需打开工作轨迹 |
+| **小Q → 员工委派** | 打开小Q → 左侧选员工 → 输入目标；进度与汇报在会话内，细节按需打开工作轨迹 |
 | **员工交工 → 任务中心待确认** | 交工带 **任务总结**；「待确认」= 验收（确认/打回）。「待审批 / 同意派发」= 放行叫醒下游，别混 |
 | **知识库 / 上传文档 → 聊天** | 先连库或建 RAG → 对话里让 Agent 检索（工具权限要勾上） |
 | **自动化 → IM** | 配好渠道 → 自动化开「完成后推送」→ 到点结果进飞书等 |
@@ -166,7 +166,7 @@ flowchart TD
 1. 「智能体」准备好角色（或复制预设）  
 2. 「智能体员工」雇佣、绑仓库工作区、交接审批策略先「谨慎型」（可跟教程 [雇佣第一个员工](../tutorials/hire-first-smart-employee.md)）  
 3. 开值班 → 处理待审批 → 工作汇报在 `docs/roles/…`；交工后在任务中心看 **任务总结** 再验收  
-4. 临时目标可用 **小V** 委派该员工，不必改职责  
+4. 临时目标可用 **小Q** 委派该员工，不必改职责  
 5. 大工程仍走 Plan / 任务中心，不要全塞给值班岗  
 
 ---
@@ -179,7 +179,7 @@ flowchart TD
 | 功能怎么点 | [操作指南总目录](../guides/README.md) [[guides/README|操作指南总目录]] |
 | 面板有哪些入口 | [EvoPanel 指南](../guides/configuration/evopanel-guide.md) [[guides/configuration/evopanel-guide|EvoPanel 指南]] |
 | 产品定义与能力清单 | [项目介绍](introduction.md) [[introduction|项目介绍]] |
-| 设计为什么这样 | [为什么是 EvoFlow](../explanation/why-evoflow.md) [[explanation/why-evoflow|为什么是 EvoFlow]] |
+| 设计为什么这样 | [为什么是 QAgent](../explanation/why-evoflow.md) [[explanation/why-evoflow|为什么是 QAgent]] |
 | 踩坑 | [FAQ](../guides/faq.md) [[guides/faq|FAQ]] |
 
 ---
@@ -188,7 +188,7 @@ flowchart TD
 
 - [[getting-started/introduction|项目介绍]] — 产品定义、能力清单与目标人群
 - [[getting-started/quick-start|5 分钟快速上手]] — 从安装到第一次对话
-- [[explanation/why-evoflow|为什么是 EvoFlow]] — 设计理念与核心差异
+- [[explanation/why-evoflow|为什么是 QAgent]] — 设计理念与核心差异
 - [[explanation/ecosystem-comparison|生态对照]] — 与 DF / 爱马仕 / Codex / 小龙虾的能力地图对照
 - [[guides/configuration/smart-employees|智能体员工]] — 编排值班岗与职责分配
 - [[tutorials/hire-first-smart-employee|雇佣第一个员工]] — 教程：从角色到值班

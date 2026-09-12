@@ -1,4 +1,4 @@
-"""External memory provider discovery under EvoFlow (``memory_port.plugins_memory``)."""
+"""External memory provider discovery under QAgent (``memory_port.plugins_memory``)."""
 
 from __future__ import annotations
 
@@ -160,5 +160,5 @@ class _ProviderCollector:
 
 
 def discover_plugin_cli_commands() -> list[dict]:
-    """EvoFlow has no Hermes CLI; reserved for future use."""
+    """QAgent has no Hermes CLI; reserved for future use."""
     return []

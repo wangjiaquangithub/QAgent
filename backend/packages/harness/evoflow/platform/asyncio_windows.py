@@ -186,7 +186,7 @@ def install_asyncio_benign_disconnect_handler(
 def claude_session_subprocess_supported() -> bool:
     """Whether ``asyncio`` subprocess spawn works in the current (or next) loop on this OS.
 
-    EvoFlow sets ``WindowsSelectorEventLoopPolicy`` on Windows for httpx streaming stability.
+    QAgent sets ``WindowsSelectorEventLoopPolicy`` on Windows for httpx streaming stability.
     Selector loops cannot run ``asyncio.create_subprocess_exec``, which ``claude_agent_sdk``
     requires to launch Claude Code CLI.
     """

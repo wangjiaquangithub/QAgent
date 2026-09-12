@@ -1,18 +1,18 @@
 <div align="center">
 
-# EvoFlow
+# QAgent
 
 **A native Agent Runtime and Control Plane for long-running work.**
 
-Built by [EvovexAI](https://www.evovexai.com): plan, decompose, execute, recover, and deliver — with observable, intervenable Agent Teams.
+Built by [QClouds](https://www.quclouds.com): plan, decompose, execute, recover, and deliver — with observable, intervenable Agent Teams.
 
-[![Release](https://img.shields.io/github/v/release/EvovexAI/EvoFlow?style=flat-square&color=6366f1)](https://github.com/EvovexAI/EvoFlow/releases)
+[![Release](https://img.shields.io/github/v/release/wangjiaquangithub/QAgent?style=flat-square&color=6366f1)](https://github.com/wangjiaquangithub/QAgent/releases)
 [![License](https://img.shields.io/badge/license-Source--available%20Non--Commercial-orange?style=flat-square)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-64748b?style=flat-square)](https://github.com/EvovexAI/EvoFlow/releases)
-[![Docs](https://img.shields.io/badge/docs-evovexai.com-6366f1?style=flat-square)](https://www.evovexai.com/docs/chat/evopanel)
-[![Contact](https://img.shields.io/badge/contact-cloud%40evovexai.com-64748b?style=flat-square&logo=gmail&logoColor=white)](mailto:cloud@evovexai.com)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-64748b?style=flat-square)](https://github.com/wangjiaquangithub/QAgent/releases)
+[![Docs](https://img.shields.io/badge/QAgent%20Docs-6366f1?style=flat-square)](https://github.com/wangjiaquangithub/QAgent)
+[![Contact](https://img.shields.io/badge/contact-wangjiaquan%40quclouds.com-64748b?style=flat-square&logo=gmail&logoColor=white)](mailto:wangjiaquan@quclouds.com)
 
-[Download](https://github.com/EvovexAI/EvoFlow/releases) · [Quick Start](#quick-start) · [Docs](docs/index.md) · [Contributing](CONTRIBUTING.md) · [中文](README.md)
+[Download](https://github.com/wangjiaquangithub/QAgent/releases) · [Quick Start](#quick-start) · [Docs](docs/index.md) · [Contributing](CONTRIBUTING.md) · [中文](README.md)
 
 </div>
 
@@ -20,9 +20,9 @@ Built by [EvovexAI](https://www.evovexai.com): plan, decompose, execute, recover
 
 ## Overview
 
-EvoFlow runs long tasks with collaborative Agent Teams: clarify and plan first, then execute tools and sandboxed work in isolated context, with recovery and human review. The control plane covers chat, Plan, Goal, task center, workflows, and observability.
+QAgent runs long tasks with collaborative Agent Teams: clarify and plan first, then execute tools and sandboxed work in isolated context, with recovery and human review. The control plane covers chat, Plan, Goal, task center, workflows, and observability.
 
-Further reading: [Why EvoFlow](docs/user/explanation/why-evoflow.md) · [Ecosystem comparison (DeerFlow / Hermes / Codex / OpenClaw)](docs/user/explanation/ecosystem-comparison.md) · [Agent system](docs/user/explanation/agent-system.md)
+Further reading: [Why QAgent](docs/user/explanation/why-evoflow.md) · [Ecosystem comparison (DeerFlow / Hermes / Codex / OpenClaw)](docs/user/explanation/ecosystem-comparison.md) · [Agent system](docs/user/explanation/agent-system.md)
 
 ---
 
@@ -43,7 +43,7 @@ Further reading: [Why EvoFlow](docs/user/explanation/why-evoflow.md) · [Ecosyst
 
 ### Desktop installer
 
-1. Download from [Releases](https://github.com/EvovexAI/EvoFlow/releases) and install.
+1. Download from [Releases](https://github.com/wangjiaquangithub/QAgent/releases) and install.
 2. Open the app → **Settings → Models** → add a provider and API key → test → set as primary.
 3. Chat; use **Plan** for multi-step work and **Goal** for long-running jobs.
 
@@ -51,7 +51,7 @@ Further reading: [Why EvoFlow](docs/user/explanation/why-evoflow.md) · [Ecosyst
 <summary>macOS: “damaged” / can’t be verified?</summary>
 
 ```bash
-xattr -cr /Applications/EvoFlow.app
+xattr -cr /Applications/QAgent.app
 ```
 
 Or **System Settings → Privacy & Security → Open Anyway**.
@@ -64,8 +64,8 @@ Guides: [5-minute quick start](docs/user/getting-started/quick-start.md) · [Con
 For contributors and self-hosters.
 
 ```bash
-git clone https://github.com/EvovexAI/EvoFlow.git
-cd EvoFlow
+git clone https://github.com/wangjiaquangithub/QAgent.git
+cd QAgent
 cp config.example.yaml config.yaml   # sandbox / tools / channels; models via the UI after start
 ```
 
@@ -106,7 +106,7 @@ Also: [SUPPORT.md](SUPPORT.md)
 
 ## Support the project
 
-If EvoFlow helps you, consider supporting ongoing development and iteration (including customization). A coffee tip is welcome; sponsors who can contribute more are especially appreciated. Support is optional and does not change license terms or grant commercial rights. For commercial use or custom work, contact [cloud@evovexai.com](mailto:cloud@evovexai.com).
+If QAgent helps you, consider supporting ongoing development and iteration (including customization). A coffee tip is welcome; sponsors who can contribute more are especially appreciated. Support is optional and does not change license terms or grant commercial rights. For commercial use or custom work, contact [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com).
 
 <p align="center">
   <img src="docs/assets/sponsors/wechat.png" width="220" alt="WeChat support QR">
@@ -118,19 +118,19 @@ If EvoFlow helps you, consider supporting ongoing development and iteration (inc
 
 ## License
 
-Copyright © 2026 **景银泰（EvovexAI）**. [PolyForm Noncommercial License 1.0.0](LICENSE): source-available; personal, research, and non-commercial use allowed; **commercial use requires written authorization** ([cloud@evovexai.com](mailto:cloud@evovexai.com)). **Not an OSI open-source license.** Third-party terms: [NOTICE](NOTICE). Authorship and contributor rights: [AUTHORS.md](AUTHORS.md), [CLA.md](CLA.md).
+Copyright © 2026 **王佳全（WangJiaquan）/ Quclouds**. [PolyForm Noncommercial License 1.0.0](LICENSE): source-available; personal, research, and non-commercial use allowed; **commercial use requires written authorization** ([wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com)). **Not an OSI open-source license.** Third-party terms: [NOTICE](NOTICE). Authorship and contributor rights: [AUTHORS.md](AUTHORS.md), [CLA.md](CLA.md).
 
 ---
 
 ## Acknowledgements
 
-EvoFlow is an independent product. Development drew design inspiration from [DeerFlow](https://github.com/bytedance/deer-flow), [Hermes Agent](https://github.com/NousResearch/hermes-agent), [OpenClaw](https://github.com/openclaw/openclaw), [OpenAI Codex](https://github.com/openai/codex), [LangGraph](https://github.com/langchain-ai/langgraph) / [LangChain](https://github.com/langchain-ai/langchain), [MCP](https://modelcontextprotocol.io), and [Tauri](https://tauri.app). Full notices: [NOTICE](NOTICE).
+QAgent is an independent product. Development drew design inspiration from [DeerFlow](https://github.com/bytedance/deer-flow), [Hermes Agent](https://github.com/NousResearch/hermes-agent), [OpenClaw](https://github.com/openclaw/openclaw), [OpenAI Codex](https://github.com/openai/codex), [LangGraph](https://github.com/langchain-ai/langgraph) / [LangChain](https://github.com/langchain-ai/langchain), [MCP](https://modelcontextprotocol.io), and [Tauri](https://tauri.app). Full notices: [NOTICE](NOTICE).
 
 ---
 
 ## Contact
 
-[GitHub Issues](https://github.com/EvovexAI/EvoFlow/issues) · [Discussions](https://github.com/EvovexAI/EvoFlow/discussions) · [cloud@evovexai.com](mailto:cloud@evovexai.com) · [evovexai.com](https://www.evovexai.com)
+[GitHub Issues](https://github.com/wangjiaquangithub/QAgent/issues) · [Discussions](https://github.com/wangjiaquangithub/QAgent/discussions) · [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com) · [www.quclouds.com](https://www.quclouds.com)
 
 <p align="center">
   <img src="docs/assets/screenshots/wechat-group-qr.png" width="160" alt="WeChat community QR">
@@ -138,6 +138,6 @@ EvoFlow is an independent product. Development drew design inspiration from [Dee
 
 <div align="center">
 
-Built by **EvovexAI** · [中文](README.md)
+Built by **QClouds** · [中文](README.md)
 
 </div>

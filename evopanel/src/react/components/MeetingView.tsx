@@ -196,7 +196,7 @@ export const MeetingView: React.FC<MeetingViewProps> = ({
     addMessage({
       id: `orch-${Date.now()}`,
       speakerAgentCode: null,
-      speakerRoleName: '小V · 主持人',
+      speakerRoleName: '小Q · 主持人',
       text: `好的，我依次邀请 ${names} 发言`,
       timestamp: Date.now(),
     })
@@ -243,7 +243,7 @@ export const MeetingView: React.FC<MeetingViewProps> = ({
             addMessage({
               id: `summary-${Date.now()}`,
               speakerAgentCode: null,
-              speakerRoleName: '小V · 主持人',
+              speakerRoleName: '小Q · 主持人',
               text: '讨论结束，以上是所有参会人的发言。',
               timestamp: Date.now(),
             })

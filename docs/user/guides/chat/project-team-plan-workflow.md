@@ -11,7 +11,7 @@
 >
 > **功能关系**：本文是 [Plan 模式](plan-mode.md) [[plan-mode|Plan 模式]] 与[预设角色与团队](preset-roles.md) [[preset-roles|预设角色与团队]] 的深度结合文档——Plan 模式提供编排机制，项目团队提供专业执行角色，两者配合形成完整的工程协作流水线；与[任务中心](../tasks/task-center.md) [[guides/tasks/task-center|任务中心]]共享同一套任务系统。
 
-本文说明：**EvoFlow Plan 模式**（主控 `plan` 工具）与**项目团队**（`project-*` 内置角色）如何配合，从 0 到 1 完成软件类任务。可与 [Plan 模式使用](plan-mode.md) [[plan-mode|Plan 模式使用]]、[Agent 管理](../configuration/agent-management.md) [[guides/configuration/agent-management|Agent 管理]] 对照阅读。
+本文说明：**QAgent Plan 模式**（主控 `plan` 工具）与**项目团队**（`project-*` 内置角色）如何配合，从 0 到 1 完成软件类任务。可与 [Plan 模式使用](plan-mode.md) [[plan-mode|Plan 模式使用]]、[Agent 管理](../configuration/agent-management.md) [[guides/configuration/agent-management|Agent 管理]] 对照阅读。
 
 ---
 
@@ -26,7 +26,7 @@
 
 ## 2. 两层「计划」对比
 
-| 维度 | EvoFlow Plan 模式（`plan` 工具） | 项目团队角色产出 |
+| 维度 | QAgent Plan 模式（`plan` 工具） | 项目团队角色产出 |
 |------|----------------------------------|------------------|
 | **谁写** | 主控 `main` | 子智能体（如 `project-architect`、`project-planner`） |
 | **是什么** | 整次任务的**执行 DAG**：Step1→Step2→…，每步有执行人、输入输出、验收 | 某一阶段的**交付物文档** |
@@ -360,7 +360,7 @@ Todo Lite TS 后端 npm test 失败或前端无法调通 API，请先对照 docs
 ## 项目信息（已确定，勿再泛问「想做什么项目」）
 
 - **项目名称**：HabitFlow Lite（个人习惯打卡 REST API）
-- **项目目标**：提供一个可本地运行的轻量后端服务，让用户创建习惯、每日打卡、查看连续打卡天数（streak），用于验证 EvoFlow 项目团队 Plan 协作全流程。
+- **项目目标**：提供一个可本地运行的轻量后端服务，让用户创建习惯、每日打卡、查看连续打卡天数（streak），用于验证 QAgent 项目团队 Plan 协作全流程。
 - **目标用户 / 场景**：开发者本机自测、CLI/Postman 调用；无多用户、无登录场景。
 - **技术栈（固定）**：
   - Python 3.12
@@ -428,9 +428,9 @@ architect → planner → implementer（多步串行）→ reviewer → qa
 |------|--------|------|
 | project crew 子智能体墙钟 | 4h | `PROJECT_CREW_TIMEOUT_SECONDS` ← `long_run_limits` |
 | Gateway → LangGraph `runs/stream` HTTP 读超时 | 4h | `langgraph_proxy` / `background_worker` |
-| 主对话 `recursion_limit` | 2500 | EvoFlow `ws-client`、Channel、Plan 授权执行 |
+| 主对话 `recursion_limit` | 2500 | QAgent `ws-client`、Channel、Plan 授权执行 |
 | 子智能体 `recursion_limit` 上限 | 3000 | `max_turns×8` 推导，封顶 `EVOFLOW_SUBAGENT_RECURSION_LIMIT_MAX` |
-| EvoFlow Guardian Plan 保护 | 4h | 执行中 defer 自动 `reload_gateway` |
+| QAgent Guardian Plan 保护 | 4h | 执行中 defer 自动 `reload_gateway` |
 | 自动化 LangGraph `runs.wait` 上限 | 4h | `EVOFLOW_AUTOMATION_LANGGRAPH_TIMEOUT` 默认同墙钟 |
 
 **未改**：`tool_timeout_middleware` 里各工具的单次调用超时（避免一次 `pytest`/构建 hang 占满 4h）。

@@ -2,7 +2,7 @@ import { _ } from '../helper.js'
 
 export default {
   title: _('Agents', 'Agents'),
-  desc: _('创建和管理 EvoFlow Agent，配置身份、模型和工作区', 'Create and manage EvoFlow Agents, configure identity, model and workspace', '建立和管理 EvoFlow Agent，設定身份、模型和工作區'),
+  desc: _('创建和管理 QAgent Agent，配置身份、模型和工作区', 'Create and manage QAgent Agents, configure identity, model and workspace', '建立和管理 QAgent Agent，設定身份、模型和工作區'),
   addAgent: _('+ 新建 Agent', '+ New Agent'),
   noAgents: _('暂无 Agent', 'No agents', '暫無 Agent'),
   loadFailed: _('加载失败', 'Load failed', '載入失敗'),

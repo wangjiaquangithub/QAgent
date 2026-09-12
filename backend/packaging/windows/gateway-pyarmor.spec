@@ -1,6 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 """
-PyArmor-protected PyInstaller spec for EvoFlow Gateway.
+PyArmor-protected PyInstaller spec for QAgent Gateway.
 
 Usage:
   1. Run obfuscate-with-pyarmor.ps1 first (or build-gateway-exe.ps1 -EnablePyArmor)

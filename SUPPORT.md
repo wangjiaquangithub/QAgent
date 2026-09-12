@@ -1,24 +1,24 @@
 # Support
 
-Where to ask for help with EvoFlow.
+Where to ask for help with QAgent.
 
 ## Choose the right channel
 
 | Need | Where |
 | --- | --- |
-| Bug or crash (reproducible) | [GitHub Issues](https://github.com/EvovexAI/EvoFlow/issues) — use the **Bug** template |
-| Feature idea | [GitHub Issues](https://github.com/EvovexAI/EvoFlow/issues) — **Feature** template, or [Discussions](https://github.com/EvovexAI/EvoFlow/discussions) |
-| “How do I…?” / setup help | [Discussions](https://github.com/EvovexAI/EvoFlow/discussions) or docs [FAQ](docs/user/guides/faq.md) |
+| Bug or crash (reproducible) | [GitHub Issues](https://github.com/wangjiaquangithub/QAgent/issues) — use the **Bug** template |
+| Feature idea | [GitHub Issues](https://github.com/wangjiaquangithub/QAgent/issues) — **Feature** template, or [Discussions](https://github.com/wangjiaquangithub/QAgent/discussions) |
+| “How do I…?” / setup help | [Discussions](https://github.com/wangjiaquangithub/QAgent/discussions) or docs [FAQ](docs/user/guides/faq.md) |
 | Docs typo / missing page | Issue with **Documentation** template, or a docs PR |
 | Security vulnerability | **Private only** — [SECURITY.md](SECURITY.md). Never a public issue. |
-| Commercial license / partnership | [cloud@evovexai.com](mailto:cloud@evovexai.com) |
+| Commercial license / partnership | [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com) |
 | Community chat (CN) | WeChat group QR on the [README](README.md) (desensitized talk only; no ads) |
 
 ## Before opening an issue
 
 1. Search existing issues and discussions.
 2. Read [Quick Start](docs/user/getting-started/quick-start.md) and [FAQ](docs/user/guides/faq.md).
-3. Note your OS, EvoFlow / EvoPanel version, and steps to reproduce.
+3. Note your OS, QAgent / EvoPanel version, and steps to reproduce.
 4. Redact API keys, tokens, and private paths.
 
 Discussion category guidance (Q&A / Ideas / RFC / Show and tell): [docs/contribute/discussions-and-good-first-issues.md](docs/contribute/discussions-and-good-first-issues.md).
@@ -33,7 +33,7 @@ Newcomers: look for the `good first issue` label, or start with a docs fix under
 | Bug with clear repro | Best-effort triage within about a week |
 | Feature / discussion | No fixed SLA; maintainers prioritize by roadmap |
 
-EvoFlow is under active development. Windows desktop is the most tested platform today.
+QAgent is under active development. Windows desktop is the most tested platform today.
 
 ## Docs & contributing
 

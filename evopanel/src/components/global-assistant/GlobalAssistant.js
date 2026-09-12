@@ -1,5 +1,5 @@
 ﻿/**
- * 小V全局浮动助手 · 主 UI（vanilla，挂在 #app 外层，路由切换不卸载）
+ * 小Q全局浮动助手 · 主 UI（vanilla，挂在 #app 外层，路由切换不卸载）
  */
 import { navigate, getCurrentRoute } from '../../router.js'
 import { toast } from '../toast.js'
@@ -1295,11 +1295,11 @@ function openPanel() {
   void refreshDashboard()
   void refreshXiaomiObsEnabled()
   void ensureXiaomiSession().then(() => bindXiaomiStreamListener()).catch((e) => {
-    toast(String(e?.message || e || '小V会话不可用'), 'warning')
+    toast(String(e?.message || e || '小Q会话不可用'), 'warning')
   })
 }
 
-/** 唤醒词 / 外部入口：打开全局小V面板 */
+/** 唤醒词 / 外部入口：打开全局小Q面板 */
 export function openGlobalAssistant() {
   if (shouldHideAssistant()) return
   if (!_root || !document.body.contains(_root)) {
@@ -1330,13 +1330,13 @@ function syncShellXiaomiActive(forceOpen) {
 }
 
 /**
- * 语音转写 → 全局小V（不进主对话）
+ * 语音转写 → 全局小Q（不进主对话）
  * @param {string} text
  */
 export async function handleXiaomiVoiceTranscript(text) {
   const t = String(text || '').trim()
   if (!t) return
-  if (shouldHideAssistant()) throw new Error('当前页面不可用小V')
+  if (shouldHideAssistant()) throw new Error('当前页面不可用小Q')
   if (getState().fabUserHidden) {
     patchState({ fabUserHidden: false }, { persistUi: true })
   }
@@ -1375,7 +1375,7 @@ function renderHeader(st) {
   const docked = resolvePanelLayout(st) === 'dock'
   const guide = isWorkbenchDock(st)
   const ctx = pageContext()
-  const title = guide ? '小V 协助' : '小V'
+  const title = guide ? '小Q 协助' : '小Q'
   const sub = guide
     ? ctx.label
       ? `当前：${ctx.label}`
@@ -1590,7 +1590,7 @@ function renderChat(st) {
           ? ''
           : `<div class="xm-thread-head">
         <div class="xm-thread-head-id">
-          <span class="xm-thread-head-title">小V</span>
+          <span class="xm-thread-head-title">小Q</span>
           <span class="xm-thread-head-sub">全局助手</span>
         </div>
         <div class="xm-thread-head-actions">
@@ -1679,7 +1679,7 @@ function renderDebug(st) {
       </div>
       <section class="xm-debug-section">
         <h3>当前页面上下文</h3>
-        <p class="xm-muted">发给小V 时附带的页面快照（指纹不变则本轮不重复注入）。</p>
+        <p class="xm-muted">发给小Q 时附带的页面快照（指纹不变则本轮不重复注入）。</p>
         <div class="xm-debug-table-wrap">
           <table class="xm-debug-table">
             <tbody>${tableRows}</tbody>
@@ -1857,12 +1857,12 @@ function renderContactRail(st) {
         <span class="xm-rail-title">联系人</span>
       </div>
       <div class="xm-rail-list">
-        <button type="button" class="xm-contact${xiaomiActive ? ' is-active' : ''}" data-act="select-contact" data-code="xiaomi" title="小V">
+        <button type="button" class="xm-contact${xiaomiActive ? ' is-active' : ''}" data-act="select-contact" data-code="xiaomi" title="小Q">
           <span class="xm-contact-avatar-wrap">
             <span class="xm-contact-avatar" data-xm-avatar="xiaomi" data-avatar-size="${RAIL_AVATAR_SIZE}" aria-hidden="true"></span>
           </span>
           <span class="xm-contact-meta">
-            <span class="xm-contact-name">小V</span>
+            <span class="xm-contact-name">小Q</span>
             <span class="xm-contact-sub">全局助手</span>
           </span>
         </button>
@@ -2409,9 +2409,9 @@ function buildRoundtableAgents(st) {
       byCode.set(key, { agent_code: code, role_name: p.role_name })
     }
   }
-  // 主持人常用小V头像
+  // 主持人常用小Q头像
   if (!byCode.has('xiaomi')) {
-    byCode.set('xiaomi', { agent_code: 'xiaomi', role_name: '小V' })
+    byCode.set('xiaomi', { agent_code: 'xiaomi', role_name: '小Q' })
   }
 
   const out = []
@@ -2434,7 +2434,7 @@ function buildRoundtableAgents(st) {
 }
 
 /**
- * 全屏会议室：挂载 React AIRoundtableRoom，状态由小V store 驱动。
+ * 全屏会议室：挂载 React AIRoundtableRoom，状态由小Q store 驱动。
  */
 function syncMeetingRoom(st) {
   if (!_root) return
@@ -2498,7 +2498,7 @@ function renderComposer(st) {
 function renderFabHtml(st) {
   const badge = Number(st.badgeCount || 0)
   const shortcut = formatShortcutDisplay(getShortcutBinding('toggleXiaomiAssistant'))
-  return `<button type="button" class="xm-fab xm-fab--quiet" data-act="open" title="小V 协助（${shortcut}）· 右键可隐藏" aria-label="打开小V 协助">
+  return `<button type="button" class="xm-fab xm-fab--quiet" data-act="open" title="小Q 协助（${shortcut}）· 右键可隐藏" aria-label="打开小Q 协助">
     <span class="xm-fab-face" aria-hidden="true">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -2511,7 +2511,7 @@ function renderFabHtml(st) {
 /** 右侧边缘入口（对标常见助手侧栏）；可带 coach mark 引导 */
 function renderEdgeTabHtml(st) {
   const ctx = pageContext()
-  const tip = ctx.label ? `协助 · ${ctx.label}` : '小V 协助'
+  const tip = ctx.label ? `协助 · ${ctx.label}` : '小Q 协助'
   const coach = resolveEdgeCoach(st)
   const coachHtml = coach
     ? `<div class="xm-edge-coach" role="status" data-coach-id="${esc(coach.id)}">
@@ -2519,7 +2519,7 @@ function renderEdgeTabHtml(st) {
           <p class="xm-edge-coach-title">${esc(coach.title)}</p>
           <p class="xm-edge-coach-body">${esc(coach.body)}</p>
           <div class="xm-edge-coach-actions">
-            <button type="button" class="xm-edge-coach-cta" data-act="open">打开小V</button>
+            <button type="button" class="xm-edge-coach-cta" data-act="open">打开小Q</button>
             <button type="button" class="xm-edge-coach-dismiss" data-act="dismiss-coach" data-coach-id="${esc(coach.id)}" aria-label="知道了">知道了</button>
           </div>
         </div>
@@ -2527,8 +2527,8 @@ function renderEdgeTabHtml(st) {
     : ''
   return `<div class="xm-edge-wrap${coach ? ' has-coach' : ''}">
     ${coachHtml}
-    <button type="button" class="xm-edge-tab${coach ? ' is-hint' : ''}" data-act="open" title="${esc(tip)}" aria-label="打开小V 协助">
-      <span class="xm-edge-tab-label">小V</span>
+    <button type="button" class="xm-edge-tab${coach ? ' is-hint' : ''}" data-act="open" title="${esc(tip)}" aria-label="打开小Q 协助">
+      <span class="xm-edge-tab-label">小Q</span>
     </button>
   </div>`
 }
@@ -2698,7 +2698,7 @@ function render() {
   if (!panel) {
     _root.insertAdjacentHTML(
       'beforeend',
-      `<aside class="xm-panel xm-panel--enter${st.isExpanded ? ' xm-panel--expanded' : ''}${resolvePanelLayout(st) === 'dock' ? ' xm-panel--dock' : ''}" role="dialog" aria-label="小V全局助手">
+      `<aside class="xm-panel xm-panel--enter${st.isExpanded ? ' xm-panel--expanded' : ''}${resolvePanelLayout(st) === 'dock' ? ' xm-panel--dock' : ''}" role="dialog" aria-label="小Q全局助手">
         <div data-xm-chrome>${renderHeader(st)}</div>
         ${renderBanner(st)}
         <div class="xm-shell" data-xm-shell>${renderShellInner(st)}</div>
@@ -3225,7 +3225,7 @@ async function handleAction(act, el, e) {
   if (act === 'new-round') {
     patchState({ headerMoreOpen: false }, { silent: true })
     const ok = await showConfirm(
-      '确定新开一轮？\n\n将清空当前小V对话记录并换新线程；会话本身保留，之后提问不再带上旧上下文。',
+      '确定新开一轮？\n\n将清空当前小Q对话记录并换新线程；会话本身保留，之后提问不再带上旧上下文。',
     )
     if (!ok) return
     try {
@@ -3333,7 +3333,7 @@ async function handleAction(act, el, e) {
   if (act === 'feishu-bind') {
     patchState({ headerMoreOpen: false }, { silent: true })
     void startFeishuEmployeeScan(XIAOMI_AGENT, {
-      roleName: '小V',
+      roleName: '小Q',
       onBound: () => {
         patchState({ feishuBound: true })
         void refreshDashboard()
@@ -3344,7 +3344,7 @@ async function handleAction(act, el, e) {
   if (act === 'feishu-unbind') {
     patchState({ headerMoreOpen: false }, { silent: true })
     const ok = await showConfirm(
-      '确定解除小V 的飞书机器人绑定？\n\n浮动助手与员工岗是同一身份，解绑后飞书侧将无法再对话到小V。',
+      '确定解除小Q 的飞书机器人绑定？\n\n浮动助手与员工岗是同一身份，解绑后飞书侧将无法再对话到小Q。',
     )
     if (!ok) return
     await unbindFeishuEmployee(XIAOMI_AGENT, {
@@ -3505,7 +3505,7 @@ function hideFabByUser() {
     { persistUi: true },
   )
   const shortcut = formatShortcutDisplay(getShortcutBinding('toggleXiaomiAssistant'))
-  toast(`小V 已隐藏 · 按 ${shortcut} 可再显示`, 'info')
+  toast(`小Q 已隐藏 · 按 ${shortcut} 可再显示`, 'info')
 }
 
 function onFabContextMenu(e) {

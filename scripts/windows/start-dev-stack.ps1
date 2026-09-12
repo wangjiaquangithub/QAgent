@@ -22,7 +22,7 @@ if ($GatewayPort -gt 0) {
     $env:EVOFLOW_GATEWAY_PORT = [string]$GatewayPort
 }
 . (Join-Path $PSScriptRoot "backend-common.ps1")
-Initialize-EvoFlowBackendPaths -RepoRoot $RepoRoot
+Initialize-QAgentBackendPaths -RepoRoot $RepoRoot
 $EvoPanelDir = Join-Path $RepoRoot "evopanel"
 
 function Test-PortListening {
@@ -93,10 +93,10 @@ function Resolve-PackagedOrDistGatewayExe {
 if (-not (Test-Path $EvoPanelDir)) {
     throw "EvoPanel directory (evopanel) not found: $EvoPanelDir"
 }
-if (-not (Test-EvoFlowCommandExists "npm")) {
+if (-not (Test-QAgentCommandExists "npm")) {
     throw "npm not found in PATH"
 }
-if (-not (Test-EvoFlowCommandExists "node")) {
+if (-not (Test-QAgentCommandExists "node")) {
     throw "node not found in PATH"
 }
 
@@ -104,16 +104,16 @@ $tauriCliJs = Join-Path $EvoPanelDir 'node_modules/@tauri-apps/cli/tauri.js'
 if (-not (Test-Path -LiteralPath $tauriCliJs)) {
     if ($InstallEvoPanel) {
         Write-Host ""
-        Write-Host "[EvoFlow] EvoPanel node_modules missing; running npm ci in:" -ForegroundColor Cyan
+        Write-Host "[QAgent] EvoPanel node_modules missing; running npm ci in:" -ForegroundColor Cyan
         Write-Host "          $EvoPanelDir" -ForegroundColor DarkGray
         Push-Location -LiteralPath $EvoPanelDir
         try {
             $prevCi = $env:CI
             if ($prevCi) {
-                Write-Host "[EvoFlow] Temporarily unsetting CI=$prevCi so npm shows progress (restored after npm ci)." -ForegroundColor DarkYellow
+                Write-Host "[QAgent] Temporarily unsetting CI=$prevCi so npm shows progress (restored after npm ci)." -ForegroundColor DarkYellow
                 Remove-Item Env:CI -ErrorAction SilentlyContinue
             }
-            Write-Host "[EvoFlow] npm will print many lines (verbose). Spinner alone means extract/write is busy." -ForegroundColor DarkGray
+            Write-Host "[QAgent] npm will print many lines (verbose). Spinner alone means extract/write is busy." -ForegroundColor DarkGray
             try {
                 & npm ci --progress=true --loglevel verbose
                 if ($LASTEXITCODE -ne 0) {
@@ -204,7 +204,7 @@ if ($usePackDesktop) {
     if (-not $SkipBackend) {
         Write-Host ""
         Write-Host "==> Step 1/2: Starting Gateway (LangGraph in-process) [Web/External]" -ForegroundColor Cyan
-        Start-EvoFlowBackend
+        Start-QAgentBackend
     } else {
         Write-Host ""
         Write-Host "==> Step 1/2: Skip backend start (using existing Gateway)" -ForegroundColor Yellow

@@ -88,3 +88,39 @@ def test_jwt_recovers_via_ensure_when_principal_missing(sqlite_tmp: str) -> None
     p = resolve_request_principal(req)
     assert p["principal_id"] != admin["principal_id"]
     assert "bob" in str(p.get("display_name") or "").lower() or p["principal_id"].startswith("webui:")
+
+
+def test_local_admin_repairs_orphaned_bootstrap_principal(sqlite_tmp: str) -> None:
+    """A stale DB may contain local-admin before its identity/grant tables existed."""
+    del sqlite_tmp
+    from evoflow.authz import admin_grants as admin_mod
+    from evoflow.authz import principals as principals_mod
+
+    ensure_app_schema(get_db())
+    principals_mod.create_principal(
+        display_name="Local Admin",
+        principal_id="local-admin",
+        attrs={"bootstrap": True},
+    )
+
+    assert principals_mod.resolve_principal_by_identity("local", "admin") is None
+    assert not admin_mod.is_org_admin("local-admin")
+
+    recovered = principals_mod.get_or_create_local_admin()
+    assert recovered["principal_id"] == "local-admin"
+    assert principals_mod.resolve_principal_by_identity("local", "admin") == recovered
+    assert admin_mod.is_org_admin("local-admin")
+
+    # The repair is idempotent and never retries the fixed principal insert.
+    assert principals_mod.get_or_create_local_admin()["principal_id"] == "local-admin"
+    assert (
+        get_db()
+        .execute(
+            """
+            SELECT COUNT(*) FROM evoflow_principal_identities
+            WHERE org_id = 'local' AND provider = 'local' AND external_id = 'admin'
+            """
+        )
+        .fetchone()[0]
+        == 1
+    )

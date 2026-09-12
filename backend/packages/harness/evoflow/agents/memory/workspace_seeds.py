@@ -9,7 +9,7 @@ from typing import Any
 def _evoflow_seed() -> dict[str, Any]:
     return {
         "standing": (
-            "EvoFlow 是自主 Agent 运行时与控制平面：LangGraph 主智能体 + 中间件链 + 工具/MCP/沙箱。"
+            "QAgent 是自主 Agent 运行时与控制平面：LangGraph 主智能体 + 中间件链 + 工具/MCP/沙箱。"
             "Python 后端在 backend/packages/harness，桌面面板 evopanel（Tauri+React）。"
             "对话记忆归 user/，项目知识归 workspace/，Agent 仅保留 SOUL/profile。"
             "配置根目录 config.yaml；用户数据 ~/.evoflow。"
@@ -64,7 +64,7 @@ def _evoflow_seed() -> dict[str, Any]:
                 "summary": "config.yaml + Makefile",
                 "category": "entrypoint",
                 "content": (
-                    "仓库根 config.yaml 为 EvoFlow 配置；backend/ 下 pip install -e . 安装 harness。"
+                    "仓库根 config.yaml 为 QAgent 配置；backend/ 下 pip install -e . 安装 harness。"
                     "CLI：evoflow（models/agents/memory/assets/workspace …）。"
                     "Gateway 启动后 EvoPanel 连接本地服务。"
                 ),
@@ -76,7 +76,7 @@ def _evoflow_seed() -> dict[str, Any]:
                 "category": "convention",
                 "content": (
                     "会话绑定 local_workspace_root 后启用 workspace 记忆注入与写入。"
-                    "应绑定具体项目根（如 EvoFlow/），不要绑定上层 monorepo 根目录，"
+                    "应绑定具体项目根（如 QAgent/），不要绑定上层 monorepo 根目录，"
                     "避免把兄弟仓库误记为本项目模块。"
                 ),
             },

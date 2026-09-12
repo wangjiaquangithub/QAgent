@@ -17,7 +17,7 @@ pub mod mcp_market;
 pub mod update;
 pub mod voice_overlay;
 
-/// 获取 EvoFlow 配置目录 (~/.evoflow/)
+/// 获取 QAgent 配置目录 (~/.evoflow/)
 pub fn evoflow_dir() -> PathBuf {
     dirs::home_dir().unwrap_or_default().join(".evoflow")
 }
@@ -92,7 +92,7 @@ pub fn panel_config_existing_path() -> Option<PathBuf> {
 }
 
 pub fn app_user_agent() -> String {
-    format!("EvoFlow/{}", env!("CARGO_PKG_VERSION"))
+    format!("QAgent/{}", env!("CARGO_PKG_VERSION"))
 }
 
 fn read_panel_config_value() -> Option<serde_json::Value> {

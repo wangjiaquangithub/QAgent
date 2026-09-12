@@ -21,7 +21,7 @@ describe('obs-payload-parse', () => {
   it('reads fields from truncated request_json string', () => {
     const payload = {
       model: 'doubao',
-      system: 'You are EvoFlow assistant.',
+      system: 'You are QAgent assistant.',
       messages: [
         { role: 'system', content: 'System in messages' },
         { role: 'user', content: 'older question' },
@@ -32,7 +32,7 @@ describe('obs-payload-parse', () => {
     const raw = `${JSON.stringify(payload).slice(0, 900)}\n… [truncated]`
     const views = parseRequestViews(raw)
     expect(views).toBeTruthy()
-    expect(views?.systemPrompt).toMatch(/EvoFlow assistant|System in messages/)
+    expect(views?.systemPrompt).toMatch(/QAgent assistant|System in messages/)
     expect(views?.userLatest).toMatch(/question/)
   })
 

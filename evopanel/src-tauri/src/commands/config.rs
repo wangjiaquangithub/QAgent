@@ -362,11 +362,11 @@ pub fn write_mcp_config(config: Value) -> Result<(), String> {
     fs::write(&path, json).map_err(|e| format!("写入失败: {e}"))
 }
 
-// EvoFlow 版本列表与升级入口已移除
+// QAgent 版本列表与升级入口已移除
 
-// EvoFlow 历史安装/卸载内部实现已移除
+// QAgent 历史安装/卸载内部实现已移除
 
-// EvoFlow 初始化/Node 检测旧功能已移除
+// QAgent 初始化/Node 检测旧功能已移除
 
 #[tauri::command]
 pub fn write_env_file(path: String, config: String) -> Result<(), String> {
@@ -503,8 +503,8 @@ pub async fn check_panel_update() -> Result<Value, String> {
             .map_err(|e| format!("创建 HTTP 客户端失败: {e}"))?;
 
     let sources = [(
-        "https://api.github.com/repos/EvovexAI/EvoFlow/releases/latest",
-        "https://github.com/EvovexAI/EvoFlow/releases",
+        "https://api.github.com/repos/wangjiaquangithub/QAgent/releases/latest",
+        "https://github.com/wangjiaquangithub/QAgent/releases",
         "github",
     )];
 
@@ -540,7 +540,7 @@ pub async fn check_panel_update() -> Result<Value, String> {
                 result.insert("source".into(), Value::String(source.to_string()));
                 result.insert(
                     "downloadUrl".into(),
-                    Value::String("https://www.evovexai.com".into()),
+                    Value::String("https://www.quclouds.com".into()),
                 );
                 return Ok(Value::Object(result));
             }

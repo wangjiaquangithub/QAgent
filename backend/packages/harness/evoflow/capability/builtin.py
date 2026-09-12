@@ -1,4 +1,4 @@
-"""Built-in EvoFlow capabilities registered into the CapabilityRegistry.
+"""Built-in QAgent capabilities registered into the CapabilityRegistry.
 
 Each capability mirrors the logic of the corresponding gateway router but is
 exposed as an MCP tool via the :func:`capability` decorator. Handlers use

@@ -2,7 +2,7 @@ import { _ } from '../helper.js'
 
 export default {
   title: _('日志查看', 'Logs', '日志查看', 'ログ', '로그', 'Nhật ký', 'Registros', '', 'Журналы', 'Journaux', 'Protokolle'),
-  desc: _('查看 EvoFlow 各服务日志', 'View EvoFlow service logs', '查看 EvoFlow 各服务日志', 'EvoFlow サービスログを表示', 'EvoFlow 서비스 로그 보기', 'Xem nhật ký dịch vụ EvoFlow', 'Ver registros del servicio EvoFlow', 'Ver logs do serviço EvoFlow', 'Просмотр журналов EvoFlow', 'Voir les journaux EvoFlow', 'EvoFlow-Protokolle anzeigen'),
+  desc: _('查看 QAgent 各服务日志', 'View QAgent service logs', '查看 QAgent 各服务日志', 'QAgent サービスログを表示', 'QAgent 서비스 로그 보기', 'Xem nhật ký dịch vụ QAgent', 'Ver registros del servicio QAgent', 'Ver logs do serviço QAgent', 'Просмотр журналов QAgent', 'Voir les journaux QAgent', 'QAgent-Protokolle anzeigen'),
   tabGateway: _('Gateway 日志', 'Gateway Logs', 'Gateway 日志', 'Gateway ログ', 'Gateway 로그', 'Gateway', 'Gateway', 'Gateway', 'Gateway', 'Gateway', 'Gateway'),
   tabGatewayErr: _('Gateway 错误', 'Gateway Errors', 'Gateway 错误', 'Gateway エラー', 'Gateway 오류', 'Lỗi Gateway', 'Errores Gateway', 'Erros Gateway', 'Ошибки Gateway', 'Erreurs Gateway', 'Gateway-Fehler'),
   tabGuardian: _('守护进程', 'Guardian', '守护进程', 'ガーディアン', '가디언'),

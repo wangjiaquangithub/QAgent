@@ -674,7 +674,7 @@ export function MessageRow({
           <span className="msg-ai-head-label">
             {assistantAgentLabel ||
               String(assistantAgent?.agent_name || '').trim() ||
-              'EvoFlow · Agent'}
+              'QAgent · Agent'}
           </span>
           <span className="msg-ai-head-time">{formatTime(displayRow.timestamp)}</span>
         </header>

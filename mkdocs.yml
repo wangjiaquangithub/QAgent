@@ -1,11 +1,11 @@
-# EvoFlow 官方文档站点 — 源文件位于 docs/，构建：make docs-build
+# QAgent 官方文档站点 — 源文件位于 docs/，构建：make docs-build
 # 本仓 docs 仅用户文档；非公开设计稿在 internal design docs (not published in this repository). See: 
-site_name: EvoFlow 文档
-site_description: EvoFlow 教程、操作指南、参考手册与架构说明
-site_author: EvoFlow contributors
+site_name: QAgent 文档
+site_description: QAgent 教程、操作指南、参考手册与架构说明
+site_author: QAgent contributors
 
-repo_url: https://github.com/EvovexAI/EvoFlow
-repo_name: EvoFlow
+repo_url: https://github.com/wangjiaquangithub/QAgent
+repo_name: QAgent
 edit_uri: edit/main/docs/
 
 docs_dir: docs
@@ -116,7 +116,7 @@ nav:
             
           - 配置与面板:
             - 面板设置: user/guides/configuration/settings.md
-            - EvoFlow 桌面端指南: user/guides/configuration/evopanel-guide.md
+            - QAgent 桌面端指南: user/guides/configuration/evopanel-guide.md
             - 智能体管理: user/guides/configuration/agent-management.md
             - 智能体员工: user/guides/configuration/smart-employees.md
             - 技能管理: user/guides/configuration/skill-management.md
@@ -145,7 +145,7 @@ nav:
           - Claude Code 持续协作: user/cases/claude-code-continuous.md
           - Supervisor 模式: user/cases/supervisor-mode.md
       - 核心概念:
-          - 为什么是 EvoFlow: user/explanation/why-evoflow.md
+          - 为什么是 QAgent: user/explanation/why-evoflow.md
           - 生态对照（DF / 爱马仕 / Codex / 小龙虾）: user/explanation/ecosystem-comparison.md
           - Agent 系统: user/explanation/agent-system.md
           - 智能体员工: user/explanation/smart-employees.md
@@ -161,7 +161,7 @@ extra:
   # 顶部轻量入口：与「下载与构建」页互为补充（发布页在 GitHub，非站内路径）
   social:
     - icon: fontawesome/solid/download
-      link: https://github.com/EvovexAI/EvoFlow/releases
+      link: https://github.com/wangjiaquangithub/QAgent/releases
       name: 本仓库 Releases 下载
     - icon: fontawesome/brands/github
-      link: https://github.com/EvovexAI/EvoFlow
+      link: https://github.com/wangjiaquangithub/QAgent

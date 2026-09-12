@@ -6,22 +6,22 @@
  * `wake-word-hit` event as the local KWS ear.
  */
 
-const WAKE_WORD_LABEL = '小V小V'
+const WAKE_WORD_LABEL = '小Q小Q'
 const COOLDOWN_MS = 2500
 
 /** Phrases that open continuous voice (normalized, no punctuation). */
 const WAKE_PHRASES = [
-  '小V小V',
+  '小Q小Q',
   '小v小v',
   '小维小维', // spoken “V” ≈ 维
   '小微小微',
   '小委小委',
   '小威小威',
-  '嘿小V',
-  '嗨小V',
-  '你好小V',
+  '嘿小Q',
+  '嗨小Q',
+  '你好小Q',
   '你好小v',
-  // Chrome ASR often hears 「小V」 as 蜜/米 — still treat as wake (product name is 小V)
+  // Chrome ASR often hears 「小Q」 as 蜜/米 — still treat as wake (product name is 小Q)
   '小蜜小蜜',
   '小米小米',
 ]
@@ -54,7 +54,7 @@ function matchWakePhrase(text) {
   for (const phrase of WAKE_PHRASES) {
     if (n.includes(normalizeZh(phrase))) return WAKE_WORD_LABEL
   }
-  // 「小V」×2 with Latin/Chinese V variants, even if ASR inserts odd chars
+  // 「小Q」×2 with Latin/Chinese V variants, even if ASR inserts odd chars
   if (/小[vV维微委威蜜米]小[vV维微委威蜜米]/.test(n)) return WAKE_WORD_LABEL
   return null
 }
@@ -318,7 +318,7 @@ function joinTranscript(prev, next) {
   return `${a}${b}`
 }
 
-/** Remove leading wake phrase so we don't send "小V小V打开灯" as-is when redundant. */
+/** Remove leading wake phrase so we don't send "小Q小Q打开灯" as-is when redundant. */
 function stripWakePrefix(text) {
   let s = String(text || '').trim()
   if (!s) return ''

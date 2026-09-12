@@ -31,7 +31,7 @@ def unwrap_mcp_servers_dict(data: Any) -> dict[str, dict[str, Any]]:
 
     Accepts:
     - ``{"mcpServers": {"github": {...}}}``  (常见 IDE)
-    - ``{"github": {"command": "npx", ...}}``  (flat map, EvoFlow UI)
+    - ``{"github": {"command": "npx", ...}}``  (flat map, QAgent UI)
     """
     if not isinstance(data, dict):
         return {}

@@ -1,6 +1,6 @@
 # 安装指南
 
-> **安装 EvoFlow 有两种方式，选一种就行**：
+> **安装 QAgent 有两种方式，选一种就行**：
 >
 > - **桌面客户端**（推荐）：下载安装包，双击安装，跟装微信/QQ 一样简单。Windows/macOS/Linux 都支持
 > - **自托管 / 源码**：适合开发者；见下方「方式二」。装好后同样在 **设置 → 模型** 配 API Key
@@ -9,7 +9,7 @@
 
 ## 适用场景
 
-在本地机器上安装 EvoFlow。有两种方式：
+在本地机器上安装 QAgent。有两种方式：
 
 | 方式 | 适合谁 | 操作 |
 |------|--------|------|
@@ -20,7 +20,7 @@
 
 ## 方式一：桌面客户端（推荐）
 
-1. 打开 [EvoFlow Releases](https://github.com/EvovexAI/EvoFlow/releases)
+1. 打开 [QAgent Releases](https://github.com/wangjiaquangithub/QAgent/releases)
 2. 下载对应平台的最新安装包（`.exe` / `.dmg` / `.AppImage`）
 3. 安装后启动，在「设置 → 模型」配置一个对话模型即可开始使用
 
@@ -38,7 +38,7 @@
 | Node.js | 22+ | 构建工具 | 是 |
 | uv | 最新 | Python 包管理器 | 是 |
 | Docker | 最新 | 沙箱 / Docker 模式 | 可选 |
-| Rust | stable | EvoFlow 桌面开发 | 可选 |
+| Rust | stable | QAgent 桌面开发 | 可选 |
 
 ### 安装 uv
 
@@ -55,8 +55,8 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 #### 1. 克隆仓库
 
 ```bash
-git clone https://github.com/EvovexAI/EvoFlow.git
-cd EvoFlow
+git clone https://github.com/wangjiaquangithub/QAgent.git
+cd QAgent
 ```
 
 #### 2. 生成配置文件

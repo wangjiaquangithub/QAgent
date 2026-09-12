@@ -19,7 +19,7 @@ def test_resolve_prompt_language_zh_aliases() -> None:
 def test_apply_prompt_template_default_is_chinese() -> None:
     text = apply_prompt_template(intent_hint="chat", available_skills=set())
     assert "你是" in text
-    assert "EvoFlow" in text
+    assert "QAgent" in text
     assert "超级助手" not in text
     assert "Evo Assistant" not in text
     assert "<im_primary_identity>" not in text
@@ -31,7 +31,7 @@ def test_apply_prompt_template_zh() -> None:
     assert text.strip().endswith("</context_priority>")
     assert "工作空间" in text
     assert "以用户为准" in text
-    assert "EvoFlow助手" in text
+    assert "QAgent助手" in text
     assert "<im_primary_identity>" not in text
     soul_start = text.find("<soul>")
     if soul_start >= 0:

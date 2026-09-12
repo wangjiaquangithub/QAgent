@@ -6,11 +6,11 @@
 > 2. 在聊天里问"我之前关于 API 设计的那篇笔记里写了什么？"——AI 直接搜索你的笔记并回答
 > 3. 支持双链关系：AI 能顺着笔记的 `[[链接]]` 找到相关内容
 >
-> 笔记放在本机目录，保留原文件与双链；EvoFlow 连接后做检索与预览。
+> 笔记放在本机目录，保留原文件与双链；QAgent 连接后做检索与预览。
 
 连接本机 **Obsidian Vault** 或任意 Markdown 文件夹，做全文 / 语义检索、预览与局部链接图。侧栏入口：**知识库**（`#/knowledge/vaults`）。页眉英文副标题为 Knowledge Vault。
 
-系统会自动注册只读内置库 **「EvoFlow 用户指南」**（`docs/user`），以及可写内置库 **「运营知识库」**（文档真相源在同级 ContentOS：`ContentOS/docs/智能内容运营平台/知识库/`；EvoFlow 只挂载读取，可用 `EVOFLOW_OPS_KNOWLEDGE_ROOT` 覆盖路径）。侧栏 **知识库** 可见「内置」标记。
+系统会自动注册只读内置库 **「QAgent 用户指南」**（`docs/user`），以及可写内置库 **「运营知识库」**（文档真相源在同级 ContentOS：`ContentOS/docs/智能内容运营平台/知识库/`；QAgent 只挂载读取，可用 `EVOFLOW_OPS_KNOWLEDGE_ROOT` 覆盖路径）。侧栏 **知识库** 可见「内置」标记。
 
 **升级后如何更新内置用户指南**：发新版时会带上最新的 `docs/user`。别人装完新版并启动后，Gateway 会对比内容指纹——有变化就自动把 Markdown 同步到本机 `{EVOFLOW_HOME}/knowledge/vaults/evoflow-user-guide/`，并在后台重建索引。一般无需手动操作；若检索仍像旧版，可在知识库详情里点一次「重建索引」。
 
@@ -26,7 +26,7 @@ evoflow knowledge get guides/configuration/knowledge-vault.md
 > **边界**  
 > - 旧「上传文档」RAG（`#/knowledge` / `search_knowledge_base`）已下线，请只用本页  
 > - 本页 ≠ 「记忆文件」`memory.json`  
-> - 笔记文件仍在你选的本地目录；EvoFlow 只存连接配置与索引缓存  
+> - 笔记文件仍在你选的本地目录；QAgent 只存连接配置与索引缓存  
 > 架构与 MCP / API 细节见 [Obsidian Knowledge Vault 集成](../integrations/obsidian-knowledge-vault.md) [[guides/integrations/obsidian-knowledge-vault|Obsidian Knowledge Vault 集成]]。
 
 ---
@@ -62,7 +62,7 @@ evoflow knowledge get guides/configuration/knowledge-vault.md
 | 卡片 | 进入该 Vault 全屏工作区 |
 | 卡片菜单 | **编辑** / **重建索引** / **测试连接** / **删除** |
 
-**删除**只移除 EvoFlow 里的连接配置，**不会**删除你磁盘上的 Vault 文件。
+**删除**只移除 QAgent 里的连接配置，**不会**删除你磁盘上的 Vault 文件。
 
 ---
 
@@ -127,7 +127,7 @@ evoflow knowledge get guides/configuration/knowledge-vault.md
 
 > v0.3.8+ 知识库从「文件浏览」升级为**可探索的知识图谱**。进入 Vault 卡片后，左上角切换至**图谱**视图。
 
-知识库不再是静态的文件树——EvoFlow 将笔记中的关联关系（`[[双链]]`、标签、文件夹结构）映射为**力导向知识图谱**，支持三栏交互探索。
+知识库不再是静态的文件树——QAgent 将笔记中的关联关系（`[[双链]]`、标签、文件夹结构）映射为**力导向知识图谱**，支持三栏交互探索。
 
 ### 三栏布局
 
@@ -208,5 +208,5 @@ Knowledge Explorer 内置搜索支持四种模式，与知识库搜索一致：
 
 - [[guides/integrations/obsidian-knowledge-vault|Obsidian Knowledge Vault 集成]] — 底层架构与 MCP 细节
 - [[guides/configuration/memory-management|记忆管理]] — 用户偏好记忆 vs 知识库笔记的区别
-- [[guides/configuration/evopanel-guide|EvoFlow 桌面端使用指南]] — 知识库入口与操作
+- [[guides/configuration/evopanel-guide|QAgent 桌面端使用指南]] — 知识库入口与操作
 - [[explanation/memory-system|记忆系统]] — 系统间数据分工

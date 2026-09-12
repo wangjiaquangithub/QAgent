@@ -46,7 +46,7 @@ Work Body / runtime 可被提示：
 源码树（未打包）：
 
 ```text
-https://github.com/EvovexAI/EvoFlow/tree/main/skills/public/evoflow-admin-external
+https://github.com/wangjiaquangithub/EvoFlow/tree/main/skills/public/evoflow-admin-external
 ```
 
 ### C. 自己打包

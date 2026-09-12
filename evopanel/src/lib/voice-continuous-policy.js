@@ -1,6 +1,6 @@
 /**
  * 持续监听策略：麦克风常开、流式识别、静默自动发送、TTS 播放期间 barge-in 打断检测。
- * 移植自既有语音模块 voice-continuous.js，适配 EvoFlow 的 speech-client / background-voice 架构。
+ * 移植自既有语音模块 voice-continuous.js，适配 QAgent 的 speech-client / background-voice 架构。
  *
  * 核心机制：
  * 1. 自动发送：转写文本停更 SILENCE_SEND_MS 后整条发出（底噪不刷新计时）
@@ -162,7 +162,7 @@ export function createContinuousPolicy(opts) {
               bargeinNoSpeechTimer = setTimeout(() => {
                 bargeinNoSpeechTimer = null
                 // 3.5s 内没有新语音输入 → 判定为噪音误触发
-                // EvoFlow 简化处理：不恢复 TTS，用户可重新提问
+                // QAgent 简化处理：不恢复 TTS，用户可重新提问
               }, BARGEIN_NO_SPEECH_MS)
             }
           } else {

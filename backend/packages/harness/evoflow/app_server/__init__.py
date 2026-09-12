@@ -1,4 +1,4 @@
-"""EvoFlow local app-server package."""
+"""QAgent local app-server package."""
 
 from evoflow.app_server.stdio_rpc import (
     PROTOCOL_VERSION,

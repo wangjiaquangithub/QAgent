@@ -49,7 +49,7 @@ describe('reduceStreamTurn text_piece', () => {
     for (const piece of ['Evo', 'Flow ', '是什么\n\n', '**', 'Evo', 'Flow**']) {
       s = reduceStreamTurn(s, { type: 'text_piece', piece })
     }
-    expect(s.openText).toBe('EvoFlow 是什么\n\n**EvoFlow**')
+    expect(s.openText).toBe('QAgent 是什么\n\n**QAgent**')
   })
 
   it('preserves newlines after 一句话定位 (evf piece sequence)', () => {
@@ -57,7 +57,7 @@ describe('reduceStreamTurn text_piece', () => {
     for (const piece of ['一、', '一句话定位', '\n\n**', 'Evo', 'Flow**']) {
       s = reduceStreamTurn(s, { type: 'text_piece', piece })
     }
-    expect(s.openText).toBe('一、一句话定位\n\n**EvoFlow**')
+    expect(s.openText).toBe('一、一句话定位\n\n**QAgent**')
   })
 
   it('preserves 我是谁 paragraph break (evf piece sequence)', () => {
@@ -89,12 +89,12 @@ describe('reduceStreamTurn text_piece', () => {
     s = reduceStreamTurn(s, { type: 'text_piece', piece: 'voFlow' })
     s = reduceStreamTurn(s, { type: 'text_piece', piece: ' 能力' })
     s = reduceStreamTurn(s, { type: 'text_piece', piece: '介绍' })
-    expect(s.openText).toBe('---\n\n# EvoFlow 能力介绍')
+    expect(s.openText).toBe('---\n\n# QAgent 能力介绍')
     s = reduceStreamTurn(s, { type: 'text_piece', piece: '\n\n##' })
-    expect(s.openText).toBe('---\n\n# EvoFlow 能力介绍\n\n##')
+    expect(s.openText).toBe('---\n\n# QAgent 能力介绍\n\n##')
     s = reduceStreamTurn(s, { type: 'text_piece', piece: ' 一句话' })
     s = reduceStreamTurn(s, { type: 'text_piece', piece: '定位\n\n' })
-    expect(s.openText).toBe('---\n\n# EvoFlow 能力介绍\n\n## 一句话定位\n\n')
+    expect(s.openText).toBe('---\n\n# QAgent 能力介绍\n\n## 一句话定位\n\n')
   })
 
   it('keeps pre_tools then post_tools after tools event', () => {
@@ -217,7 +217,7 @@ describe('reduceStreamTurn reasoning_piece after tools', () => {
     s = reduceStreamTurn(s, {
       type: 'reasoning_piece',
       piece:
-        '用户要求正式介绍 EvoFlow 与自身能力边界。这正好命中 evoflow-intro 技能。我需要先读取该技能内容，然后按要求输出。',
+        '用户要求正式介绍 QAgent 与自身能力边界。这正好命中 evoflow-intro 技能。我需要先读取该技能内容，然后按要求输出。',
     })
     s = reduceStreamTurn(s, {
       type: 'tools',
@@ -454,9 +454,9 @@ describe('finalizeStreamTurn', () => {
   it('keeps one text segment when final only differs by whitespace from stream', () => {
     let s = emptyStreamTurn()
     const streamed =
-      '#EvoFlow介绍---##一、定位**EvoFlow**是智能体平台。'
+      '#QAgent介绍---##一、定位**QAgent**是智能体平台。'
     const formatted =
-      '# EvoFlow 介绍\n\n---\n\n## 一、定位\n\n**EvoFlow** 是智能体平台。'
+      '# QAgent 介绍\n\n---\n\n## 一、定位\n\n**QAgent** 是智能体平台。'
     s = reduceStreamTurn(s, { type: 'text_piece', piece: streamed })
     const fin = finalizeStreamTurn(s, formatted)
     const textSegs = fin.segments?.filter((x) => x.kind === 'text') || []
@@ -527,9 +527,9 @@ describe('finalizeStreamTurn', () => {
       type: 'tools',
       entries: [{ id: 't1', name: 'scenario', status: 'ok' }],
     })
-    s = reduceStreamTurn(s, { type: 'text_piece', piece: '以下是对 EvoFlow 的介绍' })
+    s = reduceStreamTurn(s, { type: 'text_piece', piece: '以下是对 QAgent 的介绍' })
     const full =
-      '我来为你做一次正式的能力介绍。\n\n以下是对 EvoFlow 的介绍\n\n## EvoFlow 产品能力边界'
+      '我来为你做一次正式的能力介绍。\n\n以下是对 QAgent 的介绍\n\n## QAgent 产品能力边界'
     const fin = finalizeStreamTurn(s, full)
     const textSegs = fin.segments?.filter((x) => x.kind === 'text') || []
     expect(textSegs.length).toBe(1)
@@ -1019,7 +1019,7 @@ describe('重叠数字修复 — 连续相同字符不再被吞', () => {
 
   it('CJK 段落保留 (原有行为不回归)', () => {
     expect(seq(appendStreamBodyPiece, ['Evo', 'Flow ', '是什么\n\n', '**', 'Evo', 'Flow**']))
-      .toBe('EvoFlow 是什么\n\n**EvoFlow**')
+      .toBe('QAgent 是什么\n\n**QAgent**')
   })
 })
 

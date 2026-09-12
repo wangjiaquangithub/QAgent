@@ -107,7 +107,7 @@ function bumpLatestManifest(latestPath) {
     latest.url = latest.url
       .replace(/\/v\d+\.\d+\.\d+\//, `/v${v}/`)
       .replace(/web-\d+\.\d+\.\d+\.zip/, `web-${v}.zip`)
-      .replace(/EvoFlow_\d+\.\d+\.\d+_x64-setup\.exe/, `EvoFlow_${v}_x64-setup.exe`);
+      .replace(/QAgent_\d+\.\d+\.\d+_x64-setup\.exe/, `QAgent_${v}_x64-setup.exe`);
   }
   if (typeof latest.changelog === "string" && /v\d+\.\d+\.\d+/.test(latest.changelog)) {
     latest.changelog = latest.changelog.replace(/v\d+\.\d+\.\d+/, `v${v}`);

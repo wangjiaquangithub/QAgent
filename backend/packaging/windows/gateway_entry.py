@@ -1,4 +1,4 @@
-"""Windows executable entrypoint for EvoFlow Gateway (dual-mode: gateway / langgraph)."""
+"""Windows executable entrypoint for QAgent Gateway (dual-mode: gateway / langgraph)."""
 
 from __future__ import annotations
 
@@ -266,7 +266,7 @@ def _ensure_runtime_env() -> None:
 
 
 def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="EvoFlow Gateway executable (dual-mode)")
+    parser = argparse.ArgumentParser(description="QAgent Gateway executable (dual-mode)")
     parser.add_argument(
         "--mode",
         default="gateway",
@@ -303,7 +303,7 @@ def _run_langgraph(port: int) -> None:
 
     kwargs = run_server_kwargs()
     kwargs["port"] = port
-    logging.info("Starting EvoFlow LangGraph server on port %s", port)
+    logging.info("Starting QAgent LangGraph server on port %s", port)
     run_server(**kwargs)
 
 
@@ -421,7 +421,7 @@ def main() -> None:
 
     configure_gateway_file_logging(log_name="gateway.log", force=True)
 
-    logging.info("Starting EvoFlow Gateway on %s:%s (LangGraph in-process)", bind_host, args.port)
+    logging.info("Starting QAgent Gateway on %s:%s (LangGraph in-process)", bind_host, args.port)
 
     _reset_logging_before_server()
     configure_gateway_file_logging(log_name="gateway.log", force=True)

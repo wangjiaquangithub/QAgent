@@ -44,7 +44,7 @@ def test_filled_profile_injected(profile_home: Path) -> None:
     ensure_user_profile_files()
     ent = EntityRef("user", "user")
     profile_path(ent, "basic-info.md").write_text(
-        "# 基本信息\n\n## 职业与角色\n\n张三，EvoFlow 维护者，常用 Python。\n",
+        "# 基本信息\n\n## 职业与角色\n\n张三，QAgent 维护者，常用 Python。\n",
         encoding="utf-8",
     )
     profile_path(ent, "preferences.md").write_text(

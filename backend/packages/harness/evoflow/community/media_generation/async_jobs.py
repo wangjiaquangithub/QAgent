@@ -33,7 +33,7 @@ def download_url_to_file(url: str, dest: Path, timeout: int = 120) -> None:
     if not _is_safe_url(url):
         raise ValueError(f"URL blocked for security: {url}")
     dest.parent.mkdir(parents=True, exist_ok=True)
-    req = urllib.request.Request(url, headers={"User-Agent": "EvoFlow-Media/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "QAgent-Media/1.0"})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         data = resp.read()
     dest.write_bytes(data)

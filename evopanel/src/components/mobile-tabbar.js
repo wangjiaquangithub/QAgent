@@ -83,7 +83,7 @@ function syncActive(el) {
   const titleEl = document.querySelector('#mobile-topbar .mobile-topbar-title')
   if (titleEl) {
     const tab = TABS.find((t) => t.match(path))
-    titleEl.textContent = tab?.label || 'EvoFlow'
+    titleEl.textContent = tab?.label || 'QAgent'
   }
 }
 

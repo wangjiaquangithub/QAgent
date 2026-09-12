@@ -1,5 +1,5 @@
 /**
- * EvoFlow 桌面端入口
+ * QAgent 桌面端入口
  */
 import { registerRoute, initRouter, navigate, setDefaultRoute, removeBootSplash, isAuthRoute } from './router.js'
 import { initShellAside, openMobileShellAside } from './components/shell-aside.js'
@@ -272,7 +272,7 @@ function showBackendDownOverlay() {
       ${_logoSvg}
       <div class="login-title" style="color:var(--error,#ef4444)">后端未启动</div>
       <div class="login-desc" style="line-height:1.8">
-        ${isTauri ? '内置后端仍在启动或已异常退出。' : 'EvoFlow 后端服务未运行，无法获取真实数据。'}<br>
+        ${isTauri ? '内置后端仍在启动或已异常退出。' : 'QAgent 后端服务未运行，无法获取真实数据。'}<br>
         <span style="font-size:12px;color:var(--text-tertiary)">${isTauri ? '请点击重新检测，或查看日志定位启动失败原因。' : '请在服务器上启动后端服务后刷新页面。'}</span>
       </div>
       ${desktopHint}
@@ -734,7 +734,7 @@ async function boot() {
     } catch (e) {
       console.warn('[boot] client perf hook failed', e)
     }
-    // 小V全局浮动助手：挂在 body，路由切换不卸载；登录页自动隐藏
+    // 小Q全局浮动助手：挂在 body，路由切换不卸载；登录页自动隐藏
     try {
       const { mountGlobalAssistant } = await import('./components/global-assistant/index.js')
       mountGlobalAssistant()
@@ -769,7 +769,7 @@ async function boot() {
     <button class="mobile-hamburger" id="btn-mobile-menu">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <span class="mobile-topbar-title">EvoFlow</span>
+    <span class="mobile-topbar-title">QAgent</span>
   `
     topbar.querySelector('.mobile-hamburger').addEventListener('click', openMobileShellAside)
     mainCol.prepend(topbar)
@@ -823,7 +823,7 @@ async function boot() {
 
         // 显示友好提示
         const { toast } = await import('./components/toast.js')
-        toast('👋 欢迎使用 EvoFlow! 请先配置至少一个 AI 模型', 'info', 5000)
+        toast('👋 欢迎使用 QAgent! 请先配置至少一个 AI 模型', 'info', 5000)
       }
     } catch {
       // 检测失败,静默忽略,不影响正常使用
@@ -925,7 +925,7 @@ function renderUpdateBanner(banner, offer) {
     <div class="update-banner-content">
       <div class="update-banner-text">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span class="update-banner-ver">${ready ? '更新已就绪' : `EvoFlow v${escapeHtml(offer.ver)} 可用`}</span>
+        <span class="update-banner-ver">${ready ? '更新已就绪' : `QAgent v${escapeHtml(offer.ver)} 可用`}</span>
         ${!ready && offer.changelog ? `<span class="update-banner-changelog">· ${escapeHtml(offer.changelog)}</span>` : ''}
         ${ready && !isFrontend ? '<span class="update-banner-changelog">· 重启后完成更新</span>' : ''}
         <div class="update-progress-wrap update-progress-hidden" id="update-banner-progress">
@@ -938,7 +938,7 @@ function renderUpdateBanner(banner, offer) {
       ${offer.oneClick
     ? `<button type="button" class="btn btn-sm" id="${primaryId}">${primaryLabel}</button>`
     : `<a class="btn btn-sm" href="${escapeHtml(offer.manualUrl)}" target="_blank" rel="noopener">下载安装包</a>`}
-      <a class="btn btn-sm btn-secondary" href="https://github.com/EvovexAI/EvoFlow/releases" target="_blank" rel="noopener">更新说明</a>
+      <a class="btn btn-sm btn-secondary" href="https://github.com/wangjiaquangithub/QAgent/releases" target="_blank" rel="noopener">更新说明</a>
       ${lockDismiss ? '' : '<button type="button" class="btn btn-sm" id="btn-update-skip-version" title="本版本不再提示">本版本不再提示</button>'}
       ${lockDismiss ? '' : '<button type="button" class="update-banner-close" id="btn-update-dismiss" title="本次关闭">✕</button>'}
     </div>
@@ -1203,7 +1203,7 @@ async function checkWebuiRemoteAuth() {
         <div style="font-size:18px;font-weight:600;margin-bottom:8px;color:#18181b">页面加载失败</div>
         <div style="font-size:13px;color:#71717a;max-width:400px;line-height:1.6;margin-bottom:16px">${String(bootErr?.message || bootErr).replace(/</g,'&lt;')}</div>
         <button onclick="location.reload()" style="padding:8px 20px;border-radius:8px;border:none;background:#6366f1;color:#fff;font-size:13px;cursor:pointer">刷新重试</button>
-        <div style="margin-top:24px;font-size:11px;color:#a1a1aa">如果问题持续出现，请尝试重新安装 EvoFlow<br>或在 <a href="https://github.com/EvovexAI/EvoFlow/issues" target="_blank" style="color:#6366f1">GitHub Issues</a> 反馈</div>
+        <div style="margin-top:24px;font-size:11px;color:#a1a1aa">如果问题持续出现，请尝试重新安装 QAgent<br>或在 <a href="https://github.com/wangjiaquangithub/QAgent/issues" target="_blank" style="color:#6366f1">GitHub Issues</a> 反馈</div>
       </div>`
   }
   startUpdateChecker()

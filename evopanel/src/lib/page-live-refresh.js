@@ -1,5 +1,5 @@
 /**
- * 小V / platform 写操作后的页面实时刷新总线。
+ * 小Q / platform 写操作后的页面实时刷新总线。
  * 各模块页订阅后做局部 reload；未订阅时回退 softReloadCurrentRoute。
  */
 import { getCurrentRoute, reloadCurrentRoute } from '../router.js'

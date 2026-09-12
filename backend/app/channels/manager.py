@@ -1,4 +1,4 @@
-"""ChannelManager — consumes inbound messages and dispatches them to the EvoFlow agent via LangGraph Server."""
+"""ChannelManager — consumes inbound messages and dispatches them to the QAgent agent via LangGraph Server."""
 
 from __future__ import annotations
 
@@ -69,7 +69,7 @@ def _im_shortcut_commands_hint_text() -> str:
 
 
 def _im_agent_is_xiaomi(run_context: dict[str, Any] | None, msg: InboundMessage) -> bool:
-    """小V replies should not get the system IM shortcut-command footer."""
+    """小Q replies should not get the system IM shortcut-command footer."""
     try:
         from evoflow.agents.xiaomi.identity import is_xiaomi_agent
     except Exception:
@@ -103,7 +103,7 @@ def _im_is_group_chat(msg: InboundMessage) -> bool:
 
 
 def _im_should_omit_shortcut_hint(run_context: dict[str, Any] | None, msg: InboundMessage) -> bool:
-    """Skip /new /claude /help footer for 小V and for group chats."""
+    """Skip /new /claude /help footer for 小Q and for group chats."""
     return _im_agent_is_xiaomi(run_context, msg) or _im_is_group_chat(msg)
 
 
@@ -185,7 +185,7 @@ def _im_agent_who_label(agent_code: str) -> str:
     except Exception:
         logger.debug("im agent who label: role lookup failed code=%s", code, exc_info=True)
     if code == "xiaomi":
-        return "小V"
+        return "小Q"
     return code
 
 
@@ -956,7 +956,7 @@ def _prepare_artifact_delivery(
 
 
 class ChannelManager:
-    """Core dispatcher that bridges IM channels to the EvoFlow agent.
+    """Core dispatcher that bridges IM channels to the QAgent agent.
 
     It reads from the MessageBus inbound queue, creates/reuses threads on
     the LangGraph Server, sends messages via ``runs.wait``, and publishes
@@ -1328,7 +1328,7 @@ class ChannelManager:
     async def _append_im_shortcut_hint(self, msg: InboundMessage, response_text: str) -> str:
         """Append one-time shortcut hint to the same outbound bubble (avoids a 2nd Feishu card).
 
-        Skipped for group chats and 小V — those footers clutter coworker-facing replies.
+        Skipped for group chats and 小Q — those footers clutter coworker-facing replies.
         """
         if msg.channel_name not in IM_CHANNEL_NAMES or self._im_shortcut_hint_sent(msg):
             return response_text
@@ -1556,7 +1556,7 @@ class ChannelManager:
             except Exception:
                 logger.debug("[Manager] failed to set feishu bridge context", exc_info=True)
 
-        # Look up existing EvoFlow thread (Feishu: isolated per bot account_id).
+        # Look up existing QAgent thread (Feishu: isolated per bot account_id).
         thread_id = self._lookup_bound_thread_id(msg) or None
         if thread_id:
             logger.info(
@@ -1594,7 +1594,7 @@ class ChannelManager:
             old_title = str(existing.get("title") or "").strip()
             weak = (not old_title) or (
                 old_title.startswith(("飞书 · ", "微信 · ", "Slack · ", "Telegram · "))
-                and ("主对话" not in old_title and "小V" not in old_title and "（" not in old_title)
+                and ("主对话" not in old_title and "小Q" not in old_title and "（" not in old_title)
                 and len([p for p in old_title.split("·")]) <= 3
             )
             if weak and pretty and pretty != old_title:

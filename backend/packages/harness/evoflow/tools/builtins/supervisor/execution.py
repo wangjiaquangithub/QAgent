@@ -1583,7 +1583,7 @@ def _resolved_subagent_type_for_subtask(st: dict) -> str:
 
     Falls back from ``claude-code`` to ``general-purpose`` when ``claude_agent_sdk`` is not
     installed in this process (LangGraph runtime), so delegation does not hard-fail.
-    On Windows with Selector event loop (EvoFlow default), also falls back because Claude Code
+    On Windows with Selector event loop (QAgent default), also falls back because Claude Code
     CLI subprocess spawn requires Proactor.
     """
     resolved = "general-purpose"

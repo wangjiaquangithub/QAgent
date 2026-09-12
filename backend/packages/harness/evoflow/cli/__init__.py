@@ -1,4 +1,4 @@
-"""EvoFlow command-line interface."""
+"""QAgent command-line interface."""
 
 from evoflow.cli.main import main
 

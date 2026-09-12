@@ -81,7 +81,7 @@ def _who_label(agent_code: str, *, role_names: dict[str, str] | None = None) -> 
     if role_name and role_name != code:
         return f"{role_name}（{code}）"
     if code == "xiaomi":
-        return "小V（xiaomi）"
+        return "小Q（xiaomi）"
     return f"智能体 {code}"
 
 

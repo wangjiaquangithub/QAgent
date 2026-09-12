@@ -118,9 +118,9 @@ const GENERAL_INNER_HTML = `
       <div id="general-appearance-bar"><div class="stat-card loading-placeholder" style="height:44px"></div></div>
     </div>
     <div class="config-section">
-      <div class="config-section-title">小V 悬浮球</div>
+      <div class="config-section-title">小Q 悬浮球</div>
       <label class="switch-row">
-        <span class="switch-label">显示小V 悬浮球</span>
+        <span class="switch-label">显示小Q 悬浮球</span>
         <input id="general-xiaomi-fab-toggle" type="checkbox" />
         <span class="switch-slider"></span>
       </label>
@@ -428,7 +428,7 @@ export async function mountGeneralInto(container) {
         try {
           const { setFabUserHidden } = await import('../components/global-assistant/assistant-store.js')
           setFabUserHidden(!t.checked)
-          toast(t.checked ? '已显示小V 悬浮球' : '已隐藏小V 悬浮球', 'success')
+          toast(t.checked ? '已显示小Q 悬浮球' : '已隐藏小Q 悬浮球', 'success')
           void renderXiaomiFabToggle(root)
         } catch (err) {
           toast(String(err?.message || err || '保存失败'), 'error')

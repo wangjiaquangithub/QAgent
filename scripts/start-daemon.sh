@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# start-daemon.sh - Start all EvoFlow development services in daemon mode
+# start-daemon.sh - Start all QAgent development services in daemon mode
 #
-# This script starts EvoFlow services in the background without keeping
+# This script starts QAgent services in the background without keeping
 # the terminal connection. Logs are written to separate files.
 #
 # Must be run from the repo root directory.
@@ -24,7 +24,7 @@ sleep 1
 
 echo ""
 echo "=========================================="
-echo " Starting EvoFlow in Daemon Mode"
+echo " Starting QAgent in Daemon Mode"
 echo "=========================================="
 echo ""
 
@@ -35,7 +35,7 @@ if ! { \
         [ -f backend/config.yaml ] || \
         [ -f config.yaml ]; \
     }; then
-    echo "✗ No EvoFlow config file found."
+    echo "✗ No QAgent config file found."
     echo "  Checked these locations:"
     echo "    - $EVOFLOW_CONFIG_PATH (when EVOFLOW_CONFIG_PATH is set)"
     echo "    - backend/config.yaml"
@@ -96,7 +96,7 @@ echo "✓ Gateway API started on localhost:8001"
 
 echo ""
 echo "=========================================="
-echo " EvoFlow is running in daemon mode!"
+echo " QAgent is running in daemon mode!"
 echo "=========================================="
 echo ""
 echo " 🌐 LangGraph:   http://localhost:2024"

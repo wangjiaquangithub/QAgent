@@ -487,7 +487,7 @@ export function showUpgradeModal(title) {
   overlay.className = 'modal-overlay'
   overlay.innerHTML = `
     <div class="modal" style="max-width:520px">
-      <div class="modal-title">${title || '升级 EvoFlow'}</div>
+      <div class="modal-title">${title || '升级 QAgent'}</div>
       <div class="upgrade-progress-wrap">
         <div class="upgrade-progress-bar"><div class="upgrade-progress-fill" style="width:0%"></div></div>
         <div class="upgrade-progress-text">准备中...</div>

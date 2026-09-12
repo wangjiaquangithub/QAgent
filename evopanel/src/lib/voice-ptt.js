@@ -4,7 +4,7 @@
  * 叠加语义：持续监听正在跑时按 PTT，不重开麦克风，只"强制立即发一次"。
  * 底层录音由 voice-capture-service 管理；本模块只做门控 + 松手发送策略。
  *
- * EvoFlow 没有 legacy voice module 那样的统一 core 对象，这里通过 deps 注入：
+ * QAgent 没有 legacy voice module 那样的统一 core 对象，这里通过 deps 注入：
  * - 录音接口（startCapture / stopCapture / cancelCapture / getPartialTranscript / isCaptureActive）
  * - 持续模式接口（isContinuousActive / getContinuousTranscript / resetContinuousTranscript / cancelContinuousAutoSend）
  * - 发送接口（sendText）

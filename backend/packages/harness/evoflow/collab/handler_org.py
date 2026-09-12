@@ -111,7 +111,7 @@ def validate_handler_assignee(
             return f"处理人 `{tgt_code}` 未绑定工作区，无法确认同组织"
         return None
 
-    # Human + 小V（系统前台）：代表用户，可指派任意在岗员工。
+    # Human + 小Q（系统前台）：代表用户，可指派任意在岗员工。
     if from_code.lower() in {"", "user"} or is_xiaomi_agent(from_code):
         if from_code.lower() in {"", "user"}:
             anchor = str(org_anchor or "").strip()

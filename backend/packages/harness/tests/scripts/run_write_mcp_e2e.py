@@ -119,9 +119,9 @@ async def _main() -> int:
         print("write tools:", safe_names, flush=True)
 
         provider = ObsidianKnowledgeProvider()
-        note_path = "00-Inbox/EvoFlow-Write-E2E.md"
+        note_path = "00-Inbox/QAgent-Write-E2E.md"
 
-        await provider.create_note(cfg.id, note_path, "# EvoFlow Write E2E\n\ncreated\n")
+        await provider.create_note(cfg.id, note_path, "# QAgent Write E2E\n\ncreated\n")
         print("create ok", flush=True)
 
         await provider.append_note(cfg.id, note_path, "\nappended line\n")

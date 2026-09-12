@@ -1,4 +1,4 @@
-"""小V常驻值班：ensure 岗 + 催办 brief（不亲自一线工程）。"""
+"""小Q常驻值班：ensure 岗 + 催办 brief（不亲自一线工程）。"""
 
 from __future__ import annotations
 
@@ -27,17 +27,17 @@ XIAOMI_KPIS = [
 ]
 
 XIAOMI_SOUL = (
-    "你是小V：用户的全局助手与平台常驻管家。只传讯、分诊、催办；"
-    "具体实现永远交给对应岗位员工，也不扮演 main（EvoFlow）。"
+    "你是小Q：用户的全局助手与平台常驻管家。只传讯、分诊、催办；"
+    "具体实现永远交给对应岗位员工，也不扮演 main（QAgent）。"
     "对用户用口语短句汇报，禁止 Markdown。"
 )
 
 
 def _migrate_legacy_main_front_desk() -> None:
-    """One-shot: move old 小V duty row from ``main`` → ``xiaomi`` if needed.
+    """One-shot: move old 小Q duty row from ``main`` → ``xiaomi`` if needed.
 
     Earlier builds parked the system front desk on ``agent_code=main``.
-    ``main`` is reserved for the general lead agent; 小V lives on ``xiaomi``.
+    ``main`` is reserved for the general lead agent; 小Q lives on ``xiaomi``.
     """
     from evoflow.proactive.repositories import ProactiveRepository
 
@@ -55,7 +55,7 @@ def _migrate_legacy_main_front_desk() -> None:
             soul = str((legacy.config and legacy.config.soul_md) or "")
         except Exception:
             soul = ""
-        if "小V" not in soul and "小蜜" not in soul and "前台" not in soul:
+        if "小Q" not in soul and "小蜜" not in soul and "前台" not in soul:
             return
     try:
         ProactiveRepository.rebind_role("main", code)
@@ -65,7 +65,7 @@ def _migrate_legacy_main_front_desk() -> None:
 
 
 def ensure_xiaomi_proactive_role() -> dict[str, Any]:
-    """Idempotent: hire/update proactive role ``xiaomi`` as 小V常驻岗."""
+    """Idempotent: hire/update proactive role ``xiaomi`` as 小Q常驻岗."""
     from evoflow.proactive.models import (
         InitiativeRiskLevel,
         ProactiveAutonomyLevel,
@@ -176,7 +176,7 @@ def _list_open_tasks_for_role(role_name: str) -> list[dict[str, Any]]:
 
 
 def summarize_xiaomi_duty_load() -> dict[str, Any]:
-    """Cheap platform load for scheduled 小V skip-idle.
+    """Cheap platform load for scheduled 小Q skip-idle.
 
     Fail-open: ``ok=False`` means the caller should still run the round.
     """
@@ -225,7 +225,7 @@ def summarize_xiaomi_duty_load() -> dict[str, Any]:
 
 
 def should_skip_xiaomi_idle_patrol() -> tuple[bool, dict[str, Any]]:
-    """Skip scheduled 小V heartbeat when there is nothing to process.
+    """Skip scheduled 小Q heartbeat when there is nothing to process.
 
     Gate on the board: no open tasks and no pending approvals. Employees marked
     busy without an open Task is not a reason to burn an LLM round.
@@ -242,7 +242,7 @@ def should_skip_xiaomi_idle_patrol() -> tuple[bool, dict[str, Any]]:
 
 
 def format_global_boards_for_duty(*, limit_per_role: int = 6) -> str:
-    """All-role open Task digest for 小V duty brief."""
+    """All-role open Task digest for 小Q duty brief."""
     lim = max(1, min(20, int(limit_per_role or 6)))
     try:
         from evoflow.admin import employees as emp
@@ -281,12 +281,12 @@ def format_global_boards_for_duty(*, limit_per_role: int = 6) -> str:
 
 
 def build_xiaomi_duty_system_prompt(role) -> str:
-    """Duty system brief for 小V常驻催办（替换通用员工 Task 自建协议）。"""
+    """Duty system brief for 小Q常驻催办（替换通用员工 Task 自建协议）。"""
     from evoflow.proactive.org import reports_to_code
     from evoflow.proactive.prompt import DUTY_BRIEF_CLOSE, DUTY_BRIEF_OPEN
     from evoflow.proactive.repositories import ProactiveRepository
 
-    del role  # identity is fixed to 小V; roster is global
+    del role  # identity is fixed to 小Q; roster is global
     try:
         roster = [
             r
@@ -327,10 +327,10 @@ def build_xiaomi_duty_system_prompt(role) -> str:
     roster_block = "\n".join(lines)
 
     return f"""{DUTY_BRIEF_OPEN}
-# 小V · 平台管家 · 常驻催办
+# 小Q · 平台管家 · 常驻催办
 
 你是用户的全局助手与平台常驻管家「{XIAOMI_DISPLAY_NAME_ZH}」（agent_code=`{XIAOMI_AGENT_CODE}`）。
-你不是工程师，也不是 `main`（EvoFlow）——你管名册、全局 Task、跨岗催办与向用户汇报。
+你不是工程师，也不是 `main`（QAgent）——你管名册、全局 Task、跨岗催办与向用户汇报。
 **权限**：你可管理平台上任何人（任意员工），与真人用户同权派活/催办。
 
 ## 怎么工作

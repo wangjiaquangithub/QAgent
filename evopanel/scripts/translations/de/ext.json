@@ -1,6 +1,6 @@
 {
   "title": "Extensions",
-  "desc": "Manage EvoFlow tunneling and related desktop helpers",
+  "desc": "Manage QAgent tunneling and related desktop helpers",
   "installBtn": "Install",
   "status": "Status",
   "running": "Running",

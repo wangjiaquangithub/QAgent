@@ -132,7 +132,7 @@ class ExpertPackInstallResult:
 
 
 def _http_get(url: str, *, timeout: float = 60.0) -> tuple[str, bytes]:
-    req = Request(url, headers={"User-Agent": "EvoFlow-SkillHubPack/1.0", "Accept": "*/*"})
+    req = Request(url, headers={"User-Agent": "QAgent-SkillHubPack/1.0", "Accept": "*/*"})
     with urlopen(req, timeout=timeout) as resp:
         ct = resp.headers.get("Content-Type", "") or ""
         return ct, resp.read()

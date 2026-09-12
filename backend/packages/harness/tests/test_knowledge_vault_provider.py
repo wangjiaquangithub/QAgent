@@ -232,7 +232,7 @@ def test_read_prefers_filesystem_when_mcp_content_empty(tmp_path):
                                 "path": note_rel,
                                 "title": "Agent Memory",
                                 "content": "",
-                                "backlinks": ["Projects/EvoFlow.md"],
+                                "backlinks": ["Projects/QAgent.md"],
                             }
                         ]
                     }
@@ -244,7 +244,7 @@ def test_read_prefers_filesystem_when_mcp_content_empty(tmp_path):
     notes = asyncio.run(_run())
     assert len(notes) == 1
     assert "正文来自磁盘" in notes[0].content
-    assert notes[0].backlinks == ["Projects/EvoFlow.md"]
+    assert notes[0].backlinks == ["Projects/QAgent.md"]
 
 
 def test_invalid_provider_response_handled(tmp_path):

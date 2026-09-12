@@ -1,5 +1,5 @@
 /**
- * EvoFlow DOM → WebGL 光学几何（liquid-glass theme-layer / glass-shader 探测逻辑）
+ * QAgent DOM → WebGL 光学几何（liquid-glass theme-layer / glass-shader 探测逻辑）
  */
 
 const LENS_SELECTORS = [
@@ -38,7 +38,7 @@ let _cachedFrostPanels = []
 let _scanCounter = 0
 /** @type {WeakMap<HTMLElement, { rect: DOMRect; at: number }>} */
 const _rectCache = new WeakMap()
-/** @type {{ result: ReturnType<typeof collectEvoFlowGlassGeometry>; at: number } | null} */
+/** @type {{ result: ReturnType<typeof collectQAgentGlassGeometry>; at: number } | null} */
 let _geoCache = null
 
 function rectCacheMs() {
@@ -141,7 +141,7 @@ function regionFromEl(el, dpr, screenH, radius = 14, now = 0) {
  * @param {number} screenH CSS px viewport height
  * @param {number} now performance.now()
  */
-export function collectEvoFlowGlassGeometry(dpr, screenH, now) {
+export function collectQAgentGlassGeometry(dpr, screenH, now) {
   const throttle = geoThrottleMs()
   if (_geoCache && throttle > 0 && now - _geoCache.at < throttle) {
     return _geoCache.result

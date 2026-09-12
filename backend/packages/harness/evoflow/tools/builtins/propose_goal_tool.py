@@ -1,4 +1,4 @@
-"""EvoFlow 目标 Agent：由模型生成一套可编辑参数，用户在客户端确认后再启动。"""
+"""QAgent 目标 Agent：由模型生成一套可编辑参数，用户在客户端确认后再启动。"""
 
 from __future__ import annotations
 
@@ -19,9 +19,9 @@ def propose_goal_tool(
     retry_limit: int = 2,
     use_evolution_skill: bool = False,
 ) -> str:
-    """向 EvoFlow 提交一套「目标 Agent」运行参数，供用户在对话区确认后写入目标面板。
+    """向 QAgent 提交一套「目标 Agent」运行参数，供用户在对话区确认后写入目标面板。
 
-    调用后 EvoFlow 会在输入框上方展示摘要卡片；用户可「仅填入」或「填入并开始目标」。
+    调用后 QAgent 会在输入框上方展示摘要卡片；用户可「仅填入」或「填入并开始目标」。
     不要在正文中重复粘贴完整 JSON；简要说明意图即可。
 
     Args:
@@ -46,7 +46,7 @@ def propose_goal_tool(
     feishu_note = "由客户端按飞书默认可用性决定" if feishu_push_on_complete is None else ("开启" if feishu_push_on_complete else "关闭")
 
     lines = [
-        "已在 EvoFlow 生成目标方案卡片，请用户在对话区确认后可写入目标面板并启动。",
+        "已在 QAgent 生成目标方案卡片，请用户在对话区确认后可写入目标面板并启动。",
         "",
         "**参数摘要**",
         f"- 任务目标：{g[:240]}{'…' if len(g) > 240 else ''}",

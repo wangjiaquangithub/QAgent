@@ -32,7 +32,7 @@ if (preferredCache) {
       return cacheDir;
     },
     set(value) {
-      // Keep EvoFlow runtime cache; ignore OHS hardcoded ~/.cache/huggingface.
+      // Keep QAgent runtime cache; ignore OHS hardcoded ~/.cache/huggingface.
       cacheDir = preferredCache || value;
     },
   });

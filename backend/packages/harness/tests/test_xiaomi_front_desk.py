@@ -1,4 +1,4 @@
-"""Xiaomi (小V) front-desk identity / prompt / tool policy."""
+"""Xiaomi (小Q) front-desk identity / prompt / tool policy."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from evoflow.agents.lead_agent.prompt import apply_prompt_template
 
 def test_is_xiaomi_agent() -> None:
     assert is_xiaomi_agent("xiaomi")
-    assert is_xiaomi_agent("小V")
+    assert is_xiaomi_agent("小Q")
     assert not is_xiaomi_agent("main")
     assert not is_xiaomi_agent(None)
     assert XIAOMI_AGENT_CODE == "xiaomi"
@@ -207,7 +207,7 @@ def test_apply_prompt_template_xiaomi_steward() -> None:
     assert "<xiaomi_runtime>" not in prompt
     assert "当前系统时间" not in prompt
     assert "xiaomi_wake" in prompt
-    assert "EvovexAI 旗下的智能助手" not in prompt
+    assert "Quclouds 旗下的智能助手" not in prompt
     assert "<tool_catalog>" not in prompt
     assert "<tools_not_in_request>" not in prompt
     assert "<available-deferred-tools>" not in prompt
@@ -318,7 +318,7 @@ def test_xiaomi_duty_system_prompt() -> None:
 
     role = ProactiveRole(
         agent_code="xiaomi",
-        role_name="小V",
+        role_name="小Q",
         config=ProactiveRoleConfig(),
     )
     text = build_xiaomi_duty_system_prompt(role)
@@ -413,7 +413,7 @@ def test_summarize_xiaomi_duty_load_counts_open_and_busy(monkeypatch) -> None:
         "list_roles",
         lambda status="active": {
             "roles": [
-                {"agent_code": "xiaomi", "role_name": "小V", "busy": False},
+                {"agent_code": "xiaomi", "role_name": "小Q", "busy": False},
                 {
                     "agent_code": "coder",
                     "role_name": "代码助手",
@@ -452,7 +452,7 @@ def test_skip_xiaomi_idle_heartbeat_only_for_xiaomi(monkeypatch) -> None:
     )
     xiaomi = ProactiveRole(
         agent_code="xiaomi",
-        role_name="小V",
+        role_name="小Q",
         config=ProactiveRoleConfig(),
     )
     other = ProactiveRole(
@@ -552,7 +552,7 @@ def test_ensure_xiaomi_proactive_role_idempotent(tmp_path, monkeypatch) -> None:
         assert r1["ok"] and r1["created"] is True
         role = ProactiveRepository.get_role("xiaomi")
         assert role is not None
-        assert role.role_name == "小V"
+        assert role.role_name == "小Q"
         r2 = ensure_xiaomi_proactive_role()
         assert r2["ok"] and r2["created"] is False
     finally:
@@ -565,7 +565,7 @@ def test_build_system_prompt_routes_xiaomi() -> None:
     from evoflow.proactive.models import ProactiveRole, ProactiveRoleConfig
     from evoflow.proactive.prompt import build_system_prompt
 
-    role = ProactiveRole(agent_code="xiaomi", role_name="小V", config=ProactiveRoleConfig())
+    role = ProactiveRole(agent_code="xiaomi", role_name="小Q", config=ProactiveRoleConfig())
     text = build_system_prompt(role)
     assert "常驻" in text
 
@@ -594,7 +594,7 @@ def test_xiaomi_role_protected_from_archive_and_delete(tmp_path, monkeypatch) ->
             admin_archive("xiaomi")
             raise AssertionError("expected ValidationError")
         except ValidationError as e:
-            assert "系统默认前台" in str(e) or "小V" in str(e)
+            assert "系统默认前台" in str(e) or "小Q" in str(e)
     finally:
         reset_db_for_tests()
         reset_app_config()
@@ -655,7 +655,7 @@ def test_enforce_xiaomi_front_desk_capabilities(tmp_path, monkeypatch) -> None:
             "xiaomi",
             {
                 "agent_type": "custom",
-                "agent_name": "小V",
+                "agent_name": "小Q",
                 "description": "front desk",
                 "tools": None,
                 "mcp_servers": None,

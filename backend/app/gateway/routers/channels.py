@@ -181,7 +181,7 @@ def get_feishu_automation_default_chat_id() -> str | None:
 
 
 def _extract_request_push_secret(request: Request) -> str | None:
-    direct = (request.headers.get("X-EvoFlow-Feishu-Push-Secret") or "").strip()
+    direct = (request.headers.get("X-QAgent-Feishu-Push-Secret") or "").strip()
     if direct:
         return direct
     auth = request.headers.get("Authorization") or ""
@@ -307,7 +307,7 @@ async def feishu_push(request: Request, body: FeishuPushRequest) -> FeishuPushRe
     """Send a proactive Feishu message (markdown card). Intended for cron or other schedulers.
 
     Configure ``channels.feishu.push_secret`` in ``config.yaml`` or set ``EVOFLOW_FEISHU_PUSH_SECRET``.
-    Send the same value in header ``X-EvoFlow-Feishu-Push-Secret`` or ``Authorization: Bearer <secret>``.
+    Send the same value in header ``X-QAgent-Feishu-Push-Secret`` or ``Authorization: Bearer <secret>``.
     Requires the Feishu channel to be enabled and running (Gateway started with channel service).
     """
     expected = get_feishu_push_secret()

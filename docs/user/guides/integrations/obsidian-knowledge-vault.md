@@ -2,7 +2,7 @@
 
 > **本文是技术参考文档，面向想了解 Vault 底层机制的开发者**。日常使用请直接看侧栏「知识库」面板，或阅读[知识库（用户指南）](../guides/configuration/knowledge-vault.md) [[guides/configuration/knowledge-vault|知识库用户指南]]。
 >
-> **比如你一直用 Obsidian 记笔记，想知道 EvoFlow 怎么查你的笔记**：
+> **比如你一直用 Obsidian 记笔记，想知道 QAgent 怎么查你的笔记**：
 > - 支持只读（查笔记）和读写（改笔记）两种模式
 > - 全文搜索、语义搜索、混合搜索都能用
 > - 能顺着笔记的 `[[双链]]` 找到相关内容
@@ -12,7 +12,7 @@
 > **本文是技术参考文档**，面向希望了解 Knowledge Vault 底层架构、MCP 集成细节和 API 接口的开发者/高级用户。  
 > **日常使用**请直接看侧栏「知识库」面板，或阅读 [知识库（用户指南）](knowledge-vault.md) [[guides/configuration/knowledge-vault|知识库用户指南]] 的逐步操作。
 
-EvoFlow 将 **Obsidian Vault** 作为一等 Knowledge Vault：笔记仍以普通 Markdown、YAML Frontmatter 与 `[[wikilinks]]` 保存在本地 Vault 中；Obsidian 仅作人工编辑界面；智能体通过单一高层工具 `knowledge(action=…)` 访问，底层复用成熟开源 MCP 服务。
+QAgent 将 **Obsidian Vault** 作为一等 Knowledge Vault：笔记仍以普通 Markdown、YAML Frontmatter 与 `[[wikilinks]]` 保存在本地 Vault 中；Obsidian 仅作人工编辑界面；智能体通过单一高层工具 `knowledge(action=…)` 访问，底层复用成熟开源 MCP 服务。
 
 > **面板入口**：侧栏 **知识库**（`#/knowledge/vaults`）。逐步操作见 [知识库（用户指南）](../configuration/knowledge-vault.md) [[guides/configuration/knowledge-vault|知识库用户指南]]。  
 > **边界**：Knowledge Vault ≠ `memory.json` 用户记忆，也 ≠ 侧栏「上传文档」RAG（`#/knowledge`，工具 `search_knowledge_base`）。
@@ -32,12 +32,12 @@ Obsidian (Markdown / YAML / wikilinks)
                         │
           ┌─────────────┼─────────────┐
           ▼             ▼             ▼
-   knowledge tool   Skill/Agents  Gateway / EvoFlow
+   knowledge tool   Skill/Agents  Gateway / QAgent
 ```
 
 ## 只读模式（推荐）
 
-1. EvoFlow → 侧栏 **知识库**（`#/knowledge/vaults`）→ **连接知识库**。
+1. QAgent → 侧栏 **知识库**（`#/knowledge/vaults`）→ **连接知识库**。
 2. 用原生目录选择器选择 Vault 根目录。
 3. 访问方式保持 **只读**（面板写入 UI 可能默认关闭）。
 4. 开发环境先安装项目内 MCP 依赖：`make setup-kb-mcp`（安装到 `backend/packaging/kb-mcp`，版本钉在该目录的 `package.json`）。面板「添加并初始化」也会装到同一位置。
@@ -64,7 +64,7 @@ Obsidian (Markdown / YAML / wikilinks)
 
 ### Managed STDIO（默认）
 
-由 EvoFlow 管理 MCP 子进程（**参数数组启动，不拼接 shell**）。
+由 QAgent 管理 MCP 子进程（**参数数组启动，不拼接 shell**）。
 
 | 模式 | 行为 |
 |------|------|
@@ -94,7 +94,7 @@ Obsidian (Markdown / YAML / wikilinks)
 ## 路径与安全
 
 - 仅允许 Vault **相对路径**；禁止 `..`、绝对路径、空字节与符号链接逃逸。
-- 写入同时受 EvoFlow allowlist 与 MCP Server allowlist 约束。
+- 写入同时受 QAgent allowlist 与 MCP Server allowlist 约束。
 - 默认只读；写工具标记为 session 级审批（与 PlanGuard / tool approval 兼容）。
 - 注入模型上下文时使用 `<knowledge-source>` 边界；笔记中的注入话术只作正文。
 - MVP **不**向智能体开放删除与 Obsidian 命令执行工具。
@@ -141,7 +141,7 @@ Obsidian (Markdown / YAML / wikilinks)
 
 ## 完全移除
 
-在面板删除 Vault **连接配置**即可停止 MCP 并清除 EvoFlow 侧秘密引用。Vault 本体保留。
+在面板删除 Vault **连接配置**即可停止 MCP 并清除 QAgent 侧秘密引用。Vault 本体保留。
 
 ## 第三方依赖（通过 npm 调用，非内嵌源码）
 
@@ -150,7 +150,7 @@ Obsidian (Markdown / YAML / wikilinks)
 | obsidian-hybrid-search | 0.13.22 | https://github.com/flowing-abyss/obsidian-hybrid-search |
 | obsidian-mcp-server | 3.2.9 | https://github.com/cyanheads/obsidian-mcp-server |
 
-许可证以上游仓库为准；EvoFlow **不**声称第三方代码归属本项目。版本常量见 `evoflow.knowledge.vault.constants`。
+许可证以上游仓库为准；QAgent **不**声称第三方代码归属本项目。版本常量见 `evoflow.knowledge.vault.constants`。
 
 ## 示例配置（无真实 Key）
 

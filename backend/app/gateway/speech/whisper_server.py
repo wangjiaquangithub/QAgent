@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-EvoFlow 本地 Whisper ASR 服务
+QAgent 本地 Whisper ASR 服务
 - 流式 ASR：Whisper + VAD，每次停顿触发识别
 - WebSocket 服务，接收二进制 PCM → 返回转录 JSON
 - 离线降级：云端 ASR 不可用时自动启用
@@ -206,7 +206,7 @@ class WhisperServer:
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="EvoFlow Whisper ASR Server")
+    parser = argparse.ArgumentParser(description="QAgent Whisper ASR Server")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=3723)
     parser.add_argument("--model", default="small", choices=["tiny", "base", "small", "medium", "turbo"])

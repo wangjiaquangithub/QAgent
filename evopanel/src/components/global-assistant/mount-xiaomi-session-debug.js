@@ -1,5 +1,5 @@
 /**
- * 小V 调试区：挂载与主对话相同的 SessionDebugPane（模型调用记录）。
+ * 小Q 调试区：挂载与主对话相同的 SessionDebugPane（模型调用记录）。
  */
 import { createElement } from 'react'
 import { createRoot } from 'react-dom/client'

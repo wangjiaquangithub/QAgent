@@ -120,7 +120,7 @@ curl -X POST http://localhost:8001/api/skills/install \
 
 ## 技能规模
 
-EvoFlow 内置 50+ 个公开技能，覆盖以下领域：
+QAgent 内置 50+ 个公开技能，覆盖以下领域：
 
 | 领域 | 技能数量 | 示例 |
 |------|----------|------|
@@ -136,7 +136,7 @@ EvoFlow 内置 50+ 个公开技能，覆盖以下领域：
 |------|------|----------|----------|
 | 硬编码指令 | 代码中 | 始终加载 | 无 |
 | 工具定义 | JSON Schema | 动态 | 工具级别 |
-| EvoFlow 技能 | SKILL.md (Markdown) | 按需 | 技能级别 |
+| QAgent 技能 | SKILL.md (Markdown) | 按需 | 技能级别 |
 
 SKILL.md 格式的优势是：
 - 人类可读可编辑，不需要编程

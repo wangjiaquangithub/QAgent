@@ -4,7 +4,7 @@ Configure with ``memory.external_provider`` in config.yaml (e.g. ``echo`` for th
 in-process demo). Built-in ``memory.json`` / LLM summarization is unchanged; this
 layer adds sync + injectable recall alongside it.
 
-See ``docs/external-memory-plugins.md`` in the EvoFlow repo root.
+See ``docs/external-memory-plugins.md`` in the QAgent repo root.
 """
 
 from evoflow.agents.memory_plugins.base import ExternalMemoryProvider

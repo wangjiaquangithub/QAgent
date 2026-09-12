@@ -1,5 +1,5 @@
 /**
- * EvoFlow 访问密码登录（主应用与 agent-trace 独立页共用）
+ * QAgent 访问密码登录（主应用与 agent-trace 独立页共用）
  */
 import { version as APP_VERSION } from '../../package.json'
 
@@ -56,7 +56,7 @@ export function showLoginOverlay(mustChangePassword = false) {
   overlay.innerHTML = `
     <div class="login-card">
       ${LOGIN_LOGO_SVG}
-      <div class="login-title">EvoFlow</div>
+      <div class="login-title">QAgent</div>
       <div class="login-desc">${needsChangeHint
         ? '首次使用请使用配置中的初始密码登录，登录后请立即修改'
         : isTauri

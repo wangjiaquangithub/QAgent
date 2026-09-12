@@ -1,4 +1,4 @@
-"""Bocha / 博查搜索 — EvoFlow pluggable web provider."""
+"""Bocha / 博查搜索 — QAgent pluggable web provider."""
 
 from __future__ import annotations
 

@@ -32,7 +32,7 @@
 | **近期没干活** | 连续多轮无明显产出或空转偏高。 |
 | **卡住执行** | 执行超过约 45 分钟仍未结束（健康页）。 |
 | **系统前台** | 安装自带岗，偏催办全局待办。 |
-| **小V** | 全局助手：一员工一会话委派、工作台、飞书绑定。 |
+| **小Q** | 全局助手：一员工一会话委派、工作台、飞书绑定。 |
 | **任务中心** | 跨来源任务驾驶舱（对话 / 智能体员工 / 工作流）。侧栏 `#/tasks`。 |
 | **应用 / 应用中心** | 已跑通的可填参再跑工作流产品。侧栏 `#/apps`。见 [应用中心](../guides/configuration/app-center.md) [[guides/configuration/app-center|应用中心]]。 |
 | **自动化** | 到点跑固定 Prompt（Cron），不是岗位合同。侧栏 `#/cron`。 |
@@ -50,7 +50,7 @@
 | **Skill** | `SKILL.md`（含 YAML 头信息）描述的可选能力包，见 [skill-system.md](../explanation/skill-system.md) [[explanation/skill-system|skill-system.md]]。 |
 | **MCP** | Model Context Protocol，通过 Gateway 配置并供 Agent 侧加载的外部工具协议。 |
 | **ACP** | Agent Communication Protocol；通过配置的外部 ACP 适配进程与主 Agent 协作。 |
-| **EvoFlow（桌面/Web）** | 面向用户的桌面与 Web 界面；仓库源码目录为 `evopanel/`。 |
+| **QAgent（桌面/Web）** | 面向用户的桌面与 Web 界面；仓库源码目录为 `evopanel/`。 |
 ---
 
 ## 相关阅读

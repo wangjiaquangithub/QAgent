@@ -8,9 +8,9 @@ Except for Third-Party Components listed below, this project is licensed under
 the PolyForm Noncommercial License 1.0.0. See the LICENSE file in the
 repository root.
 
-Copyright (c) 2026 景银泰 (EvovexAI). All rights reserved.
+Copyright (c) 2026 王佳全（WangJiaquan）/ Quclouds. All rights reserved.
 
-Commercial licensing: cloud@evovexai.com
+Commercial licensing: wangjiaquan@quclouds.com
 
 Third-Party and Upstream Components
 -----------------------------------
@@ -124,7 +124,7 @@ Other runtime / UI foundations are listed in the README acknowledgements
 (LangGraph, LangChain, MCP, Tauri, etc.).
 
 If an attribution is missing or a similarity needs a clearer notice, contact
-cloud@evovexai.com or open a GitHub Issue; we will review and update this file.
+wangjiaquan@quclouds.com or open a GitHub Issue; we will review and update this file.
 
 Optional Runtime Dependencies (npm, not vendored)
 -------------------------------------------------
@@ -144,6 +144,6 @@ See docs/guides/integrations/obsidian-knowledge-vault.md.
 Trademarks
 ----------
 
-The names "EvoFlow", "EvoPanel", and "EvovexAI", and associated logos are
-brand names of the copyright holder (景银泰 / EvovexAI); they are not
+The names "EvoFlow", "EvoPanel", and "Quclouds", and associated logos are
+brand names of the copyright holder (王佳全 / Quclouds); they are not
 registered trademarks. Use of these names requires separate permission.

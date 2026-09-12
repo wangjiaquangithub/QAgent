@@ -1,4 +1,4 @@
-"""Doubao / 豆包搜索 — EvoFlow pluggable web provider."""
+"""Doubao / 豆包搜索 — QAgent pluggable web provider."""
 
 from __future__ import annotations
 

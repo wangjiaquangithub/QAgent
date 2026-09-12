@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 def get_embedding_config() -> ModelConfig:
-    """Resolve the embedding model config from the EvoFlow model store.
+    """Resolve the embedding model config from the QAgent model store.
 
     Looks for a model whose ``name`` or ``model`` field contains
     ``"embedding"``. If none is found, returns a minimal default config
@@ -72,7 +72,7 @@ def get_embedding_config() -> ModelConfig:
         vendor_lower = str(getattr(m, "vendor", "") or "").strip().lower()
         # Match by name/model containing "embedding", OR an explicit local
         # model (vendor=local models are almost always embedding models in
-        # the current EvoFlow setup — there is no local chat LLM yet).
+        # the current QAgent setup — there is no local chat LLM yet).
         if "embedding" in name_lower or "embedding" in model_lower or vendor_lower == "local":
             logger.debug("Using embedding model config: %s", m.name)
             return m

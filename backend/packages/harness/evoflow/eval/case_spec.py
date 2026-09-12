@@ -142,7 +142,7 @@ CASE_CATALOG: list[CaseSpec] = [
                 "用该词做 fulltext recall",
             ],
             expected=["vault_id 非空", "recall 命中含唯一词", "无 mock"],
-            risk="召回失败则员工/小V 知识检索不可用",
+            risk="召回失败则员工/小Q 知识检索不可用",
         ),
     ),
     _spec(
@@ -475,7 +475,7 @@ CASE_CATALOG: list[CaseSpec] = [
         "employees",
         "L2",
         "eval.scenario.employee_task_org_collab_gate",
-        "同组织平级/上下级可派发叫醒；不同 workspace 组织禁止互派；真人用户与小V（系统前台）不限",
+        "同组织平级/上下级可派发叫醒；不同 workspace 组织禁止互派；真人用户与小Q（系统前台）不限",
         _d(
             priority="P0",
             flow="boundary",

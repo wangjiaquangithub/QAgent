@@ -1,4 +1,4 @@
-"""EvoFlow CLI — manage models, skills, agents, MCP, memory, experience, and more."""
+"""QAgent CLI — manage models, skills, agents, MCP, memory, experience, and more."""
 
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="evoflow",
         description=(
-            "EvoFlow admin CLI — models, skills, agents, employees, workflow, items, "
+            "QAgent admin CLI — models, skills, agents, employees, workflow, items, "
             "knowledge, experience, automation, memory, eval, …"
         ),
     )

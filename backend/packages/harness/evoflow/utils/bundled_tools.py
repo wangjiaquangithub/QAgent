@@ -206,7 +206,7 @@ def _user_agent_browser_roots() -> list[Path]:
     # Windows / macOS / Linux app-data style caches (future-proof).
     local_app = os.environ.get("LOCALAPPDATA") or os.environ.get("XDG_CACHE_HOME")
     if local_app:
-        roots.append(Path(local_app) / "EvoFlow" / "browsers")
+        roots.append(Path(local_app) / "QAgent" / "browsers")
         roots.append(Path(local_app) / "agent-browser" / "browsers")
     return roots
 

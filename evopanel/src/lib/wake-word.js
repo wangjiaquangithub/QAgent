@@ -1,5 +1,5 @@
 /**
- * Wake word detection — 「小V小V」 using sherpa-onnx WASM.
+ * Wake word detection — 「小Q小Q」 using sherpa-onnx WASM.
  *
  * Mic remains open, AudioWorklet captures 16kHz Float32 PCM chunks,
  * sherpa-onnx KWS detects the wake word. On hit → voice capture starts.
@@ -8,7 +8,7 @@
  * Run `node scripts/download-kws-model.js` before using wake word.
  */
 
-export const WAKE_WORD_LABEL = '小V小V'
+export const WAKE_WORD_LABEL = '小Q小Q'
 
 const KWS_BASE = '/kws'
 const KWS_GLUE_JS = `${KWS_BASE}/sherpa-onnx-kws.js`

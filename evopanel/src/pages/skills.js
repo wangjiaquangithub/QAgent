@@ -142,7 +142,7 @@ export async function render() {
           <span class="role-total" id="skills-market-hint">应用内技能市场</span>
         </div>
       </div>
-      <p class="ec-muted" style="margin:8px 0 0;font-size:12px;color:var(--text-tertiary,#888);line-height:1.5">第三方技能由 SkillHub 等来源提供，许可证与作者以技能声明为准；安装即表示你接受其条款。EvoFlow 不背书第三方内容。</p>
+      <p class="ec-muted" style="margin:8px 0 0;font-size:12px;color:var(--text-tertiary,#888);line-height:1.5">第三方技能由 SkillHub 等来源提供，许可证与作者以技能声明为准；安装即表示你接受其条款。QAgent 不背书第三方内容。</p>
       <div id="install-source-results" class="ec-market-scroll">
         <div class="ec-loading">正在加载技能市场…</div>
       </div>

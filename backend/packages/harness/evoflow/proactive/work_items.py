@@ -92,7 +92,7 @@ DISPATCH_RATIONALE_ZH: dict[str, str] = {
     "chat_mention": "用户在主聊天 @ 派发",
     "manual": "手动派发",
     "role": "同事跨岗派发",
-    "xiaomi": "小V催办派发",
+    "xiaomi": "小Q催办派发",
     "event": "事件触发派发",
 }
 

@@ -1,4 +1,4 @@
-# Public repo (EvovexAI/EvoFlow): build Windows installer from this tree and attach to a GitHub Release.
+# Public repo (EvovexAI/QAgent): build Windows installer from this tree and attach to a GitHub Release.
 # Prefer umbrella workflow `release-desktop-public.yml` (Win + Mac). This file can also run alone.
 # No private→public sync. No PUBLIC_REPO_GH_TOKEN.
 # Updater signing is optional: if TAURI_SIGNING_* secrets are absent, publish unsigned setup.exe + checksums only.
@@ -167,7 +167,7 @@ jobs:
           if (-not (Test-Path -LiteralPath $notes)) {
             $notesFile = Join-Path $env:TEMP 'evoflow-release-notes.md'
             @"
-          ## EvoFlow $tag (Windows x64)
+          ## QAgent $tag (Windows x64)
 
           Installer built from this public repository.
           "@ | Set-Content -LiteralPath $notesFile -Encoding utf8
@@ -177,5 +177,5 @@ jobs:
           if ($LASTEXITCODE -eq 0) {
             gh release upload $tag --clobber $files
           } else {
-            gh release create $tag --title "EvoFlow $ver" --notes-file $notes $files
+            gh release create $tag --title "QAgent $ver" --notes-file $notes $files
           }

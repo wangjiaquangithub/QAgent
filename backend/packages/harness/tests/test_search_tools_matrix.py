@@ -198,7 +198,7 @@ _EVOFLOW_ROOT = Path(__file__).resolve().parents[4]
 
 @pytest.mark.skipif(
     not (_EVOFLOW_ROOT / "evopanel").is_dir(),
-    reason="EvoFlow workspace root not found",
+    reason="QAgent workspace root not found",
 )
 def test_evoflow_repo_index_vs_rg_smoke():
     from evoflow.code_index.store import index_status

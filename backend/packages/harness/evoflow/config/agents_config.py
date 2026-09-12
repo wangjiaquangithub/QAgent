@@ -357,14 +357,14 @@ def merge_baseline_skills_into_agent(agent_code: str, *, baseline: tuple[str, ..
 def merge_baseline_skills_for_lead_family() -> None:
     """Ensure main + general-purpose include baseline skills (idempotent).
 
-    小V（xiaomi）是系统前台，不挂普通技能面——见 :func:`enforce_xiaomi_front_desk_capabilities`。
+    小Q（xiaomi）是系统前台，不挂普通技能面——见 :func:`enforce_xiaomi_front_desk_capabilities`。
     """
     for code in ("main", "general-purpose"):
         merge_baseline_skills_into_agent(code)
 
 
 def xiaomi_front_desk_capability_defaults() -> dict[str, list[str]]:
-    """小V 持久化能力面：无角色可配置工具 / MCP / 技能。
+    """小Q 持久化能力面：无角色可配置工具 / MCP / 技能。
 
     运行时由 ``filter_xiaomi_tools`` + ``get_xiaomi_tools`` 挂载前台系统工具
     （名册 / 看板 / 派发 / 催办 / 知识检索），与普通智能体白名单无关。
@@ -458,8 +458,8 @@ _BUILTIN_SUBAGENT_UI_NAMES: dict[str, str] = {
 
 # Default image avatars for built-in agents (and main).
 # Format: "image" — file under agents/{code}/avatar.* seeded from packaged cutouts.
-# EvoFlow ``main`` 使用平台 logo（builtin_agent_avatars/main.png），非商务卡通人像。
-# 小V uses a female gallery preset (not the shared ``main`` cutout).
+# QAgent ``main`` 使用平台 logo（builtin_agent_avatars/main.png），非商务卡通人像。
+# 小Q uses a female gallery preset (not the shared ``main`` cutout).
 _XIAOMI_DEFAULT_AVATAR = "preset:analyst"
 _BUILTIN_AGENT_AVATARS: dict[str, str] = {
     "main": "image",
@@ -721,20 +721,20 @@ def ensure_builtin_agents_materialized() -> None:
 
     merge_baseline_skills_for_lead_family()
 
-    # ``main`` = general lead agent (do not hijack as 小V).
+    # ``main`` = general lead agent (do not hijack as 小Q).
     if not cfg_repo.agent_exists("main") and gp_skill_bundle:
         save_agent_config(
             "main",
             {
                 "agent_type": "custom",
-                "agent_name": "EvoFlow",
+                "agent_name": "QAgent",
                 "description": "默认主智能体：问答、改代码、编排任务。",
                 "skills": list(gp_skill_bundle),
                 "avatar": _BUILTIN_AGENT_AVATARS.get("main"),
             },
         )
 
-    # Backfill avatar + restore main if a prior build renamed it to 小V (legacy front desk).
+    # Backfill avatar + restore main if a prior build renamed it to 小Q (legacy front desk).
     if cfg_repo.agent_exists("main"):
         try:
             main_cfg = load_agent_config("main")
@@ -761,7 +761,7 @@ def ensure_builtin_agents_materialized() -> None:
                     changed = True
             old_name = str(main_cfg.agent_name or "").strip()
             if old_name in {"", "小蜜", "Xiaomi", "main", "超级助手", "Evo Assistant"}:
-                main_full["agent_name"] = "EvoFlow"
+                main_full["agent_name"] = "QAgent"
                 changed = True
             old_desc = str(main_cfg.description or "").strip()
             if (not old_desc) or ("全局前台" in old_desc and "传讯" in old_desc):
@@ -773,7 +773,7 @@ def ensure_builtin_agents_materialized() -> None:
             if changed:
                 save_agent_config("main", main_full)
             # Seed/refresh soul when missing, placeholder, or still the old front-desk text
-            # (legacy display name「小蜜」or「小V」mistakenly on main).
+            # (legacy display name「小蜜」or「小Q」mistakenly on main).
             try:
                 cur_soul = (load_agent_soul("main") or "").strip()
                 bundled = load_bundled_soul("main") or ""
@@ -781,7 +781,7 @@ def ensure_builtin_agents_materialized() -> None:
                     not cur_soul
                     or cur_soul.startswith("# main")
                     or cur_soul.startswith("# 小蜜")
-                    or cur_soul.startswith("# 小V")
+                    or cur_soul.startswith("# 小Q")
                     or cur_soul.startswith("# 超级助手")
                     or "全局前台助手" in cur_soul
                     or "Built-in subagent" in cur_soul
@@ -798,7 +798,7 @@ def ensure_builtin_agents_materialized() -> None:
             "xiaomi",
             {
                 "agent_type": "custom",
-                "agent_name": "小V",
+                "agent_name": "小Q",
                 "description": (
                     "用户的全局前台：接待、传讯、分诊给智能体员工；不亲自做一线工程。"
                 ),
@@ -829,7 +829,7 @@ def ensure_builtin_agents_materialized() -> None:
                 "Xiaomi",
                 "xiaomi",
             }:
-                xm_full["agent_name"] = "小V"
+                xm_full["agent_name"] = "小Q"
                 xm_changed = True
             if not str(xm_cfg.description or "").strip():
                 xm_full["description"] = (
@@ -862,7 +862,7 @@ def ensure_builtin_agents_materialized() -> None:
                 not cur_soul
                 or cur_soul.startswith("# xiaomi")
                 or cur_soul.startswith("# 小蜜")
-                or cur_soul.startswith("# 小V")
+                or cur_soul.startswith("# 小Q")
                 or "Built-in subagent" in cur_soul
                 or "禁止 Markdown" not in cur_soul
             ):
@@ -891,7 +891,7 @@ def ensure_builtin_agents_materialized() -> None:
     except Exception:
         logger.debug("backfill_missing_agent_avatars skipped", exc_info=True)
 
-    # Hire/refresh 小V常驻岗（agent_code=xiaomi）进入智能体员工名册心跳。
+    # Hire/refresh 小Q常驻岗（agent_code=xiaomi）进入智能体员工名册心跳。
     try:
         from evoflow.agents.xiaomi.duty import ensure_xiaomi_proactive_role
 
@@ -904,7 +904,7 @@ def ensure_builtin_agents_materialized() -> None:
 
 
 def _clear_xiaomi_bundled_male_cutout_if_using_preset() -> None:
-    """When 小V uses a gallery preset, drop the aliased male ``main`` seed on disk.
+    """When 小Q uses a gallery preset, drop the aliased male ``main`` seed on disk.
 
     Leftover ``agents/xiaomi/avatar.*`` from the old ``xiaomi→main`` alias confuses
     ``has_avatar_file`` and can resurface the male lead face in some UI paths.
@@ -972,7 +972,7 @@ def _should_upgrade_builtin_avatar(current: str | None, desired: str | None) -> 
 
 
 def _should_upgrade_xiaomi_avatar(current: str | None, desired: str | None = None) -> bool:
-    """小V must not keep the shared male lead cutout (``image`` / main alias).
+    """小Q must not keep the shared male lead cutout (``image`` / main alias).
 
     - Empty / emoji / legacy → product default (``preset:analyst``)
     - ``image`` (bundled male) → product default

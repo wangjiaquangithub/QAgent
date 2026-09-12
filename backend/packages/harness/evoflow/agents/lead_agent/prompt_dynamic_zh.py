@@ -4,7 +4,7 @@ from __future__ import annotations
 
 WEEKDAY_NAMES = ("星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日")
 
-DEFAULT_DISPLAY_AGENT_NAME = "EvoFlow"
+DEFAULT_DISPLAY_AGENT_NAME = "QAgent"
 
 RUNTIME_HOST_HINT_VIRTUAL = "沙箱模式：交付物放 `outputs/`、上传在 `uploads/`；其它文件路径以工具 schema 为准。"
 

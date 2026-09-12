@@ -440,7 +440,7 @@ function setupEventSource(page, state) {
           updateTaskStats(page, state)
           toast(`任务「${task.name}」已完成`, 'success')
           void notifyDesktopCompletion({
-            title: 'EvoFlow · 任务完成',
+            title: 'QAgent · 任务完成',
             body: `「${task.name}」已完成`,
             tag: `project-task:${d.task_id}:completed`,
           })
@@ -456,7 +456,7 @@ function setupEventSource(page, state) {
           updateTaskStats(page, state)
           toast(`任务「${task.name}」失败: ${d.error}`, 'error')
           void notifyDesktopCompletion({
-            title: 'EvoFlow · 任务失败',
+            title: 'QAgent · 任务失败',
             body: `「${task.name}」：${d.error || '执行失败'}`,
             tag: `project-task:${d.task_id}:failed`,
           })

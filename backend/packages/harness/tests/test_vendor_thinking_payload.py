@@ -72,3 +72,33 @@ def test_volc_still_uses_reasoning_effort_object() -> None:
     assert out["extra_body"]["thinking"] == {"type": "enabled"}
     assert out["extra_body"]["reasoning"] == {"effort": "medium"}
     assert "thinking" not in out
+
+
+def test_zhipu_model_without_thinking_capability_omits_thinking_fields() -> None:
+    """Models that explicitly reject thinking must not receive disabled markers."""
+    model = SimpleNamespace(
+        _evoflow_supports_thinking=False,
+        _evoflow_thinking_enabled=False,
+        _evoflow_reasoning_effort="minimal",
+        model_name="glm-5.3-flash",
+    )
+    payload = {
+        "model": "glm-5.3-flash",
+        "thinking": {"type": "disabled"},
+        "reasoning": {"effort": "minimal"},
+        "reasoning_effort": "minimal",
+        "extra_body": {
+            "thinking": {"type": "disabled"},
+            "reasoning": {"effort": "minimal"},
+            "reasoning_effort": "minimal",
+        },
+    }
+
+    out = apply_vendor_thinking_request_payload(payload, base_url=_ZHIPU, model_instance=model)
+
+    assert "thinking" not in out
+    assert "reasoning" not in out
+    assert "reasoning_effort" not in out
+    assert "thinking" not in out.get("extra_body", {})
+    assert "reasoning" not in out.get("extra_body", {})
+    assert "reasoning_effort" not in out.get("extra_body", {})

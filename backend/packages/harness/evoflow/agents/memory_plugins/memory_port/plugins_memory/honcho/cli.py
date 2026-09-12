@@ -959,10 +959,10 @@ def cmd_identity(args) -> None:
 
 
 def cmd_migrate(args) -> None:
-    """Step-by-step migration guide: EvoFlow native memory → Hermes + Honcho."""
+    """Step-by-step migration guide: QAgent native memory → Hermes + Honcho."""
     from pathlib import Path
 
-    # ── Detect EvoFlow native memory files ──────────────────────────────────
+    # ── Detect QAgent native memory files ──────────────────────────────────
     cwd = Path(os.getcwd())
     evoflow_home = Path.home() / ".evoflow"
 
@@ -987,9 +987,9 @@ def cmd_migrate(args) -> None:
     cfg = _read_config()
     has_key = bool(_resolve_api_key(cfg))
 
-    print("\nHoncho migration: EvoFlow native memory → Hermes\n" + "─" * 50)
+    print("\nHoncho migration: QAgent native memory → Hermes\n" + "─" * 50)
     print()
-    print("  EvoFlow's native memory stores context in local markdown files")
+    print("  QAgent's native memory stores context in local markdown files")
     print("  (USER.md, MEMORY.md, SOUL.md, ...) and injects them via QMD search.")
     print("  Honcho replaces that with a cloud-backed, LLM-observable memory layer:")
     print("  context is retrieved semantically, injected automatically each turn,")
@@ -1022,7 +1022,7 @@ def cmd_migrate(args) -> None:
 
     # ── Step 2: Detected files ────────────────────────────────────────────────
     print()
-    print("Step 2  Detected EvoFlow memory files")
+    print("Step 2  Detected QAgent memory files")
     print()
     if user_files or agent_files:
         if user_files:
@@ -1034,7 +1034,7 @@ def cmd_migrate(args) -> None:
             for f in agent_files:
                 print(f"    {f}")
     else:
-        print("  No EvoFlow native memory files found in cwd or ~/.evoflow/.")
+        print("  No QAgent native memory files found in cwd or ~/.evoflow/.")
         print("  If your files are elsewhere, copy them here before continuing,")
         print("  or seed them manually:  hermes honcho identity <path/to/file>")
 
@@ -1095,7 +1095,7 @@ def cmd_migrate(args) -> None:
     print("Step 4  Seed AI identity files → Honcho AI peer")
     print()
     print("  SOUL.md, IDENTITY.md, AGENTS.md, TOOLS.md, BOOTSTRAP.md define the")
-    print("  agent's character, capabilities, and behavioral rules. In EvoFlow")
+    print("  agent's character, capabilities, and behavioral rules. In QAgent")
     print("  these are injected via file search at prompt-build time.")
     print()
     print("  In Hermes, they are seeded once into Honcho's AI peer through the")
@@ -1141,20 +1141,20 @@ def cmd_migrate(args) -> None:
 
     # ── Step 5: What changes ──────────────────────────────────────────────────
     print()
-    print("Step 5  What changes vs. EvoFlow native memory")
+    print("Step 5  What changes vs. QAgent native memory")
     print()
     print("  Storage")
-    print("    EvoFlow: markdown files on disk, searched via QMD at prompt-build time.")
+    print("    QAgent: markdown files on disk, searched via QMD at prompt-build time.")
     print("    Hermes:   cloud-backed Honcho peers. Files can stay on disk as source")
     print("              of truth; Honcho holds the live representation.")
     print()
     print("  Context injection")
-    print("    EvoFlow: file excerpts injected synchronously before each LLM call.")
+    print("    QAgent: file excerpts injected synchronously before each LLM call.")
     print("    Hermes:   Honcho context fetched async at turn end, injected next turn.")
     print("              First turn has no Honcho context; subsequent turns are loaded.")
     print()
     print("  Memory growth")
-    print("    EvoFlow: you edit files manually to update memory.")
+    print("    QAgent: you edit files manually to update memory.")
     print("    Hermes:   Honcho observes every message and updates representations")
     print("              automatically. Files become the seed, not the live store.")
     print()
@@ -1165,7 +1165,7 @@ def cmd_migrate(args) -> None:
     print("    honcho_conclude      — write a conclusion/fact back to memory (no LLM)")
     print()
     print("  Session naming")
-    print("    EvoFlow: no persistent session concept — files are global.")
+    print("    QAgent: no persistent session concept — files are global.")
     print("    Hermes:   per-session by default — each run gets its own session")
     print("              Map a custom name:  hermes honcho map <session-name>")
 

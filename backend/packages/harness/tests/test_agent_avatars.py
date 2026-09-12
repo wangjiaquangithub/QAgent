@@ -107,7 +107,7 @@ def test_alias_seeds_from_target_bundled_asset(avatar_home, monkeypatch) -> None
 
 
 def test_xiaomi_does_not_alias_to_main_cutout() -> None:
-    """小V defaults to gallery preset; must not reuse the male lead cutout."""
+    """小Q defaults to gallery preset; must not reuse the male lead cutout."""
     assert "xiaomi" not in av._BUNDLED_AVATAR_ALIASES
     from evoflow.config.agents_config import _XIAOMI_DEFAULT_AVATAR, _BUILTIN_AGENT_AVATARS
 

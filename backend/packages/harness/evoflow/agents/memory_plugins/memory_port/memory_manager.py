@@ -1,4 +1,4 @@
-"""MemoryManager (vendored from Hermes Agent) — external providers only in EvoFlow."""
+"""MemoryManager (vendored from Hermes Agent) — external providers only in QAgent."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ def build_memory_context_block(raw_context: str) -> str:
 
 
 class MemoryManager:
-    """At most one external MemoryProvider (EvoFlow has no Hermes builtin provider)."""
+    """At most one external MemoryProvider (QAgent has no Hermes builtin provider)."""
 
     def __init__(self) -> None:
         self._providers: list[MemoryProvider] = []

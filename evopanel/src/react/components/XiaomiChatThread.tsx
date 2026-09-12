@@ -76,7 +76,7 @@ function pickXiaomiAgent(raw: unknown): AgentAvatarAgent | null {
   const code = String(agent.agent_code || agent.name || 'xiaomi').trim() || 'xiaomi'
   return {
     agent_code: code,
-    agent_name: String(agent.agent_name || agent.name || '小V').trim() || '小V',
+    agent_name: String(agent.agent_name || agent.name || '小Q').trim() || '小Q',
     avatar: (agent.avatar as string | null | undefined) ?? null,
     avatar_meta: (agent.avatar_meta as AgentAvatarAgent['avatar_meta']) ?? null,
     has_avatar_file: agent.has_avatar_file as boolean | undefined,
@@ -85,7 +85,7 @@ function pickXiaomiAgent(raw: unknown): AgentAvatarAgent | null {
 }
 
 /**
- * 小V 面板内嵌主对话 MessageRow 列表（与主会话同一套气泡 UI）。
+ * 小Q 面板内嵌主对话 MessageRow 列表（与主会话同一套气泡 UI）。
  */
 export function XiaomiChatThread({ sessionKey = '' }: { sessionKey?: string }) {
   const [tick, setTick] = useState(0)
@@ -102,9 +102,9 @@ export function XiaomiChatThread({ sessionKey = '' }: { sessionKey?: string }) {
       try {
         const data = await api.getAgent('xiaomi')
         if (cancelled) return
-        setXiaomiAgent(pickXiaomiAgent(data) || { agent_code: 'xiaomi', agent_name: '小V' })
+        setXiaomiAgent(pickXiaomiAgent(data) || { agent_code: 'xiaomi', agent_name: '小Q' })
       } catch {
-        if (!cancelled) setXiaomiAgent({ agent_code: 'xiaomi', agent_name: '小V' })
+        if (!cancelled) setXiaomiAgent({ agent_code: 'xiaomi', agent_name: '小Q' })
       }
     })()
     return () => {
@@ -115,7 +115,7 @@ export function XiaomiChatThread({ sessionKey = '' }: { sessionKey?: string }) {
   const st = getState()
   const messages = (Array.isArray(st.messages) ? st.messages : []) as XiaomiUiMessage[]
   const sk = String(sessionKey || st.sessionKey || '')
-  const agentLabel = String(xiaomiAgent?.agent_name || '').trim() || '小V'
+  const agentLabel = String(xiaomiAgent?.agent_name || '').trim() || '小Q'
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: 'end' })
@@ -124,7 +124,7 @@ export function XiaomiChatThread({ sessionKey = '' }: { sessionKey?: string }) {
   if (!messages.length) {
     return (
       <p className="xm-empty">
-        在左侧浏览页面，在这里让小V帮你创建、改参数或查询；也可点上方快捷语开始。
+        在左侧浏览页面，在这里让小Q帮你创建、改参数或查询；也可点上方快捷语开始。
       </p>
     )
   }

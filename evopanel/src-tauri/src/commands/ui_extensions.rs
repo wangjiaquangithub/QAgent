@@ -1,4 +1,4 @@
-//! UI Extension registry + managed sidecar (EvoFlow UI Extension Standard v1).
+//! UI Extension registry + managed sidecar (QAgent UI Extension Standard v1).
 use crate::commands::evoflow_dir;
 use serde_json::{json, Value};
 use std::collections::HashMap;
@@ -111,7 +111,7 @@ fn copy_dir_recursive(src: &Path, dst: &Path) -> Result<(), String> {
 fn read_manifest_file(dir: &Path) -> Result<Value, String> {
     let path = dir.join("evoflow.extension.json");
     if !path.is_file() {
-        return Err("目录内未找到 evoflow.extension.json".into());
+        return Err("目录内未找到扩展清单文件".into());
     }
     let text = fs::read_to_string(&path).map_err(|e| e.to_string())?;
     serde_json::from_str(&text).map_err(|e| format!("Manifest JSON 无效: {e}"))
@@ -249,7 +249,7 @@ pub fn ui_extension_install_folder(app: tauri::AppHandle) -> Result<Value, Strin
     let folder = app
         .dialog()
         .file()
-        .set_title("选择扩展文件夹（含 evoflow.extension.json）")
+        .set_title("选择扩展文件夹（含扩展清单文件）")
         .blocking_pick_folder()
         .ok_or_else(|| "已取消".to_string())?;
     let src = path_from_dialog(folder)?;
@@ -289,7 +289,7 @@ pub fn ui_extension_install_zip(app: tauri::AppHandle) -> Result<Value, String> 
     fs::create_dir_all(&tmp).map_err(|e| e.to_string())?;
     unzip_to(&zip_path, &tmp)?;
     let manifest_dir =
-        find_manifest_dir(&tmp).ok_or_else(|| "zip 内未找到 evoflow.extension.json".to_string())?;
+        find_manifest_dir(&tmp).ok_or_else(|| "zip 内未找到扩展清单文件".to_string())?;
     let manifest = read_manifest_file(&manifest_dir)?;
     let id = validate_manifest_id(&manifest)?;
     let dest = ensure_root()?.join(&id);
@@ -304,7 +304,7 @@ pub fn ui_extension_install_zip(app: tauri::AppHandle) -> Result<Value, String> 
 fn read_suite_file(dir: &Path) -> Result<Value, String> {
     let path = dir.join("evoflow.suite.json");
     if !path.is_file() {
-        return Err("目录内未找到 evoflow.suite.json".into());
+        return Err("目录内未找到扩展套件清单文件".into());
     }
     let text = fs::read_to_string(&path).map_err(|e| e.to_string())?;
     serde_json::from_str(&text).map_err(|e| format!("Suite JSON 无效: {e}"))
@@ -357,10 +357,7 @@ fn install_suite_member(suite_dir: &Path, member: &Value, suite_id: &str) -> Res
         .ok_or_else(|| "suite member.path 缺失".to_string())?;
     let manifest_dir = resolve_under(suite_dir, rel);
     if !manifest_dir.join("evoflow.extension.json").is_file() {
-        return Err(format!(
-            "成员 Manifest 不存在: {}",
-            manifest_dir.join("evoflow.extension.json").display()
-        ));
+        return Err("成员扩展清单不存在".to_string());
     }
     let mut manifest = read_manifest_file(&manifest_dir)?;
     let id = validate_manifest_id(&manifest)?;
@@ -440,7 +437,7 @@ fn resolve_builtin_content_creator_suite() -> Option<PathBuf> {
         }
     }
     // 常见：仓库根旁
-    seeds.push(PathBuf::from(r"D:\dev\github\EvoFlow"));
+    seeds.push(PathBuf::from(r"D:\dev\github\QAgent"));
     for seed in seeds {
         let mut cur = Some(seed);
         for _ in 0..8 {
@@ -458,7 +455,7 @@ fn resolve_builtin_content_creator_suite() -> Option<PathBuf> {
 fn install_suite_at(suite_dir: &Path) -> Result<Value, String> {
     let suite = read_suite_file(suite_dir)?;
     if suite.get("kind").and_then(|v| v.as_str()) != Some("suite") {
-        return Err("evoflow.suite.json 须声明 kind=suite".into());
+        return Err("扩展套件清单须声明 kind=suite".into());
     }
     let suite_id = suite
         .get("id")
@@ -546,7 +543,7 @@ pub fn ui_extension_install_suite(app: tauri::AppHandle) -> Result<Value, String
     let folder = app
         .dialog()
         .file()
-        .set_title("选择套件文件夹（含 evoflow.suite.json）")
+        .set_title("选择套件文件夹（含扩展套件清单文件）")
         .blocking_pick_folder()
         .ok_or_else(|| "已取消".to_string())?;
     let src = path_from_dialog(folder)?;
@@ -557,7 +554,7 @@ pub fn ui_extension_install_suite(app: tauri::AppHandle) -> Result<Value, String
 #[tauri::command]
 pub fn ui_extension_install_content_creator() -> Result<Value, String> {
     let dir = resolve_builtin_content_creator_suite().ok_or_else(|| {
-        "未找到 extensions/content-creator。请设置 EVOFLOW_CONTENT_CREATOR_SUITE，或用「安装套件文件夹」选择该目录。"
+        "未找到内置内容创作套件。请用「安装套件文件夹」选择套件目录。"
             .to_string()
     })?;
     install_suite_at(&dir)

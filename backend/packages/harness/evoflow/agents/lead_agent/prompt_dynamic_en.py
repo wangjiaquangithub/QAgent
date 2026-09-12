@@ -4,7 +4,7 @@ from __future__ import annotations
 
 WEEKDAY_NAMES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
-DEFAULT_DISPLAY_AGENT_NAME = "EvoFlow"
+DEFAULT_DISPLAY_AGENT_NAME = "QAgent"
 
 RUNTIME_HOST_HINT_VIRTUAL = "Sandbox mode: deliverables under `outputs/`, uploads under `uploads/`; other file paths per tool schema."
 

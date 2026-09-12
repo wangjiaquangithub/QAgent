@@ -138,7 +138,7 @@ async def push_collab_tree_receipt(
 ) -> str | None:
     """Push a one-shot「协作树收口」markdown card to the default Feishu chat.
 
-    Targets the gateway learned/default chat (same as automation / 小V 会话),
+    Targets the gateway learned/default chat (same as automation / 小Q 会话),
     preferably sent as the ``xiaomi`` bot when that account owns the chat.
     """
     rid = str(root_task_id or "").strip()
@@ -154,7 +154,7 @@ async def push_collab_tree_receipt(
     except Exception:
         role = None
     if role is None:
-        role = type("R", (), {"agent_code": "xiaomi", "role_name": "小V", "config": None})()
+        role = type("R", (), {"agent_code": "xiaomi", "role_name": "小Q", "config": None})()
 
     channel = _feishu_channel()
     title = "协作待闭环"
@@ -190,7 +190,7 @@ async def push_collab_tree_receipt(
         )
         return None
 
-    # Prefer default/learned chat (user ↔ 小V); fall back to role binding.
+    # Prefer default/learned chat (user ↔ 小Q); fall back to role binding.
     receive_id = ""
     receive_id_type = "chat_id"
     try:

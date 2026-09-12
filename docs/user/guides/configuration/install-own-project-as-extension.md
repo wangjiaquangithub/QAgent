@@ -1,4 +1,4 @@
-# 将自己的项目安装为 EvoFlow UI 扩展
+# 将自己的项目安装为 QAgent UI 扩展
 
 > 本文档面向**项目开发者**：你想把自研的 Web 应用（React/Vue/静态页/任何 http 服务）嵌入 EvoPanel，让它在侧栏「扩展」分组里出现，点击就能打开。
 
@@ -11,7 +11,7 @@
 3. [场景二：带本地服务的项目（managed）](#3-场景二带本地服务的项目managed)
 4. [场景三：外部已有服务（external）](#4-场景三外部已有服务external)
 5. [Manifest 字段速查](#5-manifest-字段速查)
-6. [Bridge 协议：让页面与 EvoFlow 通信](#6-bridge-协议让页面与-evoflow-通信)
+6. [Bridge 协议：让页面与 QAgent 通信](#6-bridge-协议让页面与-evoflow-通信)
 7. [常见问题](#7-常见问题)
 
 ---
@@ -20,7 +20,7 @@
 
 ### 第 1 步：写 `evoflow.extension.json`
 
-在你的项目根目录创建一个 `evoflow.extension.json`，这是 EvoFlow 识别扩展的唯一依据。
+在你的项目根目录创建一个 `evoflow.extension.json`，这是 QAgent 识别扩展的唯一依据。
 
 **最小示例（纯远程页面）：**
 
@@ -52,7 +52,7 @@
 }
 ```
 
-### 第 2 步：安装到 EvoFlow
+### 第 2 步：安装到 QAgent
 
 打开 EvoPanel → **设置 → 扩展**，根据你的场景选择：
 
@@ -72,7 +72,7 @@
 
 ## 2. 场景一：纯远程页面（无本地服务）
 
-> 你的项目已经部署到线上（或本地 `npm run dev` 启动后你能访问），EvoFlow 不需要帮你启动任何东西。
+> 你的项目已经部署到线上（或本地 `npm run dev` 启动后你能访问），QAgent 不需要帮你启动任何东西。
 
 ### 适用
 
@@ -122,18 +122,18 @@
 1. 点 **「选择本地文件夹」** → 选项目根目录
 2. 或点 **「添加远程入口」** → 填 `id`、`名称`、`入口 URL`
 
-> 注意：`service.mode=none` 时，EvoFlow 不会帮你启动任何进程。你需要自己提前启动服务。
+> 注意：`service.mode=none` 时，QAgent 不会帮你启动任何进程。你需要自己提前启动服务。
 
 ---
 
 ## 3. 场景二：带本地服务的项目（managed）
 
-> 你的项目需要在**本地跑一个进程**（Node.js / Python / Go 等），且你想让 EvoFlow 自动帮你管理这个进程的生命周期（启动、健康检查、停止）。
+> 你的项目需要在**本地跑一个进程**（Node.js / Python / Go 等），且你想让 QAgent 自动帮你管理这个进程的生命周期（启动、健康检查、停止）。
 
 ### 适用
 
 - 前后端一体项目，需要 `npm run dev` 或 `python main.py` 启动
-- 不希望用户手动敲命令，想让 EvoFlow 一键启动
+- 不希望用户手动敲命令，想让 QAgent 一键启动
 - 多个扩展共享同一个后端服务（如 ContentOS `:3001`）
 
 ### 示例：React 项目（Vite）
@@ -251,7 +251,7 @@
 
 - 数组第一个元素是可执行文件，后面是参数
 - 当前平台有专用命令就用专用，没有就用 `default`
-- Windows 上推荐用 `.cmd` 后缀（`npm.cmd`、`pnpm.cmd`），EvoFlow 会自动查 PATH
+- Windows 上推荐用 `.cmd` 后缀（`npm.cmd`、`pnpm.cmd`），QAgent 会自动查 PATH
 
 ### `service.link` 字段
 
@@ -270,7 +270,7 @@
 
 点 **「选择本地文件夹」** → 选你项目根目录 → 安装后 EvoPanel 会自动读 `evoflow.extension.json`。
 
-打开扩展时，EvoFlow 会：
+打开扩展时，QAgent 会：
 1. 检测 `healthcheck.url` 是否已通 → 已通则直接打开（复用已有进程）
 2. 不通则执行 `start` 命令启动进程
 3. 等待健康检查通过（超时 `timeout_ms` 毫秒）
@@ -280,7 +280,7 @@
 
 ## 4. 场景三：外部已有服务（external）
 
-> 服务已经由用户自己启动了（比如通过系统服务、Docker、手动启动），EvoFlow 不需要帮你启动，但需要知道它是否在运行。
+> 服务已经由用户自己启动了（比如通过系统服务、Docker、手动启动），QAgent 不需要帮你启动，但需要知道它是否在运行。
 
 ### 适用
 
@@ -368,22 +368,22 @@
 |------|-----------------|------|
 | `embed` | `ready` | 基础嵌入权限（默认） |
 | `context.read` | `context.get` | 读取当前对话上下文 |
-| `tasks.dispatch` | `tasks.dispatch` | 向 EvoFlow 派发任务 |
+| `tasks.dispatch` | `tasks.dispatch` | 向 QAgent 派发任务 |
 | `tasks.open` | `tasks.open` | 打开任务中心 |
 
 > 含 `tasks.dispatch` 时，首次启用会弹出确认对话框，让用户确认。
 
 ---
 
-## 6. Bridge 协议：让页面与 EvoFlow 通信
+## 6. Bridge 协议：让页面与 QAgent 通信
 
 你的扩展页面可以通过 `postMessage` 与 EvoPanel 宿主通信。
 
 ### 调用方式
 
 ```javascript
-// 在你的页面中调用 EvoFlow Bridge API
-function callEvoFlow(method, params = {}) {
+// 在你的页面中调用 QAgent Bridge API
+function callQAgent(method, params = {}) {
   return new Promise((resolve, reject) => {
     const requestId = crypto.randomUUID()
     const handler = (event) => {
@@ -409,27 +409,27 @@ function callEvoFlow(method, params = {}) {
 }
 
 // 通知宿主页面已就绪
-callEvoFlow('ready')
+callQAgent('ready')
 
 // 获取当前对话上下文
-const ctx = await callEvoFlow('context.get')
+const ctx = await callQAgent('context.get')
 console.log('当前对话上下文:', ctx)
 
 // 派发任务给智能体员工
-await callEvoFlow('tasks.dispatch', {
+await callQAgent('tasks.dispatch', {
   agent_code: 'code-agent',
   content: '分析这个视频'
 })
 
 // 打开另一个扩展
-await callEvoFlow('extensions.open', {
+await callQAgent('extensions.open', {
   id: 'contentos-trending'
 })
 ```
 
 ### 必须：先调用 `ready`
 
-iframe 加载后，宿主需要知道你的页面已就绪才能管理 Bridge 通信。建议在页面加载完成后立即调用 `callEvoFlow('ready')`。
+iframe 加载后，宿主需要知道你的页面已就绪才能管理 Bridge 通信。建议在页面加载完成后立即调用 `callQAgent('ready')`。
 
 ### origin_allowlist（安全限制）
 
@@ -526,7 +526,7 @@ iframe 加载后，宿主需要知道你的页面已就绪才能管理 Bridge �
 
 ## 相关阅读
 
-- [[guides/configuration/evopanel-guide|EvoFlow 桌面端使用指南]] — 侧栏与扩展入口
+- [[guides/configuration/evopanel-guide|QAgent 桌面端使用指南]] — 侧栏与扩展入口
 - [[guides/configuration/tools-mcp|工具与 MCP]] — 扩展可用的 Bridge 协议
 - [[guides/configuration/settings|面板设置]] — 扩展管理与配置
 - [[tutorials/create-agent|创建智能体教程]] — 扩展与角色协作

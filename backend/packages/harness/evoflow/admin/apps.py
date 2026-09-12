@@ -1,4 +1,4 @@
-"""Apps / workflow admin facade for in-process callers (CLI / 小V platform).
+"""Apps / workflow admin facade for in-process callers (CLI / 小Q platform).
 
 Thin wrappers over ``app_repositories`` + ``app_runner`` — same services the
 Gateway routers use. Do not HTTP-loopback from tools.

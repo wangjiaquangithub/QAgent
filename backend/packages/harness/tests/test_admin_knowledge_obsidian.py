@@ -49,7 +49,7 @@ def vault_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     cfg = KnowledgeVaultConfig.model_validate(
         {
             "id": BUILTIN_USER_GUIDE_VAULT_ID,
-            "name": "EvoFlow 用户指南",
+            "name": "QAgent 用户指南",
             "enabled": True,
             "builtin": True,
             "providerType": ProviderType.obsidian.value,

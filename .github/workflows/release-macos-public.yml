@@ -167,11 +167,11 @@ jobs:
           notes="scripts/maintainer/windows/public-release-body.txt"
           if [[ ! -f "$notes" ]]; then
             notes="$(mktemp)"
-            printf '## EvoFlow %s (macOS)\n\nDMG built from this public repository.\n' "$tag" > "$notes"
+            printf '## QAgent %s (macOS)\n\nDMG built from this public repository.\n' "$tag" > "$notes"
           fi
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" --clobber "${dmgs[@]}"
           else
-            gh release create "$tag" --title "EvoFlow ${ver}" --notes-file "$notes" "${dmgs[@]}"
+            gh release create "$tag" --title "QAgent ${ver}" --notes-file "$notes" "${dmgs[@]}"
           fi
           echo "Uploaded ${#dmgs[@]} DMG(s) to ${tag}"

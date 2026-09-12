@@ -1,6 +1,6 @@
 /**
  * 轻量页面行为总线：各模块可上报「用户刚在干什么」，
- * 小V 发消息时一并带进页面快照。
+ * 小Q 发消息时一并带进页面快照。
  */
 export const PAGE_ACTIVITY_EVENT = 'evoflow:page-activity'
 

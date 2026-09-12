@@ -425,7 +425,7 @@ async def install_skill_from_market(http_request: Request, request: SkillMarketI
     tmp_path: str | None = None
     try:
         async with httpx.AsyncClient(timeout=httpx.Timeout(60.0)) as client:
-            r = await client.get(url, headers={"User-Agent": "EvoFlow-Gateway/1.0"})
+            r = await client.get(url, headers={"User-Agent": "QAgent-Gateway/1.0"})
             r.raise_for_status()
             data = r.content
         if len(data) < 64:

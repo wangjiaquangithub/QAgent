@@ -279,7 +279,7 @@ def run_db_transaction[T](
 def _check_windows_stale_lock(path: Path) -> None:
     """Detect stale ``-wal``/``-shm`` files that block a new process on Windows.
 
-    On Windows, if a previous EvoFlow process crashed or was killed, the
+    On Windows, if a previous QAgent process crashed or was killed, the
     ``-wal``/``-shm`` sidecar files may remain locked by the OS. A new process
     trying to open the same database gets a generic ``OperationalError`` (e.g.
     "unable to open database file"). This function inspects the sidecar files
@@ -304,7 +304,7 @@ def _check_windows_stale_lock(path: Path) -> None:
                 stale.append(f"{sidecar.name} (locked: {exc})")
     if stale:
         hint = (
-            "A previous EvoFlow process may still be running and holding a lock "
+            "A previous QAgent process may still be running and holding a lock "
             "on the SQLite sidecar files. Please stop any lingering evoflow/gateway "
             "processes (e.g. via Task Manager) and restart. If no process is "
             "running, manually delete the stale -wal/-shm files listed above."

@@ -1,5 +1,5 @@
 /**
- * EvoFlow 聊天客户端（HTTP/SSE 版本）
+ * QAgent 聊天客户端（HTTP/SSE 版本）
  * 兼容原 wsClient 的调用接口，彻底移除旧 ws-rpc 聊天链路。
  */
 

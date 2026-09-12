@@ -12,15 +12,15 @@
 >
 > 读完本文你会了解 Agent 从创建到执行的完整生命周期，包括模型选择、工具组装、中间件编排等机制。
 >
-> **功能关系**：Agent 是 EvoFlow 的核心执行单元，它整合了[技能系统](skill-system.md) [[explanation/skill-system|技能系统]]（通过系统提示注入 SKILL.md 内容）、[记忆系统](memory-system.md) [[explanation/memory-system|记忆系统]]（通过 `<memory>` 标签注入事实）、[子 Agent 系统](subagent-system.md) [[explanation/subagent-system|子 Agent 系统]]（通过 `task` 工具委派并行任务）以及模型、沙箱、MCP 等模块。理解 Agent 系统是理解其他所有子系统如何协作的前提。
+> **功能关系**：Agent 是 QAgent 的核心执行单元，它整合了[技能系统](skill-system.md) [[explanation/skill-system|技能系统]]（通过系统提示注入 SKILL.md 内容）、[记忆系统](memory-system.md) [[explanation/memory-system|记忆系统]]（通过 `<memory>` 标签注入事实）、[子 Agent 系统](subagent-system.md) [[explanation/subagent-system|子 Agent 系统]]（通过 `task` 工具委派并行任务）以及模型、沙箱、MCP 等模块。理解 Agent 系统是理解其他所有子系统如何协作的前提。
 
 ## 背景
 
-EvoFlow 的 Agent 系统是整个平台的核心。理解 Agent 如何被创建、配置和执行，是开发和维护系统的基础。
+QAgent 的 Agent 系统是整个平台的核心。理解 Agent 如何被创建、配置和执行，是开发和维护系统的基础。
 
 ## 设计理念
 
-EvoFlow 的 Agent 系统设计围绕一个核心思想：**Agent 应该是可组合、可配置、可隔离的**。
+QAgent 的 Agent 系统设计围绕一个核心思想：**Agent 应该是可组合、可配置、可隔离的**。
 
 - **可组合**：工具、模型、技能、记忆作为独立模块，按需组装
 - **可配置**：通过 config.yaml 和运行时参数控制 Agent 行为
@@ -36,7 +36,7 @@ from evoflow.agents.lead_agent.agent import make_lead_agent
 
 `make_lead_agent(config: RunnableConfig)` 是 LangGraph 注册的入口点。整个创建过程：
 
-1. **模型选择**：通过 `create_chat_model()` 从 SQLite **`evoflow_models`**（EvoFlow 设置 → 模型）选取模型
+1. **模型选择**：通过 `create_chat_model()` 从 SQLite **`evoflow_models`**（QAgent 设置 → 模型）选取模型
 2. **工具组装**：通过 `get_available_tools()` 组合所有可用工具
 3. **中间件配置**：按固定顺序构建 13 个中间件
 4. **系统提示生成**：通过 `apply_prompt_template()` 注入技能、记忆、子 Agent 指令

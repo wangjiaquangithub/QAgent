@@ -1,6 +1,6 @@
 """Pending inject queue for mid-turn user message steering (runtime-aligned).
 
-runtime keeps ``TurnState.pending_input`` **in memory only**. EvoFlow mirrors that:
+runtime keeps ``TurnState.pending_input`` **in memory only**. QAgent mirrors that:
 steers live in a process-local queue keyed by ``session_key`` until the next
 ``before_model`` drain writes them into ``evoflow_chat_messages``.
 

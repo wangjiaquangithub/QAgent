@@ -1,14 +1,14 @@
-"""小V工具边界：平台管家系统工具（名册 / 看板 / 派发 / 催办 / 知识检索 / 平台行政）。
+"""小Q工具边界：平台管家系统工具（名册 / 看板 / 派发 / 催办 / 知识检索 / 平台行政）。
 
 不问澄清、不读仓、不联网——先查员工与进度，再推进任务；用法/概念题走知识库；
-平台杂活统一走通用内置工具 ``platform``（先 catalog 再执行；与 EvoFlow 同源）。
+平台杂活统一走通用内置工具 ``platform``（先 catalog 再执行；与 QAgent 同源）。
 """
 
 from __future__ import annotations
 
 from typing import Any, Iterable
 
-# 小V系统工具（唯一允许面）— 行政用通用 ``platform``，不另起 xiaomi_*_admin
+# 小Q系统工具（唯一允许面）— 行政用通用 ``platform``，不另起 xiaomi_*_admin
 XIAOMI_SYSTEM_TOOL_NAMES = frozenset(
     {
         "xiaomi_org_status",

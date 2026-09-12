@@ -1,5 +1,5 @@
 /**
- * EvoFlow UI Extension Manifest v1 — parse & validate (lightweight, no AJV).
+ * QAgent UI Extension Manifest v1 — parse & validate (lightweight, no AJV).
  */
 
 const ID_RE = /^[a-z][a-z0-9-]{1,63}$/

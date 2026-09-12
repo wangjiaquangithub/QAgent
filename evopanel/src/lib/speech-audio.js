@@ -16,7 +16,7 @@ export function microphoneErrorMessage(err) {
     return '麦克风被其他程序占用或无法启动，请关闭占用麦克风的应用后重试。'
   }
   if (name === 'SecurityError') {
-    return '当前页面无法访问麦克风，请使用 HTTPS 或桌面版 EvoPanel。'
+    return '当前页面无法访问麦克风，请使用 HTTPS 或桌面版 QAgent。'
   }
   return msg || '无法打开麦克风'
 }

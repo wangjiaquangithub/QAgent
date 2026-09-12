@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="docs/assets/logo-brand.png" width="360" alt="EvoPanel">
+  <img src="public/images/logo.png" width="360" alt="QAgent">
 </p>
 
 <p align="center">
-  EvoFlow AI Agent 框架的可视化管理面板<br>
+  QAgent AI Agent 框架的可视化管理面板<br>
   内置 AI 助手 · 模型配置 · 实时聊天 · 任务编排 · 多智能体协作
 </p>
 
@@ -12,10 +12,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/EvovexAI/EvoFlow/releases/latest">
-    <img src="https://img.shields.io/github/v/release/EvovexAI/EvoFlow?style=flat-square&color=6366f1" alt="Release">
+  <a href="https://github.com/wangjiaquangithub/QAgent/releases/latest">
+    <img src="https://img.shields.io/github/v/release/wangjiaquangithub/QAgent?style=flat-square&color=6366f1" alt="Release">
   </a>
-  <a href="https://github.com/EvovexAI/EvoFlow/blob/main/LICENSE">
+  <a href="https://github.com/wangjiaquangithub/QAgent/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-Non--Commercial-orange.svg?style=flat-square" alt="License">
   </a>
 </p>
@@ -79,10 +79,10 @@
 - 配对审批流程
 
 ### 🖥️ 目标（Goal）
-- 在**实时聊天**输入栏打开 **[目标](https://www.evovexai.com/docs/chat/goal)** 面板，配置并启动/停止后台目标运行（与「记忆」等不同：目标跑在独立线程与策略下）。
+- 在**实时聊天**输入栏打开 **目标** 面板（参见 [QAgent 文档](https://github.com/wangjiaquangithub/QAgent)），配置并启动/停止后台目标运行（与「记忆」等不同：目标跑在独立线程与策略下）。
 - **模型可发起目标提议**（通过 `propose_goal` 工具返回方案），界面出现**确认条**：可一键填入并开始、仅填入面板、或关闭；确认后再真正执行。
-- 与 **飞书** 等 IM 配合时：目标**结束**可向对应会话推送 **Markdown 结果小结**（依赖服务端网关与渠道配置）；飞书里发 **「开始」「确认」** 等短词可通知**在线** EvoPanel 应用方案并启动（多路订阅与切会话等行为以当前版本为准）。
-- 完整说明与进阶参数见官网文档：[目标](https://www.evovexai.com/docs/chat/goal)。
+- 与 **飞书** 等 IM 配合时：目标**结束**可向对应会话推送 **Markdown 结果小结**（依赖服务端网关与渠道配置）；飞书里发 **「开始」「确认」** 等短词可通知**在线** QAgent 应用方案并启动（多路订阅与切会话等行为以当前版本为准）。
+- 完整说明与进阶参数见 [QAgent 文档](https://github.com/wangjiaquangithub/QAgent)。
 
 ### ⏰ 自动化
 - Cron 定时执行
@@ -110,13 +110,13 @@
 
 ### 下载安装
 
-前往 [Releases](https://github.com/EvovexAI/EvoFlow/releases/latest) 下载最新版本:
+前往 [Releases](https://github.com/wangjiaquangithub/QAgent/releases/latest) 下载最新版本:
 
 | 平台 | 安装包 |
 |------|--------|
-| macOS (Apple Silicon) | `EvoFlow_x.x.x_aarch64.dmg` |
-| macOS (Intel) | `EvoFlow_x.x.x_x64.dmg` |
-| Windows | `EvoFlow_x.x.x_x64-setup.exe` |
+| macOS (Apple Silicon) | `QAgent_x.x.x_aarch64.dmg` |
+| macOS (Intel) | `QAgent_x.x.x_x64.dmg` |
+| Windows | `QAgent_x.x.x_x64-setup.exe` |
 | Linux (AppImage) | `EvoPanel_x.x.x_amd64.AppImage` |
 | Linux (DEB) | `EvoPanel_x.x.x_amd64.deb` |
 
@@ -128,7 +128,7 @@
 ### Linux 服务器部署 (Web 版)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/EvovexAI/EvoFlow/main/scripts/deploy.sh | bash -s -- up
+curl -fsSL https://raw.githubusercontent.com/wangjiaquangithub/QAgent/main/scripts/deploy.sh | bash -s -- up
 
 ```
 
@@ -140,8 +140,8 @@ curl -fsSL https://raw.githubusercontent.com/EvovexAI/EvoFlow/main/scripts/deplo
 docker run -d --name evopanel --restart unless-stopped \
   -p 1420:1420 -v evopanel-data:/root/.evopanel \
   node:22-slim \
-  sh -c "npm install -g @EvovexAI/EvoFlow-zh && \
-    git clone https://github.com/EvovexAI/EvoFlow.git /app && \
+  sh -c "npm install -g @Quclouds/QAgent-zh && \
+    git clone https://github.com/wangjiaquangithub/QAgent.git /app && \
     cd /app && npm install && npm run build && npm run serve"
 ```
 
@@ -158,7 +158,7 @@ docker run -d --name evopanel --restart unless-stopped \
 ### 桌面开发 (完整功能)
 
 ```bash
-git clone https://github.com/EvovexAI/EvoFlow.git
+git clone https://github.com/wangjiaquangithub/QAgent.git
 cd evopanel
 npm install
 
@@ -192,7 +192,7 @@ npm run package
 npm run build:desktop:win
 ```
 
-若 EvoPanel 位于 **EvoFlow 主仓库** 的 `evopanel/` 目录：Windows 本地打包可用根目录 **`install.bat`**；对外安装包见 [EvovexAI/EvoFlow Releases](https://github.com/EvovexAI/EvoFlow/releases)。
+若 QAgent 位于 **QAgent 主仓库** 的 `evopanel/` 目录：Windows 本地打包可用根目录 **`install.bat`**；对外安装包见 [wangjiaquangithub/QAgent Releases](https://github.com/wangjiaquangithub/QAgent/releases)。
 
 详细脚本说明见 [scripts/README.md](scripts/README.md)
 
@@ -204,7 +204,7 @@ npm run build:desktop:win
   "showSessionDebug": true,
   "enableDevtools": true
 }
-路径：~/.evoflow/evopanel.json（Windows 为用户目录下 .evoflow\evopanel.json），保存后重启 EvoPanel。
+路径：~/.evoflow/evopanel.json（Windows 为用户目录下 .evoflow\evopanel.json），保存后重启 QAgent。
 
 正式安装包默认关闭；本地开发构建默认开启。
 
@@ -238,6 +238,6 @@ npm run build:desktop:win
 
 ## 📄 许可证
 
-版权所有 © 2026 景银泰（EvovexAI）。[PolyForm Noncommercial License 1.0.0](../LICENSE)（源码可见、非商业使用；商用联系 [cloud@evovexai.com](mailto:cloud@evovexai.com)；上游组件见 [NOTICE](../NOTICE)）
+版权所有 © 2026 王佳全（WangJiaquan）/ Quclouds。[PolyForm Noncommercial License 1.0.0](../LICENSE)（源码可见、非商业使用；商用联系 [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com)；上游组件见 [NOTICE](../NOTICE)）
 
 ---

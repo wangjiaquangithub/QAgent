@@ -27,7 +27,7 @@ pip install hermes-agent[messaging]   # 额外带 qrcode
 
 名字里和「微信」无关、但 Hermes 标成**必装**的，主要是 **`cryptography`**（以及 **`aiohttp`**）。
 
-## EvoFlow 现状
+## QAgent 现状
 
 上述包均在 `backend/pyproject.toml`；桌面安装包由 `packaging/windows/gateway.spec` 的 `collect_all` 打进 PyInstaller（含 `certifi` / `aiohttp` / `cryptography` / `qrcode`）。
 
