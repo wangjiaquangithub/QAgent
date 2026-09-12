@@ -12,7 +12,6 @@ Where to ask for help with QAgent.
 | Docs typo / missing page | Issue with **Documentation** template, or a docs PR |
 | Security vulnerability | **Private only** — [SECURITY.md](SECURITY.md). Never a public issue. |
 | Commercial license / partnership | [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com) |
-| Community chat (CN) | WeChat group QR on the [README](README.md) (desensitized talk only; no ads) |
 
 ## Before opening an issue
 

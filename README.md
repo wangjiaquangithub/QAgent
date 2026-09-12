@@ -110,11 +110,6 @@ Windows：`.\scripts\windows\dev-stack-isolated.bat`
 
 如果 QAgent 对你有帮助，欢迎支持项目的持续优化与迭代（含定制化等方向）。可以请作者喝杯咖啡，也欢迎有能力的老板多多资助——自愿支持，不影响使用与授权；打赏不构成商用许可。商业合作或定制请联系 [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com)。
 
-<p align="center">
-  <img src="docs/assets/sponsors/wechat.png" width="220" alt="微信支持二维码">
-</p>
-
-<p align="center"><sub>微信扫码支持</sub></p>
 
 ---
 
@@ -134,9 +129,6 @@ QAgent 是独立产品。开发中参考了 [DeerFlow](https://github.com/byteda
 
 [GitHub Issues](https://github.com/wangjiaquangithub/QAgent/issues) · [Discussions](https://github.com/wangjiaquangithub/QAgent/discussions) · [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com) · [www.quclouds.com](https://www.quclouds.com)
 
-<p align="center">
-  <img src="docs/assets/screenshots/wechat-group-qr.png" width="160" alt="微信社群二维码">
-</p>
 
 <div align="center">
 

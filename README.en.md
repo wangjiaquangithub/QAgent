@@ -108,11 +108,6 @@ Also: [SUPPORT.md](SUPPORT.md)
 
 If QAgent helps you, consider supporting ongoing development and iteration (including customization). A coffee tip is welcome; sponsors who can contribute more are especially appreciated. Support is optional and does not change license terms or grant commercial rights. For commercial use or custom work, contact [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com).
 
-<p align="center">
-  <img src="docs/assets/sponsors/wechat.png" width="220" alt="WeChat support QR">
-</p>
-
-<p align="center"><sub>WeChat tip / sponsorship</sub></p>
 
 ---
 
@@ -132,9 +127,6 @@ QAgent is an independent product. Development drew design inspiration from [Deer
 
 [GitHub Issues](https://github.com/wangjiaquangithub/QAgent/issues) · [Discussions](https://github.com/wangjiaquangithub/QAgent/discussions) · [wangjiaquan@quclouds.com](mailto:wangjiaquan@quclouds.com) · [www.quclouds.com](https://www.quclouds.com)
 
-<p align="center">
-  <img src="docs/assets/screenshots/wechat-group-qr.png" width="160" alt="WeChat community QR">
-</p>
 
 <div align="center">
 

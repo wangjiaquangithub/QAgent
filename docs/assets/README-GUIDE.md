@@ -9,7 +9,6 @@ This guide tells you **which screenshots / GIFs / videos should go where** so th
 ```
 docs/assets/
 ├── QAgent-LOGO.png                              # hero logo (used in hero)
-├── sponsors/wechat.png                           # tip / sponsor QR (README)
 ├── plan-supervisor/
 │   ├── video-01-plan-clarify-to-ready-poster.png # hero demo poster
 │   ├── video-02-plan-project-running-result-poster.png
@@ -26,7 +25,6 @@ docs/assets/
     ├── browser.png                               # browser automation
     ├── hosted-1.png / hosted-2.png               # goal task run & config
     ├── scheduled-tasks-1.png / scheduled-tasks-2.png  # automation
-    └── wechat-group-qr.png                       # WeChat contact QR
 ```
 
 ---
@@ -43,7 +41,6 @@ docs/assets/
 | Screenshots / Roles | `docs/assets/screenshots/agents-preset-roles.png` | exists |
 | Screenshots / Goal | `docs/assets/screenshots/hosted-1.png` | exists |
 | Screenshots / Browser | `docs/assets/screenshots/browser.png` | exists |
-| Contact / WeChat | `docs/assets/screenshots/wechat-group-qr.png` | exists |
 
 All referenced assets already exist, so the READMEs render today with no broken images.
 
