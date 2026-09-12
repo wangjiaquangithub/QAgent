@@ -117,7 +117,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t dmgs < <(find evopanel/src-tauri/target -path '*/bundle/dmg/*.dmg' -type f 2>/dev/null || true)
+          # GitHub's macOS runners use Bash 3.2, which has no mapfile/readarray.
+          dmgs=()
+          while IFS= read -r dmg; do
+            [[ -n "$dmg" ]] && dmgs+=("$dmg")
+          done < <(find evopanel/src-tauri/target -path '*/bundle/dmg/*.dmg' -type f 2>/dev/null || true)
           if [[ ${#dmgs[@]} -eq 0 ]]; then
             echo "::error::No .dmg found under evopanel/src-tauri/target/**/bundle/dmg"
             exit 1
