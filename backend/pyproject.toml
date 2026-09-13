@@ -21,6 +21,10 @@ dependencies = [
     "langgraph-sdk>=0.1.51",
     "markdown-to-mrkdwn>=0.3.1",
     "websockets>=12.0",
+    "agentscope==2.0.8",
+    "alembic>=1.14.0",
+    "psycopg[binary]>=3.2.0",
+    "sqlalchemy>=2.0.0",
 ]
 
 [dependency-groups]
@@ -39,6 +43,8 @@ markers = [
     "unit: small unit-scoped tests (e.g. router handlers)",
     "tasks: tests for tasks API / router",
     "playwright: real Chromium via Playwright (needs `playwright install chromium` and network)",
+    "agentscope_acceptance: opt-in AgentScope 2 / PostgreSQL / device acceptance tests",
+    "postgres: PostgreSQL foundation integration tests (requires a running PostgreSQL instance)",
 ]
 filterwarnings = [
     "ignore:datetime\\.datetime\\.utcfromtimestamp\\(\\) is deprecated:DeprecationWarning",

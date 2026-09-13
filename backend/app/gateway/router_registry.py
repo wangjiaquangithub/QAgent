@@ -85,6 +85,7 @@ def register_core_routers(app: FastAPI) -> None:
     _include_module_router(app, "app.gateway.routers.security_settings", label="security_settings")
     _include_module_router(app, "app.gateway.routers.plans", label="plans")
     _include_module_router(app, "app.gateway.routers.runs", label="runs")
+    _include_module_router(app, "app.qagent_runtime.router", label="qagent_runtime")
 
     langgraph_proxy = importlib.import_module("app.gateway.routers.langgraph_proxy")
     app.include_router(langgraph_proxy.router, include_in_schema=False)

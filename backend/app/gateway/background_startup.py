@@ -140,6 +140,23 @@ async def run_background_startup(app: FastAPI, st_log: StLogFn, _st: Any) -> Non
     # to reduce cold-start latency. Both are wrapped in asyncio.to_thread to
     # avoid blocking the event loop.
     st_log("phase1 start")
+    # QAgent Runtime recovery is PostgreSQL-backed and independent from the
+    # legacy LangGraph/SQLite chain. It is deliberately best-effort so a
+    # missing PostgreSQL configuration never prevents the old gateway paths
+    # from starting during the migration period.
+    try:
+        from app.qagent_runtime.repository import RuntimeRepository
+        from app.qagent_runtime.service import RuntimeService, recover_incomplete_runs
+
+        runtime_repo = await asyncio.to_thread(RuntimeRepository.from_config)
+        runtime_service = RuntimeService(runtime_repo)
+        app.state.qagent_runtime_service = runtime_service
+        recovered = await recover_incomplete_runs(runtime_service)
+        logger.info("QAgent Runtime recovery scanned %d incomplete run(s)", len(recovered))
+        st_log(f"phase1.qagent_runtime.recovery ({len(recovered)} run(s))")
+    except Exception:
+        logger.info("QAgent Runtime recovery skipped or failed (non-fatal)", exc_info=True)
+        st_log("phase1.qagent_runtime.recovery skipped")
 
     async def _startup_skills_install() -> None:
         _t_skills = _st.perf_counter()
