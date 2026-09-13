@@ -70,6 +70,7 @@ __all__ = [
     "link_runtime_run",
     "read_linked_runtime_run",
     "read_runtime_run_linkage",
+    "read_stored_linkage",
 ]
 
 # The key that lands in the task row's existing extras / extra_json slot.
@@ -179,6 +180,26 @@ def read_runtime_run_linkage(
     if linkage.task_id != task_id:
         raise RuntimeRunLinkageError("runtime run linkage belongs to another task")
     return linkage
+
+
+def read_stored_linkage(task: Mapping[str, Any] | None) -> RuntimeRunLinkage | None:
+    """Decode the stored linkage **without** an organization check.
+
+    Advisory only, and deliberately so. Every authoritative Task <-> Runtime path
+    goes through :func:`read_linked_runtime_run`, which resolves the organization
+    from the trusted context and refuses a foreign linkage. This exists for a
+    caller that must answer a question about a task it cannot yet scope — a
+    scheduler asking whether an attempt has already been handed to the Runtime —
+    where the worst a forged value can do is make the caller *defer* work, never
+    authorize it. Nothing here may feed a creation, cancellation or projection
+    decision (AG-G2-AUTO-021).
+    """
+    if not isinstance(task, Mapping):
+        raise RuntimeRunLinkageError("no server-loaded task row supplied")
+    raw = task.get(LINKAGE_TASK_KEY)
+    if raw is None:
+        return None
+    return _decode(raw)
 
 
 def read_linked_runtime_run(

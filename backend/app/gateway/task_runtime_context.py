@@ -59,6 +59,7 @@ __all__ = [
     "TaskRuntimeContextError",
     "assert_json_serializable",
     "build_task_runtime_context",
+    "idempotency_key_for",
 ]
 
 # --- Keys that a client must never be able to influence -------------------
@@ -254,13 +255,37 @@ def _task_input_payload(task: Mapping[str, Any]) -> dict[str, Any]:
     return payload
 
 
-def _attempt_of(task: Mapping[str, Any]) -> int:
-    raw = task.get("unattended_attempts")
+def _normalized_attempt(raw: Any) -> int:
+    """The attempt number as an idempotency input: absent, junk and negatives are 0."""
     try:
         attempt = int(raw)  # type: ignore[arg-type]
     except (TypeError, ValueError):
         attempt = 0
     return attempt if attempt > 0 else 0
+
+
+def _attempt_of(task: Mapping[str, Any]) -> int:
+    return _normalized_attempt(task.get("unattended_attempts"))
+
+
+def idempotency_key_for(org_scope_key: str, task_id: str, attempt: Any) -> str:
+    """The deterministic trigger key for ``(org scope, task, attempt)``.
+
+    Exposed so a caller that must not build a full context — a scheduler asking
+    whether an attempt has *already* been handed to the Runtime — can recompute
+    the same key from a persisted linkage plus the task row, with no authz
+    resolution and no Runtime call (AG-G2-AUTO-021). The derivation is the one
+    :func:`build_task_runtime_context` uses, so the two can never disagree about
+    what "the same trigger" means.
+    """
+    scope = str(org_scope_key or "").strip()
+    tid = str(task_id or "").strip()
+    if not scope or not tid:
+        raise TaskRuntimeContextError(
+            "an idempotency key needs an organization scope and a task id"
+        )
+    digest = _digest(scope, tid, str(_normalized_attempt(attempt)))[:_IDEMPOTENCY_DIGEST_LEN]
+    return f"{_ORG_NAMESPACE}:{digest}"
 
 
 def build_task_runtime_context(
@@ -298,9 +323,7 @@ def build_task_runtime_context(
 
     attempt = _attempt_of(task)
     runtime_task_id = f"{_ORG_NAMESPACE}-{_digest(org_scope_key, task_id)[:_TASK_ID_DIGEST_LEN]}"
-    idempotency_key = (
-        f"{_ORG_NAMESPACE}:{_digest(org_scope_key, task_id, str(attempt))[:_IDEMPOTENCY_DIGEST_LEN]}"
-    )
+    idempotency_key = idempotency_key_for(org_scope_key, task_id, attempt)
 
     return TaskRuntimeContext(
         org_id=org_id,

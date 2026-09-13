@@ -7,6 +7,7 @@ import logging
 import os
 from typing import Any
 
+from app.gateway.task_runtime_schedule import decide_runtime_pickup
 from app.gateway.unattended_task_pipeline import (
     advance_unattended_task,
     count_active_unattended_tasks,
@@ -109,6 +110,28 @@ async def task_queue_tick() -> dict[str, Any]:
             break
         task_id = str(task.get("id") or "").strip()
         if not task_id:
+            continue
+        # A task whose current attempt already has a Runtime run is being driven
+        # by the Runtime; advancing it again would only rediscover that run. The
+        # answer comes from the persisted linkage, so consecutive ticks and a
+        # restart behave identically, and with the opt-in switch off the decision
+        # is inert (AG-G2-AUTO-021).
+        decision = decide_runtime_pickup(task)
+        if decision.should_skip:
+            logger.info(
+                "task_queue_tick: skipped task_id=%s action=%s run_id=%s",
+                task_id,
+                decision.action,
+                decision.runtime_run_id,
+            )
+            results.append(
+                {
+                    "task_id": task_id,
+                    "ok": True,
+                    "action": decision.action,
+                    "runtime_run_id": decision.runtime_run_id,
+                }
+            )
             continue
         try:
             result = await advance_unattended_task(task_id)
