@@ -20,6 +20,21 @@ Frozen semantics (implemented as specified, not re-litigated here):
   only, never regressing a terminal state, never overwritten by an older event.
 
 No ``TaskStatus`` value is added, no frontend change, no table and no migration.
+
+Monotonicity (AG-G2-AUTO-011)
+-----------------------------
+The projection only ever moves a task forward, and it does so per run:
+
+- a terminal task is never overwritten by a later terminal, so ``cancelled``,
+  ``failed`` and ``completed`` cannot overwrite each other;
+- a non-terminal status that is behind what the same run already reported is
+  refused, whether it arrives out of order or as a later status re-read with no
+  sequence;
+- an exact repeat of the stage this run already reported changes nothing;
+- the check is scoped to one ``run_id``, so a retry that links a new run is a new
+  monotonic sequence rather than a regression of the previous one;
+- projection is a pure function over the task row: it never calls the Runtime and
+  therefore can never alter the Runtime's own state.
 """
 
 from __future__ import annotations
@@ -58,6 +73,21 @@ _RUNTIME_TO_TASK_STATUS = {
 _TERMINAL_TASK_STATUSES = frozenset({"completed", "failed", "cancelled"})
 _TERMINAL_RUNTIME_STATUSES = frozenset({"completed", "failed", "cancelled", "timed_out"})
 _AWAITING_APPROVAL = "waiting_approval"
+
+# Per-run monotonic stage order (AG-G2-AUTO-011). Terminal statuses are handled
+# by the terminal branches and are deliberately absent: the order only exists to
+# decide whether an incoming non-terminal status is *behind* what the same run
+# has already reported, so an out-of-order frame or a later status re-read can
+# never move the task backwards. The order follows the Runtime's own state
+# machine; a run never legitimately returns to an earlier stage.
+_RUNTIME_STAGE_RANK = {
+    "created": 0,
+    "queued": 1,
+    "planning": 2,
+    "waiting_approval": 3,
+    "running": 4,
+    "executing": 5,
+}
 
 _STATUS_PATTERN = re.compile(r"[^A-Za-z0-9._:-]+")
 _CODE_PATTERN = re.compile(r"[^A-Za-z0-9._-]+")
@@ -140,6 +170,25 @@ def _max_sequence(history: list[dict[str, Any]], *, run_id: str) -> int | None:
         if seen is None or value > seen:
             seen = value
     return seen
+
+
+def _latest_stage(history: list[dict[str, Any]], *, run_id: str) -> str | None:
+    """The most advanced non-terminal stage this run already reported.
+
+    Scoped to one ``run_id`` on purpose: a retry that links a *new* run starts
+    from an empty stage history, so it is never mistaken for a regression of the
+    previous run.
+    """
+    best: str | None = None
+    best_rank = -1
+    for entry in history:
+        if str(entry.get("runtime_run_id") or "") != run_id:
+            continue
+        rank = _RUNTIME_STAGE_RANK.get(str(entry.get("runtime_status") or ""))
+        if rank is not None and rank > best_rank:
+            best_rank = rank
+            best = str(entry.get("runtime_status") or "")
+    return best
 
 
 def _build_record(
@@ -269,6 +318,21 @@ def project_runtime_status(
             return dict(task), ProjectionOutcome("noop", "terminal_already_reached", current, current)
         # A non-terminal runtime event must not un-terminate the task.
         return dict(task), ProjectionOutcome("stale", "task_already_terminal", current, current)
+
+    # Monotonicity within one run: a status that is behind what this run has
+    # already reported never moves the task, whether it arrived out of order or
+    # as a later status re-read that carries no sequence at all.
+    previous_stage = _latest_stage(history, run_id=run_id)
+    if previous_stage is not None:
+        incoming_rank = _RUNTIME_STAGE_RANK.get(status)
+        previous_rank = _RUNTIME_STAGE_RANK[previous_stage]
+        if incoming_rank is not None and incoming_rank < previous_rank:
+            return dict(task), ProjectionOutcome(
+                "stale", "runtime_status_regression", current, current
+            )
+        if incoming_rank == previous_rank:
+            # This run already reported exactly this stage: idempotent repeat.
+            return dict(task), ProjectionOutcome("noop", "duplicate_status", current, current)
 
     record = _build_record(
         runtime_status=status,

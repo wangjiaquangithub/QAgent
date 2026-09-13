@@ -196,6 +196,125 @@ def test_a_non_terminal_event_cannot_un_terminate_the_task() -> None:
     assert after["status"] == "completed"
 
 
+# --- monotonicity (AG-G2-AUTO-011) ----------------------------------------
+
+
+def test_a_status_behind_what_the_run_reported_never_moves_the_task() -> None:
+    # No sequence at all: this is the "later status re-read" shape, which the
+    # sequence guard cannot catch.
+    task, ctx = _linked()
+    advanced, _ = project_runtime_status(task, context=ctx, runtime_status="executing")
+
+    after, outcome = project_runtime_status(advanced, context=ctx, runtime_status="queued")
+
+    assert outcome.action == "stale"
+    assert outcome.reason == "runtime_status_regression"
+    assert after["status"] == "executing", "a status behind the run must not move the task"
+    assert len(_history(after)) == len(_history(advanced))
+
+
+def test_an_out_of_order_non_terminal_status_never_moves_the_task() -> None:
+    task, ctx = _linked()
+    advanced, _ = project_runtime_status(
+        task, context=ctx, runtime_status="executing", event_id="ev-9", sequence=9
+    )
+
+    after, outcome = project_runtime_status(
+        advanced, context=ctx, runtime_status="planning", event_id="ev-1", sequence=1
+    )
+
+    assert outcome.action == "stale"
+    assert after["status"] == "executing"
+
+
+def test_repeating_the_stage_a_run_already_reported_changes_nothing() -> None:
+    task, ctx = _linked()
+    first, _ = project_runtime_status(task, context=ctx, runtime_status="planning")
+    before = len(_history(first))
+
+    second, outcome = project_runtime_status(first, context=ctx, runtime_status="planning")
+
+    assert outcome.action == "noop"
+    assert outcome.reason == "duplicate_status"
+    assert second["status"] == "planning"
+    assert len(_history(second)) == before
+
+
+def test_the_same_run_progresses_normally_through_every_stage() -> None:
+    task, ctx = _linked(status="pending")
+    seen = []
+    for status in ("created", "queued", "planning", "waiting_approval", "running", "executing"):
+        task, outcome = project_runtime_status(task, context=ctx, runtime_status=status)
+        assert outcome.action in {"status_updated", "history_only"}
+        seen.append(status)
+
+    assert task["status"] == "executing"
+    assert len(_history(task)) == len(seen)
+
+
+def test_every_terminal_status_is_protected_from_the_others() -> None:
+    task, ctx = _linked()
+    cancelled, _ = project_runtime_status(
+        task, context=ctx, runtime_status="cancelled", event_id="ev-c", sequence=5
+    )
+
+    for other in ("completed", "failed", "timed_out"):
+        after, outcome = project_runtime_status(
+            cancelled, context=ctx, runtime_status=other, event_id=f"ev-{other}", sequence=9
+        )
+        assert outcome.action == "noop", other
+        assert after["status"] == "cancelled", f"{other} must not overwrite a cancel"
+
+
+def test_a_retry_that_links_a_new_run_is_a_new_monotonic_sequence() -> None:
+    # Run 1 reached executing. A retry links run 2 under a new attempt, so run 2's
+    # early stages are not a regression of run 1.
+    ctx_1 = build_task_runtime_context(
+        task=_task(status="pending"), authz=_authz(ORG_A), authorized=True
+    )
+    task, _ = link_runtime_run(_task(status="pending"), context=ctx_1, runtime_run_id=RUN_ID)
+    task, _ = project_runtime_status(task, context=ctx_1, runtime_status="executing")
+
+    ctx_2 = build_task_runtime_context(
+        task=_task(status="executing", unattended_attempts=1),
+        authz=_authz(ORG_A),
+        authorized=True,
+    )
+    task, _ = link_runtime_run(task, context=ctx_2, runtime_run_id="run-2", supersede=True)
+
+    projected, outcome = project_runtime_status(task, context=ctx_2, runtime_status="created")
+
+    assert outcome.action == "status_updated"
+    assert projected["status"] == "pending"
+    assert _history(projected)[-1]["runtime_run_id"] == "run-2"
+
+
+def test_projection_never_touches_the_runtime_fact_source() -> None:
+    # Structural: the projection is a pure function over the task row, so it
+    # cannot call the Runtime or change its state.
+    import ast
+    from pathlib import Path
+
+    source = Path("app/gateway/task_runtime_projection.py").read_text(encoding="utf-8")
+    tree = ast.parse(source)
+
+    imported = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imported.update(alias.name for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            imported.add(node.module)
+
+    assert not any(name.startswith("app.qagent_runtime") for name in imported)
+
+    called = {
+        node.func.attr
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+    }
+    assert not (called & {"create_run", "request_cancel", "resume_run", "start_run"})
+
+
 # --- non-terminal progress -------------------------------------------------
 
 
