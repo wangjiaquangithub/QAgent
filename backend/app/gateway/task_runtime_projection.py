@@ -45,6 +45,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from app.gateway.task_runtime_context import TaskRuntimeContext
+from app.gateway.task_runtime_cursor import advance_runtime_cursor
 from app.gateway.task_runtime_failure import sanitize_error_code, sanitize_failure_detail
 from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_linked_runtime_run
 from app.gateway.task_runtime_result import sanitize_result_summary
@@ -437,10 +438,16 @@ def project_runtime_status(
     if target is None:
         # waiting_approval, or any status the Task Centre cannot express: the
         # task status stays exactly as it was and only the history grows.
-        return updated, ProjectionOutcome("history_only", status, current, current, record)
+        outcome = ProjectionOutcome("history_only", status, current, current, record)
+    elif target == current:
+        outcome = ProjectionOutcome("history_only", "status_unchanged", current, current, record)
+    else:
+        updated["status"] = target
+        outcome = ProjectionOutcome("status_updated", status, current, target, record)
 
-    if target == current:
-        return updated, ProjectionOutcome("history_only", "status_unchanged", current, current, record)
-
-    updated["status"] = target
-    return updated, ProjectionOutcome("status_updated", status, current, target, record)
+    # The stream watermark moves only together with the record it describes, so a
+    # consumer can trust it as "applied up to here" without scanning history.
+    updated, _ = advance_runtime_cursor(
+        updated, context=context, run_id=run_id, sequence=sequence, event_id=event_id
+    )
+    return updated, outcome
