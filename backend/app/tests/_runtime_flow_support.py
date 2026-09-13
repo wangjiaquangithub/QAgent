@@ -56,7 +56,6 @@ __all__ = [
     "history_of",
     "identity",
     "json_of",
-    "patch_task",
     "push_frames",
     "reset_home",
     "run_contract",
@@ -86,16 +85,12 @@ class FakeRuntime:
         *,
         frames: list[dict[str, Any]] | None = None,
         status: str = "queued",
-        create_error: BaseException | None = None,
-        status_error: BaseException | None = None,
     ) -> None:
         self.create_calls: list[dict[str, Any]] = []
         self.status_calls: list[str] = []
         self.cancel_calls: list[str] = []
         self._frames = list(frames or [])
         self._status = status
-        self._create_error = create_error
-        self._status_error = status_error
         self._created = 0
 
     async def create_run(
@@ -114,8 +109,6 @@ class FakeRuntime:
                 "idempotency_key": idempotency_key,
             }
         )
-        if self._create_error is not None:
-            raise self._create_error
         self._created += 1
         # A retry is a new attempt and therefore a new run, so successive calls
         # get distinct ids the way the Runtime would issue them.
@@ -127,8 +120,6 @@ class FakeRuntime:
 
     async def get_run_status(self, run_id: str) -> dict[str, Any]:
         self.status_calls.append(run_id)
-        if self._status_error is not None:
-            raise self._status_error
         return {
             "run_id": run_id,
             "status": self._status,
@@ -230,13 +221,6 @@ def save_task(task_id: str, updated: dict[str, Any]) -> None:
                 store.save_project(project)
                 return
     raise AssertionError(f"task {task_id} not found")
-
-
-def patch_task(task_id: str, mutate) -> dict[str, Any]:
-    updated = dict(stored_task(task_id))
-    mutate(updated)
-    save_task(task_id, updated)
-    return updated
 
 
 def create_unattended_task(client: TestClient, **extra: Any) -> str:
