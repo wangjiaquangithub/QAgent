@@ -57,6 +57,7 @@ __all__ = [
     "RuntimeProjectionError",
     "build_runtime_history_record",
     "project_runtime_status",
+    "task_status_for_runtime_status",
 ]
 
 HISTORY_FIELD = "execution_history"
@@ -133,6 +134,21 @@ def _normalize_status(value: Any) -> str:
     if not status:
         raise RuntimeProjectionError("runtime status is required")
     return status
+
+
+def task_status_for_runtime_status(runtime_status: Any) -> str | None:
+    """The existing TaskStatus a Runtime status maps onto, or ``None``.
+
+    Exposed so a second writer uses *this* mapping rather than keeping a copy of
+    its own. The cancellation path needs it to restore the truth when a
+    cancellation arrives after the run already settled — a TaskStatus the Task
+    Center already has, not a new one (AG-G2-AUTO-024).
+    """
+    try:
+        key = _normalize_status(runtime_status)
+    except RuntimeProjectionError:
+        return None
+    return _RUNTIME_TO_TASK_STATUS.get(key)
 
 
 def _history_of(task: Mapping[str, Any]) -> list[dict[str, Any]]:
@@ -479,7 +495,7 @@ def project_runtime_status(
     updated_history = [*history, record]
     updated[HISTORY_FIELD] = updated_history
 
-    target = _RUNTIME_TO_TASK_STATUS.get(status)
+    target = task_status_for_runtime_status(status)
     if target is None:
         # waiting_approval, or any status the Task Centre cannot express: the
         # task status stays exactly as it was and only the history grows.

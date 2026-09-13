@@ -25,6 +25,23 @@ opt-in path:
   happen (AG-G2-AUTO-023);
 - no approval state is invented. A refusal is a run status record, not a new
   approval or a new task status, and nothing here writes one.
+
+Cancellation races (AG-G2-AUTO-024)
+-----------------------------------
+Cancel and completion are two writers racing over one task, and the order they
+arrive in decides what is true:
+
+- **cancel first** — a cancellation is recorded, so a completion or failure the
+  Runtime reports afterwards is refused by the projection and never overwrites
+  the cancelled outcome;
+- **settled first** — the Runtime refuses the cancellation because the run had
+  already ended. The Task must not claim it cancelled something that was over, so
+  its status is restored to the outcome the Runtime actually reports, using the
+  Task Center's *existing* status vocabulary through the projection's own mapping.
+  A run the Runtime still reports as running is left alone: there the user's
+  cancellation is simply still in force;
+- **repeat** — cancelling twice is decided from the history already recorded, so
+  the Runtime is never asked a second time and the state cannot drift.
 """
 
 from __future__ import annotations
@@ -35,7 +52,11 @@ from typing import Any, Literal, Protocol
 
 from app.gateway.task_runtime_context import TaskRuntimeContext
 from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_linked_runtime_run
-from app.gateway.task_runtime_projection import HISTORY_FIELD, build_runtime_history_record
+from app.gateway.task_runtime_projection import (
+    HISTORY_FIELD,
+    build_runtime_history_record,
+    task_status_for_runtime_status,
+)
 
 __all__ = [
     "RuntimeCancelOutcome",
@@ -72,6 +93,11 @@ _KNOWN_RUN_STATUSES = frozenset(
 
 _ACCEPTED_CANCEL_STATUS = "cancelled"
 
+# A run that has already ended. Only these make a cancellation too late to be
+# truthful; a run the Runtime still reports as running leaves the user's
+# cancellation in force.
+_SETTLED_RUN_STATUSES = frozenset({"completed", "failed", "timed_out"})
+
 
 class RuntimeCancelContract(Protocol):
     """The subset of the Runtime public contract used for cancellation."""
@@ -103,18 +129,75 @@ class RuntimeCancelOutcome:
         return self.action in {"runtime_cancelled", "runtime_refused"}
 
 
+_TERMINAL_TASK_STATUSES = frozenset({"completed", "failed", "cancelled"})
+
+# The TaskStatus the existing local cancel handler writes. It is the one terminal
+# status this module may correct, because it is the one it may have caused.
+_LOCAL_CANCEL_STATUS = "cancelled"
+
+
+def _truthful_status_after_refusal(
+    task: Mapping[str, Any], *, reported: str
+) -> str | None:
+    """The status to restore when a cancellation arrived after the run settled.
+
+    Returns ``None`` when nothing should change: the Runtime did not report a
+    settled run, its answer has no Task Center equivalent, the task already shows
+    that outcome, or the task carries a terminal outcome of its own that is not
+    the cancellation which just failed to take effect. The last case keeps the
+    existing terminal protection intact: this path corrects a too-late
+    cancellation, it does not arbitrate between terminal states.
+    """
+    if reported not in _SETTLED_RUN_STATUSES:
+        return None
+    mapped = task_status_for_runtime_status(reported)
+    if mapped is None:
+        return None
+    current = str(task.get("status") or "").strip().lower()
+    if current == mapped:
+        return None
+    if current in _TERMINAL_TASK_STATUSES and current != _LOCAL_CANCEL_STATUS:
+        return None
+    return mapped
+
+
+def _history_of(task: Mapping[str, Any]) -> list[dict[str, Any]]:
+    raw = task.get(HISTORY_FIELD)
+    if not isinstance(raw, list):
+        return []
+    return [entry for entry in raw if isinstance(entry, dict)]
+
+
 def _already_cancelled(task: Mapping[str, Any], *, run_id: str) -> bool:
-    history = task.get(HISTORY_FIELD)
-    if not isinstance(history, list):
-        return False
-    for entry in history:
-        if not isinstance(entry, dict):
-            continue
+    for entry in _history_of(task):
         if str(entry.get("runtime_run_id") or "") != run_id:
             continue
-        if str(entry.get("runtime_status") or "") == "cancelled":
+        if str(entry.get("runtime_status") or "") == _LOCAL_CANCEL_STATUS:
             return True
     return False
+
+
+def _settled_outcome_recorded(
+    task: Mapping[str, Any], *, run_id: str, status: str
+) -> bool:
+    """Whether this run's most recent record already states ``status``.
+
+    A refusal is a fact about a run, so stating it twice adds nothing: a repeated
+    cancellation of an already-settled run must not grow the history. Only the
+    latest record for the run is compared, so a run that genuinely moved on is
+    still recorded.
+    """
+    for entry in reversed(_history_of(task)):
+        if str(entry.get("runtime_run_id") or "") != run_id:
+            continue
+        return str(entry.get("runtime_status") or "") == status
+    return False
+
+
+def _refusal_reason(reported: str) -> str:
+    if reported in _KNOWN_RUN_STATUSES:
+        return f"runtime_reported_{reported}"
+    return "runtime_reported_unknown_status"
 
 
 async def cancel_linked_runtime_run(
@@ -172,9 +255,12 @@ async def cancel_linked_runtime_run(
         # Runtime actually says instead and leave the local cancellation the user
         # asked for exactly as it is.
         refused = dict(task)
-        if reported in _KNOWN_RUN_STATUSES:
-            history = refused.get(HISTORY_FIELD)
-            history_list = list(history) if isinstance(history, list) else []
+        changed = False
+
+        if reported in _KNOWN_RUN_STATUSES and not _settled_outcome_recorded(
+            task, run_id=run_id, status=reported
+        ):
+            history_list = _history_of(task)
             history_list.append(
                 build_runtime_history_record(
                     runtime_status=reported,
@@ -184,20 +270,33 @@ async def cancel_linked_runtime_run(
                 )
             )
             refused[HISTORY_FIELD] = history_list
+            changed = True
+
+        # A cancellation that arrived after the run settled cannot be honoured,
+        # so the task must not display "cancelled" for it. Restore the outcome the
+        # Runtime actually reports, in the Task Center's existing vocabulary. An
+        # already-terminal status other than the just-requested cancellation is
+        # never overwritten, so the terminal protection still holds.
+        restored = _truthful_status_after_refusal(task, reported=reported)
+        if restored is not None:
+            refused["status"] = restored
+            changed = True
+
+        if not changed:
+            # Nothing new to state: either the run's outcome is already recorded,
+            # or the state is not one this module may copy into the task.
             return RuntimeCancelOutcome(
                 "runtime_refused",
-                f"runtime_reported_{reported}",
+                _refusal_reason(reported),
                 run_id,
                 dict(response),
-                refused,
             )
-        # An unrecognised state is not copied into the task's history: there is
-        # nothing explainable to record, so nothing is recorded.
         return RuntimeCancelOutcome(
             "runtime_refused",
-            "runtime_reported_unknown_status",
+            _refusal_reason(reported),
             run_id,
             dict(response),
+            refused,
         )
 
     # Record the request in the shared runtime history vocabulary without

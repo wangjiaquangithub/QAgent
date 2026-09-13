@@ -257,14 +257,17 @@ async def test_a_refused_cancellation_is_not_recorded_as_one(reported: str) -> N
     assert [e["runtime_status"] for e in _history(outcome.updated_task)] != ["cancelled"]
 
 
-async def test_a_refusal_leaves_the_task_status_untouched() -> None:
+async def test_a_refusal_follows_the_runtime_outcome_not_the_cancellation() -> None:
     task, ctx = _linked()
     outcome = await cancel_linked_runtime_run(
         task, context=ctx, contract=RefusingContract("completed")
     )
 
     assert outcome.updated_task is not None
-    assert outcome.updated_task["status"] == task["status"]
+    # The run had already settled, so the display follows the Runtime's fact
+    # rather than the cancellation that could not take effect (AG-G2-AUTO-024).
+    assert outcome.updated_task["status"] == "completed"
+    assert [e["runtime_status"] for e in _history(outcome.updated_task)] == ["completed"]
 
 
 async def test_a_refused_cancellation_does_not_block_a_later_real_one() -> None:
