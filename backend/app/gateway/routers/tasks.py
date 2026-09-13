@@ -43,7 +43,21 @@ router = APIRouter(
     dependencies=[Depends(require_premium)],
 )
 
-_TASK_API_STRIP_KEYS = ("parent_project_id", "project_name", "parentProjectId", "projectName")
+_TASK_API_STRIP_KEYS = (
+    "parent_project_id",
+    "project_name",
+    "parentProjectId",
+    "projectName",
+    # Internal Runtime bookkeeping. These ride in the task row's existing extras
+    # slot: the Task <-> Runtime linkage (``task_runtime_linkage.LINKAGE_TASK_KEY``)
+    # and the stream cursor (``task_runtime_cursor.CURSOR_TASK_KEY``). They are
+    # plumbing, not task data. A linkage carries the organization scope it was
+    # written for and the trigger's idempotency key, so returning it would
+    # publish another organization's identifier to every client that can read a
+    # task whose extras slot holds a foreign linkage (AG-G2-AUTO-028).
+    "runtime_run_linkage",
+    "runtime_run_cursor",
+)
 
 
 def _public_task_dict(task: dict[str, Any]) -> dict[str, Any]:
