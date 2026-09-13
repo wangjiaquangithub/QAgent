@@ -22,6 +22,10 @@ anything is written, so a frame addressed to another run — or to another
 organization's run — is refused instead of being attributed to this task's run
 (AG-G2-AUTO-009).
 
+A frame's ``payload["result"]`` is handed to the projection, which reduces it to
+the allowlisted display summary and records whether a result was available. The
+raw result never reaches the task (AG-G2-AUTO-013).
+
 Runtime Event v1 has no ``run.timed_out`` frame, so a ``timed_out`` outcome is
 applied by passing ``runtime_status`` explicitly; it is the only status that
 cannot be derived from a frame type.
@@ -156,6 +160,7 @@ def apply_runtime_event(
             error_code=error_code,
             reason=reason,
             expected_run_id=run_id,
+            result_summary=payload_map.get("result"),
         )
     except RuntimeProjectionError as exc:
         raise RuntimeEventBridgeError(str(exc)) from exc

@@ -46,6 +46,7 @@ from typing import Any, Literal
 
 from app.gateway.task_runtime_context import TaskRuntimeContext
 from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_linked_runtime_run
+from app.gateway.task_runtime_result import sanitize_result_summary
 
 __all__ = [
     "ProjectionOutcome",
@@ -201,6 +202,7 @@ def _build_record(
     sequence: int | None,
     error_code: str | None,
     reason: str | None,
+    result_summary: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     record: dict[str, Any] = {
         "source": "qagent_runtime",
@@ -219,6 +221,12 @@ def _build_record(
         record["reason"] = reason
     if runtime_status == _AWAITING_APPROVAL:
         record["hint"] = "Runtime run is waiting for an approval decision."
+    if runtime_status == "completed":
+        # A completed run always states whether a displayable result exists, so
+        # "no result" is explicit rather than an ambiguous absence.
+        record["result_available"] = result_summary is not None
+        if result_summary is not None:
+            record["result"] = dict(result_summary)
     return record
 
 
@@ -232,12 +240,14 @@ def build_runtime_history_record(
     sequence: int | None = None,
     error_code: str | None = None,
     reason: str | None = None,
+    result_summary: Any = None,
 ) -> dict[str, Any]:
     """Build an ``execution_history`` record in the shared runtime vocabulary.
 
     Exposed so call sites that must record a Runtime outcome without touching the
     task status (for example a cancellation request) produce the same shape as the
-    projection does.
+    projection does. A ``result_summary`` is sanitised here rather than by the
+    caller, so no call site can write an unredacted result into history.
     """
     return _build_record(
         runtime_status=_normalize_status(runtime_status),
@@ -248,6 +258,7 @@ def build_runtime_history_record(
         sequence=sequence,
         error_code=_sanitize_code(error_code),
         reason=_sanitize_text(reason),
+        result_summary=sanitize_result_summary(result_summary),
     )
 
 
@@ -261,6 +272,7 @@ def project_runtime_status(
     error_code: str | None = None,
     reason: str | None = None,
     expected_run_id: str | None = None,
+    result_summary: Any = None,
 ) -> tuple[dict[str, Any], ProjectionOutcome]:
     """Project one Runtime status onto a linked Task Center task row.
 
@@ -273,6 +285,11 @@ def project_runtime_status(
     Runtime frame. When given it must match the stored linkage, so a frame for
     another run (or another organization's run) can never be written into this
     task's history under the linked run's identity.
+
+    ``result_summary`` is the raw Runtime result, if the caller has one. It is
+    sanitised here through the allowlisted summary, so a caller cannot write an
+    unredacted result into history. It is only recorded for ``completed``, which
+    always states whether a displayable result exists.
     """
     if not isinstance(task, Mapping):
         raise RuntimeProjectionError("no server-loaded task row supplied")
@@ -343,6 +360,7 @@ def project_runtime_status(
         sequence=sequence,
         error_code=_sanitize_code(error_code),
         reason=_sanitize_text(reason),
+        result_summary=sanitize_result_summary(result_summary),
     )
 
     updated = dict(task)
