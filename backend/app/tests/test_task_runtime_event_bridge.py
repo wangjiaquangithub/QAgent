@@ -52,11 +52,16 @@ def _linked(*, org_id: str = ORG_A, status: str = "executing") -> tuple[dict[str
 
 
 def _event(
-    event_type: str, *, event_id: str = "ev-1", sequence: int = 1, payload: Any = None
+    event_type: str,
+    *,
+    event_id: str = "ev-1",
+    sequence: int = 1,
+    payload: Any = None,
+    run_id: str = RUN_ID,
 ) -> dict[str, Any]:
     return {
         "event_id": event_id,
-        "run_id": RUN_ID,
+        "run_id": run_id,
         "sequence": sequence,
         "occurred_at": "2026-09-14T00:00:00Z",
         "type": event_type,
@@ -194,6 +199,30 @@ def test_cross_organization_events_are_refused() -> None:
 
     with pytest.raises(RuntimeEventBridgeError, match="another organization"):
         apply_runtime_event(task, context=other, event=_event("run.completed"))
+
+
+def test_frames_naming_another_run_are_refused() -> None:
+    # The frame's own run id must agree with the stored linkage, otherwise another
+    # run's state would be recorded under this task's linked run (AG-G2-AUTO-009).
+    task, ctx = _linked()
+
+    with pytest.raises(RuntimeEventBridgeError, match="different runtime run"):
+        apply_runtime_event(
+            task, context=ctx, event=_event("run.completed", event_id="ev-x", run_id="run-999")
+        )
+
+    assert _history(task) == [], "a foreign run's frame must not be written"
+
+
+def test_frames_naming_the_linked_run_are_bridged() -> None:
+    task, ctx = _linked(status="pending")
+
+    updated, outcome = apply_runtime_event(
+        task, context=ctx, event=_event("run.completed", event_id="ev-x")
+    )
+
+    assert outcome.status_after == "completed"
+    assert _history(updated)[-1]["runtime_run_id"] == RUN_ID
 
 
 def test_non_status_frames_leave_the_task_untouched() -> None:

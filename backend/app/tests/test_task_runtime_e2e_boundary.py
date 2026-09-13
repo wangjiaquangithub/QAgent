@@ -315,13 +315,17 @@ async def test_frames_for_another_run_cannot_be_applied(monkeypatch: pytest.Monk
     contract = FakeRuntimeContract()
     task, ctx = await _linked_task(contract, status="executing")
 
-    # The trusted run id comes from the stored linkage, so a frame naming a
-    # different run is still applied to this task's own run - never a foreign one.
-    updated, outcome = apply_runtime_event(
-        task, context=ctx, event=_frame("run.running", event_id="ev-1", sequence=1, run_id="run-999")
-    )
-    assert outcome.action == "history_only"
-    assert _history(updated)[-1]["runtime_run_id"] == RUN_ID
+    # The trusted run id comes from the stored linkage, and the frame's own run
+    # id must agree with it. A frame naming a different run is refused outright
+    # (AG-G2-AUTO-009): silently writing it into this task's history under the
+    # linked run's identity would misattribute another run's state.
+    with pytest.raises(RuntimeEventBridgeError, match="different runtime run"):
+        apply_runtime_event(
+            task, context=ctx, event=_frame("run.running", event_id="ev-1", sequence=1, run_id="run-999")
+        )
+
+    # Nothing was written for the foreign frame.
+    assert _history(task) == []
 
 
 def test_the_slice_adds_no_task_status_values() -> None:

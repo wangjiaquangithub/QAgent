@@ -46,7 +46,7 @@ from app.gateway.task_runtime_context import (
 from app.gateway.task_runtime_linkage import (
     RuntimeRunLinkageError,
     link_runtime_run,
-    read_runtime_run_linkage,
+    read_linked_runtime_run,
 )
 
 logger = logging.getLogger(__name__)
@@ -191,7 +191,7 @@ async def establish_runtime_run(
     assert isinstance(task, Mapping)
 
     try:
-        existing = read_runtime_run_linkage(task, org_scope_key=context.org_scope_key)
+        existing = read_linked_runtime_run(task, context=context)
     except RuntimeRunLinkageError:
         # An unsafe or foreign linkage must never be adopted or overwritten.
         raise

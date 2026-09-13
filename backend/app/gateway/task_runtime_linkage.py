@@ -30,6 +30,13 @@ Duplicate-trigger behaviour (the point of this card)
 
 Cross-organization reads are refused, not treated as "absent", so a linkage can
 never be silently adopted by another organization.
+
+One gate, not one per caller (AG-G2-AUTO-009)
+---------------------------------------------
+``read_linked_runtime_run`` is the single entry point every Task <-> Runtime path
+uses to obtain a linkage, so the trusted-organization and task-ownership checks
+exist in exactly one place and cannot drift apart between read, status
+projection, cancel, retry/re-attach and event bridging.
 """
 
 from __future__ import annotations
@@ -47,6 +54,7 @@ __all__ = [
     "RuntimeRunLinkage",
     "RuntimeRunLinkageError",
     "link_runtime_run",
+    "read_linked_runtime_run",
     "read_runtime_run_linkage",
 ]
 
@@ -134,6 +142,38 @@ def read_runtime_run_linkage(
     return linkage
 
 
+def read_linked_runtime_run(
+    task: Mapping[str, Any] | None,
+    *,
+    context: TaskRuntimeContext,
+) -> RuntimeRunLinkage | None:
+    """The single organization-consistency gate for every Task <-> Runtime path.
+
+    AG-G2-AUTO-009. Read, status projection, cancel, retry/re-attach and event
+    bridging all obtain the linkage through this function, so the trusted
+    organization is checked in exactly one place instead of once per caller.
+
+    The context is the *only* source of the organization. A linkage that exists
+    but belongs to another organization, or to another task, is refused rather
+    than reported as absent, so it can never be adopted by the wrong scope. The
+    refusal text stays server-side; callers surface it through their existing
+    not-found / refusal semantics and never echo it to a client, so a foreign
+    organization's run is never revealed to exist.
+    """
+    if not isinstance(context, TaskRuntimeContext):
+        raise RuntimeRunLinkageError("no trusted task runtime context supplied")
+    if not isinstance(task, Mapping):
+        raise RuntimeRunLinkageError("no server-loaded task row supplied")
+
+    task_id = str(task.get("id") or "").strip()
+    if not task_id:
+        raise RuntimeRunLinkageError("task row has no id")
+    if task_id != context.task_id:
+        raise RuntimeRunLinkageError("task runtime context does not belong to this task")
+
+    return read_runtime_run_linkage(task, org_scope_key=context.org_scope_key)
+
+
 def link_runtime_run(
     task: Mapping[str, Any] | None,
     *,
@@ -156,15 +196,13 @@ def link_runtime_run(
     if not run_id:
         raise RuntimeRunLinkageError("runtime_run_id is required")
 
-    task_id = str(task.get("id") or "").strip()
-    if not task_id:
-        raise RuntimeRunLinkageError("task row has no id")
-    if task_id != context.task_id:
-        raise RuntimeRunLinkageError("task runtime context does not belong to this task")
+    # Same gate as every other path: trusted organization + task ownership.
+    existing = read_linked_runtime_run(task, context=context)
+
     if not context.authorized:
         raise RuntimeRunLinkageError("task runtime context is not authorized")
 
-    existing = read_runtime_run_linkage(task, org_scope_key=context.org_scope_key)
+    task_id = context.task_id
 
     if existing is None:
         action: LinkAction = "attached"

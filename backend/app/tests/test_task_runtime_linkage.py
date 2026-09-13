@@ -20,6 +20,7 @@ from app.gateway.task_runtime_linkage import (
     LINKAGE_TASK_KEY,
     RuntimeRunLinkageError,
     link_runtime_run,
+    read_linked_runtime_run,
     read_runtime_run_linkage,
 )
 
@@ -177,6 +178,44 @@ def test_linkage_on_a_different_task_is_refused() -> None:
     copied["id"] = "deadbeef"
     with pytest.raises(RuntimeRunLinkageError, match="another task"):
         read_runtime_run_linkage(copied, org_scope_key=ctx.org_scope_key)
+
+
+# --- the single shared org-consistency gate (AG-G2-AUTO-009) -------------
+
+
+def test_the_gate_returns_the_linkage_for_the_trusted_scope() -> None:
+    ctx = _ctx(ORG_A)
+    stored, _ = link_runtime_run(_task(), context=ctx, runtime_run_id="run-1")
+
+    linkage = read_linked_runtime_run(stored, context=ctx)
+    assert linkage is not None
+    assert linkage.runtime_run_id == "run-1"
+    assert linkage.org_scope_key == ctx.org_scope_key
+
+
+def test_the_gate_reads_an_absent_linkage_as_none() -> None:
+    assert read_linked_runtime_run(_task(), context=_ctx(ORG_A)) is None
+
+
+def test_the_gate_refuses_a_linkage_owned_by_another_organization() -> None:
+    stored, _ = link_runtime_run(_task(), context=_ctx(ORG_A), runtime_run_id="run-1")
+
+    with pytest.raises(RuntimeRunLinkageError, match="another organization"):
+        read_linked_runtime_run(stored, context=_ctx(ORG_B))
+
+
+def test_the_gate_refuses_a_context_for_another_task() -> None:
+    stored, _ = link_runtime_run(_task(), context=_ctx(ORG_A), runtime_run_id="run-1")
+
+    with pytest.raises(RuntimeRunLinkageError, match="does not belong to this task"):
+        read_linked_runtime_run(stored, context=_ctx(ORG_A, task_id="deadbeef"))
+
+
+def test_the_gate_refuses_a_missing_or_untrusted_context() -> None:
+    with pytest.raises(RuntimeRunLinkageError, match="trusted task runtime context"):
+        read_linked_runtime_run(_task(), context="not-a-context")  # type: ignore[arg-type]
+    with pytest.raises(RuntimeRunLinkageError, match="server-loaded task row"):
+        read_linked_runtime_run(None, context=_ctx(ORG_A))
 
 
 # --- malformed / unsafe input --------------------------------------------

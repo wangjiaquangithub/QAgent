@@ -141,6 +141,29 @@ async def test_context_for_another_task_is_refused() -> None:
         await cancel_linked_runtime_run(task, context=other, contract=RecordingContract())
 
 
+async def test_a_forged_or_malformed_linkage_cannot_reach_the_runtime() -> None:
+    # A client-writable extras value must never be able to drive a Runtime call.
+    ctx = build_task_runtime_context(task=_task(), authz=_authz(ORG_A), authorized=True)
+    contract = RecordingContract()
+
+    forged = _task()
+    forged["runtime_run_linkage"] = {
+        "runtime_run_id": "run-999",
+        "org_scope_key": "tc:org:org-b",
+        "task_id": TASK_ID,
+        "idempotency_key": "k",
+    }
+    with pytest.raises(RuntimeCancelError, match="another organization"):
+        await cancel_linked_runtime_run(forged, context=ctx, contract=contract)
+
+    malformed = _task()
+    malformed["runtime_run_linkage"] = "not-json"
+    with pytest.raises(RuntimeCancelError):
+        await cancel_linked_runtime_run(malformed, context=ctx, contract=contract)
+
+    assert contract.cancel_calls == [], "no Runtime cancellation may be attempted"
+
+
 async def test_a_cancelled_task_cannot_be_pushed_back_to_completed() -> None:
     task, ctx = _linked()
     cancelled = await cancel_linked_runtime_run(task, context=ctx, contract=RecordingContract())

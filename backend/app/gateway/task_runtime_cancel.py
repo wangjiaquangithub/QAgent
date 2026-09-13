@@ -26,7 +26,7 @@ from dataclasses import dataclass
 from typing import Any, Literal, Protocol
 
 from app.gateway.task_runtime_context import TaskRuntimeContext
-from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_runtime_run_linkage
+from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_linked_runtime_run
 from app.gateway.task_runtime_projection import HISTORY_FIELD, build_runtime_history_record
 
 __all__ = [
@@ -104,11 +104,11 @@ async def cancel_linked_runtime_run(
     task_id = str(task.get("id") or "").strip()
     if not task_id:
         raise RuntimeCancelError("task row has no id")
-    if task_id != context.task_id:
-        raise RuntimeCancelError("task runtime context does not belong to this task")
 
+    # The shared org-consistency gate: a foreign organization's linkage is
+    # refused here, so this path can never cancel another org's run.
     try:
-        linkage = read_runtime_run_linkage(task, org_scope_key=context.org_scope_key)
+        linkage = read_linked_runtime_run(task, context=context)
     except RuntimeRunLinkageError as exc:
         raise RuntimeCancelError(str(exc)) from exc
 

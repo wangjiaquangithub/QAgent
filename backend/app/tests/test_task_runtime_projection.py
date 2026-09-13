@@ -254,6 +254,41 @@ def test_unknown_runtime_status_is_refused() -> None:
         project_runtime_status(task, context=ctx, runtime_status="   ")
 
 
+# --- run-id consistency (AG-G2-AUTO-009) ----------------------------------
+
+
+def test_projection_refuses_a_status_naming_a_different_run() -> None:
+    task, ctx = _linked()
+
+    with pytest.raises(RuntimeProjectionError, match="different runtime run"):
+        project_runtime_status(
+            task, context=ctx, runtime_status="completed", expected_run_id="run-999"
+        )
+
+    assert _history(task) == [], "a foreign run's status must not be written"
+
+
+def test_projection_accepts_a_status_naming_the_linked_run() -> None:
+    task, ctx = _linked()
+
+    updated, outcome = project_runtime_status(
+        task, context=ctx, runtime_status="completed", expected_run_id=RUN_ID
+    )
+
+    assert outcome.status_after == "completed"
+    assert _history(updated)[-1]["runtime_run_id"] == RUN_ID
+
+
+def test_projection_without_an_expected_run_id_still_uses_the_linked_run() -> None:
+    # Callers that do not carry a frame (e.g. a status re-read) keep working.
+    task, ctx = _linked()
+
+    updated, outcome = project_runtime_status(task, context=ctx, runtime_status="completed")
+
+    assert outcome.status_after == "completed"
+    assert _history(updated)[-1]["runtime_run_id"] == RUN_ID
+
+
 # --- hygiene ---------------------------------------------------------------
 
 

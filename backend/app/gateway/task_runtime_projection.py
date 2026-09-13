@@ -30,7 +30,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from app.gateway.task_runtime_context import TaskRuntimeContext
-from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_runtime_run_linkage
+from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_linked_runtime_run
 
 __all__ = [
     "ProjectionOutcome",
@@ -211,6 +211,7 @@ def project_runtime_status(
     sequence: int | None = None,
     error_code: str | None = None,
     reason: str | None = None,
+    expected_run_id: str | None = None,
 ) -> tuple[dict[str, Any], ProjectionOutcome]:
     """Project one Runtime status onto a linked Task Center task row.
 
@@ -218,6 +219,11 @@ def project_runtime_status(
     and what happened. Raises :class:`RuntimeProjectionError` when the projection
     is not allowed: unlinked task, another run, another organization, or a
     regression attempt.
+
+    ``expected_run_id`` is for callers that carry a run id from an incoming
+    Runtime frame. When given it must match the stored linkage, so a frame for
+    another run (or another organization's run) can never be written into this
+    task's history under the linked run's identity.
     """
     if not isinstance(task, Mapping):
         raise RuntimeProjectionError("no server-loaded task row supplied")
@@ -227,21 +233,24 @@ def project_runtime_status(
     task_id = str(task.get("id") or "").strip()
     if not task_id:
         raise RuntimeProjectionError("task row has no id")
-    if task_id != context.task_id:
-        raise RuntimeProjectionError("task runtime context does not belong to this task")
 
     status = _normalize_status(runtime_status)
 
-    # Cross-organization protection: the linkage reader refuses a linkage owned
-    # by another organization, and one error surface is exposed to callers.
+    # Cross-organization protection: the shared linkage gate refuses a linkage
+    # owned by another organization or another task, and one error surface is
+    # exposed to callers.
     try:
-        linkage = read_runtime_run_linkage(task, org_scope_key=context.org_scope_key)
+        linkage = read_linked_runtime_run(task, context=context)
     except RuntimeRunLinkageError as exc:
         raise RuntimeProjectionError(str(exc)) from exc
     if linkage is None:
         raise RuntimeProjectionError("task is not linked to a runtime run")
 
     run_id = linkage.runtime_run_id
+
+    if expected_run_id is not None and str(expected_run_id).strip() != run_id:
+        raise RuntimeProjectionError("runtime event belongs to a different runtime run")
+
     current = str(task.get("status") or "").strip().lower()
     history = _history_of(task)
 

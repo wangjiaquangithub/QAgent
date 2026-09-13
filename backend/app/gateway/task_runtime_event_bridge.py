@@ -17,6 +17,11 @@ Replay and ordering follow the projection's own rules, because the bridge passes
 ``event_id`` and ``sequence`` straight through: the same event never appends
 twice, and an older sequence never moves the task.
 
+The frame's ``run_id`` is validated against the task's stored linkage before
+anything is written, so a frame addressed to another run — or to another
+organization's run — is refused instead of being attributed to this task's run
+(AG-G2-AUTO-009).
+
 Runtime Event v1 has no ``run.timed_out`` frame, so a ``timed_out`` outcome is
 applied by passing ``runtime_status`` explicitly; it is the only status that
 cannot be derived from a frame type.
@@ -137,8 +142,10 @@ def apply_runtime_event(
     payload_map: Mapping[str, Any] = payload if isinstance(payload, Mapping) else {}
     error_code, reason = _error_fields(payload_map)
 
-    # The trusted run id comes from the stored linkage, never from the frame, so
-    # a frame for another run cannot be applied here.
+    # The trusted run id still comes from the stored linkage, but the frame's own
+    # run id is now enforced against it: a frame for another run — including one
+    # owned by another organization — is refused instead of being written into
+    # this task's history under the linked run's identity.
     try:
         return project_runtime_status(
             task,
@@ -148,6 +155,7 @@ def apply_runtime_event(
             sequence=_sequence_of(event),
             error_code=error_code,
             reason=reason,
+            expected_run_id=run_id,
         )
     except RuntimeProjectionError as exc:
         raise RuntimeEventBridgeError(str(exc)) from exc
