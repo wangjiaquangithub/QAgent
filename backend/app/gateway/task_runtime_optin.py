@@ -25,8 +25,13 @@ Routing rules
 - trusted identity incomplete, or the task is not authorized for execution ->
   legacy with a reason code (the preconditions simply do not hold yet);
 - otherwise the run is established through the Runtime **public** contract only:
-  an existing linkage is reused (read), otherwise exactly one run is created, and
-  the linkage is persisted into the task's existing extras slot;
+  an existing linkage for the *same* trigger is reused (read), and exactly one run
+  is created for a trigger that has none;
+- a **retry** is a new attempt. The existing queue semantics run a failed task
+  afresh rather than resuming it, so the link moves to the new attempt and a new
+  run is created, instead of reusing the finished run of the previous attempt
+  (AG-G2-AUTO-025). A stored linkage that is not recognisably from an earlier
+  attempt is refused, never superseded;
 - the trusted organization is always forwarded to the Runtime on the creation
   call, so the run belongs to the owning organization and never falls back to
   the Runtime's own default org (AG-G2-AUTO-008);
@@ -67,8 +72,10 @@ from app.gateway.task_runtime_context import (
     TaskRuntimeContext,
     TaskRuntimeContextError,
     build_task_runtime_context,
+    idempotency_key_for,
 )
 from app.gateway.task_runtime_linkage import (
+    RuntimeRunLinkage,
     RuntimeRunLinkageError,
     link_runtime_run,
     read_linked_runtime_run,
@@ -110,6 +117,11 @@ _EXPLICIT_OPT_IN_MODES = ("task_center", "plan", "unattended", "task_center_plan
 _EXPLICIT_OPT_OUT_MODES = ("direct", "direct_langgraph", "langgraph", "execute", "runs_wait")
 
 ExecutionModeClass = Literal["opt_in", "opt_out", "default", "invalid"]
+
+# How far back a stored linkage is searched for the attempt it belongs to. The
+# attempt counter only moves through the queue's own retry policy, which is small;
+# the bound exists so a tampered or nonsensical counter cannot make this scan.
+_MAX_ATTEMPTS_SCANNED = 64
 
 
 class RuntimeRunContract(Protocol):
@@ -275,6 +287,27 @@ def resolve_server_task_runtime_identity(task_id: str) -> dict[str, Any] | None:
     }
 
 
+def _linkage_belongs_to_earlier_attempt(
+    linkage: RuntimeRunLinkage, *, task_id: str, attempt: int
+) -> bool:
+    """Whether a stored linkage was created for an *earlier* attempt of this task.
+
+    Decided by recomputing the idempotency key of each earlier attempt and
+    comparing it with the key the linkage carries, so nothing is guessed: either
+    the linkage is recognisably from a previous attempt, or it is not and the
+    caller must refuse rather than supersede it (AG-G2-AUTO-025).
+    """
+    for candidate in range(0, min(attempt, _MAX_ATTEMPTS_SCANNED)):
+        try:
+            if idempotency_key_for(linkage.org_scope_key, task_id, candidate) == (
+                linkage.idempotency_key
+            ):
+                return True
+        except TaskRuntimeContextError:  # pragma: no cover - scope comes from a decoded linkage
+            return False
+    return False
+
+
 def _legacy(
     reason: str,
     context: TaskRuntimeContext | None = None,
@@ -328,7 +361,7 @@ async def establish_runtime_run(
         # An unsafe or foreign linkage must never be adopted or overwritten.
         raise
 
-    if existing is not None:
+    if existing is not None and existing.idempotency_key == context.idempotency_key:
         # Reuse, never re-create: this is what makes a double click, a retried
         # HTTP call and a second tick converge on the same run. The answer comes
         # from the persisted linkage, so a restart answers identically.
@@ -359,8 +392,26 @@ async def establish_runtime_run(
             action="reused" if reported else "reused_unverified",
         )
 
-    # First trigger for this attempt. A failure here propagates: it must never be
-    # swallowed into a legacy execution that would duplicate the side effects.
+    if existing is not None:
+        # A different trigger for this task. That is the retry case, and the
+        # existing retry semantics are not a guess: on a failed unattended task
+        # the queue raises ``unattended_attempts``, clears the bound plan, the
+        # subtasks and the authorization, and re-queues it as ``pending`` -- a
+        # fresh execution for a new attempt, not a resumption of the previous run
+        # (``unattended_task_pipeline``'s requeue path). The Runtime's own
+        # ``resume_run`` is for an interrupted run and is not what the queue does.
+        # So the link is moved to the new attempt; a stored linkage that is not
+        # recognisably from an earlier attempt is refused instead of superseded.
+        if not _linkage_belongs_to_earlier_attempt(
+            existing, task_id=context.task_id, attempt=context.attempt
+        ):
+            raise RuntimeRunLinkageError(
+                "stored runtime linkage belongs to an attempt this trigger does not follow"
+            )
+
+    # First trigger for this attempt, or the first trigger of a retried attempt. A
+    # failure here propagates: it must never be swallowed into a legacy execution
+    # that would duplicate the side effects.
     # The trusted organization is passed explicitly so the run can never be
     # attributed to the Runtime's own default org.
     # The idempotency key makes even two callers that raced past the read above
@@ -382,10 +433,15 @@ async def establish_runtime_run(
             "runtime created a run for a different organization; refusing to link it"
         )
 
-    updated_task, outcome = link_runtime_run(task, context=context, runtime_run_id=run_id)
+    # ``supersede`` is only ever set for a linkage that is recognisably from an
+    # earlier attempt, checked above, so a silent rebinding within one attempt is
+    # still impossible.
+    updated_task, outcome = link_runtime_run(
+        task, context=context, runtime_run_id=run_id, supersede=existing is not None
+    )
     return RuntimeOptInResult(
         decision="runtime",
-        reason="created",
+        reason="created" if existing is None else "retried",
         context=context,
         run_id=run_id,
         run_status=created,
