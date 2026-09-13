@@ -230,6 +230,7 @@ test_scheduler_agent.log
 backend/test_*.py
 backend/run_comprehensive_tests.py
 backend/tests/test_*.py
+!backend/tests/test_postgres_foundation.py
 
 # Root-level temporary/development files
 /loop_*.py
@@ -429,7 +430,9 @@ logs/
 log/
 
 # One-off local debug scripts (backend/scripts/ is not shipped; keep ignore if re-added locally)
-backend/scripts/
+backend/scripts/*
+!backend/scripts/postgres_verify.py
+!backend/scripts/agentscope_compat_probe.py
 backend/scripts/_tmp_*.py
 /tmp_fix_*.py
 /tmp_*.py

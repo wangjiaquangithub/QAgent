@@ -1,6 +1,6 @@
 # QAgent - Unified Development Environment
 
-.PHONY: help config config-upgrade check install setup-agent-browser setup-kb-mcp setup-sandbox dev dev-daemon start stop up down clean docker-init docker-start docker-stop docker-logs docker-logs-frontend docker-logs-gateway docs-install docs-serve docs-build openapi-export ci-local setup-git-hooks
+.PHONY: help config config-upgrade check install setup-agent-browser setup-kb-mcp setup-sandbox dev dev-daemon start stop up down clean docker-init docker-start docker-stop docker-logs docker-logs-frontend docker-logs-gateway postgres-up postgres-down postgres-health postgres-migrate postgres-verify docs-install docs-serve docs-build openapi-export ci-local setup-git-hooks
 
 PYTHON ?= python
 BASH ?= bash
@@ -36,6 +36,13 @@ help:
 	@echo "  make docker-logs     - View Docker development logs"
 	@echo "  make docker-logs-frontend - View Docker frontend logs"
 	@echo "  make docker-logs-gateway - View Docker gateway logs"
+	@echo ""
+	@echo "PostgreSQL Foundation Commands:"
+	@echo "  make postgres-up     - Start separate local development and verification PostgreSQL"
+	@echo "  make postgres-down   - Stop standalone local PostgreSQL"
+	@echo "  make postgres-health - Check PostgreSQL connectivity"
+	@echo "  make postgres-migrate - Apply PostgreSQL migrations"
+	@echo "  make postgres-verify - Destructive verification on qagent_foundation_test only"
 	@echo ""
 	@echo "Documentation:"
 	@echo "  make docs-install    - pip install MkDocs (requirements-docs.txt)"
@@ -192,6 +199,27 @@ docker-logs-frontend:
 	@./scripts/docker.sh logs --frontend
 docker-logs-gateway:
 	@./scripts/docker.sh logs --gateway
+
+# ==========================================
+# PostgreSQL foundation commands
+# ==========================================
+
+# Standalone database only; this does not start Gateway or LangGraph.
+# Delegate to backend/Makefile so every PostgreSQL command loads ../.env consistently.
+postgres-up:
+	@$(MAKE) -C backend postgres-up
+
+postgres-down:
+	@$(MAKE) -C backend postgres-down
+
+postgres-health:
+	@$(MAKE) -C backend postgres-health
+
+postgres-migrate:
+	@$(MAKE) -C backend postgres-migrate
+
+postgres-verify:
+	@$(MAKE) -C backend postgres-verify
 
 # ==========================================
 # Production Docker Commands

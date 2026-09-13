@@ -1,0 +1,97 @@
+name: PostgreSQL foundation
+
+on:
+  push:
+    paths:
+      - "backend/alembic.ini"
+      - "backend/app/postgres/**"
+      - "backend/migrations/**"
+      - "backend/scripts/postgres_verify.py"
+      - "backend/pyproject.toml"
+      - "backend/uv.lock"
+      - "backend/tests/test_postgres_foundation.py"
+      - "backend/Makefile"
+      - "Makefile"
+      - ".env.example"
+      - "docker/docker-compose-postgres.yaml"
+      - "docs/plan/agentscope-2-postgres-foundation-runbook.md"
+      - ".github/workflows/postgres-foundation.yml"
+  pull_request:
+    paths:
+      - "backend/alembic.ini"
+      - "backend/app/postgres/**"
+      - "backend/migrations/**"
+      - "backend/scripts/postgres_verify.py"
+      - "backend/pyproject.toml"
+      - "backend/uv.lock"
+      - "backend/tests/test_postgres_foundation.py"
+      - "backend/Makefile"
+      - "Makefile"
+      - ".env.example"
+      - "docker/docker-compose-postgres.yaml"
+      - "docs/plan/agentscope-2-postgres-foundation-runbook.md"
+      - ".github/workflows/postgres-foundation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: qagent_foundation_test
+          POSTGRES_USER: qagent
+          POSTGRES_PASSWORD: qagent_ci_only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U qagent -d qagent_foundation_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+          --health-start-period 5s
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.11.x"
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - name: Install PostgreSQL client utilities
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync --group dev
+
+      - name: Verify migrations, connectivity, and backup/restore
+        working-directory: backend
+        env:
+          QAGENT_POSTGRES_VERIFY_URL: postgresql+psycopg://qagent:qagent_ci_only@127.0.0.1:5432/qagent_foundation_test
+          PYTHONPATH: .
+        run: uv run python scripts/postgres_verify.py
+
+      - name: Run PostgreSQL foundation tests
+        working-directory: backend
+        env:
+          QAGENT_RUN_POSTGRES_TESTS: "1"
+          QAGENT_POSTGRES_VERIFY_URL: postgresql+psycopg://qagent:qagent_ci_only@127.0.0.1:5432/qagent_foundation_test
+          PYTHONPATH: .
+        run: uv run pytest --noconftest tests/test_postgres_foundation.py -v

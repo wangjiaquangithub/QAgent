@@ -1,0 +1,52 @@
+# Standalone PostgreSQL foundation for QAgent development and migration checks.
+# It intentionally does not start Gateway or LangGraph services.
+#
+# The two databases are deliberately separate. `postgres-foundation-test` is
+# the only database that may be used by postgres_verify.py, which drops and
+# recreates its public schema.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: qagent-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${QAGENT_POSTGRES_DB:-qagent_dev}
+      POSTGRES_USER: ${QAGENT_POSTGRES_USER:-qagent}
+      POSTGRES_PASSWORD: ${QAGENT_POSTGRES_PASSWORD:-qagent_dev_only}
+    ports:
+      - "${QAGENT_POSTGRES_PORT:-54329}:5432"
+    volumes:
+      - qagent-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+
+  postgres-foundation-test:
+    image: postgres:17-alpine
+    container_name: qagent-postgres-foundation-test
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${QAGENT_POSTGRES_VERIFY_DB:-qagent_foundation_test}
+      POSTGRES_USER: ${QAGENT_POSTGRES_VERIFY_USER:-qagent}
+      POSTGRES_PASSWORD: ${QAGENT_POSTGRES_VERIFY_PASSWORD:-qagent_verify_only}
+    ports:
+      - "${QAGENT_POSTGRES_VERIFY_PORT:-54330}:5432"
+    volumes:
+      - qagent-postgres-foundation-test-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+
+volumes:
+  qagent-postgres-data:
+    name: qagent-postgres-data
+  qagent-postgres-foundation-test-data:
+    name: qagent-postgres-foundation-test-data
