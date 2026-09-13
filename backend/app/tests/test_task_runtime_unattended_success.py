@@ -22,182 +22,60 @@ truth for run state — the Task Center only keeps the projection of it.
 
 from __future__ import annotations
 
-import asyncio
 import json
-import os
-import tempfile
-from typing import Any
 
 import pytest
-
-pytest.importorskip("fastapi", reason="the real Task Center routes need FastAPI")
-
-from fastapi import FastAPI  # noqa: E402
-from fastapi.testclient import TestClient  # noqa: E402
-
-# A throwaway home before anything resolves the real data directory.
-os.environ.setdefault("EVOFLOW_HOME", tempfile.mkdtemp(prefix="qagent-unattended-"))
-
-from app.gateway import task_runtime_optin as optin  # noqa: E402
-from app.gateway.deps.license import require_premium  # noqa: E402
-from app.gateway.routers.tasks import router  # noqa: E402
-from app.gateway.task_runtime_context import build_task_runtime_context  # noqa: E402
-from app.gateway.task_runtime_event_bridge import apply_runtime_event  # noqa: E402
-from app.gateway.task_runtime_linkage import LINKAGE_TASK_KEY  # noqa: E402
-from app.gateway.task_runtime_projection import HISTORY_FIELD  # noqa: E402
+from _runtime_flow_support import (
+    HISTORY_FIELD,
+    LINKAGE_TASK_KEY,
+    FakeRuntime,
+    authorize,
+    build_client,
+    create_unattended_task,
+    frame,
+    reset_home,
+    run_contract,
+    save_task,
+    storage,
+    stored_task,
+    tick,
+)
 
 SWITCH = "EVOFLOW_AUTOMATION_UNATTENDED_RUNTIME"
-RUN_ID = "run-e2e-success"
+RUN_ID = "run-flow-1"
 
-
-class FakeRuntime:
-    """The Runtime's public boundary, recorded. No I/O, no key, no network."""
-
-    def __init__(self, *, result: dict[str, Any] | None = None) -> None:
-        self.create_calls: list[dict[str, Any]] = []
-        self.status_calls: list[str] = []
-        self._result = result if result is not None else {"summary": "周报已生成"}
-        self._status = "running"
-
-    async def create_run(
-        self,
-        *,
-        org_id: str,
-        task_id: str,
-        input_payload: dict[str, Any],
-        idempotency_key: str | None = None,
-    ) -> dict[str, Any]:
-        self.create_calls.append(
-            {
-                "org_id": org_id,
-                "task_id": task_id,
-                "input_payload": dict(input_payload),
-                "idempotency_key": idempotency_key,
-            }
-        )
-        return {"run_id": RUN_ID, "status": "queued", "org_id": org_id}
-
-    async def get_run_status(self, run_id: str) -> dict[str, Any]:
-        self.status_calls.append(run_id)
-        return {"run_id": run_id, "status": self._status}
-
-    def complete(self) -> list[dict[str, Any]]:
-        """The frames the Runtime would emit for a successful run."""
-        self._status = "completed"
-        return [
-            {"type": "run.running", "run_id": RUN_ID, "sequence": 0, "event_id": "evt-0"},
-            {
-                "type": "run.completed",
-                "run_id": RUN_ID,
-                "sequence": 1,
-                "event_id": "evt-1",
-                "payload": {"result": self._result},
-            },
-        ]
+SUCCESS_FRAMES = [
+    frame("run.running", sequence=0),
+    frame("run.completed", sequence=1, payload={"result": {"summary": "周报已生成"}}),
+]
 
 
 @pytest.fixture()
-def client() -> TestClient:
-    app = FastAPI()
-    app.include_router(router)
-    app.dependency_overrides[require_premium] = lambda: None
-    return TestClient(app)
+def client():
+    reset_home()
+    return build_client()
 
 
 @pytest.fixture(autouse=True)
-def _fresh_home(monkeypatch: pytest.MonkeyPatch) -> None:
-    from evoflow.persistence.db import reset_db_for_tests
-
+def _switch_on(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv(SWITCH, "1")
-    reset_db_for_tests()
 
 
-def _storage():
-    from evoflow.collab.storage import get_project_storage
+def _push(task_id: str, fake: FakeRuntime) -> dict:
+    from _runtime_flow_support import push_frames
 
-    return get_project_storage()
-
-
-def _stored_task(task_id: str) -> dict[str, Any]:
-    for summary in _storage().list_projects():
-        project = _storage().load_project(summary["id"])
-        for task in (project or {}).get("tasks") or []:
-            if task.get("id") == task_id:
-                return dict(task)
-    raise AssertionError(f"task {task_id} not found")
-
-
-def _save_task(task_id: str, updated: dict[str, Any]) -> None:
-    storage = _storage()
-    for summary in storage.list_projects():
-        project = storage.load_project(summary["id"])
-        tasks = (project or {}).get("tasks") or []
-        for index, task in enumerate(tasks):
-            if task.get("id") == task_id:
-                tasks[index] = updated
-                storage.save_project(project)
-                return
-    raise AssertionError(f"task {task_id} not found")
-
-
-def _create_unattended_task(client: TestClient) -> str:
-    response = client.post(
-        "/api/tasks",
-        json={"name": "每周经营简报", "description": "给管理层的周报", "run_mode": "unattended"},
-    )
-    assert response.status_code == 200, response.text
-    return str(response.json()["id"])
-
-
-def _authorize(task_id: str) -> None:
-    from evoflow.collab.authorize_execution import authorize_main_task_execution
-
-    ok, message = authorize_main_task_execution(_storage(), task_id, "user")
-    assert ok, message
-
-
-def _tick(task_id: str) -> dict[str, Any]:
-    from app.gateway.unattended_task_pipeline import advance_unattended_task
-
-    return asyncio.run(advance_unattended_task(task_id))
-
-
-def _push_frames(task_id: str, frames: list[dict[str, Any]]) -> dict[str, Any]:
-    """Project the Runtime's frames the way the stream consumer does."""
-    from evoflow.collab.storage import find_main_task
-
-    row = find_main_task(_storage(), task_id)
-    assert row is not None
-    task = dict(row[1])
-    for frame in frames:
-        context = build_task_runtime_context(
-            task=task, authz=_identity(), authorized=True
-        )
-        task, _ = apply_runtime_event(task, context=context, event=frame)
-    _save_task(task_id, task)
-    return task
-
-
-def _identity() -> dict[str, Any]:
-    return {
-        "org_id": "local",
-        "scope_id": "personal:local-admin",
-        "principal": {"principal_id": "local-admin", "principal_type": "internal"},
-    }
+    return push_frames(task_id, fake.frames)
 
 
 # --- the happy path --------------------------------------------------------------
 
 
-def test_an_unattended_task_reaches_the_runtime_once(
-    client: TestClient, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    fake = FakeRuntime()
-    monkeypatch.setattr(optin, "default_runtime_contract", lambda: fake)
+def test_an_unattended_task_reaches_the_runtime_once(client, monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = run_contract(FakeRuntime(frames=SUCCESS_FRAMES), monkeypatch)
 
-    task_id = _create_unattended_task(client)
-    _authorize(task_id)
-    step = _tick(task_id)
+    task_id = create_unattended_task(client)
+    authorize(task_id)
+    step = tick(task_id)
 
     assert step["action"] == "runtime", step
     assert step["runtime_run_id"] == RUN_ID
@@ -205,34 +83,30 @@ def test_an_unattended_task_reaches_the_runtime_once(
 
 
 def test_the_run_carries_the_trusted_identity_and_a_deterministic_trigger(
-    client: TestClient, monkeypatch: pytest.MonkeyPatch
+    client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    fake = FakeRuntime()
-    monkeypatch.setattr(optin, "default_runtime_contract", lambda: fake)
+    fake = run_contract(FakeRuntime(frames=SUCCESS_FRAMES), monkeypatch)
 
-    task_id = _create_unattended_task(client)
-    _authorize(task_id)
-    _tick(task_id)
+    task_id = create_unattended_task(client)
+    authorize(task_id)
+    tick(task_id)
 
     call = fake.create_calls[0]
     assert call["org_id"] == "local"
     assert call["idempotency_key"]
-    # No client-supplied field may leak into the identity/trigger.
+    # No client-supplied identity may reach the Runtime through the input payload.
     assert "org_id" not in call["input_payload"]
     assert "tenant_id" not in call["input_payload"]
 
 
-def test_the_linkage_is_persisted_with_the_task(
-    client: TestClient, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    fake = FakeRuntime()
-    monkeypatch.setattr(optin, "default_runtime_contract", lambda: fake)
+def test_the_linkage_is_persisted_with_the_task(client, monkeypatch: pytest.MonkeyPatch) -> None:
+    run_contract(FakeRuntime(frames=SUCCESS_FRAMES), monkeypatch)
 
-    task_id = _create_unattended_task(client)
-    _authorize(task_id)
-    _tick(task_id)
+    task_id = create_unattended_task(client)
+    authorize(task_id)
+    tick(task_id)
 
-    stored = _stored_task(task_id)
+    stored = stored_task(task_id)
 
     assert stored[LINKAGE_TASK_KEY]["runtime_run_id"] == RUN_ID
     # Establishing the run writes the linkage and nothing else: the task's own
@@ -242,34 +116,43 @@ def test_the_linkage_is_persisted_with_the_task(
     assert stored[HISTORY_FIELD] == []
 
 
-def test_a_second_tick_does_not_create_a_second_run(
-    client: TestClient, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    fake = FakeRuntime()
-    monkeypatch.setattr(optin, "default_runtime_contract", lambda: fake)
+def test_a_second_tick_does_not_create_a_second_run(client, monkeypatch: pytest.MonkeyPatch) -> None:
+    fake = run_contract(FakeRuntime(frames=SUCCESS_FRAMES), monkeypatch)
 
-    task_id = _create_unattended_task(client)
-    _authorize(task_id)
-    _tick(task_id)
-    _tick(task_id)
+    task_id = create_unattended_task(client)
+    authorize(task_id)
+    tick(task_id)
+    tick(task_id)
 
     assert len(fake.create_calls) == 1
 
 
 def test_the_projection_completes_the_task_with_a_sanitised_result(
-    client: TestClient, monkeypatch: pytest.MonkeyPatch
+    client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    fake = FakeRuntime(
-        result={"summary": "周报已生成", "internal_path": "/var/private/report.csv"}
+    fake = run_contract(
+        FakeRuntime(
+            frames=[
+                frame("run.running", sequence=0),
+                frame(
+                    "run.completed",
+                    sequence=1,
+                    payload={
+                        "result": {
+                            "summary": "周报已生成",
+                            "internal_path": "/var/private/report.csv",
+                        }
+                    },
+                ),
+            ]
+        ),
+        monkeypatch,
     )
-    monkeypatch.setattr(optin, "default_runtime_contract", lambda: fake)
 
-    task_id = _create_unattended_task(client)
-    _authorize(task_id)
-    _tick(task_id)
-    _push_frames(task_id, fake.complete())
-
-    stored = _stored_task(task_id)
+    task_id = create_unattended_task(client)
+    authorize(task_id)
+    tick(task_id)
+    stored = _push(task_id, fake)
 
     assert stored["status"] == "completed"
     record = stored[HISTORY_FIELD][-1]
@@ -280,15 +163,14 @@ def test_the_projection_completes_the_task_with_a_sanitised_result(
 
 
 def test_the_completed_task_reads_back_through_the_real_routes(
-    client: TestClient, monkeypatch: pytest.MonkeyPatch
+    client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    fake = FakeRuntime()
-    monkeypatch.setattr(optin, "default_runtime_contract", lambda: fake)
+    fake = run_contract(FakeRuntime(frames=SUCCESS_FRAMES), monkeypatch)
 
-    task_id = _create_unattended_task(client)
-    _authorize(task_id)
-    _tick(task_id)
-    _push_frames(task_id, fake.complete())
+    task_id = create_unattended_task(client)
+    authorize(task_id)
+    tick(task_id)
+    _push(task_id, fake)
 
     history = client.get(f"/api/tasks/{task_id}/execution-history").json()
     body = client.get(f"/api/tasks/{task_id}").json()
@@ -304,71 +186,73 @@ def test_the_completed_task_reads_back_through_the_real_routes(
 
 
 def test_the_whole_flow_leaves_a_consistent_terminal_task(
-    client: TestClient, monkeypatch: pytest.MonkeyPatch
+    client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    fake = FakeRuntime()
-    monkeypatch.setattr(optin, "default_runtime_contract", lambda: fake)
+    fake = run_contract(FakeRuntime(frames=SUCCESS_FRAMES), monkeypatch)
 
-    task_id = _create_unattended_task(client)
-    _authorize(task_id)
-    _tick(task_id)
-    _push_frames(task_id, fake.complete())
-
-    stored = _stored_task(task_id)
+    task_id = create_unattended_task(client)
+    authorize(task_id)
+    tick(task_id)
+    stored = _push(task_id, fake)
 
     assert stored["status"] == "completed"
     assert stored[HISTORY_FIELD], "the projection must be visible"
-    assert all(
-        entry.get("runtime_run_id") == RUN_ID for entry in stored[HISTORY_FIELD]
-    )
+    assert all(entry.get("runtime_run_id") == RUN_ID for entry in stored[HISTORY_FIELD])
 
 
 # --- the switch, which keeps the legacy path intact -------------------------------
 
 
 def test_with_the_switch_off_the_legacy_path_runs_and_no_run_is_created(
-    client: TestClient, monkeypatch: pytest.MonkeyPatch
+    client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    fake = FakeRuntime()
-    monkeypatch.setattr(optin, "default_runtime_contract", lambda: fake)
+    fake = run_contract(FakeRuntime(frames=SUCCESS_FRAMES), monkeypatch)
     monkeypatch.setenv(SWITCH, "0")
 
-    task_id = _create_unattended_task(client)
-    _authorize(task_id)
-    step = _tick(task_id)
+    task_id = create_unattended_task(client)
+    authorize(task_id)
+    step = tick(task_id)
 
     assert step.get("action") != "runtime"
     assert fake.create_calls == []
-    assert LINKAGE_TASK_KEY not in _stored_task(task_id)
+    assert LINKAGE_TASK_KEY not in stored_task(task_id)
 
 
 def test_an_unauthorized_task_never_reaches_the_runtime(
-    client: TestClient, monkeypatch: pytest.MonkeyPatch
+    client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    fake = FakeRuntime()
-    monkeypatch.setattr(optin, "default_runtime_contract", lambda: fake)
+    fake = run_contract(FakeRuntime(frames=SUCCESS_FRAMES), monkeypatch)
 
-    task_id = _create_unattended_task(client)
-    step = _tick(task_id)  # not authorized
+    task_id = create_unattended_task(client)
+    step = tick(task_id)  # not authorized
 
     assert fake.create_calls == []
     assert step.get("action") != "runtime"
+    assert LINKAGE_TASK_KEY not in stored_task(task_id)
 
 
 def test_a_handwritten_organization_on_the_task_is_ignored(
-    client: TestClient, monkeypatch: pytest.MonkeyPatch
+    client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """A client-writable field must not be able to choose the run's org."""
-    fake = FakeRuntime()
-    monkeypatch.setattr(optin, "default_runtime_contract", lambda: fake)
+    fake = run_contract(FakeRuntime(frames=SUCCESS_FRAMES), monkeypatch)
 
-    task_id = _create_unattended_task(client)
-    _authorize(task_id)
-    stored = _stored_task(task_id)
+    task_id = create_unattended_task(client)
+    authorize(task_id)
+    stored = stored_task(task_id)
     stored["org_id"] = "someone-elses-org"
     stored["tenant_id"] = "someone-elses-tenant"
-    _save_task(task_id, stored)
+    save_task(task_id, stored)
 
-    _tick(task_id)
+    tick(task_id)
 
     assert fake.create_calls[0]["org_id"] == "local"
+
+
+def test_the_storage_helpers_see_the_same_task_the_route_does(client) -> None:
+    """A guard on the scaffolding itself, so a wrong helper cannot pass silently."""
+    task_id = create_unattended_task(client)
+
+    assert storage() is not None
+    assert stored_task(task_id)["id"] == task_id
+    assert client.get(f"/api/tasks/{task_id}").json()["id"] == task_id
