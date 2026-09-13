@@ -18,6 +18,10 @@ taken from a client payload.
 Routing rules
 -------------
 - switch off -> legacy, no Runtime interaction at all;
+- an explicit per-task ``execution_mode`` opts out (``direct_langgraph`` and the
+  values the automation runner already treats as direct) -> legacy, even with the
+  switch on; an unrecognised value does not opt in either, so a typo cannot change
+  which engine runs the work (AG-G2-AUTO-022);
 - trusted identity incomplete, or the task is not authorized for execution ->
   legacy with a reason code (the preconditions simply do not hold yet);
 - otherwise the run is established through the Runtime **public** contract only:
@@ -73,8 +77,12 @@ from app.gateway.task_runtime_linkage import (
 logger = logging.getLogger(__name__)
 
 __all__ = [
+    "ExecutionModeDecision",
+    "RuntimeOptInDecision",
     "RuntimeOptInResult",
     "assert_no_runtime_side_effects",
+    "classify_execution_mode",
+    "decide_runtime_opt_in",
     "default_runtime_contract",
     "establish_runtime_run",
     "resolve_server_task_runtime_identity",
@@ -93,6 +101,15 @@ _TERMINAL_TASK_STATUSES = frozenset({"completed", "failed", "cancelled"})
 
 # A settled run. The Runtime's own vocabulary, matching the projection's.
 _TERMINAL_RUN_STATUSES = frozenset({"completed", "failed", "cancelled", "timed_out"})
+
+# The explicit per-task execution mode. These are exactly the values the existing
+# automation runner already recognises (``_automation_via_task_center``), kept in
+# the same normalised form so an operator's explicit choice cannot mean one thing
+# to the Task Center routing and another to the Runtime (AG-G2-AUTO-022).
+_EXPLICIT_OPT_IN_MODES = ("task_center", "plan", "unattended", "task_center_plan")
+_EXPLICIT_OPT_OUT_MODES = ("direct", "direct_langgraph", "langgraph", "execute", "runs_wait")
+
+ExecutionModeClass = Literal["opt_in", "opt_out", "default", "invalid"]
 
 
 class RuntimeRunContract(Protocol):
@@ -139,6 +156,76 @@ class RuntimeOptInResult:
 def runtime_unattended_enabled() -> bool:
     """Whether the server has opted unattended tasks into the Runtime."""
     return (os.getenv(_ENV_SWITCH) or "").strip().lower() in _TRUTHY
+
+
+@dataclass(frozen=True)
+class ExecutionModeDecision:
+    """What a task's explicit execution mode says, if it says anything."""
+
+    kind: ExecutionModeClass
+    value: str = ""
+
+    @property
+    def was_explicit(self) -> bool:
+        return self.kind in {"opt_in", "opt_out"}
+
+
+@dataclass(frozen=True)
+class RuntimeOptInDecision:
+    """Whether the Runtime drives this task, and the reason a reader can act on."""
+
+    use_runtime: bool
+    reason: str
+    execution_mode: str = ""
+
+
+def classify_execution_mode(task: Mapping[str, Any] | None) -> ExecutionModeDecision:
+    """Classify the explicit execution mode carried by a task row.
+
+    Recognises the same opt-in and opt-out values the existing automation runner
+    does, normalised the same way. An unrecognised value is reported as
+    ``invalid`` rather than silently treated as absent: a typo must not change
+    which engine runs the work, and it must be visible rather than guessed at.
+    """
+    if not isinstance(task, Mapping):
+        return ExecutionModeDecision("default")
+    raw = task.get("execution_mode") or task.get("prompt_execution_mode") or ""
+    value = str(raw).strip().lower().replace("-", "_")
+    if not value:
+        return ExecutionModeDecision("default")
+    if value in _EXPLICIT_OPT_IN_MODES:
+        return ExecutionModeDecision("opt_in", value)
+    if value in _EXPLICIT_OPT_OUT_MODES:
+        return ExecutionModeDecision("opt_out", value)
+    return ExecutionModeDecision("invalid", value)
+
+
+def decide_runtime_opt_in(task: Mapping[str, Any] | None) -> RuntimeOptInDecision:
+    """The single decision for whether the Runtime drives this task.
+
+    Rules, in order:
+
+    1. the server switch is the master gate — off means never the Runtime, so an
+       unconfigured deployment keeps its existing behaviour byte for byte;
+    2. an explicit per-task opt-out wins — a task an operator marked as direct
+       LangGraph is not run by the Runtime even when the switch is on, so the
+       Runtime path can never quietly override an explicit instruction;
+    3. an unrecognised value does **not** opt in. It falls back to the existing
+       routing and says so, rather than turning a typo into a change of engine;
+    4. otherwise the existing semantics apply: absent means the server switch
+       decides, exactly as before. Nothing is flipped on by default.
+    """
+    if not runtime_unattended_enabled():
+        return RuntimeOptInDecision(False, "runtime_disabled")
+
+    mode = classify_execution_mode(task)
+    if mode.kind == "opt_out":
+        return RuntimeOptInDecision(False, "execution_mode_opt_out", mode.value)
+    if mode.kind == "invalid":
+        return RuntimeOptInDecision(False, "invalid_execution_mode", mode.value)
+    if mode.kind == "opt_in":
+        return RuntimeOptInDecision(True, "execution_mode_opt_in", mode.value)
+    return RuntimeOptInDecision(True, "runtime_enabled_by_server")
 
 
 _contract_cache: RuntimeRunContract | None = None
@@ -210,8 +297,9 @@ async def establish_runtime_run(
     and the read is answered from the persisted task row rather than from
     anything this process remembers (AG-G2-AUTO-020).
     """
-    if not runtime_unattended_enabled():
-        return _legacy("runtime_disabled")
+    decision = decide_runtime_opt_in(task)
+    if not decision.use_runtime:
+        return _legacy(decision.reason)
 
     if contract is None:
         return _legacy("runtime_contract_unavailable")
