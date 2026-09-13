@@ -2,7 +2,7 @@
 
 - 状态：测试与验收框架预先建立，待阶段 0 / 阶段 1.5 接入真实接口
 - 建立日期：2026 年 9 月 12 日
-- 适用计划：[AgentScope 2.0 替换、正式数据库收口与云端 / 本地运行底座计划](./agentscope-2-enterprise-runtime-foundation-plan.md)
+- 适用计划：[AgentScope 2.0 企业 Runtime 路线图](./agentscope-2-enterprise-runtime-roadmap.md)
 - 适用范围：AgentScope 2.0、PostgreSQL 正式状态、本地设备命令 / Outbox / Inbox、迁移、备份恢复和 LangGraph 清理
 - 当前限制：本文件不改变业务逻辑，不迁移 SQLite，不替换 LangGraph，也不假设尚未冻结的 Runtime / 数据库 / 设备 API
 
