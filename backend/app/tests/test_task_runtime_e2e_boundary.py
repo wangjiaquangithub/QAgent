@@ -44,13 +44,28 @@ class FakeRuntimeContract:
         self._runs: dict[str, dict[str, Any]] = {}
 
     async def create_run(
-        self, *, task_id: str, input_payload: dict[str, Any], idempotency_key: str | None = None
+        self,
+        *,
+        org_id: str,
+        task_id: str,
+        input_payload: dict[str, Any],
+        idempotency_key: str | None = None,
     ) -> dict[str, Any]:
         self.create_calls.append(
-            {"task_id": task_id, "input_payload": input_payload, "idempotency_key": idempotency_key}
+            {
+                "org_id": org_id,
+                "task_id": task_id,
+                "input_payload": input_payload,
+                "idempotency_key": idempotency_key,
+            }
         )
         run_id = f"run-{len(self.create_calls)}"
-        self._runs[run_id] = {"run_id": run_id, "status": "created", "task_id": task_id}
+        self._runs[run_id] = {
+            "run_id": run_id,
+            "status": "created",
+            "task_id": task_id,
+            "org_id": org_id,
+        }
         return dict(self._runs[run_id])
 
     async def get_run_status(self, run_id: str) -> dict[str, Any]:
@@ -162,6 +177,7 @@ async def test_full_loop_from_opt_in_to_terminal(monkeypatch: pytest.MonkeyPatch
     # 1. opt in: exactly one run is created and linked to the task
     task, ctx = await _linked_task(contract)
     assert len(contract.create_calls) == 1
+    assert contract.create_calls[0]["org_id"] == ORG_A, "the run belongs to the owning org"
     assert task[LINKAGE_TASK_KEY]["runtime_run_id"] == RUN_ID
 
     # 2. a duplicate trigger reuses the same run id, never a second run

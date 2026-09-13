@@ -132,6 +132,7 @@ def test_client_supplied_organization_or_identity_fields_are_inert(forged: dict[
     dirty = build_task_runtime_context(task=_task(**forged), authz=_authz(ORG_A), authorized=True)
 
     assert dirty == clean
+    assert dirty.org_id == clean.org_id == ORG_A
     assert dirty.org_scope_key == clean.org_scope_key
     assert dirty.runtime_task_id == clean.runtime_task_id
     assert dirty.idempotency_key == clean.idempotency_key
@@ -149,8 +150,18 @@ def test_forged_org_cannot_collide_with_the_real_owning_org() -> None:
         task=_task(org_id=ORG_B, organizationId=ORG_B), authz=_authz(ORG_A), authorized=True
     )
     real_b = build_task_runtime_context(task=_task(), authz=_authz(ORG_B), authorized=True)
+    assert forged.org_id == ORG_A
     assert forged.runtime_task_id != real_b.runtime_task_id
     assert forged.idempotency_key != real_b.idempotency_key
+
+
+def test_context_carries_the_trusted_org_id_verbatim() -> None:
+    ctx = build_task_runtime_context(task=_task(), authz=_authz(ORG_A), authorized=True)
+    assert ctx.org_id == ORG_A
+
+    other = build_task_runtime_context(task=_task(), authz=_authz(ORG_B), authorized=True)
+    assert other.org_id == ORG_B
+    assert other.org_id != ctx.org_id
 
 
 def test_identity_bearing_keys_are_dropped_from_nested_input() -> None:

@@ -36,15 +36,25 @@ class RecordingContract:
         self.fail_create = fail_create
 
     async def create_run(
-        self, *, task_id: str, input_payload: dict[str, Any], idempotency_key: str | None = None
+        self,
+        *,
+        org_id: str,
+        task_id: str,
+        input_payload: dict[str, Any],
+        idempotency_key: str | None = None,
     ) -> dict[str, Any]:
         self.create_calls.append(
-            {"task_id": task_id, "input_payload": input_payload, "idempotency_key": idempotency_key}
+            {
+                "org_id": org_id,
+                "task_id": task_id,
+                "input_payload": input_payload,
+                "idempotency_key": idempotency_key,
+            }
         )
         if self.fail_create:
             raise RuntimeError("runtime unavailable")
         self._n += 1
-        return {"run_id": f"run-{self._n}", "status": "pending"}
+        return {"run_id": f"run-{self._n}", "status": "pending", "org_id": org_id}
 
     async def get_run_status(self, run_id: str) -> dict[str, Any]:
         self.status_calls.append(run_id)
@@ -108,10 +118,46 @@ async def test_switch_on_creates_exactly_one_run_and_records_the_linkage(
     assert result.updated_task is not None
     assert result.updated_task[LINKAGE_TASK_KEY]["runtime_run_id"] == "run-1"
 
-    # Only the contract's own kwargs were used.
+    # Only the contract's own kwargs plus the trusted organization were used.
     call = contract.create_calls[0]
-    assert set(call) == {"task_id", "input_payload", "idempotency_key"}
+    assert set(call) == {"org_id", "task_id", "input_payload", "idempotency_key"}
+    assert call["org_id"] == ORG_A
     assert call["idempotency_key"] == result.context.idempotency_key
+
+
+async def test_trusted_org_is_forwarded_to_the_runtime_create_call(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv(SWITCH, "1")
+    contract = RecordingContract()
+    result = await optin.establish_runtime_run(
+        _task(), identity=_identity(ORG_A), authorized=True, contract=contract
+    )
+
+    assert result.decision == "runtime"
+    assert result.context is not None
+    assert result.context.org_id == ORG_A
+    assert contract.create_calls[0]["org_id"] == ORG_A, "trusted org must reach create_run"
+    # The Runtime's own default org is never used as a substitute.
+    assert contract.create_calls[0]["org_id"] != "local"
+
+
+async def test_identity_without_trusted_org_falls_back_and_never_creates_a_run(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv(SWITCH, "1")
+    contract = RecordingContract()
+    result = await optin.establish_runtime_run(
+        _task(),
+        identity={"scope_id": "personal:webui:1", "principal": {"principal_id": "webui:1"}},
+        authorized=True,
+        contract=contract,
+    )
+
+    assert result.decision == "legacy"
+    assert result.reason == "preconditions_not_met"
+    optin.assert_no_runtime_side_effects(result)
+    assert contract.create_calls == []
 
 
 async def test_repeated_call_reuses_the_run_instead_of_creating_a_second(
@@ -193,9 +239,11 @@ async def test_client_forged_organization_does_not_change_the_runtime_scope(
         contract=RecordingContract(),
     )
 
+    assert forged.context.org_id == clean.context.org_id == ORG_A
     assert forged.context.org_scope_key == clean.context.org_scope_key
     assert forged.context.runtime_task_id == clean.context.runtime_task_id
     assert forged.context.idempotency_key == clean.context.idempotency_key
+    assert contract.create_calls[0]["org_id"] == ORG_A, "a forged task org must not reach the runtime"
 
 
 async def test_cross_organization_linkage_is_refused_not_adopted(

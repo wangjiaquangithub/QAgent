@@ -39,9 +39,11 @@ Real request paths always carry one: ``build_authz_context`` fills an absent
 refuses a context that has no organization at all rather than re-deriving that
 default itself, so the boundary can never drift from the identity domain.
 
-Binding the Task Center organization to the Runtime's own bearer-derived
-``org_id`` belongs to the call site that actually creates the run, not to this
-mapping.
+``org_id`` is carried on the produced context so the call site that actually
+creates the run can pass it to the Runtime explicitly (AG-G2-AUTO-008). The
+mapping itself never chooses a Runtime identity: it only forwards the trusted
+Task Center organization unchanged, and refuses when there is none. The Runtime
+call site binds it; the Runtime's own default is never used as a substitute.
 """
 
 from __future__ import annotations
@@ -114,6 +116,10 @@ class TaskRuntimeContext:
 
     Attributes
     ----------
+    org_id:
+        Trusted organization from the server-resolved authz context. Passed to
+        the Runtime so a run is attributed to the owning organization instead of
+        falling back to the Runtime's own default.
     org_scope_key:
         Trusted organization boundary, namespaced for Task Center origin.
         Part of every derived identity/idempotency value.
@@ -138,6 +144,7 @@ class TaskRuntimeContext:
         a read-only precondition; this module never grants an approval.
     """
 
+    org_id: str
     org_scope_key: str
     subject_id: str
     principal_type: str
@@ -296,6 +303,7 @@ def build_task_runtime_context(
     )
 
     return TaskRuntimeContext(
+        org_id=org_id,
         org_scope_key=org_scope_key,
         subject_id=subject_id,
         principal_type=principal_type,

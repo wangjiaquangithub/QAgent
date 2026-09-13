@@ -23,6 +23,9 @@ Routing rules
 - otherwise the run is established through the Runtime **public** contract only:
   an existing linkage is reused (read), otherwise exactly one run is created, and
   the linkage is persisted into the task's existing extras slot;
+- the trusted organization is always forwarded to the Runtime on the creation
+  call, so the run belongs to the owning organization and never falls back to
+  the Runtime's own default org (AG-G2-AUTO-008);
 - a Runtime call failure is raised, never converted into a second legacy
   execution — that is what would duplicate side effects.
 """
@@ -69,10 +72,20 @@ class RuntimeRunContract(Protocol):
 
     Structural on purpose: the caller passes the real service, this module
     imports no Runtime internals, and tests can pass a recorder.
+
+    ``org_id`` mirrors the keyword the Runtime service's ``create_run`` already
+    accepts. Declaring it here means the trusted Task Center organization is
+    always passed on the creation call and can never fall back to the Runtime's
+    own default (AG-G2-AUTO-008).
     """
 
     async def create_run(
-        self, *, task_id: str, input_payload: dict[str, Any], idempotency_key: str | None = None
+        self,
+        *,
+        org_id: str,
+        task_id: str,
+        input_payload: dict[str, Any],
+        idempotency_key: str | None = None,
     ) -> dict[str, Any]: ...
 
     async def get_run_status(self, run_id: str) -> dict[str, Any]: ...
@@ -196,7 +209,11 @@ async def establish_runtime_run(
 
     # First trigger for this attempt. A failure here propagates: it must never be
     # swallowed into a legacy execution that would duplicate the side effects.
-    created = await contract.create_run(**context.to_request_kwargs())
+    # The trusted organization is passed explicitly so the run can never be
+    # attributed to the Runtime's own default org.
+    created = await contract.create_run(
+        org_id=context.org_id, **context.to_request_kwargs()
+    )
     run_id = str(created.get("run_id") or "").strip()
     if not run_id:
         raise RuntimeError("runtime create_run returned no run_id")
