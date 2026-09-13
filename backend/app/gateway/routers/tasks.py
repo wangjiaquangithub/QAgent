@@ -1907,7 +1907,8 @@ async def _cancel_linked_runtime_run_if_any(task_id: str) -> None:
 
     Inert for a task without a runtime linkage — which is every task that has not
     opted in — so the legacy cancel path is untouched. Any failure is logged and
-    never blocks the local cancellation the user asked for.
+    never blocks the local cancellation the user asked for. A Runtime refusal is
+    persisted as the run's actual state rather than as a cancellation.
     """
     try:
         from app.gateway import task_runtime_optin as optin
@@ -1932,7 +1933,10 @@ async def _cancel_linked_runtime_run_if_any(task_id: str) -> None:
         outcome = await cancel_linked_runtime_run(
             task, context=context, contract=optin.default_runtime_contract()
         )
-        if not outcome.used_runtime or outcome.updated_task is None:
+        # A refusal is persisted too: it carries the run's actual state, so the
+        # task explains itself instead of claiming a cancellation the Runtime
+        # declined (AG-G2-AUTO-023).
+        if not outcome.touched_runtime or outcome.updated_task is None:
             return
 
         for idx, candidate in enumerate(project.get("tasks") or []):
@@ -1941,7 +1945,10 @@ async def _cancel_linked_runtime_run_if_any(task_id: str) -> None:
                 break
         storage.save_project(project)
         logger.info(
-            "runtime cancel requested task_id=%s run_id=%s", task_id, outcome.runtime_run_id
+            "runtime cancel action=%s task_id=%s run_id=%s",
+            outcome.action,
+            task_id,
+            outcome.runtime_run_id,
         )
     except Exception as exc:
         logger.warning(f"Runtime cancel for task {task_id} skipped: {exc}")

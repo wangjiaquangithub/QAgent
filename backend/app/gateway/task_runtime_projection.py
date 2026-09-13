@@ -214,6 +214,24 @@ def _marker_already_recorded(
     return False
 
 
+def _cancellation_recorded(history: list[dict[str, Any]], *, run_id: str) -> bool:
+    """Whether this run already has a cancellation recorded for it.
+
+    A cancellation is recorded when the user asks for it, which can be before the
+    run has executed at all — while it is queued, planning, or waiting for an
+    approval. Relying on the task's own status to remember that would rely on the
+    caller having set it; the record in the run's history is the one fact the
+    projection itself wrote, so it is the one the projection can trust
+    (AG-G2-AUTO-023).
+    """
+    for entry in history:
+        if str(entry.get("runtime_run_id") or "") != run_id:
+            continue
+        if str(entry.get("runtime_status") or "") == "cancelled":
+            return True
+    return False
+
+
 def _latest_stage(history: list[dict[str, Any]], *, run_id: str) -> str | None:
     """The most advanced non-terminal stage this run already reported.
 
@@ -394,6 +412,33 @@ def project_runtime_status(
             return dict(task), ProjectionOutcome("noop", "terminal_already_reached", current, current)
         # A non-terminal runtime event must not un-terminate the task.
         return dict(task), ProjectionOutcome("stale", "task_already_terminal", current, current)
+
+    # A cancellation already recorded for this run settles it, even when the task
+    # status was not moved at the time — a cancel that arrived while the run was
+    # still queued, planning or waiting for an approval. A later frame must not
+    # move the task, whether it is a stale pre-cancel frame or a completion the
+    # Runtime reports after the cancellation (AG-G2-AUTO-023).
+    if _cancellation_recorded(history, run_id=run_id):
+        if status == "cancelled":
+            # The Runtime agrees the run is cancelled; converge the task onto the
+            # existing cancelled status without writing a second record for it.
+            target = _RUNTIME_TO_TASK_STATUS["cancelled"]
+            if target == current:
+                return dict(task), ProjectionOutcome(
+                    "noop", "cancellation_already_recorded", current, current
+                )
+            converged = dict(task)
+            converged["status"] = target
+            return converged, ProjectionOutcome(
+                "status_updated", "cancellation_converged", current, target
+            )
+        if status in _TERMINAL_RUNTIME_STATUSES:
+            return dict(task), ProjectionOutcome(
+                "noop", "cancellation_already_recorded", current, current
+            )
+        return dict(task), ProjectionOutcome(
+            "stale", "task_cancellation_recorded", current, current
+        )
 
     # An approval decision is a marker, not a stage: it is recorded once and never
     # moves the task, whose status converges from the run status the Runtime

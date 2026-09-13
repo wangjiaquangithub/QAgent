@@ -16,7 +16,15 @@ opt-in path:
   the Runtime is not asked a second time;
 - the recorded terminal state is ``cancelled``, and the projection refuses to
   move a terminal task, so an old executor cannot later overwrite it with
-  ``completed``.
+  ``completed``;
+- the Runtime's answer is read rather than assumed. Its cancel call answers with
+  the run's own state, so a state other than ``cancelled`` means the request was
+  **refused** — typically because the run had already settled. A refusal is never
+  recorded as a cancellation: the run's actual state is recorded instead, so the
+  task stays consistent and explainable instead of claiming a cancel that did not
+  happen (AG-G2-AUTO-023);
+- no approval state is invented. A refusal is a run status record, not a new
+  approval or a new task status, and nothing here writes one.
 """
 
 from __future__ import annotations
@@ -41,7 +49,28 @@ CancelAction = Literal[
     "legacy_not_linked",
     "already_cancelled",
     "runtime_unavailable",
+    "runtime_refused",
 ]
+
+# The Runtime's own status vocabulary. A refusal is only recorded when it names a
+# state the Task Center already understands, so no unrecognised string is copied
+# into the task's history.
+_KNOWN_RUN_STATUSES = frozenset(
+    {
+        "created",
+        "queued",
+        "planning",
+        "waiting_approval",
+        "running",
+        "executing",
+        "completed",
+        "failed",
+        "cancelled",
+        "timed_out",
+    }
+)
+
+_ACCEPTED_CANCEL_STATUS = "cancelled"
 
 
 class RuntimeCancelContract(Protocol):
@@ -67,6 +96,11 @@ class RuntimeCancelOutcome:
     @property
     def used_runtime(self) -> bool:
         return self.action == "runtime_cancelled"
+
+    @property
+    def touched_runtime(self) -> bool:
+        """Whether a Runtime call was actually made, accepted or refused."""
+        return self.action in {"runtime_cancelled", "runtime_refused"}
 
 
 def _already_cancelled(task: Mapping[str, Any], *, run_id: str) -> bool:
@@ -127,6 +161,44 @@ async def cancel_linked_runtime_run(
     response = await contract.request_cancel(run_id)
     if not isinstance(response, Mapping):
         response = {"raw": response}
+
+    reported = str(response.get("status") or "").strip().lower()
+
+    if reported and reported != _ACCEPTED_CANCEL_STATUS:
+        # The Runtime's cancel call answers with the run's state. A state other
+        # than "cancelled" means it did not cancel the run -- typically because
+        # the run had already settled. Recording a cancellation here would make
+        # the task claim something that did not happen, so record what the
+        # Runtime actually says instead and leave the local cancellation the user
+        # asked for exactly as it is.
+        refused = dict(task)
+        if reported in _KNOWN_RUN_STATUSES:
+            history = refused.get(HISTORY_FIELD)
+            history_list = list(history) if isinstance(history, list) else []
+            history_list.append(
+                build_runtime_history_record(
+                    runtime_status=reported,
+                    run_id=run_id,
+                    org_scope_key=context.org_scope_key,
+                    reason="runtime declined the cancellation request",
+                )
+            )
+            refused[HISTORY_FIELD] = history_list
+            return RuntimeCancelOutcome(
+                "runtime_refused",
+                f"runtime_reported_{reported}",
+                run_id,
+                dict(response),
+                refused,
+            )
+        # An unrecognised state is not copied into the task's history: there is
+        # nothing explainable to record, so nothing is recorded.
+        return RuntimeCancelOutcome(
+            "runtime_refused",
+            "runtime_reported_unknown_status",
+            run_id,
+            dict(response),
+        )
 
     # Record the request in the shared runtime history vocabulary without
     # touching the task status: the existing cancel handler already owns that,
