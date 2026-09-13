@@ -35,6 +35,7 @@ from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_runtim
 __all__ = [
     "ProjectionOutcome",
     "RuntimeProjectionError",
+    "build_runtime_history_record",
     "project_runtime_status",
 ]
 
@@ -170,6 +171,35 @@ def _build_record(
     if runtime_status == _AWAITING_APPROVAL:
         record["hint"] = "Runtime run is waiting for an approval decision."
     return record
+
+
+def build_runtime_history_record(
+    *,
+    runtime_status: str,
+    run_id: str,
+    org_scope_key: str,
+    approval_required: bool = False,
+    event_id: str | None = None,
+    sequence: int | None = None,
+    error_code: str | None = None,
+    reason: str | None = None,
+) -> dict[str, Any]:
+    """Build an ``execution_history`` record in the shared runtime vocabulary.
+
+    Exposed so call sites that must record a Runtime outcome without touching the
+    task status (for example a cancellation request) produce the same shape as the
+    projection does.
+    """
+    return _build_record(
+        runtime_status=_normalize_status(runtime_status),
+        run_id=str(run_id or "").strip(),
+        org_scope_key=str(org_scope_key or "").strip(),
+        approval_required=approval_required,
+        event_id=event_id,
+        sequence=sequence,
+        error_code=_sanitize_code(error_code),
+        reason=_sanitize_text(reason),
+    )
 
 
 def project_runtime_status(

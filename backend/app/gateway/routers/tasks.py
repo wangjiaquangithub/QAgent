@@ -1902,6 +1902,51 @@ async def restart_task(http_request: Request, task_id: str) -> dict:
     raise_task_error(ErrorCode.TASK_NOT_FOUND, f"任务 '{task_id}' 不存在")
 
 
+async def _cancel_linked_runtime_run_if_any(task_id: str) -> None:
+    """Cancel the Runtime run linked to this task, if it has one.
+
+    Inert for a task without a runtime linkage — which is every task that has not
+    opted in — so the legacy cancel path is untouched. Any failure is logged and
+    never blocks the local cancellation the user asked for.
+    """
+    try:
+        from app.gateway import task_runtime_optin as optin
+        from app.gateway.task_runtime_cancel import cancel_linked_runtime_run
+        from app.gateway.task_runtime_context import build_task_runtime_context
+        from evoflow.collab.storage import find_main_task, get_project_storage
+
+        storage = get_project_storage()
+        row = find_main_task(storage, task_id)
+        if not row:
+            return
+        project, task = row
+
+        identity = optin.resolve_server_task_runtime_identity(task_id)
+        if identity is None:
+            return
+
+        # Cancellation is deliberately not gated by execution_authorized:
+        # cancelling is what revokes it, so requiring it would block exactly the
+        # case it exists for.
+        context = build_task_runtime_context(task=task, authz=identity, authorized=True)
+        outcome = await cancel_linked_runtime_run(
+            task, context=context, contract=optin.default_runtime_contract()
+        )
+        if not outcome.used_runtime or outcome.updated_task is None:
+            return
+
+        for idx, candidate in enumerate(project.get("tasks") or []):
+            if candidate.get("id") == task_id:
+                project["tasks"][idx] = outcome.updated_task
+                break
+        storage.save_project(project)
+        logger.info(
+            "runtime cancel requested task_id=%s run_id=%s", task_id, outcome.runtime_run_id
+        )
+    except Exception as exc:
+        logger.warning(f"Runtime cancel for task {task_id} skipped: {exc}")
+
+
 @router.post("/{task_id}/cancel", summary="Cancel Task", description="Cancel a running or planned task.")
 async def cancel_task(http_request: Request, task_id: str) -> dict:
     require_task_visible(http_request, task_id)
@@ -1932,6 +1977,7 @@ async def cancel_task(http_request: Request, task_id: str) -> dict:
                             subtask["completed_at"] = now_iso
                     project["tasks"][i] = task
                     if storage.save_project(project):
+                        await _cancel_linked_runtime_run_if_any(task_id)
                         try:
                             revoke_main_task_execution_authorization(storage, task_id)
                         except Exception as e:
