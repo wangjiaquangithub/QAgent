@@ -143,14 +143,39 @@ def _history_of(task: Mapping[str, Any]) -> list[dict[str, Any]]:
     return [entry for entry in raw if isinstance(entry, dict)]
 
 
+def _same_sequence(entry: Mapping[str, Any], sequence: int) -> bool:
+    try:
+        return int(entry.get("sequence")) == sequence  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return False
+
+
 def _is_duplicate(
-    history: list[dict[str, Any]], *, run_id: str, runtime_status: str, event_id: str | None
+    history: list[dict[str, Any]],
+    *,
+    run_id: str,
+    runtime_status: str,
+    event_id: str | None,
+    sequence: int | None,
 ) -> bool:
+    """Whether this run already recorded this change.
+
+    Three ways to be a repeat, all scoped to one run: the same event id, the same
+    position in the run's event stream (``sequence``), or — when the caller has
+    neither — the same status.
+    """
     for entry in history:
         if str(entry.get("runtime_run_id") or "") != run_id:
             continue
         if event_id is not None:
             if str(entry.get("event_id") or "") == event_id:
+                return True
+            # The same stream position under a different id is still the same event.
+            if sequence is not None and _same_sequence(entry, sequence):
+                return True
+            continue
+        if sequence is not None:
+            if _same_sequence(entry, sequence):
                 return True
             continue
         if str(entry.get("runtime_status") or "") == runtime_status:
@@ -350,7 +375,11 @@ def project_runtime_status(
     history = _history_of(task)
 
     if sequence is not None and _is_duplicate(
-        history, run_id=run_id, runtime_status=status, event_id=event_id
+        history,
+        run_id=run_id,
+        runtime_status=status,
+        event_id=event_id,
+        sequence=sequence,
     ):
         return dict(task), ProjectionOutcome("noop", "duplicate_event", current, current)
 
