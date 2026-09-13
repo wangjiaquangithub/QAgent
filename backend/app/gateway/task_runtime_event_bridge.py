@@ -31,6 +31,12 @@ metadata to the history at most once per asset per run and never moves the task
 status. The asset's bytes and its storage location are not projected
 (AG-G2-AUTO-015).
 
+An ``approval.granted`` / ``approval.rejected`` frame is also a side record: the
+decision becomes visible in the history, once, without moving the task status.
+The task converges from the run status the Runtime reports next, so the Task
+Center never keeps an approval state of its own and nothing a client writes can
+make a task look approved (AG-G2-AUTO-016).
+
 Runtime Event v1 has no ``run.timed_out`` frame, so a ``timed_out`` outcome is
 applied by passing ``runtime_status`` explicitly; it is the only status that
 cannot be derived from a frame type.
@@ -44,6 +50,8 @@ from typing import Any
 from app.gateway.task_runtime_asset import project_runtime_asset
 from app.gateway.task_runtime_context import TaskRuntimeContext
 from app.gateway.task_runtime_projection import (
+    APPROVAL_GRANTED,
+    APPROVAL_REJECTED,
     ProjectionOutcome,
     RuntimeProjectionError,
     project_runtime_status,
@@ -52,7 +60,6 @@ from app.gateway.task_runtime_projection import (
 __all__ = [
     "ASSET_EVENT_TYPE",
     "EVENT_TYPE_TO_RUNTIME_STATUS",
-    "NON_STATUS_EVENT_TYPES",
     "apply_runtime_event",
     "runtime_status_for_event_type",
 ]
@@ -68,12 +75,12 @@ EVENT_TYPE_TO_RUNTIME_STATUS = {
     "run.completed": "completed",
     "run.failed": "failed",
     "run.cancelled": "cancelled",
+    # An approval decision is a marker: it is made visible in the history and
+    # never moves the task, whose status converges from the run status the Runtime
+    # reports next. The Task Center keeps no approval state of its own.
+    "approval.granted": APPROVAL_GRANTED,
+    "approval.rejected": APPROVAL_REJECTED,
 }
-
-# Frames that carry no run status. ``approval.*`` is not projected as a history
-# record in this card: an approval decision converges the task through the run
-# status that follows it, so the frame simply leaves the task untouched.
-NON_STATUS_EVENT_TYPES = frozenset({"approval.granted", "approval.rejected"})
 
 # A frame that announces an artifact. It carries no run status either, but it does
 # add a displayable record (the asset's metadata, never its bytes).
@@ -159,11 +166,6 @@ def apply_runtime_event(
                 )
             except RuntimeProjectionError as exc:
                 raise RuntimeEventBridgeError(str(exc)) from exc
-        if event_type in NON_STATUS_EVENT_TYPES:
-            current = str((task or {}).get("status") or "").strip().lower()
-            return dict(task or {}), ProjectionOutcome(
-                "noop", "non_status_event", current, current
-            )
         derived = runtime_status_for_event_type(event_type)
         if derived is None:
             raise RuntimeEventBridgeError(f"unsupported runtime event type: {event_type}")

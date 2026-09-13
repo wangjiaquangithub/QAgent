@@ -50,6 +50,8 @@ from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_linked
 from app.gateway.task_runtime_result import sanitize_result_summary
 
 __all__ = [
+    "APPROVAL_GRANTED",
+    "APPROVAL_REJECTED",
     "ProjectionOutcome",
     "RuntimeProjectionError",
     "build_runtime_history_record",
@@ -75,6 +77,20 @@ _RUNTIME_TO_TASK_STATUS = {
 _TERMINAL_TASK_STATUSES = frozenset({"completed", "failed", "cancelled"})
 _TERMINAL_RUNTIME_STATUSES = frozenset({"completed", "failed", "cancelled", "timed_out"})
 _AWAITING_APPROVAL = "waiting_approval"
+
+# Statuses that are *markers* rather than run stages: they make something visible
+# without moving the task, so they carry no stage rank and are deduplicated by
+# status alone. An approval decision is the only one.
+APPROVAL_GRANTED = "approval_granted"
+APPROVAL_REJECTED = "approval_rejected"
+_APPROVAL_DECISIONS = frozenset({APPROVAL_GRANTED, APPROVAL_REJECTED})
+
+# A marker gets a fixed, server-authored display line.
+_STATUS_HINTS = {
+    _AWAITING_APPROVAL: "Runtime run is waiting for an approval decision.",
+    APPROVAL_GRANTED: "Runtime run approval was granted.",
+    APPROVAL_REJECTED: "Runtime run approval was rejected.",
+}
 
 # Per-run monotonic stage order (AG-G2-AUTO-011). Terminal statuses are handled
 # by the terminal branches and are deliberately absent: the order only exists to
@@ -156,6 +172,22 @@ def _max_sequence(history: list[dict[str, Any]], *, run_id: str) -> int | None:
     return seen
 
 
+def _marker_already_recorded(
+    history: list[dict[str, Any]], *, run_id: str, marker: str
+) -> bool:
+    """Whether this run already recorded this marker status.
+
+    Markers carry no stage rank, so the monotonic stage guard cannot see them; a
+    repeated decision frame must still not be written twice.
+    """
+    for entry in history:
+        if str(entry.get("runtime_run_id") or "") != run_id:
+            continue
+        if str(entry.get("runtime_status") or "") == marker:
+            return True
+    return False
+
+
 def _latest_stage(history: list[dict[str, Any]], *, run_id: str) -> str | None:
     """The most advanced non-terminal stage this run already reported.
 
@@ -215,8 +247,9 @@ def _build_record(
         # A withheld detail is stated, so "no detail" and "detail hidden" stay
         # distinguishable to a reader.
         record["error_detail_redacted"] = True
-    if runtime_status == _AWAITING_APPROVAL:
-        record["hint"] = "Runtime run is waiting for an approval decision."
+    hint = _STATUS_HINTS.get(runtime_status)
+    if hint is not None:
+        record["hint"] = hint
     if runtime_status == "completed":
         # A completed run always states whether a displayable result exists, so
         # "no result" is explicit rather than an ambiguous absence.
@@ -331,6 +364,14 @@ def project_runtime_status(
             return dict(task), ProjectionOutcome("noop", "terminal_already_reached", current, current)
         # A non-terminal runtime event must not un-terminate the task.
         return dict(task), ProjectionOutcome("stale", "task_already_terminal", current, current)
+
+    # An approval decision is a marker, not a stage: it is recorded once and never
+    # moves the task, whose status converges from the run status the Runtime
+    # reports next.
+    if status in _APPROVAL_DECISIONS and _marker_already_recorded(
+        history, run_id=run_id, marker=status
+    ):
+        return dict(task), ProjectionOutcome("noop", "duplicate_status", current, current)
 
     # Monotonicity within one run: a status that is behind what this run has
     # already reported never moves the task, whether it arrived out of order or

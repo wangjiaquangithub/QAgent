@@ -75,7 +75,8 @@ def _history(task: dict[str, Any]) -> list[dict[str, Any]]:
 
 def test_event_type_coverage_is_the_frozen_status_set() -> None:
     # The bridge must be able to express every required status except timed_out,
-    # which Event v1 cannot carry as a frame type.
+    # which Event v1 cannot carry as a frame type, plus the two approval decision
+    # markers, which make a decision visible without moving the task.
     assert set(EVENT_TYPE_TO_RUNTIME_STATUS.values()) == {
         "created",
         "queued",
@@ -86,6 +87,8 @@ def test_event_type_coverage_is_the_frozen_status_set() -> None:
         "completed",
         "failed",
         "cancelled",
+        "approval_granted",
+        "approval_rejected",
     }
 
 
@@ -225,16 +228,18 @@ def test_frames_naming_the_linked_run_are_bridged() -> None:
     assert _history(updated)[-1]["runtime_run_id"] == RUN_ID
 
 
-def test_non_status_frames_leave_the_task_untouched() -> None:
-    task, ctx = _linked()
+def test_an_approval_decision_frame_is_visible_without_moving_the_task() -> None:
+    task, ctx = _linked(status="pending")
     updated, outcome = apply_runtime_event(
         task, context=ctx, event=_event("approval.granted", event_id="ev-approval")
     )
 
-    assert outcome.action == "noop"
-    assert outcome.reason == "non_status_event"
-    assert updated["status"] == "executing"
-    assert _history(updated) == []
+    assert outcome.action == "history_only"
+    assert updated["status"] == "pending", "a decision is not a run stage"
+    record = _history(updated)[-1]
+    assert record["runtime_status"] == "approval_granted"
+    assert record["approval_required"] is False
+    assert record["hint"] == "Runtime run approval was granted."
 
 
 def test_an_asset_frame_without_a_usable_asset_is_a_noop() -> None:
