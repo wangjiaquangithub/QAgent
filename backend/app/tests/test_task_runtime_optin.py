@@ -29,11 +29,12 @@ SWITCH = "EVOFLOW_AUTOMATION_UNATTENDED_RUNTIME"
 class RecordingContract:
     """Records every Runtime public-boundary call."""
 
-    def __init__(self, *, fail_create: bool = False) -> None:
+    def __init__(self, *, fail_create: bool = False, echo_org: str | None = None) -> None:
         self.create_calls: list[dict[str, Any]] = []
         self.status_calls: list[str] = []
         self._n = 0
         self.fail_create = fail_create
+        self.echo_org = echo_org
 
     async def create_run(
         self,
@@ -54,7 +55,11 @@ class RecordingContract:
         if self.fail_create:
             raise RuntimeError("runtime unavailable")
         self._n += 1
-        return {"run_id": f"run-{self._n}", "status": "pending", "org_id": org_id}
+        return {
+            "run_id": f"run-{self._n}",
+            "status": "pending",
+            "org_id": self.echo_org if self.echo_org is not None else org_id,
+        }
 
     async def get_run_status(self, run_id: str) -> dict[str, Any]:
         self.status_calls.append(run_id)
@@ -158,6 +163,24 @@ async def test_identity_without_trusted_org_falls_back_and_never_creates_a_run(
     assert result.reason == "preconditions_not_met"
     optin.assert_no_runtime_side_effects(result)
     assert contract.create_calls == []
+
+
+async def test_a_run_echoing_another_organization_is_never_linked(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # The Runtime confirms the owning organization on the created run. If it does
+    # not match the trusted organization, linking would attach this task to a run
+    # that belongs elsewhere, so the opt-in path refuses (AG-G2-AUTO-010).
+    monkeypatch.setenv(SWITCH, "1")
+    contract = RecordingContract(echo_org=ORG_B)
+
+    with pytest.raises(RuntimeError, match="different organization"):
+        await optin.establish_runtime_run(
+            _task(), identity=_identity(ORG_A), authorized=True, contract=contract
+        )
+
+    # The run was created but deliberately not linked.
+    assert len(contract.create_calls) == 1
 
 
 async def test_repeated_call_reuses_the_run_instead_of_creating_a_second(

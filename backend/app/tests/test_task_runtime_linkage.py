@@ -252,3 +252,38 @@ def test_context_for_another_task_cannot_be_linked() -> None:
     other = _ctx(task_id="deadbeef")
     with pytest.raises(RuntimeRunLinkageError, match="does not belong to this task"):
         link_runtime_run(_task(task_id="e4c1a2b0"), context=other, runtime_run_id="run-1")
+
+
+# --- lifecycle hardening (AG-G2-AUTO-010) ---------------------------------
+
+
+@pytest.mark.parametrize(
+    "bad_run_id",
+    [
+        "",
+        "   ",
+        "run 1",
+        "run\n1",
+        "run/1",
+        "run;drop",
+        "r" * 200,
+    ],
+)
+def test_a_malformed_run_id_cannot_be_linked(bad_run_id: str) -> None:
+    with pytest.raises(RuntimeRunLinkageError):
+        link_runtime_run(_task(), context=_ctx(ORG_A), runtime_run_id=bad_run_id)
+
+
+def test_a_stored_linkage_with_a_malformed_run_id_is_refused() -> None:
+    stored = _task(
+        **{
+            LINKAGE_TASK_KEY: {
+                "runtime_run_id": "run 1;--",
+                "org_scope_key": "tc:org:org-a",
+                "task_id": "e4c1a2b0",
+                "idempotency_key": "k",
+            }
+        }
+    )
+    with pytest.raises(RuntimeRunLinkageError, match="malformed"):
+        read_linked_runtime_run(stored, context=_ctx(ORG_A))

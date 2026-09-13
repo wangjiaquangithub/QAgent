@@ -218,6 +218,15 @@ async def establish_runtime_run(
     if not run_id:
         raise RuntimeError("runtime create_run returned no run_id")
 
+    # When the Runtime echoes the owning organization, it must be the trusted
+    # one. A mismatching echo means the run we are about to link does not belong
+    # to this task's organization, so refuse rather than link it (AG-G2-AUTO-010).
+    echoed_org = str(created.get("org_id") or "").strip()
+    if echoed_org and echoed_org != context.org_id:
+        raise RuntimeError(
+            "runtime created a run for a different organization; refusing to link it"
+        )
+
     updated_task, outcome = link_runtime_run(task, context=context, runtime_run_id=run_id)
     return RuntimeOptInResult(
         decision="runtime",
