@@ -49,6 +49,7 @@ __all__ = [
     "SWITCH",
     "FakeRuntime",
     "authorize",
+    "block_outbound_network",
     "build_client",
     "create_unattended_task",
     "frame",
@@ -95,6 +96,7 @@ class FakeRuntime:
         self._status = status
         self._create_error = create_error
         self._status_error = status_error
+        self._created = 0
 
     async def create_run(
         self,
@@ -114,7 +116,14 @@ class FakeRuntime:
         )
         if self._create_error is not None:
             raise self._create_error
-        return {"run_id": RUN_ID, "status": "queued", "org_id": org_id}
+        self._created += 1
+        # A retry is a new attempt and therefore a new run, so successive calls
+        # get distinct ids the way the Runtime would issue them.
+        return {
+            "run_id": f"run-flow-{self._created}",
+            "status": "queued",
+            "org_id": org_id,
+        }
 
     async def get_run_status(self, run_id: str) -> dict[str, Any]:
         self.status_calls.append(run_id)
@@ -154,6 +163,34 @@ def reset_home() -> None:
     from evoflow.persistence.db import reset_db_for_tests
 
     reset_db_for_tests()
+
+
+_LOOPBACK = {"127.0.0.1", "::1", "localhost", "0.0.0.0", ""}
+
+
+def block_outbound_network(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Fail any outbound connection to a non-loopback address.
+
+    These flows must not reach the network: the Runtime is replaced at its public
+    boundary, so a real connection could only come from a path that was not
+    supposed to run. Without this, a legacy branch that tries to call out makes
+    the test slow and dependent on the machine's connectivity instead of failing
+    for the reason it should. Loopback is left alone so an in-process HTTP
+    transport keeps working.
+    """
+    import socket
+
+    real_connect = socket.socket.connect
+
+    def guarded(self, address, *args, **kwargs):  # type: ignore[no-untyped-def]
+        host = ""
+        if isinstance(address, tuple) and address:
+            host = str(address[0])
+        if host not in _LOOPBACK:
+            raise AssertionError(f"outbound network access attempted: {host}")
+        return real_connect(self, address, *args, **kwargs)
+
+    monkeypatch.setattr(socket.socket, "connect", guarded)
 
 
 def build_client() -> TestClient:

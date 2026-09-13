@@ -24,6 +24,7 @@ from _runtime_flow_support import (
     LINKAGE_TASK_KEY,
     FakeRuntime,
     authorize,
+    block_outbound_network,
     build_client,
     create_unattended_task,
     frame,
@@ -47,8 +48,10 @@ def client():
 
 
 @pytest.fixture(autouse=True)
-def _switch_on(monkeypatch: pytest.MonkeyPatch):
+def _hermetic(monkeypatch: pytest.MonkeyPatch):
+    """Runtime opt-in on, and no outbound network: the fake is the only runtime."""
     monkeypatch.setenv(SWITCH, "1")
+    block_outbound_network(monkeypatch)
 
 
 def _started(client, fake: FakeRuntime, monkeypatch: pytest.MonkeyPatch) -> str:
