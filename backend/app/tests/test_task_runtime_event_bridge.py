@@ -228,11 +228,23 @@ def test_frames_naming_the_linked_run_are_bridged() -> None:
 def test_non_status_frames_leave_the_task_untouched() -> None:
     task, ctx = _linked()
     updated, outcome = apply_runtime_event(
-        task, context=ctx, event=_event("asset.available", event_id="ev-asset")
+        task, context=ctx, event=_event("approval.granted", event_id="ev-approval")
     )
 
     assert outcome.action == "noop"
     assert outcome.reason == "non_status_event"
+    assert updated["status"] == "executing"
+    assert _history(updated) == []
+
+
+def test_an_asset_frame_without_a_usable_asset_is_a_noop() -> None:
+    task, ctx = _linked()
+    updated, outcome = apply_runtime_event(
+        task, context=ctx, event=_event("asset.available", event_id="ev-asset")
+    )
+
+    assert outcome.action == "noop"
+    assert outcome.reason == "asset_not_displayable"
     assert updated["status"] == "executing"
     assert _history(updated) == []
 

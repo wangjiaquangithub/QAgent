@@ -26,6 +26,11 @@ A frame's ``payload["result"]`` is handed to the projection, which reduces it to
 the allowlisted display summary and records whether a result was available. The
 raw result never reaches the task (AG-G2-AUTO-013).
 
+An ``asset.available`` frame is a side record: it adds the asset's allowlisted
+metadata to the history at most once per asset per run and never moves the task
+status. The asset's bytes and its storage location are not projected
+(AG-G2-AUTO-015).
+
 Runtime Event v1 has no ``run.timed_out`` frame, so a ``timed_out`` outcome is
 applied by passing ``runtime_status`` explicitly; it is the only status that
 cannot be derived from a frame type.
@@ -36,6 +41,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from app.gateway.task_runtime_asset import project_runtime_asset
 from app.gateway.task_runtime_context import TaskRuntimeContext
 from app.gateway.task_runtime_projection import (
     ProjectionOutcome,
@@ -44,6 +50,7 @@ from app.gateway.task_runtime_projection import (
 )
 
 __all__ = [
+    "ASSET_EVENT_TYPE",
     "EVENT_TYPE_TO_RUNTIME_STATUS",
     "NON_STATUS_EVENT_TYPES",
     "apply_runtime_event",
@@ -63,11 +70,14 @@ EVENT_TYPE_TO_RUNTIME_STATUS = {
     "run.cancelled": "cancelled",
 }
 
-# Frames that carry no run status. They are not projected as history records in
-# this card; they simply leave the task untouched.
-NON_STATUS_EVENT_TYPES = frozenset(
-    {"asset.available", "approval.granted", "approval.rejected"}
-)
+# Frames that carry no run status. ``approval.*`` is not projected as a history
+# record in this card: an approval decision converges the task through the run
+# status that follows it, so the frame simply leaves the task untouched.
+NON_STATUS_EVENT_TYPES = frozenset({"approval.granted", "approval.rejected"})
+
+# A frame that announces an artifact. It carries no run status either, but it does
+# add a displayable record (the asset's metadata, never its bytes).
+ASSET_EVENT_TYPE = "asset.available"
 
 
 class RuntimeEventBridgeError(RuntimeError):
@@ -127,11 +137,28 @@ def apply_runtime_event(
     if not run_id:
         raise RuntimeEventBridgeError("runtime event has no run_id")
 
+    payload = event.get("payload")
+    payload_map: Mapping[str, Any] = payload if isinstance(payload, Mapping) else {}
+
     status = str(runtime_status or "").strip().lower()
     if not status:
         event_type = str(event.get("type") or "").strip().lower()
         if not event_type:
             raise RuntimeEventBridgeError("runtime event has no type")
+        if event_type == ASSET_EVENT_TYPE:
+            # An asset is a side record: it never moves the task status, and its
+            # metadata is projected at most once per asset per run.
+            try:
+                return project_runtime_asset(
+                    task,
+                    context=context,
+                    asset=payload_map.get("asset"),
+                    event_id=str(event.get("event_id") or "").strip() or None,
+                    sequence=_sequence_of(event),
+                    expected_run_id=str(event.get("run_id") or "").strip() or None,
+                )
+            except RuntimeProjectionError as exc:
+                raise RuntimeEventBridgeError(str(exc)) from exc
         if event_type in NON_STATUS_EVENT_TYPES:
             current = str((task or {}).get("status") or "").strip().lower()
             return dict(task or {}), ProjectionOutcome(
@@ -142,8 +169,6 @@ def apply_runtime_event(
             raise RuntimeEventBridgeError(f"unsupported runtime event type: {event_type}")
         status = derived
 
-    payload = event.get("payload")
-    payload_map: Mapping[str, Any] = payload if isinstance(payload, Mapping) else {}
     error_code, reason = _error_fields(payload_map)
 
     # The trusted run id still comes from the stored linkage, but the frame's own
