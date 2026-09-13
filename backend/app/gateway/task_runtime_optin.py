@@ -28,6 +28,27 @@ Routing rules
   the Runtime's own default org (AG-G2-AUTO-008);
 - a Runtime call failure is raised, never converted into a second legacy
   execution — that is what would duplicate side effects.
+
+Idempotence of a repeated trigger (AG-G2-AUTO-020)
+-------------------------------------------------
+A manual run-now can be delivered twice: a double click, a retried HTTP call, a
+second scheduler tick. No second run may be created for the same trigger, and the
+protection must not live in this process:
+
+- the **persisted linkage** already pins one trigger (org scope + task +
+  attempt) to exactly one run, and it survives a restart because it travels in
+  the task row's existing extras slot;
+- the **Runtime's own idempotency key**, derived from that same trigger, is
+  unique per ``(org_id, idempotency_key)`` in the Runtime's own store, so even
+  two callers that race past the read both end up with the same run. The
+  uniqueness is enforced by the Runtime, not by this module;
+- consequently nothing here needs — or uses — an in-process lock as its
+  guarantee. A second call is answered from persisted state, not from memory.
+
+A **terminal task** is not "an already running task". Once a task has settled,
+what happens next — a retry, a requeue, a failure report — is the existing
+business semantics' decision, so this branch steps aside and lets it decide
+instead of answering "a run is already in place" and swallowing the retry.
 """
 
 from __future__ import annotations
@@ -65,6 +86,13 @@ _ENV_SWITCH = "EVOFLOW_AUTOMATION_UNATTENDED_RUNTIME"
 _TRUTHY = frozenset({"1", "true", "yes", "on"})
 
 RouteDecision = Literal["runtime", "legacy"]
+
+# A settled task. The existing pipeline owns what happens to it (retry, requeue,
+# report), so the Runtime branch must not claim it.
+_TERMINAL_TASK_STATUSES = frozenset({"completed", "failed", "cancelled"})
+
+# A settled run. The Runtime's own vocabulary, matching the projection's.
+_TERMINAL_RUN_STATUSES = frozenset({"completed", "failed", "cancelled", "timed_out"})
 
 
 class RuntimeRunContract(Protocol):
@@ -160,8 +188,13 @@ def resolve_server_task_runtime_identity(task_id: str) -> dict[str, Any] | None:
     }
 
 
-def _legacy(reason: str, context: TaskRuntimeContext | None = None) -> RuntimeOptInResult:
-    return RuntimeOptInResult(decision="legacy", reason=reason, context=context)
+def _legacy(
+    reason: str,
+    context: TaskRuntimeContext | None = None,
+    *,
+    action: str | None = None,
+) -> RuntimeOptInResult:
+    return RuntimeOptInResult(decision="legacy", reason=reason, context=context, action=action)
 
 
 async def establish_runtime_run(
@@ -171,7 +204,12 @@ async def establish_runtime_run(
     authorized: bool,
     contract: RuntimeRunContract | None,
 ) -> RuntimeOptInResult:
-    """Decide the route and, when opted in, establish/reuse exactly one run."""
+    """Decide the route and, when opted in, establish/reuse exactly one run.
+
+    A repeated trigger never creates a second run: an existing linkage is reused,
+    and the read is answered from the persisted task row rather than from
+    anything this process remembers (AG-G2-AUTO-020).
+    """
     if not runtime_unattended_enabled():
         return _legacy("runtime_disabled")
 
@@ -190,6 +228,12 @@ async def establish_runtime_run(
 
     assert isinstance(task, Mapping)
 
+    # A settled task is not an already-running one. Step aside so the existing
+    # retry / rerun / report semantics decide, instead of answering "a run is
+    # already in place" and swallowing them. Nothing is created or read here.
+    if str(task.get("status") or "").strip().lower() in _TERMINAL_TASK_STATUSES:
+        return _legacy("task_already_terminal", action="deferred_to_existing_semantics")
+
     try:
         existing = read_linked_runtime_run(task, context=context)
     except RuntimeRunLinkageError:
@@ -197,20 +241,43 @@ async def establish_runtime_run(
         raise
 
     if existing is not None:
+        # Reuse, never re-create: this is what makes a double click, a retried
+        # HTTP call and a second tick converge on the same run. The answer comes
+        # from the persisted linkage, so a restart answers identically.
         status = await contract.get_run_status(existing.runtime_run_id)
+        reported = ""
+        if isinstance(status, Mapping):
+            reported = str(status.get("status") or "").strip().lower()
+        if reported in _TERMINAL_RUN_STATUSES:
+            # The run is over; there is nothing to reuse, but a second run is
+            # still not this branch's to create.
+            return RuntimeOptInResult(
+                decision="runtime",
+                reason="linked_run_terminal",
+                context=context,
+                run_id=existing.runtime_run_id,
+                run_status=status,
+                action="reused_terminal_run",
+            )
+        # An unreadable status must not be read as "nothing is running" either:
+        # that would create a duplicate run, and falling through would duplicate
+        # the side effects in a legacy execution. Reuse, and say it is unverified.
         return RuntimeOptInResult(
             decision="runtime",
             reason="reused",
             context=context,
             run_id=existing.runtime_run_id,
             run_status=status,
-            action="reused",
+            action="reused" if reported else "reused_unverified",
         )
 
     # First trigger for this attempt. A failure here propagates: it must never be
     # swallowed into a legacy execution that would duplicate the side effects.
     # The trusted organization is passed explicitly so the run can never be
     # attributed to the Runtime's own default org.
+    # The idempotency key makes even two callers that raced past the read above
+    # converge on the same run: the Runtime enforces it per (org, key) in its own
+    # store, so no in-process lock is load-bearing here.
     created = await contract.create_run(
         org_id=context.org_id, **context.to_request_kwargs()
     )
