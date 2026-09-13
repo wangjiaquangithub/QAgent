@@ -45,6 +45,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from app.gateway.task_runtime_context import TaskRuntimeContext
+from app.gateway.task_runtime_failure import sanitize_error_code, sanitize_failure_detail
 from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_linked_runtime_run
 from app.gateway.task_runtime_result import sanitize_result_summary
 
@@ -91,7 +92,6 @@ _RUNTIME_STAGE_RANK = {
 }
 
 _STATUS_PATTERN = re.compile(r"[^A-Za-z0-9._:-]+")
-_CODE_PATTERN = re.compile(r"[^A-Za-z0-9._-]+")
 
 ProjectionAction = Literal["status_updated", "history_only", "noop", "stale"]
 
@@ -109,23 +109,6 @@ class ProjectionOutcome:
     status_before: str
     status_after: str
     record: dict[str, Any] | None = None
-
-
-def _sanitize_text(value: Any, *, limit: int = 240) -> str | None:
-    """Collapse a free-form message to a short, safe, single-line string."""
-    if value is None:
-        return None
-    text = " ".join(str(value).split())
-    if not text:
-        return None
-    return text[:limit]
-
-
-def _sanitize_code(value: Any) -> str | None:
-    if value is None:
-        return None
-    code = _CODE_PATTERN.sub("", str(value).strip())
-    return code[:64] or None
 
 
 def _normalize_status(value: Any) -> str:
@@ -204,6 +187,15 @@ def _build_record(
     reason: str | None,
     result_summary: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
+    """Build one history record, redacting the failure detail.
+
+    The failure fields are sanitised here rather than by the caller, so every
+    writer — the event bridge, the shared history builder, and any future call
+    site — inherits the same redaction and none can bypass it by accident.
+    """
+    clean_code = sanitize_error_code(error_code)
+    clean_reason, withheld = sanitize_failure_detail(reason)
+
     record: dict[str, Any] = {
         "source": "qagent_runtime",
         "runtime_run_id": run_id,
@@ -215,10 +207,14 @@ def _build_record(
         record["event_id"] = event_id
     if sequence is not None:
         record["sequence"] = sequence
-    if error_code is not None:
-        record["error_code"] = error_code
-    if reason is not None:
-        record["reason"] = reason
+    if clean_code is not None:
+        record["error_code"] = clean_code
+    if clean_reason is not None:
+        record["reason"] = clean_reason
+    if withheld:
+        # A withheld detail is stated, so "no detail" and "detail hidden" stay
+        # distinguishable to a reader.
+        record["error_detail_redacted"] = True
     if runtime_status == _AWAITING_APPROVAL:
         record["hint"] = "Runtime run is waiting for an approval decision."
     if runtime_status == "completed":
@@ -256,8 +252,8 @@ def build_runtime_history_record(
         approval_required=approval_required,
         event_id=event_id,
         sequence=sequence,
-        error_code=_sanitize_code(error_code),
-        reason=_sanitize_text(reason),
+        error_code=error_code,
+        reason=reason,
         result_summary=sanitize_result_summary(result_summary),
     )
 
@@ -358,8 +354,8 @@ def project_runtime_status(
         approval_required=status == _AWAITING_APPROVAL,
         event_id=event_id,
         sequence=sequence,
-        error_code=_sanitize_code(error_code),
-        reason=_sanitize_text(reason),
+        error_code=error_code,
+        reason=reason,
         result_summary=sanitize_result_summary(result_summary),
     )
 
