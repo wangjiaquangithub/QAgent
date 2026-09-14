@@ -57,6 +57,8 @@ __all__ = [
     "history_of",
     "identity",
     "json_of",
+    "open_the_retry_window",
+    "park_other_unattended_tasks",
     "push_frames",
     "queue_tick_via_route",
     "reset_home",
@@ -284,6 +286,42 @@ def queue_tick_via_route(client: TestClient) -> dict[str, Any]:
     response = client.post("/api/tasks/queue/tick")
     assert response.status_code == 200, response.text
     return dict(response.json())
+
+
+def park_other_unattended_tasks(keep_task_id: str) -> None:
+    """Keep a global queue tick hermetic.
+
+    ``POST /api/tasks/queue/tick`` walks every unattended task in the store, and the
+    store accumulates the tasks other tests created. Two consequences are avoided:
+    a leftover task would be dragged into the legacy LangGraph path (a real
+    connection attempt), and the tick's concurrency cap counts active leftovers,
+    which can leave zero slots and make the tick advance nothing.
+    """
+    store = storage()
+    for summary in store.list_projects():
+        project = store.load_project(summary["id"])
+        if not project:
+            continue
+        changed = False
+        for index, task in enumerate(project.get("tasks") or []):
+            if str(task.get("id") or "") == keep_task_id:
+                continue
+            if str(task.get("run_mode") or "") != "unattended":
+                continue
+            if str(task.get("status") or "") == "paused":
+                continue
+            task["status"] = "paused"
+            project["tasks"][index] = task
+            changed = True
+        if changed:
+            store.save_project(project)
+
+
+def open_the_retry_window(task_id: str) -> None:
+    """A failed unattended task is picked up only after its backoff has elapsed."""
+    stored = stored_task(task_id)
+    stored["unattended_next_retry_at"] = None
+    save_task(task_id, stored)
 
 
 def identity(org_id: str = LOCAL_ORG, owner: str = LOCAL_OWNER) -> dict[str, Any]:

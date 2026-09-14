@@ -47,6 +47,8 @@ from _runtime_flow_support import (
     build_client,
     create_unattended_task,
     frame,
+    open_the_retry_window,
+    park_other_unattended_tasks,
     push_frames,
     queue_tick_via_route,
     reset_home,
@@ -93,48 +95,11 @@ def _failed_run(client, monkeypatch: pytest.MonkeyPatch) -> tuple[str, FakeRunti
     return task_id, fake
 
 
-def _park_other_unattended_tasks(keep_task_id: str) -> None:
-    """Keep the global tick hermetic.
-
-    ``POST /api/tasks/queue/tick`` walks every unattended task in the store, and
-    the store accumulates the tasks other tests created. Two consequences are
-    avoided here: a leftover task would be dragged into the legacy LangGraph path
-    (a real connection attempt), and the tick's concurrency cap counts active
-    leftovers, which can leave zero slots and make the tick advance nothing.
-    """
-    from _runtime_flow_support import storage
-
-    store = storage()
-    for summary in store.list_projects():
-        project = store.load_project(summary["id"])
-        if not project:
-            continue
-        changed = False
-        for index, task in enumerate(project.get("tasks") or []):
-            if str(task.get("id") or "") == keep_task_id:
-                continue
-            if str(task.get("run_mode") or "") != "unattended":
-                continue
-            if str(task.get("status") or "") == "paused":
-                continue
-            task["status"] = "paused"
-            project["tasks"][index] = task
-            changed = True
-        if changed:
-            store.save_project(project)
-
-
-def _open_the_retry_window(task_id: str) -> None:
-    """A failed task is picked up only after its backoff has elapsed."""
-    stored = stored_task(task_id)
-    stored["unattended_next_retry_at"] = None
-    save_task(task_id, stored)
-
-
 def _tick(client, task_id: str, *, retry_window: bool = False) -> dict:
+    """One real tick, with the two preconditions the queue itself relies on."""
     if retry_window:
-        _open_the_retry_window(task_id)
-    _park_other_unattended_tasks(task_id)
+        open_the_retry_window(task_id)
+    park_other_unattended_tasks(task_id)
     return queue_tick_via_route(client)
 
 
