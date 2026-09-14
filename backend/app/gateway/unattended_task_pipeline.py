@@ -596,6 +596,43 @@ async def _notify_lead_agent_task_failed(task_id: str, task: dict[str, Any]) -> 
             logger.debug("trigger lead follow run for failed task failed task_id=%s", task_id, exc_info=True)
 
 
+async def _maybe_run_via_runtime(task_id: str, task: dict[str, Any]) -> dict[str, Any] | None:
+    """Opt-in Runtime branch at the execution convergence point (default off).
+
+    Returns ``None`` when the existing LangGraph / legacy path must run exactly as
+    before: the server switch is off, the Runtime is not applicable, or the
+    trusted preconditions (server-resolved identity, execution authorization) do
+    not hold yet. A Runtime failure propagates rather than being folded back into
+    a second legacy execution, which would duplicate side effects.
+    """
+    from app.gateway import task_runtime_optin as optin
+
+    if not optin.runtime_unattended_enabled():
+        return None
+
+    storage = get_project_storage()
+    result = await optin.establish_runtime_run(
+        task,
+        identity=optin.resolve_server_task_runtime_identity(task_id),
+        authorized=is_task_execution_authorized(storage, task_id),
+        contract=optin.default_runtime_contract(),
+    )
+    if not result.use_runtime:
+        logger.info("unattended runtime opt-in: legacy (%s) task_id=%s", result.reason, task_id)
+        return None
+
+    if result.updated_task is not None:
+        _patch_task(task_id, lambda _t: dict(result.updated_task or {}))
+
+    return {
+        "task_id": task_id,
+        "ok": True,
+        "action": "runtime",
+        "runtime_run_id": result.run_id,
+        "runtime_action": result.action,
+    }
+
+
 async def _advance_unattended_task_impl(task_id: str) -> dict[str, Any]:
     """Advance one unattended task by a single pipeline step."""
     storage = get_project_storage()
@@ -606,6 +643,10 @@ async def _advance_unattended_task_impl(task_id: str) -> dict[str, Any]:
     _project, task = row
     if not is_unattended_task(task):
         return {"task_id": task_id, "ok": False, "error": "not_unattended"}
+
+    runtime_step = await _maybe_run_via_runtime(task_id, task)
+    if runtime_step is not None:
+        return runtime_step
 
     status = str(task.get("status") or "").strip().lower()
     if status == "paused":
