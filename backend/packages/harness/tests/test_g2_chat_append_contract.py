@@ -176,3 +176,53 @@ def test_append_message_idempotent_by_message_id(chat_db: None) -> None:
     assert second is not None
     assert msg_repo.count_messages(SESSION_KEY) == 1
     assert second["messageCount"] == 1
+
+
+@requires_agent_runtime
+def test_append_message_retry_returns_the_persisted_row(chat_db: None) -> None:
+    """The retry result is the existing row, and dedupe stays session-scoped."""
+    del chat_db
+
+    other_session = "agent:main:g2-contract-other"
+    sess_repo.upsert_session_row(
+        other_session,
+        thread_id=THREAD_ID,
+        created_at_ms=1,
+        updated_at_ms=1,
+        message_count=0,
+        context={},
+        title="t",
+    )
+
+    payload = {
+        "role": "user",
+        "content": "retry me twice",
+        "run_id": "run-1",
+        "thread_id": THREAD_ID,
+        "message_id": "u-ident",
+    }
+    first = chat_svc.append_message_and_touch_session(SESSION_KEY, **payload)
+    second = chat_svc.append_message_and_touch_session(SESSION_KEY, **payload)
+
+    assert first is not None and second is not None
+    # Same persisted row: same seq, same id, same session.
+    assert second["seq"] == first["seq"]
+    assert second["message_id"] == "u-ident"
+    assert second["session_key"] == SESSION_KEY
+    assert second["role"] == "user"
+
+    # The same messageId in another session must not be conflated with that row.
+    other = chat_svc.append_message_and_touch_session(other_session, **payload)
+    assert other is not None
+    assert other["session_key"] == other_session
+    assert msg_repo.count_messages(other_session) == 1
+    assert msg_repo.count_messages(SESSION_KEY) == 1
+
+    # A different messageId in the same session still appends a new row.
+    third = chat_svc.append_message_and_touch_session(
+        SESSION_KEY, **{**payload, "message_id": "u-ident-2", "content": "not a retry"}
+    )
+    assert third is not None
+    assert third["message_id"] == "u-ident-2"
+    assert third["seq"] != first["seq"]
+    assert msg_repo.count_messages(SESSION_KEY) == 2

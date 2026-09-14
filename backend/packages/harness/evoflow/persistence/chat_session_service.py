@@ -1140,9 +1140,18 @@ def append_message_and_touch_session(
 
             update_last_persisted_seq(sk, run_id=run_id, conn=conn)
         conn.commit()
-        if append_result is None:
-            return None
-        return {**append_result, "messageCount": count}
+        if append_result is not None:
+            return {**append_result, "messageCount": count}
+        # ``append_message`` returns None when the message_id is already present in
+        # this session (idempotent retry). Report the row that is already persisted
+        # instead of None, so callers can tell a retry apart from "nothing written".
+        # Lookup stays inside the same session_key + message_id scope as the dedupe.
+        requested_mid = str(flat_fields.get("message_id") or flat_fields.get("messageId") or "").strip()
+        if requested_mid:
+            persisted = msg_repo.get_message_by_message_id(sk, requested_mid, conn=conn)
+            if persisted is not None:
+                return {**persisted, "messageCount": count}
+        return None
 
     return run_db_with_retry(_write)
 
