@@ -219,15 +219,44 @@ def save_app(app_id: str, document: dict[str, Any]) -> None:
         if not isinstance(canvas, dict):
             canvas = {}
         version = int(document_n.get("version") or 1)
+        # Upsert in place: INSERT OR REPLACE would delete the existing row,
+        # and the ON DELETE CASCADE from evoflow_app_revisions would wipe all
+        # prior revision snapshots for this app on every save.
         conn.execute(
             """
-INSERT OR REPLACE INTO evoflow_apps (
+INSERT INTO evoflow_apps (
     id, name, description, icon, category,
     parameters_json, steps_json, goal_template, validation_template_json, flowchart_mermaid,
     execution_mode, auto_run, source, source_task_id, version,
     status, tags_json, created_at, updated_at, usage_count, last_used_at, canvas_json,
     answer_from_ref, final_rollup, final_rollup_agent, final_rollup_instruction
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+ON CONFLICT(id) DO UPDATE SET
+    name = excluded.name,
+    description = excluded.description,
+    icon = excluded.icon,
+    category = excluded.category,
+    parameters_json = excluded.parameters_json,
+    steps_json = excluded.steps_json,
+    goal_template = excluded.goal_template,
+    validation_template_json = excluded.validation_template_json,
+    flowchart_mermaid = excluded.flowchart_mermaid,
+    execution_mode = excluded.execution_mode,
+    auto_run = excluded.auto_run,
+    source = excluded.source,
+    source_task_id = excluded.source_task_id,
+    version = excluded.version,
+    status = excluded.status,
+    tags_json = excluded.tags_json,
+    created_at = excluded.created_at,
+    updated_at = excluded.updated_at,
+    usage_count = excluded.usage_count,
+    last_used_at = excluded.last_used_at,
+    canvas_json = excluded.canvas_json,
+    answer_from_ref = excluded.answer_from_ref,
+    final_rollup = excluded.final_rollup,
+    final_rollup_agent = excluded.final_rollup_agent,
+    final_rollup_instruction = excluded.final_rollup_instruction
 """,
             (
                 app_id,
