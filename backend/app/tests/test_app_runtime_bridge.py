@@ -478,3 +478,163 @@ def test_trigger_enabled_schedules_and_reports_ownership(
     assert triggered is True
     assert scheduled == ["app-runtime-apprun-14"]
     asyncio.run(asyncio.sleep(0))
+
+
+# ---------------------------------------------------------------------------
+# 8. AG-G2-APP-005-A01 — results readable through the *existing* App Run
+#    query path (real evoflow_app_runs sqlite row, no new API/table/field).
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture()
+def real_run_db(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Isolated temp evoflow_app_runs sqlite database per test."""
+    import tempfile
+
+    from evoflow.persistence.db import reset_db_for_tests
+
+    with tempfile.TemporaryDirectory() as tmp:
+        monkeypatch.setenv("EVOFLOW_HOME", tmp)
+        reset_db_for_tests()
+        yield
+        reset_db_for_tests()
+        import gc
+
+        gc.collect()
+
+
+def _persist_run(run_id: str, *, status: str = "planned") -> None:
+    from evoflow.persistence import app_repositories
+
+    # evoflow_app_runs carries a FK to evoflow_apps — seed the app first.
+    app_repositories.save_app(
+        "app-obs-1",
+        {
+            "name": "Obs Demo",
+            "steps": [{"ref": "1", "goal": "g", "tools": "a,b", "depends_on": []}],
+            "parameters": [],
+            "version": 1,
+            "status": "published",
+        },
+    )
+    app_repositories.save_run(
+        run_id,
+        {
+            "app_id": "app-obs-1",
+            "task_id": f"task-{run_id}",
+            "status": status,
+            "progress": 0,
+        },
+    )
+
+
+async def _execute_bridge(run_id: str, svc: FakeRuntimeService) -> dict[str, Any]:
+    return await bridge.run_app_workflow_on_runtime(
+        app_run_id=run_id,
+        app_id="app-obs-1",
+        app_version=None,
+        parameters={},
+        task_id=f"task-{run_id}",
+        org_id="org-1",
+        service=svc,
+    )
+
+
+async def test_completed_result_readable_via_existing_query_path(
+    real_run_db: None,
+) -> None:
+    from evoflow.persistence import app_repositories
+
+    _persist_run("apprun-obs-1")
+    outcome = await _execute_bridge(
+        "apprun-obs-1",
+        FakeRuntimeService(final_status="completed", result_payload={"summary": "季度汇总完成"}),
+    )
+    assert outcome["app_run_status"] == "completed"
+    run = app_repositories.load_run("apprun-obs-1")
+    assert run is not None
+    assert run["status"] == "completed"
+    assert int(run["progress"]) == 100
+    assert run["result_summary"] == "季度汇总完成"
+    assert run["completed_at"]
+
+
+async def test_failed_result_readable_with_error_via_existing_query_path(
+    real_run_db: None,
+) -> None:
+    from evoflow.persistence import app_repositories
+
+    _persist_run("apprun-obs-2")
+    await _execute_bridge(
+        "apprun-obs-2",
+        FakeRuntimeService(
+            final_status="failed",
+            error_payload={"code": "boom", "message": "LLM provider unreachable"},
+        ),
+    )
+    run = app_repositories.load_run("apprun-obs-2")
+    assert run is not None
+    assert run["status"] == "failed"
+    assert run["error"] == "LLM provider unreachable"
+    assert run["completed_at"]
+
+
+async def test_timed_out_maps_to_failed_with_nonempty_error(real_run_db: None) -> None:
+    from evoflow.persistence import app_repositories
+
+    _persist_run("apprun-obs-3")
+    await _execute_bridge(
+        "apprun-obs-3",
+        FakeRuntimeService(
+            final_status="timed_out",
+            error_payload={"code": "timeout", "message": "Runtime run timed out"},
+        ),
+    )
+    run = app_repositories.load_run("apprun-obs-3")
+    assert run is not None
+    # Frozen semantics: timed_out is never a new enum, it is the existing failed.
+    assert run["status"] == "failed"
+    assert run["error"]
+    assert run["completed_at"]
+
+
+async def test_cancelled_survives_late_task_center_polling(real_run_db: None) -> None:
+    from evoflow.collab.app_runner import _sync_run_from_task
+    from evoflow.persistence import app_repositories
+
+    _persist_run("apprun-obs-4")
+    await _execute_bridge("apprun-obs-4", FakeRuntimeService(final_status="cancelled"))
+    run = app_repositories.load_run("apprun-obs-4")
+    assert run is not None and run["status"] == "cancelled"
+
+    # A late Task Center poll claiming the task completed must not win.
+    status = _sync_run_from_task(run, task_status="completed", progress=100)
+    assert status == "cancelled"
+    reread = app_repositories.load_run("apprun-obs-4")
+    assert reread is not None
+    assert reread["status"] == "cancelled"
+
+
+def test_switch_off_creates_no_runtime_run_and_leaves_run_untouched(
+    monkeypatch: pytest.MonkeyPatch, real_run_db: None
+) -> None:
+    from evoflow.persistence import app_repositories
+
+    monkeypatch.delenv("EVOFLOW_APP_WORKFLOW_RUNTIME", raising=False)
+    _persist_run("apprun-obs-5")
+    svc = FakeRuntimeService()
+
+    triggered = bridge.trigger_workflow_app_runtime_run(
+        run_id="apprun-obs-5",
+        app_id="app-obs-1",
+        app_version=None,
+        parameters={},
+        task_id="task-apprun-obs-5",
+        org_id="org-1",
+        service=svc,
+    )
+    assert triggered is False
+    assert svc.calls == []  # zero Runtime reads and zero Runtime writes
+    run = app_repositories.load_run("apprun-obs-5")
+    assert run is not None
+    assert run["status"] == "planned"  # legacy path untouched by the bridge
