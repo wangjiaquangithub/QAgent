@@ -3,7 +3,7 @@
 - **状态**：已接受（Accepted）
 - **决策日期**：2026-09-12
 - **决策人**：QAgent 产品与工程团队
-- **关联计划**：[AgentScope 2.0 替换、正式数据库收口与云端 / 本地运行底座计划](../plan/agentscope-2-enterprise-runtime-foundation-plan.md)
+- **关联计划**：[AgentScope 2.0 企业 Runtime 路线图](../plan/agentscope-2-enterprise-runtime-roadmap.md)
 
 ## 1. 决策
 
