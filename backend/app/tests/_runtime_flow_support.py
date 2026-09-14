@@ -68,6 +68,7 @@ __all__ = [
     "schedule_a_run_via_route",
     "start_via_route",
     "statuses_of",
+    "stop_via_route",
     "storage",
     "stored_task",
     "tick",
@@ -275,6 +276,17 @@ def start_via_route(client: TestClient, task_id: str) -> dict[str, Any]:
     ``advance_unattended_task`` — the same step the queue tick runs.
     """
     response = client.post(f"/api/tasks/{task_id}/start")
+    assert response.status_code == 200, response.text
+    return dict(response.json())
+
+
+def stop_via_route(client: TestClient, task_id: str) -> dict[str, Any]:
+    """The「停止」control, through its real route.
+
+    Pauses the task and — like a plan revision — withdraws the execution consent.
+    It is not a Runtime cancellation: the run the attempt may have is left running.
+    """
+    response = client.post(f"/api/tasks/{task_id}/stop")
     assert response.status_code == 200, response.text
     return dict(response.json())
 
