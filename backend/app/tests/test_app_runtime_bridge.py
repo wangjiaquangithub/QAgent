@@ -102,6 +102,8 @@ class FakeRuntimeService:
         run_id: str | None = None,
     ) -> dict[str, Any]:
         self.calls.append(("grant_approval", approval_id, run_id))
+        if self.fail_on == "grant_approval":
+            raise RuntimeError("approval store unavailable")
         run = self._find(str(run_id))
         run["status"] = self.final_status
         run["result_payload"] = self.result_payload
@@ -110,6 +112,8 @@ class FakeRuntimeService:
         return {"run_id": run_id, "status": run["status"]}
 
     async def get_result(self, run_id: str, org_id: str | None = None) -> dict[str, Any]:
+        if self.fail_on == "get_result":
+            raise RuntimeError("result store unavailable")
         run = self._find(run_id)
         return {
             "run_id": run_id,
@@ -638,3 +642,135 @@ def test_switch_off_creates_no_runtime_run_and_leaves_run_untouched(
     run = app_repositories.load_run("apprun-obs-5")
     assert run is not None
     assert run["status"] == "planned"  # legacy path untouched by the bridge
+
+
+# ---------------------------------------------------------------------------
+# 9. AG-G2-APP-006-A01 — failure boundaries, retries and terminal monotonicity
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "fail_on", ["create_run", "start_run", "grant_approval", "get_result"]
+)
+def test_runtime_call_failure_lands_on_failed_terminal_never_legacy(
+    monkeypatch: pytest.MonkeyPatch,
+    app_run_store: dict[str, Any],
+    fail_on: str,
+) -> None:
+    """Every Runtime call boundary that can fail ends in the existing failed
+    terminal write path through the detached wrapper — never a silent legacy
+    re-execution and never a stuck run."""
+    monkeypatch.setenv("EVOFLOW_APP_WORKFLOW_RUNTIME", "1")
+    run_id = f"apprun-fail-{fail_on}"
+    _seed_run(app_run_store, run_id)
+    svc = FakeRuntimeService(fail_on=fail_on)
+
+    import evoflow.subagents.detached_poll_scheduler as dps
+
+    captured: dict[str, Any] = {}
+
+    def fake_schedule(coro: Any, *, name: str | None = None) -> None:
+        captured["coro"] = coro
+
+    monkeypatch.setattr(dps, "schedule_detached_poll", fake_schedule)
+
+    triggered = bridge.trigger_workflow_app_runtime_run(
+        run_id=run_id,
+        app_id="app-1",
+        app_version=None,
+        parameters={},
+        task_id=f"task-{run_id}",
+        org_id="org-1",
+        service=svc,
+    )
+    assert triggered is True
+    asyncio.run(captured["coro"])
+
+    run = app_run_store["runs"][run_id]
+    assert run["status"] == "failed"
+    assert "Runtime bridge execution failed" in str(run["error"])
+
+
+@pytest.mark.parametrize("final_status", ["completed", "failed", "cancelled", "timed_out"])
+async def test_repeated_terminal_projection_is_idempotent_and_monotonic(
+    app_run_store: dict[str, Any], final_status: str
+) -> None:
+    """A repeated Runtime terminal projection neither regresses the App Run
+    nor produces duplicate side-effect writes."""
+    run_id = f"apprun-rep-{final_status}"
+    _seed_run(app_run_store, run_id)
+    svc = FakeRuntimeService(final_status=final_status)
+    await bridge.run_app_workflow_on_runtime(
+        app_run_id=run_id,
+        app_id="app-1",
+        app_version=None,
+        parameters={},
+        task_id=f"task-{run_id}",
+        org_id="org-1",
+        service=svc,
+    )
+    first_run = app_run_store["runs"][run_id]
+    expected_terminal = "failed" if final_status == "timed_out" else final_status
+    assert first_run["status"] == expected_terminal
+    writes_after_first = len(app_run_store["writes"])
+
+    # Repeat the exact same projection (e.g. a retried trigger reading the
+    # same Runtime result).
+    result = await svc.get_result(svc.runs[bridge.app_run_idempotency_key(run_id)]["run_id"])
+    projected = bridge.project_runtime_result_to_app_run(run_id, result)
+    assert projected == expected_terminal
+    assert len(app_run_store["writes"]) == writes_after_first  # no duplicate write
+    # An already-terminal App Run is never flipped back to executing/planned.
+    late_poll = dict(app_run_store["runs"][run_id])
+    from evoflow.collab.app_runner import _sync_run_from_task
+
+    assert _sync_run_from_task(late_poll, task_status="executing", progress=50) == expected_terminal
+
+
+def test_same_org_retry_reuses_runtime_run_in_real_repository() -> None:
+    """Same org + same app_run_id → same idempotency key → the Runtime
+    repository (real, in-memory sqlite) returns the existing run instead of
+    creating a second one."""
+    import sqlalchemy as sa
+    from sqlalchemy.pool import StaticPool
+
+    from app.qagent_runtime.repository import RuntimeRepository
+
+    engine = sa.create_engine(
+        "sqlite://",
+        poolclass=StaticPool,
+        connect_args={"check_same_thread": False},
+    )
+    repo = RuntimeRepository(engine, create_schema=True)
+    key = bridge.app_run_idempotency_key("apprun-retry-1")
+
+    first = repo.create_run(org_id="org-1", task_id="t1", input_payload={}, idempotency_key=key)
+    retry = repo.create_run(org_id="org-1", task_id="t1", input_payload={}, idempotency_key=key)
+    assert retry["run_id"] == first["run_id"]
+    assert retry["task_id"] == "t1"
+    engine.dispose()
+
+
+def test_cross_org_same_app_run_id_is_isolated_in_real_repository() -> None:
+    """Cross org with the identical app_run_id text: the Runtime repository
+    scopes idempotency by org_id, so no run is shared or reused."""
+    import sqlalchemy as sa
+    from sqlalchemy.pool import StaticPool
+
+    from app.qagent_runtime.repository import RuntimeRepository
+
+    engine = sa.create_engine(
+        "sqlite://",
+        poolclass=StaticPool,
+        connect_args={"check_same_thread": False},
+    )
+    repo = RuntimeRepository(engine, create_schema=True)
+    key = bridge.app_run_idempotency_key("apprun-shared-text")
+
+    org_a = repo.create_run(org_id="org-a", task_id="t", input_payload={}, idempotency_key=key)
+    org_a_retry = repo.create_run(org_id="org-a", task_id="t", input_payload={}, idempotency_key=key)
+    org_b = repo.create_run(org_id="org-b", task_id="t", input_payload={}, idempotency_key=key)
+    assert org_a_retry["run_id"] == org_a["run_id"]
+    assert org_b["run_id"] != org_a["run_id"]
+    assert org_b["org_id"] == "org-b"
+    engine.dispose()
