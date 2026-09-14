@@ -513,6 +513,14 @@ def _sync_run_from_task(run: dict[str, Any], *, task_status: str, progress: int)
     run_id = str(run.get("id") or "").strip()
     mapped = _TASK_STATUS_TO_RUN.get(str(task_status or "").strip().lower())
     current = str(run.get("status") or "").strip().lower()
+    # AG-G2-APP-003-A01: a terminal App Run (e.g. written by the Runtime bridge)
+    # is never regressed by Task Center polling. Mirrors the frozen automation
+    # monotonicity semantics (AG-G2-AUTO-011).
+    if current in ("completed", "failed", "cancelled"):
+        if current == "completed" and int(run.get("progress") or 0) < 100:
+            app_repositories.update_run_status(run_id, "completed", progress=100)
+            run["progress"] = 100
+        return current
     effective = mapped or current or "running"
     prog = int(progress or 0)
     # 应用运行：completed 一律展示 / 落库 100%（协作主任务中间态仍可能是 99）
@@ -850,6 +858,7 @@ def run_app(
     app: dict[str, Any] | None = None,
     run_kind: str | None = None,
     trigger_kind: str | None = None,
+    org_id: str | None = None,
 ) -> dict[str, Any]:
     """Unified entry point for running an application.
 
@@ -861,7 +870,10 @@ def run_app(
         app_version: Optional pinned revision for workflow OpenAPI runs
         app: Optional preloaded definition (wins over app_version load)
         run_kind: ``debug`` | ``production`` | ``scheduled`` (defaults by channel)
-        trigger_kind: ``manual`` | ``api`` | ``schedule`` …
+        trigger_kind: ``manual`` | ``api`` | ``schedule``,
+        org_id: Authenticated organization scope from the HTTP entry. Required
+            for the AG-G2-APP-003-A01 Runtime bridge opt-in; callers without a
+            request context (scheduler) leave it unset and keep the legacy path.
 
     Returns:
         Run result dict with run_id, task_id, status, etc.
@@ -906,6 +918,23 @@ def run_app(
             run_kind=kind or "debug",
             trigger_kind=trigger or "manual",
         )
+        if org_id:
+            # AG-G2-APP-003-A01 Runtime bridge opt-in: exactly one Runtime
+            # execution owns this run and its terminal is projected back onto
+            # evoflow_app_runs. Legacy dispatch is skipped only for this run;
+            # with the switch off (or no org context) the legacy path below
+            # stays exactly as it was.
+            from app.gateway.app_runtime_bridge import trigger_workflow_app_runtime_run
+
+            if trigger_workflow_app_runtime_run(
+                run_id=str(result.get("run_id") or ""),
+                app_id=app_id,
+                app_version=app_version if app is None else None,
+                parameters=parameters,
+                task_id=str(result.get("task_id") or ""),
+                org_id=org_id,
+            ):
+                return result
         auth = str(trigger or "manual").strip().lower() or "api"
         if auth in {"manual", "schedule", "scheduled", "cron"}:
             auth = "api"

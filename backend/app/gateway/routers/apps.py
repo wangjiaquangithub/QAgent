@@ -496,6 +496,12 @@ async def run_app_endpoint(
     from evoflow.authz.http_guard import require_app_visible
 
     require_app_visible(http_request, app_id)
+    # AG-G2-APP-003-A01: forward the authenticated organization scope so the
+    # Runtime bridge (when opted in server-side) never falls back to the
+    # Runtime's own default org. The response contract is unchanged.
+    from evoflow.authz.context import resolve_request_principal
+
+    org_id = str(resolve_request_principal(http_request).get("org_id") or "").strip() or None
     try:
         # run_app() dispatches workflow tasks synchronously (apply_workflow_dispatch).
         return await asyncio.to_thread(
@@ -506,6 +512,7 @@ async def run_app_endpoint(
             thread_id=request.thread_id,
             run_kind=request.run_kind or "debug",
             trigger_kind=request.trigger_kind or "manual",
+            org_id=org_id,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
