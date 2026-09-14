@@ -117,6 +117,8 @@ SSE / API 必须支持按 cursor 或 sequence 续读；客户端重连不能因�
 
 **目标**：按固定顺序逐域迁移 Agent / 数字员工、Apps / 工作流、Goal / 任务 / 协同、聊天 / 会话、自动化 / 调度、工作空间 / 文件 / 资产、知识 / 记忆 / 工具 / MCP / 渠道。
 
+**执行单位与顺序**：G2 的工作单位是**任务卡**（一个真实旧入口 → 一次 Runtime 执行 → 一次旧业务记录终态回写），不是业务域母任务。同一入口按「首次闭环 → 状态投影 → 事件 / SSE 兼容 → 业务语义 → 用户可测业务包」依次推进，不同入口的首次闭环可并行；首批并行入口为聊天 / Live Run、App Runner、无人值守 / Task Center（其中聊天 / Live Run 与无人值守 / Task Center 的首次闭环已集成，App Runner 仍待做；卡片明细与证据见执行计划）。**只有该域的入口、状态投影、事件兼容、业务语义和用户可测业务包全部完成，该域才可标记为已迁移**，不得用单个入口的首次闭环代表整域迁移完成。
+
 每个业务域都必须完成：入口和写路径盘点、对象与事件映射、Adapter 接入、正式 PostgreSQL 写入和恢复、域测试 / 回滚 / 对账、灰度观察期验收。任何域切换前都必须具备权限、状态机、事件、幂等、失败恢复、数据对账、回滚和旧链路停止写入证据。
 
 **放行门槛**：该域的正式数据来源、组织隔离、运行状态、事件序列、迁移差异、回滚边界和旧路径写入验证全部可解释；未完成域不阻塞其他域的设计，但不能被标记为已迁移。
@@ -158,6 +160,7 @@ SSE / API 必须支持按 cursor 或 sequence 续读；客户端重连不能因�
 ## 7. 相关文档
 
 - [AgentScope 2.0 Runtime 执行计划](./agentscope-2-enterprise-runtime-execution-plan.md)
+- [Plan 归并说明（G0–G4 拆卡成果 → 唯一权威结构）](./agentscope-2-plan-consolidation-notes.md)
 - [阶段 1.5A QAgent Runtime 实现说明](./phase-1.5A-qagent-runtime.md)
 - [验收测试矩阵](./agentscope-2-acceptance-test-matrix.md)
 - [Runtime 能力清单](./agentscope-2-runtime-inventory.md)

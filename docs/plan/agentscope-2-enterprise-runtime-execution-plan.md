@@ -1,13 +1,16 @@
 # AgentScope 2.0 Runtime 执行计划
 
-- 文档角色：唯一实时执行进度来源
+- 文档角色：唯一实时执行进度来源；**唯一** `AG-*` 可派工卡片来源
 - 更新日期：2026 年 9 月 14 日
 - 适用路线图：[AgentScope 2.0 企业 Runtime 路线图](./agentscope-2-enterprise-runtime-roadmap.md)
 - 关联 ADR：[ADR-003：QAgent Agent Runtime 与正式运行底座决策](../adr/003-agent-runtime-and-agentscope-2-adoption.md)
-- 当前分支：`codex/g2-chat-live-run`
-- 当前基线提交：`b09adf4 docs(runtime): add migration plan and acceptance scaffold`
+- 归并记录：[Plan 归并说明（G0–G4 拆卡成果 → 唯一权威结构）](./agentscope-2-plan-consolidation-notes.md)
+- 当前分支：`codex/agentscope-runtime`
+- 当前基线提交：`bdafb35 merge(chat): fix idempotent message append`
 
 > 本计划按可直接派工的任务维护。状态以代码、测试和验收证据为准，不以旧计划中的“已完成”描述为准。本次只重写计划和引用，不修改 Runtime 代码、数据库 schema 或公共 API。
+>
+> 2026-09-14 起，本文件与路线图构成 Runtime 迁移的**唯一**权威计划结构：路线图只描述阶段、目标、依赖、放行门槛与顺序；本文件是唯一的 `AG-*` 卡片来源。`docs/plan/agentscope-2-enterprise-runtime-foundation-plan.md` 不再作为长期权威入口，其仍有效的内容已按 [归并记录](./agentscope-2-plan-consolidation-notes.md) 逐项并入。
 
 ## 1. 使用规则
 
@@ -258,6 +261,105 @@ G2～G4 当前仍然是阶段母任务，尚未开始，不提前伪装成 Agent
 
 G2 业务域至少需要为“盘点、映射、接入、正式写入 / 恢复、测试 / 回滚 / 对账、灰度观察”各实例化一组卡片；G3 / G4 的性能、故障、备份、灰度、回滚和旧链路下线也必须逐项实例化。**在卡片实例化前，G2～G4 任务仍保持 `Not Started`。**
 
+## 2.5 G2 波次化拆卡与执行约束（归并自拆卡分支）
+
+本节内容归并自 `origin/codex/g2-execution-workbreakdown`（`0d73a1f`）的有效拆卡成果，逐项映射见 [归并记录](./agentscope-2-plan-consolidation-notes.md)。本节只新增约束与 App 入口的新卡，不改写既有 `G2-<域>-00x` 母任务编号。
+
+### 2.5.1 波次顺序（同一入口串行，不同入口可并行）
+
+```text
+G2.1 首次闭环  →  G2.2 状态投影  →  G2.3 事件 / SSE 兼容  →  G2.4 业务语义（每语义一张卡）  →  G2.5 用户可测业务包
+```
+
+- **G2 的工作单位是任务卡，不是业务域。** 每张 G2.1 卡只交付：一个真实旧入口 → 一次 Runtime 执行 → 一次旧业务记录终态回写 → 可从原 API 或原页面验证的结果。
+- 同一入口必须依次经过 G2.1 → G2.2 → G2.3 → G2.4 → G2.5；不同入口的 G2.1 可以并行。
+- 一个入口的“可给负责人测”状态只要求完成该入口的 G2.1 与 G2.5；G2.2～G2.4 的实际完成范围必须在验收包中如实标记，不得假称全域迁移完成。
+
+### 2.5.2 写域与过程约束
+
+- 不同入口使用独立 worktree / 分支，写域不重叠；任何两个 Agent 不得同时修改同一旧业务目录、同一旧状态表或同一个前端文件。
+- `backend/app/qagent_runtime/` 与 `backend/migrations/versions/` 始终由 Runtime 负责人独占；业务卡发现 Runtime API 缺口时只提交最小接口需求与复现，不得直接修改内核。
+- 编辑前列出允许修改文件，原则上不超过 6 个；超出即拆新卡。
+- 只读当前入口及最多两个直接必要的调用点；首个实际 diff 的时间盒为 15 分钟，超时只能报告一个已核实、不可绕过的具体阻塞，不得继续泛读。
+- 旧 LangGraph 链路在 G4 前保留以支持回滚，但**已接入 Runtime 的入口不得在 Runtime 失败时静默 fallback 到 LangGraph**；失败必须让原入口得到明确、可读的失败结果。
+- 本阶段明确不吸收：SQLite 历史数据迁移、HA / 多地域、全量 Chaos、全量压测、设备 lease / fencing 与 scheduler HA（分别属于 `G4-MIG-001/002`、`G3-HA-001`、`G3-CHAOS-001`、`G3-LOAD-002`）。
+
+### 2.5.3 G2.1 单卡完成标准
+
+1. 真实旧入口创建或关联一个可追溯的 Runtime Run；
+2. 该 Run 经 Runtime 实际执行，不用 mock 结果、不静默回退到 LangGraph；
+3. `completed` 或 `failed` 终态及最终结果 / 错误回写到对应旧业务记录；
+4. 原 API 或原页面可读取该结果，且跨 org / 无权限访问不泄漏；
+5. 至少一个聚焦该入口的自动化测试，以及不超过 8 步的手工测试步骤；
+6. 交付报告给出入口、业务记录 ID、`run_id`、验证命令、验证结果和未覆盖项。
+
+### 2.5.4 新增 `AG-*` 卡片（App 入口）
+
+Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串行，`AG-G2-APP-003-A01` 的允许修改文件清单必须由 `AG-G2-APP-001-A01` 的产物登记后才能派工。
+
+| ID | 母任务 | 阶段 | 目标（单一动作） | 依赖 | 允许修改范围 | 禁止范围 | 唯一验收命令 / 标准 | 停止条件 | 时间盒 | 状态 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| AG-G2-APP-001-A01 | G2-APP-001 | G2 | 只读盘点 App 启动入口、旧业务记录与写路径，并给出可复用的 Runtime 公开调用点，产出 `inventory.md` 与允许修改文件清单 | — | 只读 App 启动 / Run 相关模块与既有 Adapter 调用点；只写 `artifacts/acceptance/<release>/AG-G2-APP-001-A01/<attempt>/inventory.md` | 不改任何代码；不改 `backend/app/qagent_runtime/`、`backend/migrations/versions/`、Gateway 主干与 router registry；不删 / 替换 LangGraph；不改前端 | 先读 `agentscope-2-g2-chat-entry-map.md` 与 `agentscope-2-g2-automation-entry-map.md` 作对照，再只读定位入口；`inventory.md` 必须同时给出：①真实入口（前端或 HTTP）②对应旧业务记录与终态字段 ③可复用 Runtime 公开调用点 ④允许修改文件清单（≤6 个）。缺任一项不得标 `Done` | 入口不唯一、需要改 Runtime 内核、或需要新增 schema / 第二状态源时立即停止并转决策卡 | 60m | Not Started |
+| AG-G2-APP-002-A01 | G2-APP-002 | G2 | 固化 App Run 与 Runtime Run / Event / 结果 / 终态回写字段的映射 | AG-G2-APP-001-A01 | 只读代码；只写 `artifacts/acceptance/<release>/AG-G2-APP-002-A01/<attempt>/mapping.md` | 不改 Runtime 契约与 schema；不新增字段；不改公共 API；不改 Gateway 主干 | `mapping.md` 对每个 App Run 状态、终态字段、结果引用、错误摘要与 org 权限给出唯一对应，并显式列出无法一一对应的项（含原因） | 需要新增 schema、第二状态源或改变公共 API 时停止；不得自行拍板映射语义 | 75m | Not Started |
+| AG-G2-APP-003-A01 | G2-APP-003 | G2 | 打通一个真实 App 启动入口 → 一次 Runtime 执行 → 终态回写原 App Run，并可从原 API 读取 | AG-G2-APP-001-A01、AG-G2-APP-002-A01 | 以 `AG-G2-APP-001-A01` 产出的 ≤6 个文件清单为准（清单未登记前不得派工） | 不改 `backend/app/qagent_runtime/`、`backend/migrations/versions/`；不改前端页面结构与导航；不改其他业务域；不删 / 替换 LangGraph；不得静默 fallback | 一个聚焦该入口的自动化测试通过，且 5～8 步手工验证在原页面 / 原 API 走通成功与失败路径；报告给出入口、业务记录 ID、`run_id`、验证命令、验证结果、未覆盖项 | 需要改 Runtime 内核 / schema、需要第二状态源、或同类失败第 2 次出现时停止 | 90m | Not Started |
+
+### 2.5.5 G2 任务卡强制模板
+
+```text
+【任务名称】G2.<波次>-<业务入口>-<单一目标>
+【目标】只打通 <一个现有真实入口> 到 Runtime 的 <一个可读取结果>。
+【入口与回写】旧入口/API：…；旧业务记录：…；Runtime Run：…；终态回写字段：…。
+【允许修改】开始编辑前列出不超过 6 个文件/目录；超出即拆新卡。
+【禁止修改】backend/app/qagent_runtime/；backend/migrations/versions/；前端页面结构或导航；其他业务域；删除/替换 LangGraph。
+【暂不做】SSE、断线恢复、所有子类型、设备、多实例、完整审批、HA、压测、全量迁移（除非本卡名称明确包含其中一项）。
+【自动化验证】一个聚焦测试 + 必要的既有回归；不跑无关全仓检查。
+【手工验证】原页面/API 的 5～8 步成功/失败验证；列出预期结果与 run_id/业务记录证据。
+【完成标准】真实入口关联 Runtime Run；Runtime 实际执行；终态回写；原页面/API 可读；测试与手工步骤均可复现。
+【过程约束】只读入口和最多两个直接必要调用点；15 分钟内出现首个 diff；没有 diff 时只报告一个具体、不可绕过的阻塞。
+```
+
+### 2.5.6 G1 验收场景集（用于 `G1-GATE-001`）
+
+`G1-GATE-001` 的验收场景至少覆盖下表的全部场景（归并自拆卡分支 §5.1）：
+
+| 场景 | 必须证明 |
+| --- | --- |
+| 成功执行 | Approved Run 经真实 `AgentScope Agent.reply(...)` 产生结果；Run 状态、Result、Event、Recovery Point 均可追溯 |
+| Provider 失败 | 失败分类、错误事件与 Run 终态一致；可按合法策略重试或转人工处置；不重复副作用 |
+| 取消 | 取消按已冻结的状态机与安全检查点处理；不把已完成结果覆盖为旧状态 |
+| 服务重启 | 重启前后的 Run / Event / Recovery Point 可从 PostgreSQL 恢复；不创建第二个执行者 |
+| 重复触发 / 回执 | 幂等键与 claim 使重复请求、迟到事件、重复回执收敛，不重复执行、不覆盖结果 |
+| SSE 断线 | 客户端可用 cursor / sequence 续读；事件顺序可验证；缺口可发现而非静默跳过 |
+| 授权 | 跨 org 或无权限访问被拒绝；服务端不信任客户端传入的 org / owner 上下文 |
+
+### 2.5.7 统一回报格式（所有 `AG-*` 卡片）
+
+```text
+【卡片】Gx.y-名称 / AG-*
+【工作树 / 分支】…
+【旧入口 / 原页面或 API】…
+【Runtime Run / 旧业务记录证据】run_id=…；business_id=…
+【改动文件】…（不超过该卡范围）
+【自动化】命令 + 原始结果
+【手工验证】5～8 步 + 成功 / 失败实际结果
+【未覆盖 / 阻塞】只列本卡明确未做项；若阻塞，给出最小复现和所需接口
+【Git】commit / push 状态；不得夹带其他 worktree 修改
+```
+
+## 2.6 已集成入口与阶段状态（截至 2026-09-14）
+
+下表用于防止已完成工作被重新派工。状态以集成分支实际提交为准；如与验收记录不一致，由负责人修正。
+
+| 范围 | 状态 | 集成分支证据 | 对应归并项 |
+| --- | --- | --- | --- |
+| G0.7 PostgreSQL 真实并发验收 | 已完成 / 已集成 | `fadddd0 merge(g0): integrate PostgreSQL concurrency acceptance` | 来源 G0.7；母任务 `G0-DB-003` 已登记该提交（该母任务的 `AG-*-A01`～`A06` 不得重复派工） |
+| G2.1-A 聊天 / Live Run 首次接入 | 已完成 / 已集成 | `0679886 merge(chat): integrate Live Run runtime bridge`；消息幂等修复 `bdafb35` | 来源 G2.1-A；证据文档 `agentscope-2-g2-chat-entry-map.md`、`agentscope-2-g2-chat-manual-acceptance.md` |
+| G2.1-C 无人值守 / Task Center 首次接入 | 已完成 / 已集成 | `433a9df merge(automation): integrate Task Center runtime opt-in` | 来源 G2.1-C；证据文档 `agentscope-2-g2-automation-entry-map.md`、`agentscope-2-g2-automation-completion-checklist.md`、`agentscope-2-g2-automation-manual-acceptance.md` |
+| G2.5 用户可测业务包（聊天、自动化） | 已完成 | `agentscope-2-g2-chat-manual-acceptance.md`、`agentscope-2-g2-automation-manual-acceptance.md` | 来源 G2.5-A / G2.5-C；不再派工 |
+| G2.1-B App Runner 首次接入 | 未开始 | 集成分支无 App Runner 运行时代码与对应 merge 提交 | 见 §2.5.4 新增卡片 |
+| G2.2 / G2.3（聊天、自动化） | 部分已完成 / 已集成 | 聊天 `chat_runtime_result.py`、`chat_runtime_stream_bridge.py`；自动化 `task_runtime_projection.py`、`task_runtime_event_bridge.py`、`task_runtime_cursor.py` | 余项范围以既有 G2 文档为准，不新造卡 |
+| G0-DEC-001～004 四项契约 | Blocked（未变） | 无负责人签署记录 | 见 [归并记录](./agentscope-2-plan-consolidation-notes.md) 第 4 节 |
+
 ## 3. G0：生产正确性底座
 
 ### 3.1 已完成或基本完成
@@ -278,7 +380,7 @@ G2 业务域至少需要为“盘点、映射、接入、正式写入 / 恢复�
 
 | ID | 阶段 | Milestone | 任务 | 状态 | Owner | 依赖 | 工作量 | 修改范围 | 验收标准 | 测试与证据 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| G0-DB-003 | G0 | PostgreSQL 集成 | 建立真实 PostgreSQL 集成测试环境 | In Progress | DB | G0-DB-001、G0-DB-002 | 2d | disposable PostgreSQL、CI / 本地 fixture、`postgres_verify.py` | 真实 PostgreSQL 执行 migration、事务、org 隔离、幂等和两连接并发测试；可重复清理 | 目标命令：`cd backend && .venv/bin/python scripts/postgres_verify.py`；需归档数据库版本、日志和 verdict |
+| G0-DB-003 | G0 | PostgreSQL 集成 | 建立真实 PostgreSQL 集成测试环境 | Implemented（已集成） | DB | G0-DB-001、G0-DB-002 | 2d | disposable PostgreSQL、CI / 本地 fixture、`postgres_verify.py` | 真实 PostgreSQL 执行 migration、事务、org 隔离、幂等和两连接并发测试；可重复清理 | 目标命令：`cd backend && .venv/bin/python scripts/postgres_verify.py`；需归档数据库版本、日志和 verdict。**2026-09-14 归并登记：真实并发验收已由 `fadddd0 merge(g0): integrate PostgreSQL concurrency acceptance` 合入集成分支；其 `AG-G0-DB-003-A01`～`A06` 不得重复派工。是否可标 `Done` 需负责人对照该提交的验收记录确认** |
 | G0-DB-004 | G0 | Migration 运维 | migration 升级、失败和回滚验证 | Not Started | DB | G0-DB-003 | 2d | `backend/migrations/versions`、migration 验收脚本 | 中断 / 失败 migration 可重试；upgrade / downgrade 结果可解释；旧约束不会残留 | `postgres_verify.py` migration upgrade / downgrade 输出；需新增故障注入记录 |
 | G0-DB-005 | G0 | Backup / PITR | PostgreSQL 备份恢复和 PITR 输入确认 | Not Started | DB | G0-DB-003 | 2d | backup / restore runbook、DB 运维配置、证据目录 | 能生成脱敏验证备份；恢复到隔离库后 schema、Run、Event、组织边界一致；形成 RPO / RTO 基线 | 备份文件校验、restore 日志、`db-checks/`、恢复记录；PITR 具体演练在 G3-DB-001 |
 | G0-DEC-001 | G0 | Contract Decision | 冻结 cancel 后 Approval 的最终状态 | Blocked | Release / Integration | — | 1d | ADR / Runtime 状态契约，不先改实现 | 明确 Approval 是 `cancelled`、`expired` 或保持批准态；写出取消与批准竞态、审计和重试规则 | 阻塞原因：负责人未拍板；解除条件：ADR / 契约记录签署并补测试向量 |
@@ -481,3 +583,4 @@ G2 业务域至少需要为“盘点、映射、接入、正式写入 / 恢复�
 | 日期 | 变更 | 证据 / 备注 |
 | --- | --- | --- |
 | 2026-09-13 | 将原 foundation plan 拆分为路线图与执行计划；登记 G0～G4 任务、状态、Owner、依赖、工作量、修改范围和验收证据 | 基线 Runtime 回归：27 passed；未修改 Runtime 代码、schema 或公共 API |
+| 2026-09-14 | 归并 `origin/codex/g2-execution-workbreakdown`（`0d73a1f`）的 G0–G4 拆卡成果：新增 §2.5 G2 波次化拆卡与执行约束、§2.5.4 三张 App 入口 `AG-*` 卡、§2.5.6 G1 验收场景集、§2.5.7 统一回报格式、§2.6 已集成入口状态；更新文档头与 `G0-DB-003` 登记 | 逐项映射见 `agentscope-2-plan-consolidation-notes.md`；未使用 git merge / cherry-pick；未修改任何代码、schema、ADR；未恢复 foundation-plan.md |
