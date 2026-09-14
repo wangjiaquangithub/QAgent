@@ -49,6 +49,7 @@ __all__ = [
     "SWITCH",
     "FakeRuntime",
     "authorize",
+    "authorize_via_route",
     "block_outbound_network",
     "build_client",
     "create_unattended_task",
@@ -60,6 +61,7 @@ __all__ = [
     "reset_home",
     "run_contract",
     "save_task",
+    "start_via_route",
     "statuses_of",
     "storage",
     "stored_task",
@@ -247,6 +249,29 @@ def tick(task_id: str) -> dict[str, Any]:
     from app.gateway.unattended_task_pipeline import advance_unattended_task
 
     return asyncio.run(advance_unattended_task(task_id))
+
+
+def authorize_via_route(client: TestClient, task_id: str, **body: Any) -> dict[str, Any]:
+    """The Task Center「开始执行」control, through its real route.
+
+    Distinct from :func:`authorize`, which calls the service the route calls. The
+    route adds the surrounding dispatch attempt, so a test that cares about what a
+    real user's click does must go through here.
+    """
+    response = client.post(f"/api/tasks/{task_id}/authorize-execution", json=body or None)
+    assert response.status_code == 200, response.text
+    return dict(response.json())
+
+
+def start_via_route(client: TestClient, task_id: str) -> dict[str, Any]:
+    """The manual run-now control, through its real route.
+
+    For an unattended task this is the entry that enqueues and immediately calls
+    ``advance_unattended_task`` — the same step the queue tick runs.
+    """
+    response = client.post(f"/api/tasks/{task_id}/start")
+    assert response.status_code == 200, response.text
+    return dict(response.json())
 
 
 def identity(org_id: str = LOCAL_ORG, owner: str = LOCAL_OWNER) -> dict[str, Any]:
