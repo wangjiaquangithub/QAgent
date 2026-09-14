@@ -45,6 +45,7 @@ from _runtime_flow_support import (
     queue_tick_via_route,
     reset_home,
     run_contract,
+    schedule_a_run_via_route,
     start_via_route,
     stored_task,
 )
@@ -89,26 +90,6 @@ def _entry_for(tick_result: dict, task_id: str) -> dict | None:
     return None
 
 
-def _scheduled(client, monkeypatch: pytest.MonkeyPatch) -> tuple[str, FakeRuntime]:
-    """A task with a live run that is still a queue candidate.
-
-    Authorizing promotes ``pending`` → ``planned``; run-now on a task with no bound
-    plan puts it back to ``pending`` and immediately advances it, which is what
-    establishes the run. So the task ends up authorized, linked, and ``pending`` —
-    exactly the state the scheduler's candidate list picks up.
-    """
-    fake = run_contract(FakeRuntime(), monkeypatch)
-    task_id = create_unattended_task(client)
-    authorize_via_route(client, task_id)
-    step = start_via_route(client, task_id)["advance"]
-    assert step["action"] == "runtime", step
-    stored = stored_task(task_id)
-    assert stored["status"] == "pending", stored.get("status")
-    assert stored["execution_authorized"] is True
-    assert stored[LINKAGE_TASK_KEY]["runtime_run_id"] == RUN_ID
-    return task_id, fake
-
-
 def _failed(client, monkeypatch: pytest.MonkeyPatch) -> tuple[str, FakeRuntime]:
     """A failed task whose attempt already has a run — the retry entry's subject."""
     fake = run_contract(FakeRuntime(frames=FAILURE_FRAMES, status="failed"), monkeypatch)
@@ -126,7 +107,7 @@ def _failed(client, monkeypatch: pytest.MonkeyPatch) -> tuple[str, FakeRuntime]:
 def test_the_tick_does_not_start_a_second_run_for_a_scheduled_attempt(
     client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    task_id, fake = _scheduled(client, monkeypatch)
+    task_id, fake = schedule_a_run_via_route(client, monkeypatch)
 
     _tick(client, task_id)
 
@@ -136,7 +117,7 @@ def test_the_tick_does_not_start_a_second_run_for_a_scheduled_attempt(
 def test_two_ticks_in_the_same_window_still_start_only_one_run(
     client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    task_id, fake = _scheduled(client, monkeypatch)
+    task_id, fake = schedule_a_run_via_route(client, monkeypatch)
 
     _tick(client, task_id)
     _tick(client, task_id)
@@ -148,7 +129,7 @@ def test_the_tick_reports_the_run_the_attempt_already_has(
     client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """The skip is explained in the tick's own report, not silently dropped."""
-    task_id, _ = _scheduled(client, monkeypatch)
+    task_id, _ = schedule_a_run_via_route(client, monkeypatch)
 
     entry = _entry_for(_tick(client, task_id), task_id)
 
@@ -160,7 +141,7 @@ def test_the_tick_reports_the_run_the_attempt_already_has(
 def test_the_tick_leaves_the_linked_run_id_untouched(
     client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    task_id, _ = _scheduled(client, monkeypatch)
+    task_id, _ = schedule_a_run_via_route(client, monkeypatch)
     before = dict(stored_task(task_id)[LINKAGE_TASK_KEY])
 
     _tick(client, task_id)
@@ -172,7 +153,7 @@ def test_the_tick_does_not_replan_or_re_authorize_a_scheduled_task(
     client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """A skipped task is left alone: the run is driving it, not the queue."""
-    task_id, _ = _scheduled(client, monkeypatch)
+    task_id, _ = schedule_a_run_via_route(client, monkeypatch)
 
     _tick(client, task_id)
 
@@ -188,7 +169,7 @@ def test_the_tick_does_not_replan_or_re_authorize_a_scheduled_task(
 def test_the_queue_switch_off_makes_the_tick_inert(
     client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    task_id, fake = _scheduled(client, monkeypatch)
+    task_id, fake = schedule_a_run_via_route(client, monkeypatch)
     monkeypatch.setenv(QUEUE_SWITCH, "0")
 
     result = _tick(client, task_id)
@@ -226,7 +207,7 @@ def test_with_the_runtime_off_the_tick_still_picks_the_task_up(
     """The guard is inert when the Runtime is off: a tick must pick what it always did."""
     from app.gateway.task_runtime_schedule import decide_runtime_pickup
 
-    task_id, fake = _scheduled(client, monkeypatch)
+    task_id, fake = schedule_a_run_via_route(client, monkeypatch)
     monkeypatch.delenv(SWITCH, raising=False)
 
     decision = decide_runtime_pickup(stored_task(task_id))
@@ -284,7 +265,7 @@ def test_a_second_instance_reaches_the_same_persisted_answer(
     There is nothing to elect and nothing to fence — the guard reads the persisted
     task row, so a fresh instance answers ``already_scheduled`` and adds no run.
     """
-    task_id, fake = _scheduled(client, monkeypatch)
+    task_id, fake = schedule_a_run_via_route(client, monkeypatch)
     second_instance = build_client()
 
     entry = _entry_for(_tick(second_instance, task_id), task_id)
@@ -299,7 +280,7 @@ def test_a_rebuilt_app_does_not_re_trigger_the_run(
     client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """A rebuilt app — the same store after a restart — adds no run either."""
-    task_id, fake = _scheduled(client, monkeypatch)
+    task_id, fake = schedule_a_run_via_route(client, monkeypatch)
 
     _tick(build_client(), task_id)
 

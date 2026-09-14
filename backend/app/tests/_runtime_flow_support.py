@@ -62,8 +62,10 @@ __all__ = [
     "push_frames",
     "queue_tick_via_route",
     "reset_home",
+    "revoke_via_route",
     "run_contract",
     "save_task",
+    "schedule_a_run_via_route",
     "start_via_route",
     "statuses_of",
     "storage",
@@ -275,6 +277,40 @@ def start_via_route(client: TestClient, task_id: str) -> dict[str, Any]:
     response = client.post(f"/api/tasks/{task_id}/start")
     assert response.status_code == 200, response.text
     return dict(response.json())
+
+
+def revoke_via_route(client: TestClient, task_id: str, **body: Any) -> dict[str, Any]:
+    """The「修改计划」control, through its real route.
+
+    Withdraws the user's execution consent (and downgrades ``executing`` back to
+    ``planned``). It says nothing about the Runtime run the attempt may already
+    have — that is the point of the tests that use it.
+    """
+    response = client.post(f"/api/tasks/{task_id}/revoke-execution-authorization", json=body or None)
+    assert response.status_code == 200, response.text
+    return dict(response.json())
+
+
+def schedule_a_run_via_route(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch, **task_extra: Any
+) -> tuple[str, FakeRuntime]:
+    """Take a fresh task to: authorized, linked to a run, and ``pending``.
+
+    Authorizing promotes ``pending`` → ``planned``; run-now on a task with no bound
+    plan puts it back to ``pending`` and immediately advances it, which is what
+    establishes the run. The result is the only state where a queue tick has
+    anything to decide, so several cards start from here.
+    """
+    fake = run_contract(FakeRuntime(), monkeypatch)
+    task_id = create_unattended_task(client, **task_extra)
+    authorize_via_route(client, task_id)
+    step = start_via_route(client, task_id)["advance"]
+    assert step["action"] == "runtime", step
+    stored = stored_task(task_id)
+    assert stored["status"] == "pending", stored.get("status")
+    assert stored["execution_authorized"] is True
+    assert stored[LINKAGE_TASK_KEY]["runtime_run_id"] == RUN_ID
+    return task_id, fake
 
 
 def queue_tick_via_route(client: TestClient) -> dict[str, Any]:
