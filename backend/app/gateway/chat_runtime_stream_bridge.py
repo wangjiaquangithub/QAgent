@@ -20,6 +20,9 @@ Guarantees:
 * **Terminal converges once.** The first terminal event ends the stream. Any
   further frames (including another terminal, or late progress) are ignored, so
   a reconnect or duplicate attach cannot produce a second visible terminal.
+  Note the convergence is *per stream*: a reconnect resuming before the terminal
+  re-delivers it on purpose (that client never saw it), while a reconnect at or
+  after it delivers nothing but ``done``.
 * **Cursor is the Runtime sequence.** The SSE ``id:`` is the event sequence, so
   a client reconnecting with ``after_seq`` resumes exactly where it stopped.
 """

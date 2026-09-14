@@ -31,6 +31,7 @@ RUN_ID = "run-g2-stream"
 
 
 def _ev(seq: int, etype: str, payload: dict | None = None) -> dict:
+    """Build a Runtime Event v1 frame, shaped exactly like ``event_dict()``."""
     return {
         "event_id": f"ev-{seq}",
         "run_id": RUN_ID,
@@ -239,3 +240,133 @@ def test_reconnect_from_cursor_resumes_without_gap_or_replay() -> None:
     seqs = [_parse(f)[2]["sequence"] for f in tail if _parse(f)[2]]
     assert seqs == [3, 4]
     assert names.count(RUN_COMPLETED_EVENT) == 1
+
+
+# --------------------------------------------------------------------------
+# Cancel semantics
+# --------------------------------------------------------------------------
+
+
+def test_late_cancel_after_completion_does_not_regress_terminal() -> None:
+    """A cancel arriving after completion must not emit a second terminal."""
+    bridge = ChatRuntimeEventBridge()
+    first = bridge.frames_for(_ev(1, "run.completed", {"text": "done"}))
+    assert _parse(first[0])[1] == RUN_COMPLETED_EVENT
+
+    late_cancel = bridge.frames_for(_ev(2, "run.cancelled"))
+    assert late_cancel == []
+    assert bridge.state.skipped == [2]
+    assert bridge.terminal_seen is True
+
+
+def test_cancel_before_completion_wins_and_closes_stream() -> None:
+    """Cancel racing ahead of completion converges once and ends the stream."""
+    bridge = ChatRuntimeEventBridge()
+    events = [
+        _ev(1, "run.running"),
+        _ev(2, "run.cancelled"),
+        _ev(3, "run.completed", {"text": "too late"}),  # must not reopen
+    ]
+    frames = list(bridge.stream(events))
+    names = [_parse(f)[1] for f in frames]
+
+    assert names == ["runStatus", RUN_COMPLETED_EVENT, DONE_EVENT]
+    terminal = [_parse(f)[2] for f in frames if _parse(f)[1] == RUN_COMPLETED_EVENT][0]
+    assert terminal["status"] == "cancelled"
+    assert 3 in bridge.state.skipped
+
+
+def test_cancel_reconnect_does_not_re_emit_cancelled_terminal() -> None:
+    """Reconnecting with the cursor after a cancel must not replay it."""
+    bridge = ChatRuntimeEventBridge()
+    bridge.frames_for(_ev(1, "run.running"))
+    bridge.frames_for(_ev(2, "run.cancelled"))
+    cursor = bridge.last_sequence
+    assert cursor == 2
+
+    resumed = ChatRuntimeEventBridge(after_sequence=cursor)
+    frames = list(resumed.stream([_ev(1, "run.running"), _ev(2, "run.cancelled")]))
+    assert [_parse(f)[1] for f in frames] == [DONE_EVENT]
+
+
+# --------------------------------------------------------------------------
+# Reconnect convergence (the load-bearing cross-cutting scenario)
+# --------------------------------------------------------------------------
+
+
+def _run_prefix() -> list[dict]:
+    """The shared run history, as the Runtime repository would replay it."""
+    return [
+        _ev(1, "run.created"),
+        _ev(2, "run.running"),
+        _ev(3, "run.executing"),
+        _ev(4, "asset.available", {"uri": "s3://x/1.png"}),
+        _ev(5, "run.completed", {"text": "final answer"}),
+    ]
+
+
+def test_full_reconnect_flow_converges_to_single_terminal_and_single_done() -> None:
+    """Segmented reconnect over the whole run: one terminal, one done, no gaps."""
+    history = _run_prefix()
+
+    # Segment 1: fresh stream, drop the connection after seq 2.
+    seg1 = ChatRuntimeEventBridge()
+    seg1_frames = seg1.frames_for(history[0]) + seg1.frames_for(history[1])
+
+    # Segment 2: client reconnects carrying the last seen cursor.
+    seg2 = ChatRuntimeEventBridge(after_sequence=seg1.last_sequence)
+    seg2_frames = list(seg2.stream(history))
+
+    total = seg1_frames + seg2_frames
+    names = [_parse(f)[1] for f in total]
+
+    # Exactly one terminal and one done across the *whole* reconnected session.
+    assert names.count(RUN_COMPLETED_EVENT) == 1
+    assert names.count(DONE_EVENT) == 1
+    assert names[-1] == DONE_EVENT
+
+    # Every delivered frame carries a strictly increasing sequence.
+    seqs = [_parse(f)[2]["sequence"] for f in total if _parse(f)[2]]
+    assert seqs == sorted(seqs)
+    assert len(seqs) == len(set(seqs))
+
+    # No gap: segments together cover the entire run without replaying seq 1/2.
+    assert seqs == [1, 2, 3, 4, 5]
+
+
+def test_reconnect_after_terminal_emits_only_done() -> None:
+    """Reconnecting on an already-finished run yields nothing but the close frame."""
+    history = _run_prefix()
+
+    first = ChatRuntimeEventBridge()
+    list(first.stream(history))
+    assert first.terminal_seen is True
+
+    resumed = ChatRuntimeEventBridge(after_sequence=first.last_sequence)
+    frames = list(resumed.stream(history))
+    assert [ _parse(f)[1] for f in frames ] == [DONE_EVENT]
+
+
+def test_repeated_reconnect_delivers_terminal_once_per_stream() -> None:
+    """Each attach emits at most one terminal and exactly one ``done``.
+
+    A reconnect resuming *before* the terminal must re-deliver it (the client
+    never saw it); a reconnect resuming *at or after* it must not. So the
+    invariant is per-stream, not global: never two terminals in one stream, and
+    always exactly one ``done``.
+    """
+    history = _run_prefix()
+
+    per_stream_terminal: dict[int, int] = {}
+    for cursor in (0, 2, 5):
+        bridge = ChatRuntimeEventBridge(after_sequence=cursor)
+        frames = list(bridge.stream(history))
+        names = [_parse(f)[1] for f in frames]
+        assert names.count(DONE_EVENT) == 1
+        assert names.count(RUN_COMPLETED_EVENT) <= 1
+        per_stream_terminal[cursor] = names.count(RUN_COMPLETED_EVENT)
+
+    # Below the terminal -> delivered; at the terminal -> suppressed.
+    assert per_stream_terminal[0] == 1
+    assert per_stream_terminal[2] == 1
+    assert per_stream_terminal[5] == 0
