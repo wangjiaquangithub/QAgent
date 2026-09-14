@@ -11,6 +11,7 @@ from __future__ import annotations
 import asyncio
 import concurrent.futures
 import json
+import logging
 import re
 import uuid
 from typing import Any
@@ -1230,6 +1231,18 @@ def cancel_run(run_id: str, reason: str = "User cancelled") -> bool:
 
     # Update run record
     app_repositories.update_run_status(run_id, "cancelled", error=reason)
+    # AG-G2-APP-012-A01: when the Runtime bridge owns this run, propagate the
+    # cancel to the Runtime side (best effort, in-process association only).
+    # Legacy runs are a lookup-miss no-op, and a late Runtime terminal can
+    # never regress the already-cancelled App Run (monotonic projection).
+    try:
+        from app.gateway.app_runtime_bridge import cancel_app_run_runtime
+
+        cancel_app_run_runtime(run_id, reason)
+    except Exception:
+        logging.getLogger(__name__).exception(
+            "app_runner: runtime cancel propagation failed run_id=%s", run_id
+        )
     return True
 
 

@@ -37,6 +37,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import threading
 from typing import Any, Protocol
 
 logger = logging.getLogger(__name__)
@@ -61,6 +62,14 @@ _TERMINAL_APP_RUN_STATUSES = frozenset({"completed", "failed", "cancelled"})
 
 _RESULT_SUMMARY_MAX_CHARS = 2000
 _ERROR_MAX_CHARS = 2000
+
+# AG-G2-APP-012-A01: process-local registry of App Runs currently owned by a
+# detached Runtime execution, used to propagate legacy cancels. In-memory
+# only — the association lives exactly as long as the detached execution, so
+# no schema, no new stored field and no second state source is involved.
+# Multi-instance deployments are out of scope (release gate: single instance).
+_inflight_runtime_runs: dict[str, dict[str, Any]] = {}
+_inflight_lock = threading.Lock()
 
 
 class RuntimeServiceProtocol(Protocol):
@@ -95,6 +104,8 @@ class RuntimeServiceProtocol(Protocol):
     ) -> dict[str, Any]: ...
 
     async def get_result(self, run_id: str, org_id: str | None = None) -> dict[str, Any]: ...
+
+    async def request_cancel(self, run_id: str, org_id: str | None = None) -> dict[str, Any]: ...
 
 
 def app_runtime_bridge_enabled() -> bool:
@@ -261,22 +272,25 @@ async def run_app_workflow_on_runtime(
     runtime_run_id = str(created.get("run_id") or "").strip()
     if not runtime_run_id:
         raise ValueError("Runtime create_run did not return a run_id")
+    _register_inflight(app_run_id, runtime_run_id, org_id, svc)
+    try:
+        await svc.start_run(runtime_run_id, org_id=org_id)
+        status = await svc.get_run_status(runtime_run_id, org_id=org_id)
+        if status.get("status") == "waiting_approval":
+            approval = status.get("approval") or {}
+            approval_id = str(approval.get("approval_id") or "").strip()
+            if approval_id:
+                await svc.grant_approval(approval_id, run_id=runtime_run_id, org_id=org_id)
 
-    await svc.start_run(runtime_run_id, org_id=org_id)
-    status = await svc.get_run_status(runtime_run_id, org_id=org_id)
-    if status.get("status") == "waiting_approval":
-        approval = status.get("approval") or {}
-        approval_id = str(approval.get("approval_id") or "").strip()
-        if approval_id:
-            await svc.grant_approval(approval_id, run_id=runtime_run_id, org_id=org_id)
-
-    result = await svc.get_result(runtime_run_id, org_id=org_id)
-    projected = project_runtime_result_to_app_run(app_run_id, result)
-    return {
-        "runtime_run_id": runtime_run_id,
-        "runtime_status": result.get("status"),
-        "app_run_status": projected,
-    }
+        result = await svc.get_result(runtime_run_id, org_id=org_id)
+        projected = project_runtime_result_to_app_run(app_run_id, result)
+        return {
+            "runtime_run_id": runtime_run_id,
+            "runtime_status": result.get("status"),
+            "app_run_status": projected,
+        }
+    finally:
+        _forget_inflight(app_run_id)
 
 
 def trigger_workflow_app_runtime_run(
@@ -334,4 +348,76 @@ def trigger_workflow_app_runtime_run(
     from evoflow.subagents.detached_poll_scheduler import schedule_detached_poll
 
     schedule_detached_poll(_go(), name=f"app-runtime-{run_id[:12]}")
+    return True
+
+
+# ─────────────────── Cancel propagation (AG-G2-APP-012-A01) ───────────────────
+
+
+def _register_inflight(
+    app_run_id: str, runtime_run_id: str, org_id: str, service: RuntimeServiceProtocol
+) -> None:
+    with _inflight_lock:
+        _inflight_runtime_runs[str(app_run_id)] = {
+            "runtime_run_id": runtime_run_id,
+            "org_id": org_id,
+            "service": service,
+        }
+
+
+def _forget_inflight(app_run_id: str) -> None:
+    with _inflight_lock:
+        _inflight_runtime_runs.pop(str(app_run_id or "").strip(), None)
+
+
+async def _propagate_runtime_cancel(
+    runtime_run_id: str, org_id: str, service: RuntimeServiceProtocol, reason: str
+) -> None:
+    try:
+        await service.request_cancel(runtime_run_id, org_id=org_id)
+    except Exception:
+        # The App Run is already terminal on the legacy side and the monotonic
+        # projection can never regress it; a failed propagation is an
+        # observability concern, not a user-facing failure.
+        logger.exception(
+            "app runtime bridge: runtime cancel failed runtime_run_id=%s", runtime_run_id
+        )
+
+
+def cancel_app_run_runtime(app_run_id: str, reason: str = "") -> bool:
+    """Best-effort propagate a legacy App Run cancel to its Runtime run.
+
+    Returns ``True`` when a live Runtime association exists in this process
+    and propagation was scheduled; ``False`` when the run is not owned by the
+    bridge (pure legacy no-op) or scheduling failed. Never raises and never
+    touches the App Run record: the frozen monotonic projection already
+    guarantees a cancelled App Run cannot be regressed by a late Runtime
+    terminal. Residual gap (documented in the release gate): an association
+    that already left this process's lifetime, or another instance, cannot be
+    reached without a persisted association — out of scope by design.
+    """
+    app_run_id = str(app_run_id or "").strip()
+    if not app_run_id:
+        return False
+    with _inflight_lock:
+        entry = _inflight_runtime_runs.get(app_run_id)
+    if entry is None:
+        return False
+    try:
+        from evoflow.subagents.detached_poll_scheduler import schedule_detached_poll
+
+        schedule_detached_poll(
+            _propagate_runtime_cancel(
+                str(entry["runtime_run_id"]),
+                str(entry["org_id"]),
+                entry["service"],
+                str(reason or ""),
+            ),
+            name=f"app-runtime-cancel-{app_run_id[:12]}",
+        )
+    except Exception:
+        logger.exception(
+            "app runtime bridge: scheduling runtime cancel failed app_run_id=%s", app_run_id
+        )
+        return False
     return True

@@ -774,3 +774,116 @@ def test_cross_org_same_app_run_id_is_isolated_in_real_repository() -> None:
     assert org_b["run_id"] != org_a["run_id"]
     assert org_b["org_id"] == "org-b"
     engine.dispose()
+
+
+# ---------------------------------------------------------------------------
+# 7. Cancel propagation (AG-G2-APP-012-A01)
+# ---------------------------------------------------------------------------
+
+
+class CancelRecordingRuntimeService(FakeRuntimeService):
+    """FakeRuntimeService plus the public ``request_cancel`` surface."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.cancel_calls: list[tuple[str, str | None]] = []
+        self.fail_cancel = False
+
+    async def request_cancel(self, run_id: str, org_id: str | None = None) -> dict[str, Any]:
+        if self.fail_cancel:
+            raise RuntimeError("runtime cancel unavailable")
+        self.cancel_calls.append((run_id, org_id))
+        run = self._find(run_id)
+        run["status"] = "cancelled"
+        return {"run_id": run_id, "status": run["status"]}
+
+
+def _capture_detached(monkeypatch: pytest.MonkeyPatch) -> list[Any]:
+    captured: list[Any] = []
+
+    def fake_schedule(coro: Any, *, name: str | None = None) -> None:
+        captured.append(coro)
+
+    monkeypatch.setattr(
+        "evoflow.subagents.detached_poll_scheduler.schedule_detached_poll", fake_schedule
+    )
+    return captured
+
+
+def test_cancel_propagates_to_live_runtime_run(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    svc = CancelRecordingRuntimeService()
+    bridge._register_inflight("apprun-cancel-1", "runtime-run-9", "org-3", svc)
+    try:
+        captured = _capture_detached(monkeypatch)
+        assert bridge.cancel_app_run_runtime("apprun-cancel-1", "user cancelled") is True
+        assert len(captured) == 1
+        asyncio.run(captured[0])
+        assert svc.cancel_calls == [("runtime-run-9", "org-3")]
+    finally:
+        bridge._forget_inflight("apprun-cancel-1")
+
+
+def test_cancel_without_runtime_association_is_noop() -> None:
+    assert bridge.cancel_app_run_runtime("apprun-never-bridged", "bye") is False
+
+
+async def test_cancel_after_execution_finished_is_noop() -> None:
+    """The in-process association lives exactly as long as the execution."""
+    svc = CancelRecordingRuntimeService(final_status="completed", result_payload={"s": "x"})
+    await bridge.run_app_workflow_on_runtime(
+        app_run_id="apprun-cancel-2",
+        app_id="app-1",
+        app_version=None,
+        parameters={},
+        task_id="task-1",
+        org_id="org-1",
+        service=svc,
+    )
+    assert bridge.cancel_app_run_runtime("apprun-cancel-2", "late") is False
+    assert svc.cancel_calls == []
+
+
+async def test_propagate_swallows_runtime_cancel_failure() -> None:
+    svc = CancelRecordingRuntimeService()
+    svc.fail_cancel = True
+    await bridge._propagate_runtime_cancel("runtime-run-x", "org-1", svc, "reason")
+    assert svc.cancel_calls == []
+
+
+def test_legacy_cancel_propagates_when_bridge_owns_run(
+    monkeypatch: pytest.MonkeyPatch, app_run_store: dict[str, Any]
+) -> None:
+    from evoflow.collab.app_runner import cancel_run
+
+    monkeypatch.setenv("EVOFLOW_APP_WORKFLOW_RUNTIME", "1")
+    _seed_run(app_run_store, "apprun-cancel-3", status="running")
+    recorded: dict[str, str] = {}
+
+    def fake_cancel(run_id: str, reason: str = "") -> bool:
+        recorded["run_id"] = run_id
+        recorded["reason"] = reason
+        return True
+
+    monkeypatch.setattr(bridge, "cancel_app_run_runtime", fake_cancel)
+    assert cancel_run("apprun-cancel-3", "user cancelled") is True
+    assert recorded == {"run_id": "apprun-cancel-3", "reason": "user cancelled"}
+    cancelled = [w for w in app_run_store["writes"] if w[1] == "cancelled"]
+    assert cancelled and cancelled[0][0] == "apprun-cancel-3"
+
+
+def test_legacy_cancel_without_bridge_association_skips_propagation(
+    monkeypatch: pytest.MonkeyPatch, app_run_store: dict[str, Any]
+) -> None:
+    from evoflow.collab.app_runner import cancel_run
+
+    monkeypatch.setenv("EVOFLOW_APP_WORKFLOW_RUNTIME", "1")
+    _seed_run(app_run_store, "apprun-cancel-4", status="running")
+    monkeypatch.setattr(
+        bridge,
+        "cancel_app_run_runtime",
+        lambda run_id, reason="": (_ for _ in ()).throw(AssertionError("must not be called")),
+    )
+    assert cancel_run("apprun-cancel-4", "user cancelled") is True
+    assert app_run_store["writes"][-1][1] == "cancelled"
