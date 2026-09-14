@@ -291,6 +291,52 @@ def message_id_exists(session_key: str, message_id: str, *, conn: Any | None = N
     return row is not None
 
 
+def get_message_by_message_id(
+    session_key: str, message_id: str, *, conn: Any | None = None
+) -> dict[str, Any] | None:
+    """Return the already-persisted transcript row for ``message_id`` in ``session_key``.
+
+    Scope mirrors ``message_id_exists`` (same ``session_key + message_id`` key used by
+    the append dedupe), so an append retry can report the row that is already on disk
+    instead of returning ``None``. Returns ``None`` when no such row exists.
+    """
+    sk = str(session_key or "").strip()
+    mid = str(message_id or "").strip()
+    if not sk or not mid:
+        return None
+    db = conn or get_db()
+    row = db.execute(
+        """
+        SELECT seq, role, message_id, round_id, model_name,
+               input_tokens, output_tokens, total_tokens,
+               cache_read_tokens, cache_creation_tokens, cache_miss_tokens,
+               created_at
+        FROM evoflow_chat_messages
+        WHERE session_key = ? AND message_id = ?
+        ORDER BY seq ASC
+        LIMIT 1
+        """,
+        (sk, mid),
+    ).fetchone()
+    if not row:
+        return None
+    return {
+        "session_key": sk,
+        "seq": int(row[0]),
+        "role": str(row[1] or ""),
+        "message_id": str(row[2] or "").strip() or None,
+        "round_id": str(row[3] or "").strip() or None,
+        "model_name": row[4],
+        "input_tokens": row[5],
+        "output_tokens": row[6],
+        "total_tokens": row[7],
+        "cache_read_tokens": row[8],
+        "cache_creation_tokens": row[9],
+        "cache_miss_tokens": row[10],
+        "created_at_ms": iso_z_to_ms(str(row[11] or "")),
+    }
+
+
 def transcript_duplicate_exists(
     session_key: str,
     *,
