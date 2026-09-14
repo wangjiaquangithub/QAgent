@@ -356,7 +356,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 | G2.1-A 聊天 / Live Run 首次接入 | 已完成 / 已集成 | `0679886 merge(chat): integrate Live Run runtime bridge`；消息幂等修复 `bdafb35` | 来源 G2.1-A；证据文档 `agentscope-2-g2-chat-entry-map.md`、`agentscope-2-g2-chat-manual-acceptance.md` |
 | G2.1-C 无人值守 / Task Center 首次接入 | 已完成 / 已集成 | `433a9df merge(automation): integrate Task Center runtime opt-in` | 来源 G2.1-C；证据文档 `agentscope-2-g2-automation-entry-map.md`、`agentscope-2-g2-automation-completion-checklist.md`、`agentscope-2-g2-automation-manual-acceptance.md` |
 | G2.5 用户可测业务包（聊天、自动化） | 已完成 | `agentscope-2-g2-chat-manual-acceptance.md`、`agentscope-2-g2-automation-manual-acceptance.md` | 来源 G2.5-A / G2.5-C；不再派工 |
-| G2.1-B App Runner 首次接入 | 未开始 | 集成分支无 App Runner 运行时代码与对应 merge 提交 | 见 §2.5.4 新增卡片 |
+| G2.1-B App Runner 首次接入 | 已实现 / 已集成（TEST GO，PROD NO-GO） | 盘点→映射→bridge→验收链 `b8cf3e0`、`5f5571c`、`12fdeb9`、`842f160`、`59f36c3`、`f0a1de0`、`30bea77`、`5d287e2`、`bec812e`；后续修复 `bffbf5c`（存量 revision 级联缺陷）、`e8a0d13`（cancel 传播到 Runtime）、`f290af9`（auto-grant 记录 decided_by）；证据 `artifacts/acceptance/agentscope-runtime/AG-G2-APP-009-A01/20260914/handoff-index.md`。未验证：多实例、长任务、真实并发、HA、压测、真实 Provider（§2.5.4 派工通道保留；PROD NO-GO 维持） | 见 §2.5.4 新增卡片 |
 | G2.2 / G2.3（聊天、自动化） | 部分已完成 / 已集成 | 聊天 `chat_runtime_result.py`、`chat_runtime_stream_bridge.py`；自动化 `task_runtime_projection.py`、`task_runtime_event_bridge.py`、`task_runtime_cursor.py` | 余项范围以既有 G2 文档为准，不新造卡 |
 | G0-DEC-001～004 四项契约 | Blocked（未变） | 无负责人签署记录 | 见 [归并记录](./agentscope-2-plan-consolidation-notes.md) 第 4 节 |
 
@@ -584,3 +584,4 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 | --- | --- | --- |
 | 2026-09-13 | 将原 foundation plan 拆分为路线图与执行计划；登记 G0～G4 任务、状态、Owner、依赖、工作量、修改范围和验收证据 | 基线 Runtime 回归：27 passed；未修改 Runtime 代码、schema 或公共 API |
 | 2026-09-14 | 归并 `origin/codex/g2-execution-workbreakdown`（`0d73a1f`）的 G0–G4 拆卡成果：新增 §2.5 G2 波次化拆卡与执行约束、§2.5.4 三张 App 入口 `AG-*` 卡、§2.5.6 G1 验收场景集、§2.5.7 统一回报格式、§2.6 已集成入口状态；更新文档头与 `G0-DB-003` 登记 | 逐项映射见 `agentscope-2-plan-consolidation-notes.md`；未使用 git merge / cherry-pick；未修改任何代码、schema、ADR；未恢复 foundation-plan.md |
+| 2026-09-14 | §2.6 状态同步：G2.1-B App Runner 由"未开始"更正为"已实现 / 已集成（TEST GO，PROD NO-GO）"，登记 `b8cf3e0`～`bec812e` 验收链与 `bffbf5c` / `e8a0d13` / `f290af9` 三笔后续修复；`G0-DB-003`、`G0-DEC-001～004` 状态不变（仍待负责人验收 / 冻结） | 同步只覆盖可由提交直接证明的事实；派工通道、放行结论与未验证项以 `AG-G2-APP-009-A01` 交接索引为准 |
