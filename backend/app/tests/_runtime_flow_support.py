@@ -58,6 +58,7 @@ __all__ = [
     "identity",
     "json_of",
     "push_frames",
+    "queue_tick_via_route",
     "reset_home",
     "run_contract",
     "save_task",
@@ -270,6 +271,17 @@ def start_via_route(client: TestClient, task_id: str) -> dict[str, Any]:
     ``advance_unattended_task`` — the same step the queue tick runs.
     """
     response = client.post(f"/api/tasks/{task_id}/start")
+    assert response.status_code == 200, response.text
+    return dict(response.json())
+
+
+def queue_tick_via_route(client: TestClient) -> dict[str, Any]:
+    """One real scheduler tick, through its route.
+
+    Unlike the run-now control this does not touch the task before advancing it, so
+    a settled task still reaches the pipeline's own retry / rerun branch.
+    """
+    response = client.post("/api/tasks/queue/tick")
     assert response.status_code == 200, response.text
     return dict(response.json())
 
