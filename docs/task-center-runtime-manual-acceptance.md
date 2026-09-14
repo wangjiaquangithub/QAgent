@@ -32,6 +32,114 @@ Steps 1–3 and 8–10 need no provider. Steps 4–7 need one that can be made t
 | 10 | Disconnect (close the tab / restart the gateway) while a run is mid-flight, then reopen the task | The task's state is rebuilt from what is persisted plus a read of the Runtime — no re-execution, no second run, no duplicated history. A run that moved on while you were away is caught up |
 | 11 | Hand-edit the stored linkage to another organization's (bad row), then read, cancel and tick | The operation is refused and the other run is never touched or revealed: no run id and no organization id appears in any response. The task still reads normally |
 
+## API sequences (copy-pasteable)
+
+Each sequence drives the same entries the automated flow tests drive, so every
+expectation below has a test behind it — `backend/app/tests/test_task_runtime_*_entry_flow.py`
+plus `test_task_runtime_scheduler_entry_flow.py`. Set the gateway once:
+
+```bash
+BASE=http://localhost:8080        # the gateway you are accepting against
+TASK=                             # filled in by the create command below
+```
+
+### A. Manual entry: authorize, then run now
+
+```bash
+TASK=$(curl -s -X POST "$BASE/api/tasks" -H 'Content-Type: application/json' \
+  -d '{"name":"每周经营简报","description":"给管理层的周报","run_mode":"unattended"}' \
+  | python3 -c 'import sys,json;print(json.load(sys.stdin)["id"])')
+echo "$TASK"
+
+curl -s -X POST "$BASE/api/tasks/$TASK/authorize-execution" | python3 -m json.tool
+# → execution_authorized true. Authorizing alone creates no Runtime run.
+
+curl -s -X POST "$BASE/api/tasks/$TASK/start" | python3 -m json.tool
+# → advance.action "runtime" with a runtime_run_id — once. Run it again and the
+#   same run id comes back; no second run is created.
+
+curl -s "$BASE/api/tasks/$TASK" | python3 -m json.tool
+curl -s "$BASE/api/tasks/$TASK/execution-history" | python3 -m json.tool
+# → both readable, and the task body carries NO runtime_run_linkage / runtime_run_cursor.
+```
+
+Run-now on a task that is **still failed** is the one case that does not start a new
+attempt: it answers with the run that attempt already has
+(`advance.runtime_action == "reused_terminal_run"`), because the queue, not run-now,
+is the attempt-retry entry.
+
+### B. Retry: one tick requeues, run now starts the new attempt
+
+```bash
+curl -s -X POST "$BASE/api/tasks/queue/tick" | python3 -m json.tool
+# → the failed task's entry: action "requeued_for_retry", status back to pending,
+#   unattended_attempts + 1, authorization cleared. The failed run id is still the
+#   linked one — it is superseded, not rewritten.
+
+curl -s -X POST "$BASE/api/tasks/$TASK/authorize-execution" >/dev/null
+curl -s -X POST "$BASE/api/tasks/$TASK/start" | python3 -m json.tool
+# → a NEW runtime_run_id for the new attempt; the previous run stays in
+#   execution-history. A late frame from the old run is refused, so it cannot
+#   overwrite the new attempt.
+```
+
+`POST /api/tasks/$TASK/retry` is a **different** thing: it retries failed
+*subtasks* of the plan. It leaves the Runtime link, the authorization and the
+failed run exactly as it found them.
+
+### C. Cancel, and the triggers after it
+
+```bash
+curl -s -X POST "$BASE/api/tasks/$TASK/cancel" | python3 -m json.tool
+# → status cancelled; the linked run is asked to cancel. Cancel again: still one
+#   cancellation record, still one explainable status.
+
+curl -s -o /dev/null -w '%{http_code}\n' -X POST "$BASE/api/tasks/$TASK/dispatch-execution"
+# → 4xx: the authorization was withdrawn by the cancel.
+
+curl -s -X POST "$BASE/api/tasks/$TASK/start" | python3 -m json.tool
+# → creates no run and does not move the link; the cancelled task still reads
+#   normally. A late approval/completion for the old run cannot resurrect it.
+```
+
+### D. Automation rule run-now
+
+```bash
+AUTOMATION=                       # an automation rule id
+curl -s -X POST "$BASE/api/automation/tasks/$AUTOMATION/run" | python3 -m json.tool
+```
+
+With the opt-in **off** (the default) this is the unchanged prompt-only LangGraph
+run. With it on (`execution_mode=task_center` / `plan` / `unattended`, or
+`EVOFLOW_AUTOMATION_VIA_TASK=1`) a Task Center unattended task is created
+(`run_mode=unattended`, `raised_by=automation`) and kicked. Note the precondition the
+tests pin: the Runtime run is established only when the created task carries a
+**trusted identity** (organization + owner scope + creator); without it the kick
+safely defers to the legacy path. An `app_id`-bound automation is routed to the App
+Runner before this switch is consulted and is unaffected either way.
+
+### E. Scheduler tick
+
+```bash
+curl -s -X POST "$BASE/api/tasks/queue/tick" | python3 -m json.tool
+# → results[]: one entry per task the tick walked, each with its action. For a task
+#   whose attempt already has a run: action "already_scheduled" plus that run id,
+#   and no advance. Tick again in the same window: identical. No second run.
+
+curl -s "$BASE/api/tasks/queue/status" | python3 -m json.tool
+# → the scheduler's own view: enabled, slots, active, queued_candidates, last_tick.
+```
+
+Two switches, independent of each other:
+
+```bash
+# EVOFLOW_TASK_QUEUE_ENABLED=0 → the tick does nothing at all:
+#     {"skipped": true, "reason": "disabled"}
+# EVOFLOW_AUTOMATION_UNATTENDED_RUNTIME unset → the tick still picks tasks up
+#     (the Runtime guard is inert) and hands them to the legacy pipeline, which is
+#     the whole point of default-off.
+```
+
 ## Not included
 
 Deliberately out of scope for this acceptance:

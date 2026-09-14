@@ -56,11 +56,23 @@ uvx ruff check <the files you changed>
 | `test_task_runtime_recovery_flow.py` | a lagging projection caught up by reconcile / reconnect / the queue |
 | `test_task_runtime_org_isolation_flow.py` | two organizations: refusal, no disclosure, and forged org fields ignored |
 | `test_task_runtime_api_reads.py` | what the real read routes return, linked and unlinked |
+| `test_task_runtime_manual_entry_flow.py` | the manual entry — `authorize-execution` then `start` (run now) — reaches the Runtime exactly once, and the switch-off path is unchanged |
+| `test_task_runtime_retry_entry_flow.py` | attempt retry (the queue tick requeues; run now starts the new attempt) vs. subtask retry (`/retry`, which touches nothing) |
+| `test_task_runtime_cancel_entry_flow.py` | `cancel` plus every manual trigger after it: nothing restarts the cancelled attempt, and a foreign linkage is never revealed |
+| `test_task_runtime_automation_entry_flow.py` | `POST /api/automation/tasks/{id}/run` routing: the opt-in creates one Task Center task and one run, the default path is unchanged, `app_id` is unaffected |
+| `test_task_runtime_scheduler_entry_flow.py` | the queue tick: a duplicate tick starts no second run, the two switches stay independent, and the default-off path is preserved |
 
 Shared plumbing for those files lives in `_runtime_flow_support.py` (not a test
 module, not production code). It replaces the Runtime with a recording fake at its
 public boundary and fails any outbound connection to a non-loopback address, so a
 flow that accidentally starts calling out fails by name instead of hanging.
+
+Two helpers there exist because `POST /api/tasks/queue/tick` is global, and knowing
+how to make it hermetic is easy to get wrong: `park_other_unattended_tasks(task_id)`
+pauses every other unattended task the store accumulated (otherwise a leftover is
+dragged into the legacy path, or the concurrency cap leaves the tick with no slots),
+and `open_the_retry_window(task_id)` clears `unattended_next_retry_at`, because a
+failed task is only picked up once its backoff has elapsed.
 
 This is the domain's own acceptance surface — not a repository-wide test or
 format run.
