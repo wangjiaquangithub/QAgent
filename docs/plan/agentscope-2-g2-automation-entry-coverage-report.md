@@ -1,6 +1,6 @@
-# G2 Automation / Task Center 域：真实入口覆盖报告（AG-G2-AUTO-039 → 046）
+# G2 Automation / Task Center 域：真实入口覆盖报告（AG-G2-AUTO-039 → 047）
 
-- 卡片：`AG-G2-AUTO-039` → `AG-G2-AUTO-046`（008–038 队列之后的续队列 + 续做卡）
+- 卡片：`AG-G2-AUTO-039` → `AG-G2-AUTO-047`（008–038 队列之后的续队列 + 续做卡）
 - 分支：`codex/g2-automation-task-center`
 - 起点：`0fa8e4a`
 - 用途：把**真实 HTTP / 调度入口**上的 Runtime 行为一次列清 —— 每张卡覆盖了什么、由哪个测试文件固化、以及本次回归发现的**真实缺口**与已固化的边界。避免后续验收时把「单元级已覆盖」误当成「真实入口已覆盖」。
@@ -21,6 +21,9 @@
 | 044 | 文档：可复制的 API 验收序列 | `docs/task-center-runtime-manual-acceptance.md`、`backend/app/tests/TASK_RUNTIME_TESTING.md` | — | `7044c9f` |
 | 045 | 回归收尾 + 本报告 | 本文件 | — | `d908371` |
 | 046 | `POST /api/tasks/{id}/revoke-execution-authorization`（「修改计划」撤回授权） | `test_task_runtime_authorization_entry_flow.py` | 14 | `2adde88` |
+| 047 | `POST /api/tasks/{id}/stop`（「停止」暂停） | `test_task_runtime_pause_entry_flow.py` | 8 | `bc3210d` |
+
+至此，**手动生命周期**（授权 → 启动 → 撤授权 → 取消 → 暂停）与**调度**入口都已覆盖。
 
 每张卡独立提交、独立 push，各自跑 scoped 测试 + scoped ruff（`ruff check`，不跑 `format`）。
 
@@ -53,7 +56,7 @@ opt-in 打开后，会创建一条 Task Center 无人值守任务（`run_mode=un
 
 ### 2.3 调度器语义（已固化）
 
-- 同一触发窗口重复 tick **不会**为同一 attempt 建第二个 Run：`decide_runtime_pickup` 读到持久化 linkage 即报 `already_scheduled` 并跳过；答案来自任务行而非进程内状态，所以**不需要也不需要 leader / lease / fencing**（第二实例 / 重启后读同一存储得到同一答案，已测试固化）。
+- 同一触发窗口重复 tick **不会**为同一 attempt 建第二个 Run：`decide_runtime_pickup` 读到持久化 linkage 即报 `already_scheduled` 并跳过；答案来自任务行而非进程内状态，所以**不需要 leader / lease / fencing**（第二实例 / 重启后读同一存储得到同一答案，已测试固化）。
 - 两个开关互不污染：`EVOFLOW_TASK_QUEUE_ENABLED` 只管队列本身（关掉即 `{"skipped": true, "reason": "disabled"}`），`EVOFLOW_AUTOMATION_UNATTENDED_RUNTIME` 只管 opt-in；默认关闭时 tick 照旧把任务交给旧管线。
 
 ### 2.4 「撤回执行授权」不等于「取消」（已固化）
@@ -63,6 +66,20 @@ opt-in 打开后，会创建一条 Task Center 无人值守任务（`run_mode=un
 它改变的是一条**前置条件** —— 撤回后 `dispatch-execution` 被拒（4xx）、也不能再启动；
 而**重新授权不会买来第二个 Run**：attempt 未变、幂等键未变，run-now 复用既有 Run（`runtime_action == "reused"`）。
 不要把它和 `cancel` 混：cancel 会通知 Runtime 取消，revoke 不会。
+
+### 2.5 「暂停」同样不等于「取消」，且会让任务脱离队列（已固化）
+
+`POST /api/tasks/{id}/stop`（界面「停止」）做三件事：任务置 `paused`、**顺带撤回执行授权**
+（和「修改计划」同一个撤销动作）、让任务脱离队列 —— 被暂停的任务**不会被 tick 走到**
+（候选集与 in-progress 集都排除 `paused`）。它**不**通知 Runtime 取消、**不**移动 linkage、**不**建 Run：
+Run 会继续跑，直到有人真的取消它。
+
+### 2.6 明确**未覆盖**：`POST /api/tasks/{id}/resume`
+
+恢复一个无人值守任务会走到 `advance_unattended_task`，而暂停时**已经撤回了授权**，
+因此这一步不再满足 Runtime 前置、直接落回旧管线（LangGraph / LLM 规划）。
+要把这条路径隔离出来就必须 stub 掉 LangGraph / LLM 边界，而本域其它入口卡都刻意不这么做 ——
+所以 `resume` **宁可留白**，也不用一个「什么都没证明」的测试去凑覆盖。
 
 ---
 
