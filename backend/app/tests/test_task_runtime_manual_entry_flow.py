@@ -27,7 +27,6 @@ import json
 
 import pytest
 from _runtime_flow_support import (
-    HISTORY_FIELD,
     LINKAGE_TASK_KEY,
     RUN_ID,
     FakeRuntime,
@@ -347,7 +346,10 @@ def test_the_manual_entry_writes_history_only_after_the_projection(
     task_id, fake = _authorized_task(client, monkeypatch)
 
     start_via_route(client, task_id)
-    assert stored_task(task_id)[HISTORY_FIELD] == []
+    # ``history_of`` and not ``row[HISTORY_FIELD]``: the key is only materialised
+    # on a read that went through the row mapper with at least one record, so a
+    # direct index would depend on the project still being in the storage cache.
+    assert history_of(stored_task(task_id)) == []
 
     push_frames(task_id, fake.frames)
-    assert stored_task(task_id)[HISTORY_FIELD]
+    assert history_of(stored_task(task_id))

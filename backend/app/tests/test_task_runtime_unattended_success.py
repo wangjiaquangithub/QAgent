@@ -34,6 +34,7 @@ from _runtime_flow_support import (
     build_client,
     create_unattended_task,
     frame,
+    history_of,
     reset_home,
     run_contract,
     save_task,
@@ -116,7 +117,10 @@ def test_the_linkage_is_persisted_with_the_task(client, monkeypatch: pytest.Monk
     # status is the one the existing authorization left it in, and no legacy
     # execution has written history.
     assert stored["status"] == "planned"
-    assert stored[HISTORY_FIELD] == []
+    # ``history_of`` and not ``stored[HISTORY_FIELD]``: on a read that went through
+    # the row mapper with no records the key is absent, so a direct index would make
+    # this depend on the project still being in the storage cache.
+    assert history_of(stored) == []
 
 
 def test_a_second_tick_does_not_create_a_second_run(client, monkeypatch: pytest.MonkeyPatch) -> None:
