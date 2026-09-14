@@ -63,6 +63,12 @@ _TERMINAL_APP_RUN_STATUSES = frozenset({"completed", "failed", "cancelled"})
 _RESULT_SUMMARY_MAX_CHARS = 2000
 _ERROR_MAX_CHARS = 2000
 
+# AG-G2-APP-013-A01: the workflow-mode auto-grant is a system action, so the
+# approval audit trail must record it as such instead of leaving decided_by
+# NULL (the Runtime persists decided_by on qagent_approvals already).
+_AUTO_GRANT_DECIDED_BY = "system:app-runtime-auto-grant"
+_AUTO_GRANT_REASON = "auto-granted by the App Runtime bridge (workflow mode consent)"
+
 # AG-G2-APP-012-A01: process-local registry of App Runs currently owned by a
 # detached Runtime execution, used to propagate legacy cancels. In-memory
 # only — the association lives exactly as long as the detached execution, so
@@ -280,7 +286,13 @@ async def run_app_workflow_on_runtime(
             approval = status.get("approval") or {}
             approval_id = str(approval.get("approval_id") or "").strip()
             if approval_id:
-                await svc.grant_approval(approval_id, run_id=runtime_run_id, org_id=org_id)
+                await svc.grant_approval(
+                    approval_id,
+                    decided_by=_AUTO_GRANT_DECIDED_BY,
+                    reason=_AUTO_GRANT_REASON,
+                    run_id=runtime_run_id,
+                    org_id=org_id,
+                )
 
         result = await svc.get_result(runtime_run_id, org_id=org_id)
         projected = project_runtime_result_to_app_run(app_run_id, result)

@@ -101,7 +101,7 @@ class FakeRuntimeService:
         org_id: str | None = None,
         run_id: str | None = None,
     ) -> dict[str, Any]:
-        self.calls.append(("grant_approval", approval_id, run_id))
+        self.calls.append(("grant_approval", approval_id, run_id, decided_by))
         if self.fail_on == "grant_approval":
             raise RuntimeError("approval store unavailable")
         run = self._find(str(run_id))
@@ -266,7 +266,12 @@ async def test_waiting_approval_is_granted_then_result_projected(
         org_id="org-1",
         service=svc,
     )
-    assert ("grant_approval", "approval-runtime-run-1", "runtime-run-1") in svc.calls
+    assert (
+        "grant_approval",
+        "approval-runtime-run-1",
+        "runtime-run-1",
+        bridge._AUTO_GRANT_DECIDED_BY,
+    ) in svc.calls
     assert outcome["runtime_status"] == "completed"
     assert outcome["app_run_status"] == "completed"
     assert ("apprun-9", "completed", {"progress": 100, "result_summary": "done"}) in (
@@ -887,3 +892,25 @@ def test_legacy_cancel_without_bridge_association_skips_propagation(
     )
     assert cancel_run("apprun-cancel-4", "user cancelled") is True
     assert app_run_store["writes"][-1][1] == "cancelled"
+
+
+async def test_auto_grant_records_audit_identity_and_reason(
+    app_run_store: dict[str, Any],
+) -> None:
+    """AG-G2-APP-013-A01: the workflow auto-grant is a system action, so the
+    approval audit trail carries a stable decided_by identity and reason
+    instead of leaving them NULL."""
+    _seed_run(app_run_store, "apprun-audit-1")
+    svc = FakeRuntimeService(final_status="completed", result_payload={"summary": "ok"})
+    await bridge.run_app_workflow_on_runtime(
+        app_run_id="apprun-audit-1",
+        app_id="app-1",
+        app_version=None,
+        parameters={},
+        task_id="task-audit-1",
+        org_id="org-1",
+        service=svc,
+    )
+    grant = next(c for c in svc.calls if c[0] == "grant_approval")
+    assert grant[3] == bridge._AUTO_GRANT_DECIDED_BY
+    assert bridge._AUTO_GRANT_DECIDED_BY.startswith("system:")
