@@ -1,0 +1,37 @@
+backend/packages/harness/evoflow/persistence/schema.py:247:CREATE TABLE IF NOT EXISTS evoflow_artifacts (
+backend/packages/harness/evoflow/persistence/schema.py:807:CREATE TABLE IF NOT EXISTS evoflow_media_assets (
+backend/packages/harness/evoflow/persistence/schema.py:986:CREATE TABLE IF NOT EXISTS evoflow_org_artifacts (
+backend/packages/harness/evoflow/persistence/schema.py:1620:            ON evoflow_artifacts(session_key, updated_at);
+backend/packages/harness/evoflow/persistence/schema.py:1738:            ON evoflow_media_assets(media_kind, created_at DESC);
+backend/packages/harness/evoflow/persistence/schema.py:1741:            ON evoflow_media_assets(provider, task_id);
+backend/packages/harness/evoflow/persistence/schema.py:1744:            ON evoflow_media_assets(thread_id, id DESC);
+backend/packages/harness/evoflow/persistence/schema.py:1858:CREATE INDEX IF NOT EXISTS idx_org_artifacts_instance ON evoflow_org_artifacts(org_instance_id);
+backend/packages/harness/evoflow/persistence/schema.py:247:CREATE TABLE IF NOT EXISTS evoflow_artifacts (
+backend/packages/harness/evoflow/persistence/schema.py:807:CREATE TABLE IF NOT EXISTS evoflow_media_assets (
+backend/packages/harness/evoflow/persistence/schema.py:986:CREATE TABLE IF NOT EXISTS evoflow_org_artifacts (
+backend/packages/harness/evoflow/persistence/schema.py:1620:            ON evoflow_artifacts(session_key, updated_at);
+backend/packages/harness/evoflow/persistence/schema.py:1738:            ON evoflow_media_assets(media_kind, created_at DESC);
+backend/packages/harness/evoflow/persistence/schema.py:1741:            ON evoflow_media_assets(provider, task_id);
+backend/packages/harness/evoflow/persistence/schema.py:1744:            ON evoflow_media_assets(thread_id, id DESC);
+backend/packages/harness/evoflow/persistence/schema.py:1858:CREATE INDEX IF NOT EXISTS idx_org_artifacts_instance ON evoflow_org_artifacts(org_instance_id);
+backend/packages/harness/evoflow/persistence/chat_session_service.py:202:        conn.execute("DELETE FROM evoflow_artifacts WHERE session_key = ?", (sk,))
+backend/packages/harness/evoflow/persistence/artifact_repositories.py:1:"""SQLite CRUD for ``evoflow_artifacts`` (session-bound, append/upsert)."""
+backend/packages/harness/evoflow/persistence/artifact_repositories.py:40:            SELECT artifact_id, created_at, status FROM evoflow_artifacts
+backend/packages/harness/evoflow/persistence/artifact_repositories.py:65:            INSERT INTO evoflow_artifacts (
+backend/packages/harness/evoflow/persistence/artifact_repositories.py:131:            FROM evoflow_artifacts
+backend/packages/harness/evoflow/persistence/artifact_repositories.py:144:            FROM evoflow_artifacts
+backend/packages/harness/evoflow/persistence/artifact_repositories.py:245:        "DELETE FROM evoflow_artifacts WHERE session_key = ? AND thread_id = ?",
+backend/packages/harness/evoflow/persistence/media_assets.py:1:"""Persist media tool outputs (task ids, remote URLs, local paths) in ``evoflow_media_assets``."""
+backend/packages/harness/evoflow/persistence/media_assets.py:68:            INSERT INTO evoflow_media_assets (
+backend/packages/harness/evoflow/persistence/media_assets.py:114:            SELECT id, meta_json FROM evoflow_media_assets
+backend/packages/harness/evoflow/persistence/media_assets.py:129:            UPDATE evoflow_media_assets SET
+backend/packages/harness/evoflow/persistence/media_assets.py:170:                FROM evoflow_media_assets
+backend/packages/harness/evoflow/persistence/media_assets.py:182:                FROM evoflow_media_assets
+backend/packages/harness/evoflow/persistence/media_assets.py:220:    """Find https remote URL for a local outputs path from ``evoflow_media_assets``."""
+backend/packages/harness/evoflow/persistence/media_assets.py:259:            FROM evoflow_media_assets
+backend/packages/harness/evoflow/community/media_generation/asset_recorder.py:1:"""Best-effort persistence hooks for media tools → ``evoflow_media_assets``."""
+backend/packages/harness/evoflow/eval/data_sources.py:692:        if _table_exists(db, "evoflow_artifacts"):
+backend/packages/harness/evoflow/eval/data_sources.py:694:                row = db.execute("SELECT COUNT(*) AS c FROM evoflow_artifacts").fetchone()
+backend/packages/harness/evoflow/organizations/registry.py:36:        "SELECT artifact_type, artifact_id FROM evoflow_org_artifacts "
+backend/packages/harness/evoflow/organizations/registry.py:114:                INSERT OR IGNORE INTO evoflow_org_artifacts
+backend/packages/harness/evoflow/organizations/registry.py:141:        FROM evoflow_org_artifacts a
