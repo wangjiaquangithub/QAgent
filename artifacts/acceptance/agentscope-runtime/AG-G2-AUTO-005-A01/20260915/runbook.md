@@ -266,7 +266,7 @@ curl -s -X POST $BASE/api/tasks/queue/tick
 | U3 | **Event 流式续读** | 本卡只读终态与既有读取出口，未使用 `GET /api/qagent/runtime/runs/{id}/events`；SSE 续读属 Event v1 范围。 | 由 Event v1 / `G0-DEC-003` 冻结后另派卡。 |
 | U4 | **事件 gap** | 同上；本卡只观察到 `sequence = 1,2,3` 连续无缺口，未构造缺口场景。 | `G0-DEC-003`。 |
 | U5 | **跨实例幂等** | 单实例本地 Gateway；`max_concurrent=3` 是单进程并发上限，不构成多实例一致性证据。 | 多实例环境 + `G0-DEC-002`。 |
-| U6 | **`org_id` 归属** | 无人值守路径建立的 Run `org_id = "local"`（`pg-runtime-truth.txt` 三条 Run 全部为 `local`），而 `org_scope_key = tc:org:local`。这与 `docs/plan/agentscope-2-g2-automation-manual-acceptance.md` §9 登记的 **P1 缺口**一致，且本次验收证明它的后果不止于"归属不正确"：它还使 Runtime 原生入口无法驱动该 Run。 | 在 `RuntimeRunContract` 协议中声明 `org_id` 并在调用处传入可信组织值。 |
+| U6 | **两套入口的组织命名空间未统一** | 无人值守路径建立的 Run `org_id = "local"`（`pg-runtime-truth.txt` 三条 Run 全部为 `local`）。该值由可信 `AuthzContext` 显式传入、语义正确：`establish_runtime_run` 传 `org_id=context.org_id`（`task_runtime_optin.py:427`），`context.org_id` 来自 `_trusted_org_id`（`task_runtime_context.py:182`，缺 org 即拒绝、不自造默认），单机部署下 `build_authz_context` 填 `DEFAULT_ORG_ID="local"`（`evoflow/authz/types.py:13`）。阻塞在于 Runtime 原生入口的 principal org 为 `identity:<type>:<id>`（`auth.py:34-36`），两者不同名，使该入口无法驱动 Task Center 建立的 Run。注：`manual-acceptance.md` §9 的 P1「无人值守路径调用 Runtime 时未传组织」描述**已过时**（已由 `AG-G2-AUTO-008` 修复）。 | 统一两套入口的组织命名空间，或提供一个以 Task Center 可信组织为 org 的既有驱动入口。 |
 | U7 | **页面路径** | 卡片要求"HTTP / 页面"；本环境未启动 evopanel（Tauri + Vite），只走了 HTTP。页面路径的等价性未验证。 | 启动前端并以同一任务复跑步骤 2~6。 |
 
 ## 回滚方式

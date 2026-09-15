@@ -55,27 +55,43 @@ Run 建立后稳定停在 `queued`（`raw/pg-runtime-truth.txt` 中三条 `tc:` 
 
 1. 需要 `Authorization: Bearer <token>`，本环境无有效 token → `401 Missing or malformed Authorization header`（`raw/step09-start-run.json`）。
 2. 即便有 token 也不成立：该入口的 `principal.org_id` 形如 `identity:<type>:<id>`（`auth.py:34-36`），
-   而无人值守路径建立的 Run `org_id = "local"`（`service.create_run` 的默认值），
-   `service._require_run(run_id, org_id=...)` 会因组织不匹配而拒绝。
+   而无人值守路径建立的 Run `org_id = "local"`，两者是**不同的组织命名空间**，
+   `service._require_run(run_id, org_id=...)` 会因不匹配而拒绝。
 
-第 2 条使 `docs/plan/agentscope-2-g2-automation-manual-acceptance.md` §9 登记的 **P1 缺口**
-（无人值守路径调用 Runtime 时未传组织）后果扩大：它不只让 Run 的 `org_id` 归属不正确，
-还**阻断了从既有 HTTP 入口驱动该 Run 执行**，因而直接阻塞本卡的 U1/U2。
+   **关于 `org_id = "local"` 的准确归因（本卡复核后修正）**：该值**不是** Runtime 侧默认值的静默回退。
+   调用链是显式传参的 —— `establish_runtime_run` 传 `org_id=context.org_id`（`task_runtime_optin.py:427`），
+   `RuntimeRunContract.create_run` 也声明了 `org_id`（`task_runtime_optin.py:141`，其 docstring 明确
+   "can never fall back to the Runtime's own default (AG-G2-AUTO-008)"），并校验 Runtime 回显的组织
+   （`task_runtime_optin.py:434-439`，不匹配即拒绝链接）；`context.org_id` 来自
+   `_trusted_org_id`（`task_runtime_context.py:182`），该函数**缺 org 即拒绝、绝不自造默认**；
+   单机部署下 `build_authz_context` 会把缺失的 org 填为 `DEFAULT_ORG_ID = "local"`
+   （`evoflow/authz/types.py:13`，`task_runtime_context.py:37-38` docstring 说明）。
+
+   因此：**`docs/plan/agentscope-2-g2-automation-manual-acceptance.md` §9 登记的 P1「无人值守路径调用 Runtime 时未传组织」
+   已过时** —— 该缺口已由 `AG-G2-AUTO-008` 修复（上述三处代码即修复结果）。本卡实测的 `org_id = local`
+   是"Task Center 域在单机部署下的可信组织值"，语义正确。
+
+   但 B2 的阻塞**依然成立**，原因是另一件事：Runtime 原生入口用的是**另一套组织命名空间**
+   （`identity:<identity_type>:<identity_id>`，`auth.py:34-36`），它与 Task Center 的 `local` 天然不同名，
+   所以该入口无法驱动 Task Center 建立的 Run。这不是"没传组织"，而是"两套入口的组织命名空间未统一"。
+
+第 2 条本身即可独立阻塞 U1/U2：只要"从既有 HTTP 入口驱动一个由 Task Center 建立的 Run"这条路径不成立，
+成功与失败终态就无法在真实环境产生（与 B1 的 provider 缺失叠加，任一条单独成立都足以阻塞）。
 
 ## 最小解除条件
 
 | 阻塞 | 解除条件 |
 |---|---|
 | B1 | 配置真实 OpenAI 兼容 provider 凭据：`AGENTSCOPE_MODEL` + `AGENTSCOPE_API_KEY`（可选 `AGENTSCOPE_ENDPOINT`、`AGENTSCOPE_TIMEOUT`）。凭据由部署环境注入，不得写入仓库或本产物。 |
-| B2 | 二选一：(a) 先在 `RuntimeRunContract` 协议中声明 `org_id` 并在无人值守调用处传入可信组织值，使 Runtime 原生入口可按组织驱动该 Run；(b) 或提供一个以 `local` 为 org 的既有执行驱动入口。任一项都属契约/状态机级改动，**须先由负责人拍板**，不得由本卡自行实现。 |
+| B2 | 二选一：(a) 统一两套入口的组织命名空间，使 Runtime 原生入口可按 Task Center 的可信组织驱动该 Run（当前 `local` vs `identity:<type>:<id>` 不同名）；(b) 或提供一个以 Task Center 可信组织为 org 的既有执行驱动入口。任一项都属契约 / 身份域级改动，**须先由负责人拍板**，不得由本卡自行实现。 |
 
 解除后本卡可重派，届时按 `runbook.md` 步骤 2~6 的同一路径复跑，把步骤 7 的 fail-safe 探针换成真实 provider，
 补齐 U1/U2 的原始输出即可。
 
 ## 未覆盖项（完整清单见 `runbook.md` 末节）
 
-U1 成功终态 · U2 失败终态 · U3 Event 流式续读 · U4 事件 gap · U5 跨实例幂等 · U6 `org_id` 归属（P1）· U7 页面路径。
-其中 U3~U5 属 `G0-DEC-002` / `G0-DEC-003` 范围；U6 属 P1 缺口；U7 因未启动前端而未验证。
+U1 成功终态 · U2 失败终态 · U3 Event 流式续读 · U4 事件 gap · U5 跨实例幂等 · U6 两套入口的组织命名空间未统一 · U7 页面路径。
+其中 U3~U5 属 `G0-DEC-002` / `G0-DEC-003` 范围；U6 见 B2 第 2 条；U7 因未启动前端而未验证。
 
 ## 本卡是否产生代码改动
 
