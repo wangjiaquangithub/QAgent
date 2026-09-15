@@ -32,7 +32,7 @@ class AcceptedContract:
     def __init__(self) -> None:
         self.cancel_calls: list[str] = []
 
-    async def request_cancel(self, run_id: str) -> dict[str, Any]:
+    async def request_cancel(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.cancel_calls.append(run_id)
         return {"run_id": run_id, "status": "cancelled"}
 
@@ -44,7 +44,7 @@ class RefusingContract:
         self.cancel_calls: list[str] = []
         self._status = status
 
-    async def request_cancel(self, run_id: str) -> dict[str, Any]:
+    async def request_cancel(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.cancel_calls.append(run_id)
         return {"run_id": run_id, "status": self._status}
 

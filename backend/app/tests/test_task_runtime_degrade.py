@@ -41,7 +41,7 @@ class StatusContract:
         self._status = {"status": "running"} if status is None else status
         self._raises = raises
 
-    async def get_run_status(self, run_id: str) -> dict[str, Any]:
+    async def get_run_status(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.status_calls.append(run_id)
         if self._raises is not None:
             raise self._raises
@@ -57,7 +57,7 @@ class NoCallContract:
     def __init__(self) -> None:
         self.status_calls: list[str] = []
 
-    async def get_run_status(self, run_id: str) -> dict[str, Any]:
+    async def get_run_status(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.status_calls.append(run_id)
         raise AssertionError("a broken link must not reach the Runtime")
 

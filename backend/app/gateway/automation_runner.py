@@ -672,6 +672,33 @@ def _enqueue_automation_as_unattended_task(
     if not storage.save_project(project_data):
         return {"ok": False, "collab_task_id": collab_task_id, "error": "save_project failed"}
 
+    # Automation tasks are created by a background worker, so there is no HTTP
+    # auth context to stamp onto the new Task Center row. Reuse the automation's
+    # persisted owner scope as the trusted source instead of inventing an
+    # identity or passing an ``identity:*`` principal to Runtime.
+    try:
+        from evoflow.authz.runtime_identity import resolve_identity_from_automation
+        from evoflow.persistence import task_repositories as task_repo
+
+        owner = resolve_identity_from_automation(automation_id)
+        org_id = str(owner.get("org_id") or "").strip()
+        owner_scope_id = str(owner.get("owner_scope_id") or "").strip()
+        created_by = str(owner.get("created_by") or owner.get("principal_id") or "").strip()
+        if org_id and owner_scope_id and created_by:
+            task_repo.set_root_task_owner_scope(
+                collab_task_id,
+                org_id=org_id,
+                owner_scope_id=owner_scope_id,
+                created_by=created_by,
+            )
+    except Exception:
+        logger.debug(
+            "automation_runner: task owner scope stamp skipped automation_id=%s task_id=%s",
+            automation_id,
+            collab_task_id,
+            exc_info=True,
+        )
+
     logger.info(
         "automation_runner: enqueued Task Center job automation_id=%s collab_task_id=%s run_id=%s trigger=%s",
         automation_id,
@@ -846,9 +873,6 @@ async def _run_one_task(
     push = bool(fresh.get("feishu_push_enabled"))
     prompt = str(fresh.get("prompt") or "").strip()
     run_id = secrets.token_hex(6)
-    ai_text = ""
-    thread_for_history = ""
-    session_key_for_chat = ""
     collab_task_id = ""
     summary = ""
     app_id = _bound_app_id(fresh)

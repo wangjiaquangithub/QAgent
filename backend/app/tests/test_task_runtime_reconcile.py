@@ -34,7 +34,7 @@ class RecordingContract:
         self.cancel_calls: list[str] = []
         self._status = {"run_id": RUN_ID, "status": "executing"} if status is None else status
 
-    async def get_run_status(self, run_id: str) -> dict[str, Any]:
+    async def get_run_status(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.status_calls.append(run_id)
         return self._status
 
@@ -42,7 +42,7 @@ class RecordingContract:
         self.create_calls.append("called")
         raise AssertionError("reconciliation must never create a run")
 
-    async def request_cancel(self, run_id: str) -> dict[str, Any]:  # pragma: no cover
+    async def request_cancel(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:  # pragma: no cover
         self.cancel_calls.append(run_id)
         raise AssertionError("reconciliation must never cancel a run")
 

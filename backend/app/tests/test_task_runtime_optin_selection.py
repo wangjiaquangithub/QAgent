@@ -57,7 +57,7 @@ class RecordingContract:
         self.create_calls.append(idempotency_key)
         return {"run_id": "run-1", "status": "pending", "org_id": org_id}
 
-    async def get_run_status(self, run_id: str) -> dict[str, Any]:
+    async def get_run_status(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.status_calls.append(run_id)
         return {"run_id": run_id, "status": "pending"}
 

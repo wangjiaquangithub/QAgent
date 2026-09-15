@@ -117,7 +117,7 @@ class UnreadableRuntime(FakeRuntime):
         super().__init__(status=status)
         self._error = error
 
-    async def get_run_status(self, run_id: str) -> dict[str, Any]:
+    async def get_run_status(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.status_calls.append(run_id)
         raise self._error
 
@@ -125,7 +125,7 @@ class UnreadableRuntime(FakeRuntime):
 class LeakyRuntime(FakeRuntime):
     """A Runtime whose status answer carries a provider payload nobody may store."""
 
-    async def get_run_status(self, run_id: str) -> dict[str, Any]:
+    async def get_run_status(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.status_calls.append(run_id)
         return {
             "run_id": run_id,

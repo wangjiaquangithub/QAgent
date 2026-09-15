@@ -2,7 +2,7 @@
 
 AG-G2-AUTO-002-B01: the minimal boundary between the existing Task Center /
 unattended main-task pipeline and the existing QAgent Runtime public contract
-(``RuntimeContract.create_run(*, task_id, input_payload, idempotency_key)``).
+(``RuntimeContract.create_run(*, org_id, task_id, input_payload, idempotency_key)``).
 
 What it does
 ------------

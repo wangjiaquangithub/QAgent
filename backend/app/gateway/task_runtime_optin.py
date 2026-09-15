@@ -145,7 +145,19 @@ class RuntimeRunContract(Protocol):
         idempotency_key: str | None = None,
     ) -> dict[str, Any]: ...
 
-    async def get_run_status(self, run_id: str) -> dict[str, Any]: ...
+    async def start_run(self, run_id: str, *, org_id: str) -> dict[str, Any]: ...
+
+    async def grant_approval(
+        self,
+        approval_id: str,
+        *,
+        decided_by: str | None = None,
+        reason: str | None = None,
+        org_id: str,
+        run_id: str | None = None,
+    ) -> dict[str, Any]: ...
+
+    async def get_run_status(self, run_id: str, *, org_id: str) -> dict[str, Any]: ...
 
 
 @dataclass(frozen=True)
@@ -365,7 +377,7 @@ async def establish_runtime_run(
         # Reuse, never re-create: this is what makes a double click, a retried
         # HTTP call and a second tick converge on the same run. The answer comes
         # from the persisted linkage, so a restart answers identically.
-        status = await contract.get_run_status(existing.runtime_run_id)
+        status = await contract.get_run_status(existing.runtime_run_id, org_id=context.org_id)
         reported = ""
         if isinstance(status, Mapping):
             reported = str(status.get("status") or "").strip().lower()

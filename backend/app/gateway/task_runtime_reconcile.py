@@ -74,7 +74,7 @@ class RuntimeReconcileContract(Protocol):
     cancel anything, so those methods are deliberately absent from the protocol.
     """
 
-    async def get_run_status(self, run_id: str) -> dict[str, Any]: ...
+    async def get_run_status(self, run_id: str, *, org_id: str) -> dict[str, Any]: ...
 
 
 @dataclass(frozen=True)
@@ -132,7 +132,7 @@ async def reconcile_linked_task_runtime(
     if contract is None:
         return _outcome("runtime_unavailable", "runtime_contract_unavailable", run_id=run_id)
 
-    status = await contract.get_run_status(run_id)
+    status = await contract.get_run_status(run_id, org_id=context.org_id)
     if not isinstance(status, Mapping):
         return _outcome("runtime_unavailable", "runtime_status_unusable", run_id=run_id)
 

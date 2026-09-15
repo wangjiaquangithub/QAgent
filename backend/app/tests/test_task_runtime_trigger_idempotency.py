@@ -45,7 +45,7 @@ class RecordingContract:
         self._n += 1
         return {"run_id": f"run-{self._n}", "status": "pending", "org_id": org_id}
 
-    async def get_run_status(self, run_id: str) -> dict[str, Any]:
+    async def get_run_status(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.status_calls.append(run_id)
         payload = dict(self._status) if isinstance(self._status, dict) else self._status
         if isinstance(payload, dict):

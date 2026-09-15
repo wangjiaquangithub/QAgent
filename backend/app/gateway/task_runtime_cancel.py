@@ -10,7 +10,7 @@ opt-in path:
   cancelling is what revokes it, so requiring it would make cancellation
   impossible exactly when it is needed;
 - nothing writes to the Runtime's own tables. Cancellation goes through the
-  existing public contract call ``request_cancel(run_id)`` and nothing else;
+  existing public contract call ``request_cancel(run_id, org_id=...)`` and nothing else;
 - a task without a linkage keeps the untouched legacy cancel path;
 - cancelling twice is a no-op, decided from the history already on the task, so
   the Runtime is not asked a second time;
@@ -102,7 +102,7 @@ _SETTLED_RUN_STATUSES = frozenset({"completed", "failed", "timed_out"})
 class RuntimeCancelContract(Protocol):
     """The subset of the Runtime public contract used for cancellation."""
 
-    async def request_cancel(self, run_id: str) -> dict[str, Any]: ...
+    async def request_cancel(self, run_id: str, *, org_id: str) -> dict[str, Any]: ...
 
 
 class RuntimeCancelError(RuntimeError):
@@ -241,7 +241,7 @@ async def cancel_linked_runtime_run(
         return RuntimeCancelOutcome("runtime_unavailable", "runtime_contract_unavailable", run_id)
 
     # The only way this module touches the Runtime: its existing public call.
-    response = await contract.request_cancel(run_id)
+    response = await contract.request_cancel(run_id, org_id=context.org_id)
     if not isinstance(response, Mapping):
         response = {"raw": response}
 

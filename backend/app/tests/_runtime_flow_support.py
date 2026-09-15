@@ -96,6 +96,8 @@ class FakeRuntime:
     ) -> None:
         self.create_calls: list[dict[str, Any]] = []
         self.status_calls: list[str] = []
+        self.start_calls: list[dict[str, Any]] = []
+        self.approval_calls: list[dict[str, Any]] = []
         self.cancel_calls: list[str] = []
         self._frames = list(frames or [])
         self._status = status
@@ -126,19 +128,55 @@ class FakeRuntime:
             "org_id": org_id,
         }
 
-    async def get_run_status(self, run_id: str) -> dict[str, Any]:
+    async def start_run(self, run_id: str, *, org_id: str) -> dict[str, Any]:
+        self.start_calls.append({"run_id": run_id, "org_id": org_id})
+        return {
+            "run_id": run_id,
+            # The configured status represents the later Runtime answer used by
+            # projection tests. A start acknowledgement itself remains queued so
+            # those tests can still feed their scripted event frames explicitly.
+            "status": "queued",
+            "org_id": org_id,
+            "approval": None,
+        }
+
+    async def grant_approval(
+        self,
+        approval_id: str,
+        *,
+        decided_by: str | None = None,
+        reason: str | None = None,
+        org_id: str,
+        run_id: str | None = None,
+    ) -> dict[str, Any]:
+        self.approval_calls.append(
+            {
+                "approval_id": approval_id,
+                "decided_by": decided_by,
+                "reason": reason,
+                "org_id": org_id,
+                "run_id": run_id,
+            }
+        )
+        return {
+            "run_id": run_id or approval_id,
+            "status": self._status,
+            "org_id": org_id,
+        }
+
+    async def get_run_status(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.status_calls.append(run_id)
         return {
             "run_id": run_id,
             "status": self._status,
-            "org_id": LOCAL_ORG,
+            "org_id": org_id or LOCAL_ORG,
             "result": self._result_of_last_frame(),
         }
 
-    async def request_cancel(self, run_id: str) -> dict[str, Any]:
+    async def request_cancel(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.cancel_calls.append(run_id)
         self._status = "cancelled"
-        return {"run_id": run_id, "status": "cancelled"}
+        return {"run_id": run_id, "status": "cancelled", "org_id": org_id or LOCAL_ORG}
 
     def _result_of_last_frame(self) -> Any:
         for frame in reversed(self._frames):

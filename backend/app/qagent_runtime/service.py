@@ -84,7 +84,19 @@ class RuntimeService(RuntimeContract):
 
     async def start_run(self, run_id: str, org_id: str | None = None) -> dict[str, Any]:
         async with self._lock_for(run_id):
-            return await self._start_run_locked(run_id, org_id=org_id)
+            try:
+                return await self._start_run_locked(run_id, org_id=org_id)
+            except Exception as exc:
+                # A start failure is a Runtime failure, not a reason for a
+                # caller to fall back to another executor. Persist the terminal
+                # state through the existing Runtime state machine before
+                # surfacing the status to the caller.
+                self.repository.set_error(
+                    run_id,
+                    _safe_execution_error(exc),
+                    org_id=org_id,
+                )
+                return self.status(run_id, org_id=org_id)
 
     async def _start_run_locked(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         run = self._require_run(run_id, org_id=org_id)
@@ -387,6 +399,7 @@ class RuntimeService(RuntimeContract):
         return {
             "run_id": run["run_id"],
             "task_id": run["task_id"],
+            "org_id": run["org_id"],
             "status": run["status"],
             "version": run["version"],
             "created_at": run["created_at"],

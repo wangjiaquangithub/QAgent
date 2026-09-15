@@ -68,11 +68,11 @@ class FakeRuntimeContract:
         }
         return dict(self._runs[run_id])
 
-    async def get_run_status(self, run_id: str) -> dict[str, Any]:
+    async def get_run_status(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.status_calls.append(run_id)
         return dict(self._runs.get(run_id, {"run_id": run_id, "status": "unknown"}))
 
-    async def request_cancel(self, run_id: str) -> dict[str, Any]:
+    async def request_cancel(self, run_id: str, *, org_id: str | None = None) -> dict[str, Any]:
         self.cancel_calls.append(run_id)
         self._runs.setdefault(run_id, {"run_id": run_id})
         self._runs[run_id]["status"] = "cancelled"

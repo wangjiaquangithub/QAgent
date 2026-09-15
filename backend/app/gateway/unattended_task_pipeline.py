@@ -631,35 +631,67 @@ async def _maybe_run_via_runtime(task_id: str, task: dict[str, Any]) -> dict[str
     if result.updated_task is not None:
         _patch_task(task_id, lambda _t: dict(result.updated_task or {}))
 
+    context = result.context
+    contract = optin.default_runtime_contract()
+    if context is None or not result.run_id or contract is None:
+        raise RuntimeError("runtime opt-in returned no executable run context")
+
+    # RuntimeService.create_run leaves a run queued. Driving it is deliberately
+    # a separate public call so the real unattended entry is create -> start,
+    # with the same trusted organization on both calls. A reused run is started
+    # only when its own persisted status still says created/queued; a run that is
+    # already planning/running/terminal is never double-started.
+    run_status = result.run_status if isinstance(result.run_status, Mapping) else {}
+    reported = str(run_status.get("status") or "").strip().lower()
+    should_start = reported in {"created", "queued"} or (
+        result.reason in {"created", "retried"} and not reported
+    )
+    if should_start:
+        started = await contract.start_run(result.run_id, org_id=context.org_id)
+        if not isinstance(started, Mapping):
+            raise RuntimeError("runtime start_run returned an unusable response")
+        run_status = dict(started)
+        reported = str(run_status.get("status") or "").strip().lower()
+
+    # Runtime's existing start contract creates an approval after planning. The
+    # Task Center's server-side execution authorization is the already-recorded
+    # unattended consent, so continue through the existing public grant call;
+    # this is not a second Task Center state source and is org-gated by Runtime.
+    if reported == "waiting_approval":
+        approval = run_status.get("approval")
+        approval_id = str(approval.get("approval_id") or "").strip() if isinstance(approval, Mapping) else ""
+        if not approval_id:
+            raise RuntimeError("runtime start_run returned no approval_id")
+        granted = await contract.grant_approval(
+            approval_id,
+            decided_by=context.subject_id,
+            reason="unattended Task Center execution authorization",
+            org_id=context.org_id,
+            run_id=result.run_id,
+        )
+        if not isinstance(granted, Mapping):
+            raise RuntimeError("runtime grant_approval returned an unusable response")
+        run_status = dict(granted)
+        reported = str(run_status.get("status") or "").strip().lower()
+
     step: dict[str, Any] = {
         "task_id": task_id,
         "ok": True,
         "action": "runtime",
         "runtime_run_id": result.run_id,
         "runtime_action": result.action,
+        "runtime_status": reported or None,
     }
 
-    if result.reason in _REUSE_REASONS:
-        # This attempt already had the run and the Runtime is driving it, so what
-        # the user reads back has to follow the run rather than the task's own
-        # untouched status. The row is re-read so the projection sees what was
-        # just persisted, and the run is only ever read.
+    # Use the existing one-way projection for both a newly driven run and a
+    # reused run. It reads the Runtime's org-scoped status again and persists only
+    # the existing Task Center status/history projection.
+    if reported not in {"created", "queued"}:
         projected = await project_linked_runtime_state(_current_task_row(task_id))
         if projected is not None:
-            step["runtime_projection"] = projected.get("runtime_projection") or projected.get(
-                "reason"
-            )
+            step["runtime_projection"] = projected.get("runtime_projection") or projected.get("reason")
 
     return step
-
-
-# The opt-in reasons that mean "this attempt already had a run and we are looking
-# at it again", as opposed to "a run was created for this trigger just now". Only
-# the first kind may be projected back: on creation the run has just been made and
-# the task's own status is still the one the existing authorization left it in,
-# which is exactly what the existing behaviour and its tests assert.
-_REUSE_REASONS = frozenset({"reused", "linked_run_terminal"})
-
 
 async def project_linked_runtime_state(task: Mapping[str, Any] | None) -> dict[str, Any] | None:
     """Project an already-linked Runtime run's state back onto the task row.
