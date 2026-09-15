@@ -1,0 +1,107 @@
+backend/app/gateway/task_runtime_cursor.py:39:from app.gateway.task_runtime_context import TaskRuntimeContext
+backend/app/gateway/task_runtime_cursor.py:40:from app.gateway.task_runtime_linkage import (
+backend/app/gateway/task_runtime_optin.py:71:from app.gateway.task_runtime_context import (
+backend/app/gateway/task_runtime_optin.py:74:    build_task_runtime_context,
+backend/app/gateway/task_runtime_optin.py:77:from app.gateway.task_runtime_linkage import (
+backend/app/gateway/task_runtime_optin.py:95:    "resolve_server_task_runtime_identity",
+backend/app/gateway/task_runtime_optin.py:269:def resolve_server_task_runtime_identity(task_id: str) -> dict[str, Any] | None:
+backend/app/gateway/task_runtime_optin.py:344:        context = build_task_runtime_context(task=task, authz=identity, authorized=authorized)
+backend/app/gateway/unattended_task_pipeline.py:608:    from app.gateway import task_runtime_optin as optin
+backend/app/gateway/unattended_task_pipeline.py:616:        identity=optin.resolve_server_task_runtime_identity(task_id),
+backend/app/gateway/task_runtime_asset.py:37:from app.gateway.task_runtime_context import TaskRuntimeContext
+backend/app/gateway/task_runtime_asset.py:38:from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_linked_runtime_run
+backend/app/gateway/task_runtime_asset.py:39:from app.gateway.task_runtime_projection import (
+backend/app/gateway/task_runtime_degrade.py:54:from app.gateway.task_runtime_context import TaskRuntimeContext
+backend/app/gateway/task_runtime_degrade.py:55:from app.gateway.task_runtime_linkage import (
+backend/app/gateway/task_runtime_degrade.py:60:from app.gateway.task_runtime_optin import runtime_unattended_enabled
+backend/app/gateway/task_runtime_degrade.py:61:from app.gateway.task_runtime_projection import HISTORY_FIELD
+backend/app/gateway/task_runtime_degrade.py:62:from app.gateway.task_runtime_reconcile import (
+backend/app/gateway/task_runtime_degrade.py:67:from app.gateway.task_runtime_recovery import TaskStreamView, read_task_stream_view
+backend/app/gateway/task_runtime_degrade.py:76:    "reconcile_task_runtime_safely",
+backend/app/gateway/task_runtime_degrade.py:264:async def reconcile_task_runtime_safely(
+backend/app/gateway/task_runtime_projection.py:47:from app.gateway.task_runtime_context import TaskRuntimeContext
+backend/app/gateway/task_runtime_projection.py:48:from app.gateway.task_runtime_cursor import advance_runtime_cursor
+backend/app/gateway/task_runtime_projection.py:49:from app.gateway.task_runtime_failure import sanitize_error_code, sanitize_failure_detail
+backend/app/gateway/task_runtime_projection.py:50:from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_linked_runtime_run
+backend/app/gateway/task_runtime_projection.py:51:from app.gateway.task_runtime_result import sanitize_result_summary
+backend/app/gateway/task_queue_runner.py:10:from app.gateway.task_runtime_schedule import decide_runtime_pickup
+backend/app/gateway/task_runtime_input_snapshot.py:8:``task_runtime_context._INPUT_ALLOWED_KEYS``). It is execution input, and it is
+backend/app/gateway/task_runtime_input_snapshot.py:25:``secret`` …) are already defined once, in ``task_runtime_failure``, and that
+backend/app/gateway/task_runtime_input_snapshot.py:48:from app.gateway.task_runtime_failure import sanitize_failure_message
+backend/app/gateway/task_runtime_linkage.py:63:from app.gateway.task_runtime_context import TaskRuntimeContext
+backend/app/gateway/task_runtime_recovery.py:55:from app.gateway.task_runtime_context import TaskRuntimeContext
+backend/app/gateway/task_runtime_recovery.py:56:from app.gateway.task_runtime_cursor import RuntimeCursorError, applied_watermark
+backend/app/gateway/task_runtime_recovery.py:57:from app.gateway.task_runtime_linkage import read_linked_runtime_run
+backend/app/gateway/task_runtime_recovery.py:58:from app.gateway.task_runtime_projection import HISTORY_FIELD
+backend/app/gateway/task_runtime_recovery.py:59:from app.gateway.task_runtime_reconcile import (
+backend/app/gateway/task_runtime_schedule.py:50:from app.gateway.task_runtime_context import TaskRuntimeContextError, idempotency_key_for
+backend/app/gateway/task_runtime_schedule.py:51:from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_stored_linkage
+backend/app/gateway/task_runtime_schedule.py:52:from app.gateway.task_runtime_optin import runtime_unattended_enabled
+backend/app/gateway/task_runtime_event_bridge.py:50:from app.gateway.task_runtime_asset import project_runtime_asset
+backend/app/gateway/task_runtime_event_bridge.py:51:from app.gateway.task_runtime_context import TaskRuntimeContext
+backend/app/gateway/task_runtime_event_bridge.py:52:from app.gateway.task_runtime_projection import (
+backend/app/gateway/routers/tasks.py:14:from app.gateway.events.task_events import TaskCancelEvent
+backend/app/gateway/routers/tasks.py:52:    # slot: the Task <-> Runtime linkage (``task_runtime_linkage.LINKAGE_TASK_KEY``)
+backend/app/gateway/routers/tasks.py:53:    # and the stream cursor (``task_runtime_cursor.CURSOR_TASK_KEY``). They are
+backend/app/gateway/routers/tasks.py:441:    event = TaskCancelEvent(
+backend/app/gateway/routers/tasks.py:1228:                        from app.gateway.events.task_events import TaskAuthorizedEvent
+backend/app/gateway/routers/tasks.py:1230:                        event = TaskAuthorizedEvent.from_request(
+backend/app/gateway/routers/tasks.py:1729:                            from app.gateway.events.task_events import TaskResumeEvent
+backend/app/gateway/routers/tasks.py:1731:                            event = TaskResumeEvent.from_request(
+backend/app/gateway/routers/tasks.py:1791:                            from app.gateway.events.task_events import TaskCancelEvent
+backend/app/gateway/routers/tasks.py:1795:                                cancel_event = TaskCancelEvent(task_id=task_id, project_id=project["id"], subtask_ids=running_subtask_ids, cancelled_by="user", reason="Task restarted - creating new execution", timestamp=datetime.now(UTC))
+backend/app/gateway/routers/tasks.py:1928:        from app.gateway import task_runtime_optin as optin
+backend/app/gateway/routers/tasks.py:1929:        from app.gateway.task_runtime_cancel import cancel_linked_runtime_run
+backend/app/gateway/routers/tasks.py:1930:        from app.gateway.task_runtime_context import build_task_runtime_context
+backend/app/gateway/routers/tasks.py:1939:        identity = optin.resolve_server_task_runtime_identity(task_id)
+backend/app/gateway/routers/tasks.py:1946:        context = build_task_runtime_context(task=task, authz=identity, authorized=True)
+backend/app/gateway/routers/tasks.py:2557:        from app.gateway.events.task_events import TaskAuthorizedEvent
+backend/app/gateway/routers/tasks.py:2559:        event = TaskAuthorizedEvent.from_request(
+backend/app/gateway/task_runtime_context.py:61:    "build_task_runtime_context",
+backend/app/gateway/task_runtime_context.py:278:    :func:`build_task_runtime_context` uses, so the two can never disagree about
+backend/app/gateway/task_runtime_context.py:291:def build_task_runtime_context(
+backend/app/gateway/task_runtime_reconcile.py:43:from app.gateway.task_runtime_context import TaskRuntimeContext
+backend/app/gateway/task_runtime_reconcile.py:44:from app.gateway.task_runtime_linkage import read_linked_runtime_run
+backend/app/gateway/task_runtime_reconcile.py:45:from app.gateway.task_runtime_optin import runtime_unattended_enabled
+backend/app/gateway/task_runtime_reconcile.py:46:from app.gateway.task_runtime_projection import (
+backend/app/gateway/task_runtime_cancel.py:53:from app.gateway.task_runtime_context import TaskRuntimeContext
+backend/app/gateway/task_runtime_cancel.py:54:from app.gateway.task_runtime_linkage import RuntimeRunLinkageError, read_linked_runtime_run
+backend/app/gateway/task_runtime_cancel.py:55:from app.gateway.task_runtime_projection import (
+backend/app/gateway/events/__init__.py:9:    TaskAuthorizedEvent,
+backend/app/gateway/events/__init__.py:10:    TaskExecutionFailedEvent,
+backend/app/gateway/events/__init__.py:11:    TaskExecutionStartedEvent,
+backend/app/gateway/events/__init__.py:12:    TaskResumeEvent,
+backend/app/gateway/events/__init__.py:18:    "TaskAuthorizedEvent",
+backend/app/gateway/events/__init__.py:19:    "TaskExecutionStartedEvent",
+backend/app/gateway/events/__init__.py:20:    "TaskExecutionFailedEvent",
+backend/app/gateway/events/__init__.py:21:    "TaskResumeEvent",
+backend/app/gateway/events/task_event_handlers.py:18:    TaskAuthorizedEvent,
+backend/app/gateway/events/task_event_handlers.py:19:    TaskCancelEvent,
+backend/app/gateway/events/task_event_handlers.py:20:    TaskExecutionFailedEvent,
+backend/app/gateway/events/task_event_handlers.py:21:    TaskExecutionStartedEvent,
+backend/app/gateway/events/task_event_handlers.py:22:    TaskResumeEvent,
+backend/app/gateway/events/task_event_handlers.py:73:async def handle_task_authorized(event: TaskAuthorizedEvent) -> None:
+backend/app/gateway/events/task_event_handlers.py:88:        event: TaskAuthorizedEvent with task_id, project_id, etc.
+backend/app/gateway/events/task_event_handlers.py:257:    event: TaskAuthorizedEvent,
+backend/app/gateway/events/task_event_handlers.py:292:    event: TaskAuthorizedEvent,
+backend/app/gateway/events/task_event_handlers.py:454:    started_event = TaskExecutionStartedEvent(
+backend/app/gateway/events/task_event_handlers.py:462:        logger.info("Published TaskExecutionStartedEvent for %s", task_id)
+backend/app/gateway/events/task_event_handlers.py:464:        logger.warning("Failed to publish TaskExecutionStartedEvent for %s", task_id)
+backend/app/gateway/events/task_event_handlers.py:536:async def _emit_execution_failed(original_event: TaskAuthorizedEvent, error: str, retryable: bool) -> None:
+backend/app/gateway/events/task_event_handlers.py:544:    failed_event = TaskExecutionFailedEvent(
+backend/app/gateway/events/task_event_handlers.py:553:        logger.error("Failed to publish TaskExecutionFailedEvent for %s", original_event.task_id)
+backend/app/gateway/events/task_event_handlers.py:557:async def handle_task_execution_started(event: TaskExecutionStartedEvent) -> None:
+backend/app/gateway/events/task_event_handlers.py:569:async def handle_task_execution_failed(event: TaskExecutionFailedEvent) -> None:
+backend/app/gateway/events/task_event_handlers.py:581:async def handle_task_cancelled(event: TaskCancelEvent) -> None:
+backend/app/gateway/events/task_event_handlers.py:590:        event: TaskCancelEvent with task_id, subtask_ids, etc.
+backend/app/gateway/events/task_event_handlers.py:659:async def handle_task_resume(event: TaskResumeEvent) -> None:
+backend/app/gateway/events/task_event_handlers.py:668:        event: TaskResumeEvent with task_id, project_id, etc.
+backend/app/gateway/events/task_events.py:12:class TaskAuthorizedEvent:
+backend/app/gateway/events/task_events.py:34:    ) -> "TaskAuthorizedEvent":
+backend/app/gateway/events/task_events.py:47:class TaskExecutionStartedEvent:
+backend/app/gateway/events/task_events.py:59:class TaskExecutionFailedEvent:
+backend/app/gateway/events/task_events.py:72:class TaskCancelEvent:
+backend/app/gateway/events/task_events.py:91:    ) -> "TaskCancelEvent":
+backend/app/gateway/events/task_events.py:104:class TaskCancelledEvent:
+backend/app/gateway/events/task_events.py:116:class TaskResumeEvent:
+backend/app/gateway/events/task_events.py:133:    ) -> "TaskResumeEvent":
