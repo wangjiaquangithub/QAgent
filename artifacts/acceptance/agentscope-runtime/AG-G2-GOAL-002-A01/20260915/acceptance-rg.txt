@@ -1,0 +1,312 @@
+backend/packages/harness/evoflow/persistence/schema.py:458:            wake_scheduled INTEGER NOT NULL DEFAULT 0,
+backend/packages/harness/evoflow/persistence/schema.py:517:    execution_authorized INTEGER NOT NULL DEFAULT 0,
+backend/packages/harness/evoflow/persistence/schema.py:550:    event_json TEXT NOT NULL
+backend/packages/harness/evoflow/persistence/schema.py:566:    execution_authorized INTEGER NOT NULL DEFAULT 0,
+backend/packages/harness/evoflow/persistence/schema.py:691:            goal_status TEXT NOT NULL DEFAULT 'active',
+backend/packages/harness/evoflow/persistence/schema.py:693:            continuation_suppressed INTEGER NOT NULL DEFAULT 0,
+backend/packages/harness/evoflow/persistence/schema.py:1328:    event_json TEXT NOT NULL,
+backend/packages/harness/evoflow/persistence/schema.py:1843:CREATE INDEX IF NOT EXISTS idx_goal_sessions_goal_status
+backend/packages/harness/evoflow/persistence/schema.py:1844:        ON evoflow_goal_sessions(goal_status, enabled, updated_at);
+backend/app/channels/services/goal_service.py:258:        if str(session.goal_status or "") == "active":
+backend/app/channels/services/goal_service.py:264:        if str(session.goal_status or "").strip().lower() not in {"completed", "cleared"}:
+backend/app/channels/services/goal_service.py:308:        session.goal_status = "completed"
+backend/app/channels/services/goal_service.py:396:                goal_status="cleared",
+backend/app/channels/services/goal_service.py:397:                continuation_suppressed=True,
+backend/app/channels/services/goal_service.py:541:        gs = str(state.get("goal_status") or session.goal_status or "active").strip().lower()
+backend/app/channels/services/goal_service.py:543:            session.goal_status = gs
+backend/app/channels/services/goal_service.py:547:        session.continuation_suppressed = bool(state.get("continuation_suppressed", session.continuation_suppressed))
+backend/app/channels/services/goal_service.py:559:        elif session.continuation_suppressed or gs == "paused":
+backend/app/channels/services/goal_service.py:650:                "goal_status": str(session.goal_status or "active"),
+backend/app/channels/services/goal_service.py:653:                "continuation_suppressed": bool(session.continuation_suppressed),
+backend/app/channels/services/goal_service.py:730:            gs = str(final_state.get("goal_status") or session.goal_status or "active")
+backend/app/channels/services/goal_service.py:731:            session.goal_status = gs
+backend/app/channels/services/goal_service.py:750:                session.goal_status = "completed"
+backend/app/channels/services/goal_service.py:767:                session.goal_status = gs
+backend/app/channels/services/goal_service.py:768:                if session.continuation_suppressed or gs == "paused" or st == "interrupted":
+backend/app/channels/services/goal_service.py:779:            if str(session.goal_status or "") in {"active", "paused"}:
+backend/app/channels/services/goal_service.py:960:                goal_status=str(session.goal_status or ""),
+backend/app/channels/services/goal_service.py:964:            gs = str(session.goal_status or "").strip().lower()
+backend/app/channels/services/goal_service.py:1039:            goal_status="active",
+backend/app/channels/services/goal_service.py:1041:            continuation_suppressed=False,
+backend/app/channels/services/goal_service.py:1116:        if session.continuation_suppressed or str(session.goal_status or "") != "active":
+backend/app/channels/services/goal_service.py:1188:            db_gs = str(session.goal_status or "").strip().lower()
+backend/app/channels/services/goal_service.py:1193:            elif reply and str(session.goal_status or "") == "active":
+backend/app/channels/services/goal_service.py:1201:            elif str(session.goal_status or "") == "active":
+backend/app/channels/services/goal_service.py:1213:                    f"goal_status={session.goal_status} session_status="
+backend/app/channels/services/goal_service.py:1219:            if str(session.goal_status or "") in {"active", "paused"}:
+backend/app/channels/services/goal_service.py:1269:        db_gs = str(session.goal_status or "").strip().lower()
+backend/app/channels/services/goal_service.py:1275:        elif reply and str(session.goal_status or "") == "active":
+backend/app/channels/services/goal_service.py:1292:            str(session.goal_status or "") == "active"
+backend/app/channels/services/goal_service.py:1293:            and not session.continuation_suppressed
+backend/app/channels/services/goal_service.py:1299:            db_goal_status = str((row or {}).get("goal_status") or "").strip().lower()
+backend/app/channels/services/goal_service.py:1300:            if db_goal_status == "completed":
+backend/app/channels/services/goal_service.py:1301:                session.goal_status = "completed"
+backend/app/channels/services/goal_service.py:1327:                f"goal_status={session.goal_status} session_status={session.status.value if hasattr(session.status, 'value') else session.status}"
+backend/app/channels/services/goal_service.py:1337:            completed=session.goal_status == "completed",
+backend/app/channels/services/goal_service.py:1355:        session.continuation_suppressed = True
+backend/app/channels/services/goal_service.py:1356:        session.goal_status = "active"
+backend/app/channels/services/goal_service.py:1365:            goal_status=session.goal_status,
+backend/app/channels/services/goal_service.py:1380:        session.goal_status = "paused"
+backend/app/channels/services/goal_service.py:1381:        session.continuation_suppressed = True
+backend/app/channels/services/goal_service.py:1394:        if session.goal_status not in {"active", "paused"}:
+backend/app/channels/services/goal_service.py:1397:        session.goal_status = "active"
+backend/app/channels/services/goal_service.py:1398:        session.continuation_suppressed = False
+backend/app/channels/services/goal_service.py:1422:        session.goal_status = "cleared"
+backend/app/channels/services/goal_service.py:1423:        session.continuation_suppressed = True
+backend/app/channels/services/goal_service.py:1441:        return str(session.goal_status or "").strip().lower() in {"active", "paused"}
+backend/app/channels/services/goal_service.py:1467:            "goal_status": str(session.goal_status or "active"),
+backend/app/channels/services/goal_service.py:1469:            "continuation_suppressed": bool(session.continuation_suppressed),
+backend/app/channels/services/goal_service.py:1530:            goal_status=str(existing.get("goal_status") or "cleared"),
+backend/app/channels/services/goal_service.py:1532:            continuation_suppressed=bool(existing.get("continuation_suppressed")),
+backend/app/channels/services/goal_service.py:1544:        gs = str(row.get("goal_status") or "").strip().lower()
+backend/app/channels/services/goal_service.py:1576:                existing_gs = str(existing.get("goal_status") or "").strip().lower()
+backend/app/channels/services/goal_service.py:1577:                new_gs = str(kwargs.get("goal_status") or "").strip().lower()
+backend/app/channels/services/goal_service.py:1585:                        kwargs["goal_status"] = existing_gs
+backend/app/channels/services/goal_service.py:1636:                "enabled": str(session.goal_status or "active") in ("active", "paused"),
+backend/app/channels/services/goal_service.py:1637:                "goalStatus": str(session.goal_status or "active"),
+backend/app/channels/services/goal_service.py:1638:                "continuationSuppressed": bool(session.continuation_suppressed),
+backend/app/channels/services/goal_service.py:1736:                    goal_status=str(row.get("goal_status") or "active"),
+backend/app/channels/services/goal_service.py:1738:                    continuation_suppressed=bool(row.get("continuation_suppressed")),
+backend/app/channels/services/goal_service.py:1786:        gs = str(row.get("goal_status") or session.goal_status or "active").strip().lower()
+backend/app/channels/services/goal_service.py:1788:            session.goal_status = gs
+backend/app/channels/services/goal_service.py:1789:        session.continuation_suppressed = bool(row.get("continuation_suppressed"))
+backend/app/channels/services/goal_service.py:1849:            goal_status=str(row.get("goal_status") or "active"),
+backend/app/channels/services/goal_service.py:1851:            continuation_suppressed=bool(row.get("continuation_suppressed")),
+backend/app/channels/services/goal_service.py:1875:            gs = str(row.get("goal_status") or "").strip().lower()
+backend/app/channels/services/goal_service.py:1897:            gs = str(session.goal_status or "").strip().lower()
+backend/app/channels/services/goal_service.py:1932:        if not session or str(session.goal_status or "") not in {"active", "paused"}:
+backend/app/channels/services/goal_service.py:1951:        session.continuation_suppressed = False
+backend/app/channels/services/goal_service.py:1952:        session.goal_status = "active"
+backend/packages/harness/evoflow/collab/user_execution_confirm.py:77:    from evoflow.collab.authorize_execution import authorize_main_task_execution, is_task_execution_authorized
+backend/packages/harness/evoflow/collab/user_execution_confirm.py:108:    out["success"] = bool(is_task_execution_authorized(storage, tid))
+backend/packages/harness/evoflow/collab/user_execution_confirm.py:120:    """Fire-and-forget: persist execution_authorized without blocking the LangGraph model step."""
+backend/packages/harness/evoflow/collab/task_state_service.py:15:from evoflow.collab.models import TaskStatus
+backend/packages/harness/evoflow/collab/task_state_service.py:32:class TaskStatusChangeRecord(BaseModel):
+backend/packages/harness/evoflow/collab/task_state_service.py:72:        register_transition_hook(TaskStatus.PLANNED, TaskStatus.EXECUTING, self._on_start_execution)
+backend/packages/harness/evoflow/collab/task_state_service.py:73:        register_transition_hook(TaskStatus.EXECUTING, TaskStatus.PAUSED, self._on_pause)
+backend/packages/harness/evoflow/collab/task_state_service.py:74:        register_transition_hook(TaskStatus.PAUSED, TaskStatus.EXECUTING, self._on_resume)
+backend/packages/harness/evoflow/collab/task_state_service.py:75:        register_transition_hook(TaskStatus.EXECUTING, TaskStatus.COMPLETED, self._on_complete)
+backend/packages/harness/evoflow/collab/task_state_service.py:76:        register_transition_hook(TaskStatus.REVIEWED, TaskStatus.COMPLETED, self._on_complete)
+backend/packages/harness/evoflow/collab/task_state_service.py:77:        register_transition_hook(TaskStatus.EXECUTING, TaskStatus.FAILED, self._on_fail)
+backend/packages/harness/evoflow/collab/task_state_service.py:78:        register_transition_hook(TaskStatus.EXECUTING, TaskStatus.CANCELLED, self._on_cancel)
+backend/packages/harness/evoflow/collab/task_state_service.py:79:        register_transition_hook(TaskStatus.PAUSED, TaskStatus.CANCELLED, self._on_cancel)
+backend/packages/harness/evoflow/collab/task_state_service.py:84:        to_status: TaskStatus,
+backend/packages/harness/evoflow/collab/task_state_service.py:113:        from_status = TaskStatus(task.get("status", "pending"))
+backend/packages/harness/evoflow/collab/task_state_service.py:155:    def _update_timestamps(self, task: dict[str, Any], from_status: TaskStatus, to_status: TaskStatus) -> None:
+backend/packages/harness/evoflow/collab/task_state_service.py:160:        if from_status == TaskStatus.PENDING and to_status == TaskStatus.PLANNING:
+backend/packages/harness/evoflow/collab/task_state_service.py:164:        elif from_status == TaskStatus.PLANNING and to_status == TaskStatus.PLANNED:
+backend/packages/harness/evoflow/collab/task_state_service.py:168:        elif from_status == TaskStatus.PLANNED and to_status == TaskStatus.EXECUTING:
+backend/packages/harness/evoflow/collab/task_state_service.py:173:        elif from_status == TaskStatus.EXECUTING and to_status == TaskStatus.PAUSED:
+backend/packages/harness/evoflow/collab/task_state_service.py:177:        elif from_status == TaskStatus.PAUSED and to_status == TaskStatus.EXECUTING:
+backend/packages/harness/evoflow/collab/task_state_service.py:181:        elif to_status in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
+backend/packages/harness/evoflow/collab/task_state_service.py:203:        record = TaskStatusChangeRecord(
+backend/packages/harness/evoflow/collab/task_state_service.py:225:    ) -> list[TaskStatusChangeRecord]:
+backend/packages/harness/evoflow/collab/task_state_service.py:240:            records: list[TaskStatusChangeRecord] = []
+backend/packages/harness/evoflow/collab/task_state_service.py:243:                    records.append(TaskStatusChangeRecord.model_validate(data))
+backend/packages/harness/evoflow/collab/task_state_service.py:267:        task_status = TaskStatus(task.get("status", "pending"))
+backend/packages/harness/evoflow/collab/task_state_service.py:269:        # Check 1: Task status should match expected CollabPhase
+backend/packages/harness/evoflow/collab/task_state_service.py:283:        terminal_statuses = {TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED}
+backend/packages/harness/evoflow/collab/supervisor_plan_gate.py:13:    is_task_execution_authorized,
+backend/packages/harness/evoflow/collab/supervisor_plan_gate.py:133:        if is_task_execution_authorized(store, mid):
+backend/packages/harness/evoflow/collab/supervisor_plan_gate.py:139:        hint=("用户授权后由系统写入 execution_authorized；再调用 supervisor(action=start_execution, task_id=...)。"),
+backend/packages/harness/evoflow/collab/supervisor_plan_gate.py:164:        has_auth = is_task_execution_authorized(store, resolved_task)
+backend/packages/harness/evoflow/collab/dispatch_authorized_execution.py:66:    from evoflow.collab.authorize_execution import is_task_execution_authorized
+backend/packages/harness/evoflow/collab/dispatch_authorized_execution.py:76:    if not is_task_execution_authorized(storage, tid):
+backend/packages/harness/evoflow/collab/dispatch_authorized_execution.py:81:            "error": "Task not execution_authorized",
+backend/packages/harness/evoflow/collab/authorize_execution.py:20:def is_task_execution_authorized(storage: ProjectStorage, task_id: str) -> bool:
+backend/packages/harness/evoflow/collab/authorize_execution.py:21:    """Whether the main task row has execution_authorized set (persisted user consent)."""
+backend/packages/harness/evoflow/collab/authorize_execution.py:30:    return bool(row[1].get("execution_authorized"))
+backend/packages/harness/evoflow/collab/authorize_execution.py:34:    """Set execution_authorized when status is planned, planning, or pending.
+backend/packages/harness/evoflow/collab/authorize_execution.py:56:            if task.get("execution_authorized"):
+backend/packages/harness/evoflow/collab/authorize_execution.py:74:            was_authorized = bool(task.get("execution_authorized"))
+backend/packages/harness/evoflow/collab/authorize_execution.py:75:            task["execution_authorized"] = True
+backend/packages/harness/evoflow/collab/authorize_execution.py:198:    """Persist execution_authorized after user confirm when strict status gate blocked."""
+backend/packages/harness/evoflow/collab/authorize_execution.py:209:            if task.get("execution_authorized"):
+backend/packages/harness/evoflow/collab/authorize_execution.py:217:            task["execution_authorized"] = True
+backend/packages/harness/evoflow/collab/authorize_execution.py:227:def ensure_task_execution_authorized_for_user(
+backend/packages/harness/evoflow/collab/authorize_execution.py:234:    """Lazy authorize at start_execution: user confirm → write execution_authorized if missing."""
+backend/packages/harness/evoflow/collab/authorize_execution.py:238:    if is_task_execution_authorized(storage, tid):
+backend/packages/harness/evoflow/collab/authorize_execution.py:262:    """Clear execution_authorized after plan revision (user must re-authorize to start)."""
+backend/packages/harness/evoflow/collab/authorize_execution.py:270:            if not task.get("execution_authorized"):
+backend/packages/harness/evoflow/collab/authorize_execution.py:272:            task["execution_authorized"] = False
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:9:from evoflow.collab.models import CollabPhase, ThreadCollabState
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:34:    return p in {"", CollabPhase.IDLE.value}
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:52:    disk_raw = collab.collab_phase.value if isinstance(collab.collab_phase, CollabPhase) else str(collab.collab_phase)
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:57:            return CollabPhase.PLAN_READY.value, "infer_virtual_plan_ready_no_task"
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:58:        return disk_raw if disk_raw else CollabPhase.IDLE.value, "disk"
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:62:    auth = bool(main_task.get("execution_authorized"))
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:65:        return CollabPhase.DONE.value, "infer_main_terminal_no_subtasks"
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:68:        return CollabPhase.DONE.value, "infer_main_terminal_all_subtasks_terminal"
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:72:            CollabPhase.IDLE.value,
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:73:            CollabPhase.PLANNING.value,
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:74:            CollabPhase.PLAN_READY.value,
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:75:            CollabPhase.AWAITING_EXEC.value,
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:77:            return CollabPhase.EXECUTING.value, "infer_execution_authorized_active_subtasks"
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:81:            return CollabPhase.PLAN_READY.value, "infer_virtual_plan_ready_bound_plan"
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:83:    return disk_raw if disk_raw else CollabPhase.IDLE.value, "disk"
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:88:    if inferred != CollabPhase.DONE.value:
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:90:    cur = _norm(collab.collab_phase.value if isinstance(collab.collab_phase, CollabPhase) else collab.collab_phase)
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:91:    if cur == CollabPhase.DONE.value:
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:94:        merged = merge_thread_collab_state(collab, {"collab_phase": CollabPhase.DONE.value})
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:211:                "executionAuthorized": bool(task.get("execution_authorized")),
+backend/packages/harness/evoflow/collab/task_progress_snapshot.py:247:            auth = 1 if t.get("execution_authorized") else 0
+backend/packages/harness/evoflow/collab/__init__.py:5:    CollabPhase,
+backend/packages/harness/evoflow/collab/__init__.py:11:    TaskStatus,
+backend/packages/harness/evoflow/collab/__init__.py:33:    "CollabPhase",
+backend/packages/harness/evoflow/collab/__init__.py:39:    "TaskStatus",
+backend/packages/harness/evoflow/collab/models.py:23:class CollabPhase(StrEnum):
+backend/packages/harness/evoflow/collab/models.py:41:    collab_phase: CollabPhase = Field(default=CollabPhase.IDLE, description="Collaboration phase")
+backend/packages/harness/evoflow/collab/models.py:59:class TaskStatus(StrEnum):
+backend/packages/harness/evoflow/collab/models.py:135:    status: TaskStatus = Field(default=TaskStatus.PENDING, description="Task status")
+backend/packages/harness/evoflow/collab/models.py:152:            "status": self.status.value if isinstance(self.status, TaskStatus) else self.status,
+backend/packages/harness/evoflow/collab/models.py:169:    status: TaskStatus = Field(default=TaskStatus.PENDING, description="Current status")
+backend/packages/harness/evoflow/collab/models.py:179:    execution_authorized: bool = Field(default=False, description="Gate: allow task tool to run workers for this task")
+backend/packages/harness/evoflow/collab/models.py:189:            "status": self.status.value if isinstance(self.status, TaskStatus) else self.status,
+backend/packages/harness/evoflow/collab/models.py:199:            "execution_authorized": self.execution_authorized,
+backend/packages/harness/evoflow/collab/state_transitions.py:10:from evoflow.collab.models import CollabPhase, TaskStatus
+backend/packages/harness/evoflow/collab/state_transitions.py:16:TASK_STATUS_TO_COLLAB_PHASE: dict[TaskStatus, CollabPhase] = {
+backend/packages/harness/evoflow/collab/state_transitions.py:17:    TaskStatus.INBOX: CollabPhase.IDLE,
+backend/packages/harness/evoflow/collab/state_transitions.py:18:    TaskStatus.PENDING: CollabPhase.IDLE,
+backend/packages/harness/evoflow/collab/state_transitions.py:19:    TaskStatus.PLANNING: CollabPhase.PLANNING,
+backend/packages/harness/evoflow/collab/state_transitions.py:20:    TaskStatus.PLANNED: CollabPhase.AWAITING_EXEC,
+backend/packages/harness/evoflow/collab/state_transitions.py:21:    TaskStatus.EXECUTING: CollabPhase.EXECUTING,
+backend/packages/harness/evoflow/collab/state_transitions.py:22:    TaskStatus.PAUSED: CollabPhase.PAUSED,
+backend/packages/harness/evoflow/collab/state_transitions.py:23:    TaskStatus.REVIEWED: CollabPhase.VERIFYING,  # 已完成待审核，对应验证阶段
+backend/packages/harness/evoflow/collab/state_transitions.py:24:    TaskStatus.COMPLETED: CollabPhase.DONE,
+backend/packages/harness/evoflow/collab/state_transitions.py:25:    TaskStatus.FAILED: CollabPhase.DONE,
+backend/packages/harness/evoflow/collab/state_transitions.py:26:    TaskStatus.CANCELLED: CollabPhase.DONE,
+backend/packages/harness/evoflow/collab/state_transitions.py:29:COLLAB_PHASE_TO_TASK_STATUS: dict[CollabPhase, TaskStatus | None] = {
+backend/packages/harness/evoflow/collab/state_transitions.py:30:    CollabPhase.IDLE: TaskStatus.PENDING,
+backend/packages/harness/evoflow/collab/state_transitions.py:31:    CollabPhase.REQ_CONFIRM: TaskStatus.PLANNING,
+backend/packages/harness/evoflow/collab/state_transitions.py:32:    CollabPhase.PLANNING: TaskStatus.PLANNING,
+backend/packages/harness/evoflow/collab/state_transitions.py:33:    CollabPhase.PLAN_READY: TaskStatus.PLANNED,
+backend/packages/harness/evoflow/collab/state_transitions.py:34:    CollabPhase.AWAITING_EXEC: TaskStatus.PLANNED,
+backend/packages/harness/evoflow/collab/state_transitions.py:35:    CollabPhase.EXECUTING: TaskStatus.EXECUTING,
+backend/packages/harness/evoflow/collab/state_transitions.py:36:    CollabPhase.PAUSED: TaskStatus.PAUSED,
+backend/packages/harness/evoflow/collab/state_transitions.py:37:    CollabPhase.DONE: None,  # 需要进一步判断是 completed/failed/cancelled
+backend/packages/harness/evoflow/collab/state_transitions.py:45:ALLOWED_TRANSITIONS: dict[TaskStatus, set[TaskStatus]] = {
+backend/packages/harness/evoflow/collab/state_transitions.py:46:    TaskStatus.INBOX: {
+backend/packages/harness/evoflow/collab/state_transitions.py:47:        TaskStatus.PENDING,  # 分配 / 升级为正式任务
+backend/packages/harness/evoflow/collab/state_transitions.py:48:        TaskStatus.COMPLETED,  # 用户自己勾完成
+backend/packages/harness/evoflow/collab/state_transitions.py:49:        TaskStatus.CANCELLED,
+backend/packages/harness/evoflow/collab/state_transitions.py:51:    TaskStatus.PENDING: {
+backend/packages/harness/evoflow/collab/state_transitions.py:52:        TaskStatus.PLANNING,
+backend/packages/harness/evoflow/collab/state_transitions.py:53:        TaskStatus.PLANNED,
+backend/packages/harness/evoflow/collab/state_transitions.py:54:        TaskStatus.EXECUTING,  # 直接开跑（事项派发 / progress）
+backend/packages/harness/evoflow/collab/state_transitions.py:55:        TaskStatus.CANCELLED,  # 未开始即可取消（误派发清理）
+backend/packages/harness/evoflow/collab/state_transitions.py:57:    TaskStatus.PLANNING: {
+backend/packages/harness/evoflow/collab/state_transitions.py:58:        TaskStatus.PLANNED,
+backend/packages/harness/evoflow/collab/state_transitions.py:59:        TaskStatus.FAILED,  # 规划失败
+backend/packages/harness/evoflow/collab/state_transitions.py:60:        TaskStatus.CANCELLED,  # 取消
+backend/packages/harness/evoflow/collab/state_transitions.py:62:    TaskStatus.PLANNED: {
+backend/packages/harness/evoflow/collab/state_transitions.py:63:        TaskStatus.PLANNING,  # 重新规划
+backend/packages/harness/evoflow/collab/state_transitions.py:64:        TaskStatus.EXECUTING,  # 开始执行
+backend/packages/harness/evoflow/collab/state_transitions.py:65:        TaskStatus.CANCELLED,  # 取消
+backend/packages/harness/evoflow/collab/state_transitions.py:67:    TaskStatus.EXECUTING: {
+backend/packages/harness/evoflow/collab/state_transitions.py:68:        TaskStatus.PAUSED,  # 暂停
+backend/packages/harness/evoflow/collab/state_transitions.py:69:        TaskStatus.COMPLETED,  # 直接完成（无需审核的任务）
+backend/packages/harness/evoflow/collab/state_transitions.py:70:        TaskStatus.REVIEWED,  # 完成待审核（员工干完，等上级确认）
+backend/packages/harness/evoflow/collab/state_transitions.py:71:        TaskStatus.FAILED,  # 失败
+backend/packages/harness/evoflow/collab/state_transitions.py:72:        TaskStatus.CANCELLED,  # 取消
+backend/packages/harness/evoflow/collab/state_transitions.py:74:    TaskStatus.PAUSED: {
+backend/packages/harness/evoflow/collab/state_transitions.py:75:        TaskStatus.EXECUTING,  # 恢复
+backend/packages/harness/evoflow/collab/state_transitions.py:76:        TaskStatus.CANCELLED,  # 取消
+backend/packages/harness/evoflow/collab/state_transitions.py:78:    TaskStatus.REVIEWED: {
+backend/packages/harness/evoflow/collab/state_transitions.py:79:        TaskStatus.COMPLETED,  # 审核通过
+backend/packages/harness/evoflow/collab/state_transitions.py:80:        TaskStatus.EXECUTING,  # 打回重做
+backend/packages/harness/evoflow/collab/state_transitions.py:81:        TaskStatus.CANCELLED,  # 取消
+backend/packages/harness/evoflow/collab/state_transitions.py:83:    TaskStatus.COMPLETED: set(),  # 终态，不可转换
+backend/packages/harness/evoflow/collab/state_transitions.py:84:    TaskStatus.FAILED: {
+backend/packages/harness/evoflow/collab/state_transitions.py:85:        TaskStatus.EXECUTING,  # 重试
+backend/packages/harness/evoflow/collab/state_transitions.py:87:    TaskStatus.CANCELLED: set(),  # 终态，不可转换
+backend/packages/harness/evoflow/collab/state_transitions.py:102:def can_transition(from_status: TaskStatus, to_status: TaskStatus) -> bool:
+backend/packages/harness/evoflow/collab/state_transitions.py:116:def validate_transition(from_status: TaskStatus, to_status: TaskStatus) -> None:
+backend/packages/harness/evoflow/collab/state_transitions.py:130:def get_allowed_transitions(status: TaskStatus) -> set[TaskStatus]:
+backend/packages/harness/evoflow/collab/state_transitions.py:147:def map_task_status_to_collab_phase(task_status: TaskStatus) -> CollabPhase:
+backend/packages/harness/evoflow/collab/state_transitions.py:148:    """Map TaskStatus to CollabPhase.
+backend/packages/harness/evoflow/collab/state_transitions.py:156:    return TASK_STATUS_TO_COLLAB_PHASE.get(task_status, CollabPhase.IDLE)
+backend/packages/harness/evoflow/collab/state_transitions.py:159:def map_collab_phase_to_task_status(collab_phase: CollabPhase) -> TaskStatus | None:
+backend/packages/harness/evoflow/collab/state_transitions.py:160:    """Map CollabPhase to TaskStatus.
+backend/packages/harness/evoflow/collab/state_transitions.py:181:def register_transition_hook(from_status: TaskStatus, to_status: TaskStatus, hook: StateTransitionHook) -> None:
+backend/packages/harness/evoflow/collab/state_transitions.py:195:def unregister_transition_hook(from_status: TaskStatus, to_status: TaskStatus, hook: StateTransitionHook) -> None:
+backend/packages/harness/evoflow/collab/state_transitions.py:208:def execute_transition_hooks(from_status: TaskStatus, to_status: TaskStatus, context: dict[str, Any]) -> None:
+backend/packages/harness/evoflow/collab/execution_lifecycle.py:8:from evoflow.collab.models import CollabPhase, TaskStatus
+backend/packages/harness/evoflow/collab/execution_lifecycle.py:106:        if p in {CollabPhase.PLANNING.value, CollabPhase.PLAN_READY.value}:
+backend/packages/harness/evoflow/collab/execution_lifecycle.py:108:        if p == CollabPhase.AWAITING_EXEC.value:
+backend/packages/harness/evoflow/collab/execution_lifecycle.py:110:        if p == CollabPhase.EXECUTING.value:
+backend/packages/harness/evoflow/collab/execution_lifecycle.py:115:    auth = bool(task.get("execution_authorized"))
+backend/packages/harness/evoflow/collab/execution_lifecycle.py:122:    if phase == CollabPhase.PAUSED.value or status == TaskStatus.PAUSED.value:
+backend/packages/harness/evoflow/collab/execution_lifecycle.py:124:    if status in {TaskStatus.EXECUTING.value, "running", "in_progress"} or phase == CollabPhase.EXECUTING.value:
+backend/packages/harness/evoflow/collab/execution_lifecycle.py:129:        if phase == CollabPhase.AWAITING_EXEC.value or status in {TaskStatus.PLANNED.value, TaskStatus.PLANNING.value}:
+backend/packages/harness/evoflow/collab/execution_lifecycle.py:132:    if has_plan or status in {TaskStatus.PLANNED.value, TaskStatus.PLANNING.value}:
+backend/packages/harness/evoflow/collab/execution_lifecycle.py:134:    if status == TaskStatus.PLANNING.value or phase in {CollabPhase.PLANNING.value, CollabPhase.PLAN_READY.value}:
+backend/packages/harness/evoflow/collab/storage.py:13:    TaskStatus,
+backend/packages/harness/evoflow/collab/storage.py:83:        "status": TaskStatus.PENDING.value,
+backend/packages/harness/evoflow/collab/storage.py:93:        "execution_authorized": False,
+backend/packages/harness/evoflow/collab/storage.py:113:        "status": TaskStatus.PENDING.value,
+backend/packages/harness/evoflow/collab/storage.py:662:            mem["status"] = TaskStatus.COMPLETED.value
+backend/packages/harness/evoflow/collab/storage.py:665:            mem["status"] = TaskStatus.CANCELLED.value
+backend/packages/harness/evoflow/collab/storage.py:668:            mem["status"] = TaskStatus.FAILED.value
+backend/packages/harness/evoflow/collab/storage.py:898:    ``execution_authorized`` and ``thread_id`` binding are no longer enforced here: if the
+backend/packages/harness/evoflow/collab/debug_runner.py:119:    task_data["execution_authorized"] = True
+backend/packages/harness/evoflow/collab/app_runner.py:74:    from evoflow.collab.authorize_execution import authorize_main_task_execution, is_task_execution_authorized
+backend/packages/harness/evoflow/collab/app_runner.py:76:    if not is_task_execution_authorized(storage, tid):
+backend/packages/harness/evoflow/collab/thread_collab.py:8:from evoflow.collab.models import CollabPhase, ThreadCollabState, _utc_iso_z
+backend/packages/harness/evoflow/collab/thread_collab.py:49:        return ctx or CollabPhase.IDLE.value
+backend/packages/harness/evoflow/collab/thread_collab.py:52:        p = disk.collab_phase.value if isinstance(disk.collab_phase, CollabPhase) else str(disk.collab_phase or "")
+backend/packages/harness/evoflow/collab/thread_collab.py:56:    if disk_p and disk_p != CollabPhase.IDLE.value:
+backend/packages/harness/evoflow/collab/thread_collab.py:58:    if ctx and ctx != CollabPhase.IDLE.value:
+backend/packages/harness/evoflow/collab/thread_collab.py:60:    return disk_p or ctx or CollabPhase.IDLE.value
+backend/packages/harness/evoflow/collab/thread_collab.py:133:    CollabPhase.IDLE.value: frozenset({CollabPhase.PLANNING.value, CollabPhase.REQ_CONFIRM.value}),
+backend/packages/harness/evoflow/collab/thread_collab.py:134:    CollabPhase.REQ_CONFIRM.value: frozenset({CollabPhase.PLANNING.value, CollabPhase.IDLE.value}),
+backend/packages/harness/evoflow/collab/thread_collab.py:135:    CollabPhase.PLANNING.value: frozenset({CollabPhase.PLAN_READY.value, CollabPhase.IDLE.value, CollabPhase.AWAITING_EXEC.value}),
+backend/packages/harness/evoflow/collab/thread_collab.py:136:    CollabPhase.PLAN_READY.value: frozenset({CollabPhase.AWAITING_EXEC.value, CollabPhase.PLANNING.value, CollabPhase.EXECUTING.value}),
+backend/packages/harness/evoflow/collab/thread_collab.py:137:    CollabPhase.AWAITING_EXEC.value: frozenset({CollabPhase.EXECUTING.value, CollabPhase.PLAN_READY.value, CollabPhase.PLANNING.value}),
+backend/packages/harness/evoflow/collab/thread_collab.py:138:    CollabPhase.EXECUTING.value: frozenset({CollabPhase.VERIFYING.value, CollabPhase.PAUSED.value, CollabPhase.DONE.value, CollabPhase.REFLECTING.value}),
+backend/packages/harness/evoflow/collab/thread_collab.py:139:    CollabPhase.VERIFYING.value: frozenset({CollabPhase.REFLECTING.value, CollabPhase.DONE.value, CollabPhase.EXECUTING.value}),
+backend/packages/harness/evoflow/collab/thread_collab.py:140:    CollabPhase.REFLECTING.value: frozenset({CollabPhase.DONE.value}),
+backend/packages/harness/evoflow/collab/thread_collab.py:141:    CollabPhase.PAUSED.value: frozenset({CollabPhase.EXECUTING.value}),
+backend/packages/harness/evoflow/collab/thread_collab.py:142:    CollabPhase.DONE.value: frozenset(),
+backend/packages/harness/evoflow/collab/thread_collab.py:147:    if isinstance(phase, CollabPhase):
+backend/packages/harness/evoflow/collab/thread_collab.py:149:    return str(phase or CollabPhase.IDLE.value).strip().lower() or CollabPhase.IDLE.value
+backend/packages/harness/evoflow/collab/thread_collab.py:152:def can_transition_collab_phase(from_phase: str | CollabPhase | None, to_phase: str | CollabPhase | None) -> bool:
+backend/packages/harness/evoflow/collab/thread_collab.py:241:    if phase_val == CollabPhase.VERIFYING.value:
+backend/packages/harness/evoflow/collab/thread_collab.py:246:    if phase_val == CollabPhase.REFLECTING.value:
+backend/packages/harness/evoflow/collab/thread_collab.py:250:            {"collab_phase": CollabPhase.DONE.value, "bound_task_id": task_id},
+backend/packages/harness/evoflow/collab/thread_collab.py:257:    if phase_val == CollabPhase.DONE.value:
+backend/packages/harness/evoflow/collab/thread_collab.py:263:        {"collab_phase": CollabPhase.DONE.value, "bound_task_id": task_id},
+backend/packages/harness/evoflow/collab/thread_collab.py:302:            CollabPhase.PLANNING,
+backend/packages/harness/evoflow/collab/thread_collab.py:303:            CollabPhase.PLAN_READY,
+backend/packages/harness/evoflow/collab/thread_collab.py:304:            CollabPhase.AWAITING_EXEC,
+backend/packages/harness/evoflow/collab/thread_collab.py:305:            CollabPhase.EXECUTING,
+backend/packages/harness/evoflow/collab/thread_collab.py:306:            CollabPhase.VERIFYING,
+backend/packages/harness/evoflow/collab/thread_collab.py:307:            CollabPhase.REFLECTING,
+backend/packages/harness/evoflow/collab/thread_collab.py:313:    phase_val = phase.value if isinstance(phase, CollabPhase) else str(phase)
+backend/packages/harness/evoflow/collab/thread_collab.py:325:        {"collab_phase": CollabPhase.PAUSED.value, "bound_task_id": task_id},
+backend/packages/harness/evoflow/collab/thread_collab.py:359:    if current.collab_phase != CollabPhase.PAUSED:
+backend/packages/harness/evoflow/collab/thread_collab.py:363:            current.collab_phase.value if isinstance(current.collab_phase, CollabPhase) else str(current.collab_phase),
+backend/packages/harness/evoflow/collab/thread_collab.py:370:        {"collab_phase": CollabPhase.EXECUTING.value, "bound_task_id": task_id},
+backend/packages/harness/evoflow/collab/thread_collab.py:400:        {"collab_phase": CollabPhase.PLAN_READY.value, "bound_task_id": task_id},
+backend/packages/harness/evoflow/collab/thread_collab.py:437:        {"collab_phase": CollabPhase.AWAITING_EXEC.value, "bound_task_id": task_id},
+backend/packages/harness/evoflow/collab/thread_collab.py:476:        {"collab_phase": CollabPhase.EXECUTING.value, "bound_task_id": task_id},
+backend/packages/harness/evoflow/collab/thread_collab.py:510:        {"collab_phase": CollabPhase.VERIFYING.value, "bound_task_id": task_id},
+backend/packages/harness/evoflow/collab/thread_collab.py:540:    if phase in {CollabPhase.DONE.value, CollabPhase.IDLE.value, CollabPhase.REFLECTING.value}:
+backend/packages/harness/evoflow/collab/thread_collab.py:545:        {"collab_phase": CollabPhase.REFLECTING.value, "bound_task_id": task_id},
+backend/packages/harness/evoflow/collab/plan_session_task.py:10:from evoflow.collab.models import CollabPhase, ProjectStatus, TaskStatus
+backend/packages/harness/evoflow/collab/plan_session_task.py:103:    if bool(task.get("execution_authorized")) and status in {
+backend/packages/harness/evoflow/collab/plan_session_task.py:104:        TaskStatus.EXECUTING.value,
+backend/packages/harness/evoflow/collab/plan_session_task.py:115:    return status in {TaskStatus.PLANNING.value, TaskStatus.PLANNED.value, "pending", "waiting_dispatch", ""}
+backend/packages/harness/evoflow/collab/plan_session_task.py:197:    if bool(task.get("execution_authorized")):
+backend/packages/harness/evoflow/collab/plan_session_task.py:198:        task["execution_authorized"] = False
+backend/packages/harness/evoflow/collab/plan_session_task.py:203:    if status not in {TaskStatus.PLANNING.value, "pending"}:
+backend/packages/harness/evoflow/collab/plan_session_task.py:204:        task["status"] = TaskStatus.PLANNING.value
+backend/packages/harness/evoflow/collab/plan_session_task.py:268:    if phase == CollabPhase.DONE.value:
+backend/packages/harness/evoflow/collab/plan_session_task.py:286:    if force_planning or phase in {"", CollabPhase.IDLE.value, CollabPhase.DONE.value}:
+backend/packages/harness/evoflow/collab/plan_session_task.py:287:        phase_patch["collab_phase"] = CollabPhase.PLANNING.value
+backend/packages/harness/evoflow/collab/plan_session_task.py:337:    task_data["status"] = TaskStatus.PLANNING.value
+backend/packages/harness/evoflow/collab/plan_session_task.py:435:                "status": str(task.get("status") or TaskStatus.PLANNING.value),
+backend/packages/harness/evoflow/collab/plan_session_task.py:452:    task_data["status"] = TaskStatus.PLANNING.value
+backend/packages/harness/evoflow/collab/plan_session_task.py:517:        task["status"] = TaskStatus.PLANNED.value if task_has_bound_plan(task) else TaskStatus.PLANNING.value
+backend/packages/harness/evoflow/collab/plan_session_task.py:592:            had_execution_auth = bool(row0[1].get("execution_authorized"))
+backend/packages/harness/evoflow/collab/plan_session_task.py:666:        task["status"] = TaskStatus.PLANNED.value
+backend/packages/harness/evoflow/collab/plan_session_task.py:667:        project["status"] = TaskStatus.PLANNED.value
