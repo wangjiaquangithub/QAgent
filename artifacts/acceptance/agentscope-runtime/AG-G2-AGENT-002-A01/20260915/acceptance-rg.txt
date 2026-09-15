@@ -1,0 +1,545 @@
+backend/packages/harness/evoflow/persistence/schema.py:162:CREATE TABLE IF NOT EXISTS "evoflow_agent_runtime" (
+backend/packages/harness/evoflow/persistence/schema.py:322:            approval_id TEXT NOT NULL DEFAULT '',
+backend/packages/harness/evoflow/persistence/schema.py:367:            updated_at TEXT NOT NULL, cache_read_tokens INTEGER, cache_creation_tokens INTEGER, cache_miss_tokens INTEGER, round_id TEXT,
+backend/packages/harness/evoflow/persistence/schema.py:459:            wake_round_id TEXT,
+backend/packages/harness/evoflow/persistence/schema.py:1054:            round_id TEXT NOT NULL DEFAULT '',
+backend/packages/harness/evoflow/persistence/schema.py:1117:CREATE TABLE IF NOT EXISTS evoflow_proactive_approvals (
+backend/packages/harness/evoflow/persistence/schema.py:1130:    FOREIGN KEY (initiative_id) REFERENCES evoflow_proactive_initiatives(id)
+backend/packages/harness/evoflow/persistence/schema.py:1136:            round_id TEXT NOT NULL DEFAULT '',
+backend/packages/harness/evoflow/persistence/schema.py:1147:CREATE TABLE IF NOT EXISTS evoflow_proactive_initiatives (
+backend/packages/harness/evoflow/persistence/schema.py:1158:    approval_id TEXT,
+backend/packages/harness/evoflow/persistence/schema.py:1163:    execution_result TEXT,
+backend/packages/harness/evoflow/persistence/schema.py:1165:    updated_at TEXT NOT NULL, round_id TEXT, goal TEXT NOT NULL DEFAULT '', outcome TEXT NOT NULL DEFAULT '', config_autonomy_level TEXT NOT NULL DEFAULT 'approval_for_risky',
+backend/packages/harness/evoflow/persistence/schema.py:1166:    FOREIGN KEY (role_agent_code) REFERENCES evoflow_proactive_roles(agent_code)
+backend/packages/harness/evoflow/persistence/schema.py:1175:CREATE TABLE IF NOT EXISTS evoflow_proactive_roles (
+backend/packages/harness/evoflow/persistence/schema.py:1180:    heartbeat_rrule TEXT NOT NULL DEFAULT 'FREQ=HOURLY;INTERVAL=2',
+backend/packages/harness/evoflow/persistence/schema.py:1183:    next_heartbeat_at TEXT,
+backend/packages/harness/evoflow/persistence/schema.py:1481:            round_id TEXT PRIMARY KEY,
+backend/packages/harness/evoflow/persistence/schema.py:1498:            round_id TEXT NOT NULL,
+backend/packages/harness/evoflow/persistence/schema.py:1512:            FOREIGN KEY (round_id) REFERENCES evoflow_verification_rounds(round_id)
+backend/packages/harness/evoflow/persistence/schema.py:1549:            ON evoflow_channel_push_log(approval_id, created_at);
+backend/packages/harness/evoflow/persistence/schema.py:1642:            ON evoflow_chat_messages(session_key, round_id);
+backend/packages/harness/evoflow/persistence/schema.py:1829:            ON evoflow_verification_steps(round_id, seq, id);
+backend/packages/harness/evoflow/persistence/schema.py:1875:    ON evoflow_proactive_approvals(status, created_at);
+backend/packages/harness/evoflow/persistence/schema.py:1878:            ON evoflow_proactive_approvals(task_id);
+backend/packages/harness/evoflow/persistence/schema.py:1884:            ON evoflow_proactive_cost_log(round_id);
+backend/packages/harness/evoflow/persistence/schema.py:1887:    ON evoflow_proactive_initiatives(role_agent_code, status, created_at);
+backend/packages/harness/evoflow/persistence/schema.py:1889:CREATE INDEX IF NOT EXISTS idx_proactive_roles_position ON evoflow_proactive_roles(position_code) WHERE position_code != '';
+backend/packages/harness/evoflow/persistence/schema.py:1892:            ON evoflow_proactive_roles(reports_to);
+backend/packages/harness/evoflow/persistence/schema.py:2135:        "evoflow_proactive_initiatives",
+backend/packages/harness/evoflow/proactive/chat_session.py:180:    round_id: str | None = None,
+backend/packages/harness/evoflow/proactive/chat_session.py:194:        rid = str(round_id or stamp or "").strip()
+backend/packages/harness/evoflow/proactive/chat_session.py:197:        return proactive_chat_session_key(code, stamp or round_id)
+backend/packages/harness/evoflow/proactive/chat_session.py:199:    rid = str(round_id or stamp or "").strip()
+backend/packages/harness/evoflow/proactive/chat_session.py:203:def resolve_transcript_round_id(session_key: str, round_id: str | None) -> str | None:
+backend/packages/harness/evoflow/proactive/chat_session.py:204:    """Map Panel trail filters onto the chat ``round_id`` that actually has rows.
+backend/packages/harness/evoflow/proactive/chat_session.py:212:    rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/proactive/chat_session.py:223:            WHERE session_key = ? AND round_id = ?
+backend/packages/harness/evoflow/proactive/chat_session.py:248:            SELECT round_id, MIN(created_at) AS first_at
+backend/packages/harness/evoflow/proactive/chat_session.py:251:              AND round_id LIKE 'round:%'
+backend/packages/harness/evoflow/proactive/chat_session.py:254:            GROUP BY round_id
+backend/packages/harness/evoflow/proactive/chat_session.py:260:        sibling = str((row["round_id"] if row else "") or "").strip()
+backend/packages/harness/evoflow/proactive/chat_session.py:271:            "proactive_chat_session: resolve_transcript_round_id failed session=%s rid=%s",
+backend/packages/harness/evoflow/proactive/chat_session.py:344:    round_id: str | None = None,
+backend/packages/harness/evoflow/proactive/chat_session.py:357:    stamp = str(round_id or "").strip()
+backend/packages/harness/evoflow/proactive/chat_session.py:368:    round_id: str | None = None,
+backend/packages/harness/evoflow/proactive/chat_session.py:397:        round_id=round_id,
+backend/packages/harness/evoflow/proactive/chat_session.py:411:        rid = str(round_id or "").strip() or None
+backend/packages/harness/evoflow/proactive/chat_session.py:419:            round_id=rid,
+backend/packages/harness/evoflow/proactive/chat_session.py:430:            ctx["proactive_round_id"] = rid
+backend/packages/harness/evoflow/proactive/chat_session.py:483:                    "proactive_chat_session: skip duplicate seed session_key=%s round_id=%s",
+backend/packages/harness/evoflow/proactive/chat_session.py:497:            round_id=rid,
+backend/packages/harness/evoflow/proactive/chat_session.py:515:                round_id=rid,
+backend/packages/harness/evoflow/proactive/chat_session.py:521:            "proactive_chat_session: prepared session_key=%s thread_id=%s kind=%s wk=%s round_id=%s",
+backend/packages/harness/evoflow/admin/employees.py:123:        "heartbeat_rrule",
+backend/packages/harness/evoflow/admin/employees.py:388:        "heartbeat_rrule": role.heartbeat_rrule,
+backend/packages/harness/evoflow/admin/employees.py:393:        "next_heartbeat_at": resolve_next_duty_display(role),
+backend/packages/harness/evoflow/admin/employees.py:433:                "round_id": i.round_id,
+backend/packages/harness/evoflow/admin/employees.py:473:    heartbeat = str(data.get("heartbeat_rrule") or "FREQ=HOURLY;INTERVAL=2").strip()
+backend/packages/harness/evoflow/admin/employees.py:552:        heartbeat_rrule="",
+backend/packages/harness/evoflow/admin/employees.py:555:        next_heartbeat_at=None,
+backend/packages/harness/evoflow/admin/employees.py:564:        heartbeat_rrule=heartbeat or None,
+backend/packages/harness/evoflow/admin/employees.py:567:        role.next_heartbeat_at = compute_next_duty_iso(role)
+backend/packages/harness/evoflow/admin/employees.py:609:    if data.get("heartbeat_schedule") is not None or data.get("heartbeat_rrule") is not None:
+backend/packages/harness/evoflow/admin/employees.py:615:            heartbeat_rrule=str(data.get("heartbeat_rrule") or "").strip() or None
+backend/packages/harness/evoflow/admin/employees.py:616:            if data.get("heartbeat_rrule") is not None
+backend/packages/harness/evoflow/admin/employees.py:698:        role.next_heartbeat_at = compute_next_duty_iso(role)
+backend/packages/harness/evoflow/admin/employees.py:713:    role.next_heartbeat_at = None
+backend/packages/harness/evoflow/admin/employees.py:740:        role.next_heartbeat_at = None
+backend/packages/harness/evoflow/admin/employees.py:776:    if not role.next_heartbeat_at:
+backend/packages/harness/evoflow/admin/employees.py:779:        role.next_heartbeat_at = compute_next_duty_iso(role)
+backend/packages/harness/evoflow/admin/employees.py:833:        "next_heartbeat_at": role.next_heartbeat_at,
+backend/packages/harness/evoflow/admin/employees.py:859:        "round_id": init.round_id,
+backend/packages/harness/evoflow/admin/employees.py:875:        key = str(init.round_id or "").strip() or f"item:{init.id}"
+backend/packages/harness/evoflow/admin/employees.py:878:                "round_id": init.round_id,
+backend/packages/harness/evoflow/admin/employees.py:1145:    round_id: str | None = None,
+backend/packages/harness/evoflow/admin/employees.py:1156:    rid = str(round_id or "").strip() or None
+backend/packages/harness/evoflow/admin/employees.py:1169:            if str(init.round_id or "").strip():
+backend/packages/harness/evoflow/admin/employees.py:1170:                rid = str(init.round_id).strip()
+backend/packages/harness/evoflow/admin/employees.py:1176:    result = list_messages_for_display_all(session_key, max_rows=200, round_id=rid)
+backend/packages/harness/evoflow/admin/employees.py:1187:            if str(i.round_id or "") == rid
+backend/packages/harness/evoflow/admin/employees.py:1202:        "round_id": rid,
+backend/packages/harness/evoflow/admin/employees.py:1254:    round_id: str = "",
+backend/packages/harness/evoflow/admin/employees.py:1279:    round_id_s = str(round_id or "").strip()
+backend/packages/harness/evoflow/admin/employees.py:1307:    if round_id_s:
+backend/packages/harness/evoflow/admin/employees.py:1308:        payload["round_id"] = round_id_s
+backend/packages/harness/evoflow/admin/employees.py:1341:                    round_id=round_id_s,
+backend/packages/harness/evoflow/admin/employees.py:1370:                "round_id": round_id_s or None,
+backend/packages/harness/evoflow/admin/employees.py:1411:    round_id: str = "",
+backend/packages/harness/evoflow/admin/employees.py:1424:    ``round_id`` / ``resume_round``: continue the same work trail (see dispatch).
+backend/packages/harness/evoflow/admin/employees.py:1442:    round_id_s = str(round_id or "").strip()
+backend/packages/harness/evoflow/admin/employees.py:1443:    # --resume-round with --task-id: pull stamp from the Task when round_id omitted.
+backend/packages/harness/evoflow/admin/employees.py:1444:    if (resume_round or round_id_s) and not round_id_s and tid:
+backend/packages/harness/evoflow/admin/employees.py:1450:                round_id_s = str(row.get("round_id") or row.get("source_ref") or "").strip()
+backend/packages/harness/evoflow/admin/employees.py:1570:        round_id=round_id_s,
+backend/packages/harness/evoflow/admin/employees.py:1583:        if round_id_s:
+backend/packages/harness/evoflow/admin/employees.py:1584:            result.setdefault("round_id", round_id_s)
+backend/packages/harness/evoflow/proactive/migrate_initiatives.py:89:                        execution_result="cleaned: __role_stamp_test__",
+backend/packages/harness/evoflow/proactive/migrate_initiatives.py:124:                round_id=str(init.round_id or ""),
+backend/packages/harness/evoflow/proactive/migrate_initiatives.py:144:                        result=str(init.execution_result or "")[:8000] or None,
+backend/packages/harness/evoflow/proactive/migrate_initiatives.py:156:                        result=str(init.execution_result or "")[:8000] or None,
+backend/packages/harness/evoflow/proactive/migrate_initiatives.py:162:                        result=str(init.execution_result or "migrated cancelled")[:8000],
+backend/packages/harness/evoflow/proactive/migrate_initiatives.py:180:                    execution_result=f"migrated_to_task:{tid}",
+backend/packages/harness/evoflow/admin/approvals.py:206:        raise ValidationError("item_id (task_id / approval_id / initiative_id) is required")
+backend/packages/harness/evoflow/proactive/router.py:82:    heartbeat_rrule: str = Field(
+backend/packages/harness/evoflow/proactive/router.py:134:    heartbeat_rrule: str | None = None
+backend/packages/harness/evoflow/proactive/router.py:196:    round_id: str = Field(
+backend/packages/harness/evoflow/proactive/router.py:198:        description="沿用已有值班 round_id（续跑同一工作轨迹）；空则新开 dispatch:…",
+backend/packages/harness/evoflow/proactive/router.py:202:        description="为 true 且未传 round_id 时，从 related_task 的 round_id/source_ref 续跑",
+backend/packages/harness/evoflow/proactive/router.py:206:        description="强制新开一轮（忽略 resume_round / 任务上旧 round_id）",
+backend/packages/harness/evoflow/proactive/router.py:457:        heartbeat_rrule="",
+backend/packages/harness/evoflow/proactive/router.py:460:        next_heartbeat_at=(
+backend/packages/harness/evoflow/proactive/router.py:469:        heartbeat_rrule=req.heartbeat_rrule or None,
+backend/packages/harness/evoflow/proactive/router.py:472:        role.next_heartbeat_at = compute_next_duty_iso(role)
+backend/packages/harness/evoflow/proactive/router.py:528:    if req.heartbeat_schedule is not None or req.heartbeat_rrule is not None:
+backend/packages/harness/evoflow/proactive/router.py:534:            heartbeat_rrule=req.heartbeat_rrule,
+backend/packages/harness/evoflow/proactive/router.py:638:        role.next_heartbeat_at = compute_next_duty_iso(role)
+backend/packages/harness/evoflow/proactive/router.py:867:        "approval_id": approval.id,
+backend/packages/harness/evoflow/proactive/router.py:875:@router.post("/approvals/{approval_id}/push-feishu")
+backend/packages/harness/evoflow/proactive/router.py:876:async def push_feishu_for_approval(request: Request, approval_id: str) -> dict[str, Any]:
+backend/packages/harness/evoflow/proactive/router.py:879:        _ap = ProactiveRepository.get_approval(approval_id)
+backend/packages/harness/evoflow/proactive/router.py:892:    aid = str(approval_id or "").strip()
+backend/packages/harness/evoflow/proactive/router.py:895:        raise HTTPException(status_code=404, detail=f"Approval '{approval_id}' not found")
+backend/packages/harness/evoflow/proactive/router.py:925:        "approval_id": aid,
+backend/packages/harness/evoflow/proactive/router.py:1197:            round_id=str(req.round_id or "").strip(),
+backend/packages/harness/evoflow/proactive/router.py:1249:    current_round_id = ""
+backend/packages/harness/evoflow/proactive/router.py:1281:                    current_round_id = str(ctx.get("proactive_round_id") or "").strip()
+backend/packages/harness/evoflow/proactive/router.py:1283:                    current_round_id = ""
+backend/packages/harness/evoflow/proactive/router.py:1285:            current_round_id = ""
+backend/packages/harness/evoflow/proactive/router.py:1292:        "current_round_id": current_round_id or None,
+backend/packages/harness/evoflow/proactive/router.py:1375:                            "round_id": t.get("round_id"),
+backend/packages/harness/evoflow/proactive/router.py:1711:            "approval_id": approval.id,
+backend/packages/harness/evoflow/proactive/router.py:1735:                id=ProactiveRepository.new_approval_id(),
+backend/packages/harness/evoflow/proactive/router.py:1744:            init.approval_id = approval.id
+backend/packages/harness/evoflow/proactive/router.py:1782:        "approval_id": approval.id,
+backend/packages/harness/evoflow/proactive/router.py:1790:    approval_id: str | None = Query(None),
+backend/packages/harness/evoflow/proactive/router.py:1799:    aid = str(approval_id or "").strip()
+backend/packages/harness/evoflow/proactive/router.py:1918:    round_id: str | None = Query(None, description="Filter transcript to one duty round"),
+backend/packages/harness/evoflow/proactive/router.py:1932:    When ``round_id`` is set, only that duty round's messages are returned
+backend/packages/harness/evoflow/proactive/router.py:1940:        resolve_transcript_round_id,
+backend/packages/harness/evoflow/proactive/router.py:1951:    requested = str(round_id or "").strip() or None
+backend/packages/harness/evoflow/proactive/router.py:1952:    rid = resolve_transcript_round_id(sk, requested) if requested else None
+backend/packages/harness/evoflow/proactive/router.py:1956:        round_id=rid,
+backend/packages/harness/evoflow/proactive/router.py:1970:                "round_id": "",
+backend/packages/harness/evoflow/proactive/router.py:1982:        "round_id": rid,
+backend/packages/harness/evoflow/proactive/router.py:1983:        "requested_round_id": requested,
+backend/packages/harness/evoflow/proactive/router.py:2221:    role.next_heartbeat_at = None
+backend/packages/harness/evoflow/proactive/router.py:2261:    role.next_heartbeat_at = None
+backend/packages/harness/evoflow/proactive/router.py:2290:    if not role.next_heartbeat_at:
+backend/packages/harness/evoflow/proactive/router.py:2293:        role.next_heartbeat_at = compute_next_duty_iso(role)
+backend/packages/harness/evoflow/proactive/router.py:2393:        "heartbeat_rrule": role.heartbeat_rrule,
+backend/packages/harness/evoflow/proactive/router.py:2400:        "next_heartbeat_at": next_duty,
+backend/packages/harness/evoflow/proactive/router.py:2434:        "approval_id": init.approval_id,
+backend/packages/harness/evoflow/proactive/router.py:2439:        "execution_result": init.execution_result,
+backend/packages/harness/evoflow/proactive/router.py:2440:        "round_id": init.round_id,
+backend/packages/harness/evoflow/proactive/router.py:2465:                SELECT round_id,
+backend/packages/harness/evoflow/proactive/router.py:2472:                  AND round_id IS NOT NULL
+backend/packages/harness/evoflow/proactive/router.py:2473:                  AND TRIM(round_id) != ''
+backend/packages/harness/evoflow/proactive/router.py:2474:                GROUP BY round_id
+backend/packages/harness/evoflow/proactive/router.py:2492:        rid = str(row["round_id"] or "").strip()
+backend/packages/harness/evoflow/proactive/router.py:2520:                "approval_id": None,
+backend/packages/harness/evoflow/proactive/router.py:2525:                "execution_result": "",
+backend/packages/harness/evoflow/proactive/router.py:2526:                "round_id": rid,
+backend/packages/harness/evoflow/proactive/feishu_notify.py:478:            next_heartbeat_at=str(report.get("next_heartbeat_at") or ""),
+backend/packages/harness/evoflow/proactive/repositories.py:33:    heartbeat_rrule, heartbeat_schedule, status, last_heartbeat_at, next_heartbeat_at,
+backend/packages/harness/evoflow/proactive/repositories.py:40:    status, approval_id, approved_by, approved_at,
+backend/packages/harness/evoflow/proactive/repositories.py:41:    approval_timeout_minutes, execution_thread_id, execution_result,
+backend/packages/harness/evoflow/proactive/repositories.py:42:    round_id, goal, outcome,
+backend/packages/harness/evoflow/proactive/repositories.py:118:        heartbeat_rrule=str(row["heartbeat_rrule"] or "FREQ=HOURLY;INTERVAL=2"),
+backend/packages/harness/evoflow/proactive/repositories.py:122:        next_heartbeat_at=str(row["next_heartbeat_at"]) if row["next_heartbeat_at"] else None,
+backend/packages/harness/evoflow/proactive/repositories.py:162:        sql = f"SELECT {_ROLE_COLS.strip()} FROM evoflow_proactive_roles"
+backend/packages/harness/evoflow/proactive/repositories.py:184:                f"SELECT {_ROLE_COLS.strip()} FROM evoflow_proactive_roles WHERE agent_code = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:217:            INSERT INTO evoflow_proactive_roles ({_ROLE_COLS.strip()})
+backend/packages/harness/evoflow/proactive/repositories.py:225:                heartbeat_rrule = excluded.heartbeat_rrule,
+backend/packages/harness/evoflow/proactive/repositories.py:229:                next_heartbeat_at = excluded.next_heartbeat_at,
+backend/packages/harness/evoflow/proactive/repositories.py:239:                role.heartbeat_rrule,
+backend/packages/harness/evoflow/proactive/repositories.py:243:                role.next_heartbeat_at,
+backend/packages/harness/evoflow/proactive/repositories.py:269:                "SELECT agent_code, role_name FROM evoflow_proactive_roles "
+backend/packages/harness/evoflow/proactive/repositories.py:321:                DELETE FROM evoflow_proactive_approvals
+backend/packages/harness/evoflow/proactive/repositories.py:324:                        SELECT id FROM evoflow_proactive_initiatives
+backend/packages/harness/evoflow/proactive/repositories.py:334:            "evoflow_proactive_initiatives",
+backend/packages/harness/evoflow/proactive/repositories.py:406:            "DELETE FROM evoflow_proactive_roles WHERE agent_code = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:448:            INSERT INTO evoflow_proactive_roles ({_ROLE_COLS.strip()})
+backend/packages/harness/evoflow/proactive/repositories.py:458:                role.heartbeat_rrule,
+backend/packages/harness/evoflow/proactive/repositories.py:462:                role.next_heartbeat_at,
+backend/packages/harness/evoflow/proactive/repositories.py:468:            "evoflow_proactive_initiatives",
+backend/packages/harness/evoflow/proactive/repositories.py:469:            "evoflow_proactive_approvals",
+backend/packages/harness/evoflow/proactive/repositories.py:507:            "SELECT agent_code, config_json FROM evoflow_proactive_roles "
+backend/packages/harness/evoflow/proactive/repositories.py:521:                "UPDATE evoflow_proactive_roles "
+backend/packages/harness/evoflow/proactive/repositories.py:526:            "DELETE FROM evoflow_proactive_roles WHERE agent_code = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:543:        """Roles whose next_heartbeat_at is due.
+backend/packages/harness/evoflow/proactive/repositories.py:548:        Roles with a null/empty ``next_heartbeat_at`` are **not** treated as
+backend/packages/harness/evoflow/proactive/repositories.py:560:                SELECT {_ROLE_COLS.strip()} FROM evoflow_proactive_roles
+backend/packages/harness/evoflow/proactive/repositories.py:562:                ORDER BY next_heartbeat_at NULLS FIRST
+backend/packages/harness/evoflow/proactive/repositories.py:575:            nh = str(role.next_heartbeat_at or "").strip()
+backend/packages/harness/evoflow/proactive/repositories.py:583:                        next_heartbeat_at=nxt,
+backend/packages/harness/evoflow/proactive/repositories.py:585:                    role.next_heartbeat_at = nxt
+backend/packages/harness/evoflow/proactive/repositories.py:604:        next_heartbeat_at: str | None,
+backend/packages/harness/evoflow/proactive/repositories.py:609:            UPDATE evoflow_proactive_roles
+backend/packages/harness/evoflow/proactive/repositories.py:610:            SET last_heartbeat_at = ?, next_heartbeat_at = ?, updated_at = ?
+backend/packages/harness/evoflow/proactive/repositories.py:613:            (last_heartbeat_at, next_heartbeat_at, utc_now_iso_z(), agent_code),
+backend/packages/harness/evoflow/proactive/repositories.py:621:        next_heartbeat_at: str | None,
+backend/packages/harness/evoflow/proactive/repositories.py:625:                db, agent_code, last_heartbeat_at=last_heartbeat_at, next_heartbeat_at=next_heartbeat_at
+backend/packages/harness/evoflow/proactive/repositories.py:650:            approval_id=str(row["approval_id"]) if row["approval_id"] else None,
+backend/packages/harness/evoflow/proactive/repositories.py:655:            execution_result=str(row["execution_result"]) if row["execution_result"] else None,
+backend/packages/harness/evoflow/proactive/repositories.py:656:            round_id=str(row["round_id"]) if row["round_id"] else None,
+backend/packages/harness/evoflow/proactive/repositories.py:672:        sql = f"SELECT {_INIT_COLS.strip()} FROM evoflow_proactive_initiatives WHERE 1=1"
+backend/packages/harness/evoflow/proactive/repositories.py:690:                f"SELECT {_INIT_COLS.strip()} FROM evoflow_proactive_initiatives WHERE id = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:703:            INSERT INTO evoflow_proactive_initiatives ({_INIT_COLS.strip()})
+backend/packages/harness/evoflow/proactive/repositories.py:714:                approval_id = excluded.approval_id,
+backend/packages/harness/evoflow/proactive/repositories.py:719:                execution_result = excluded.execution_result,
+backend/packages/harness/evoflow/proactive/repositories.py:720:                round_id = excluded.round_id,
+backend/packages/harness/evoflow/proactive/repositories.py:737:                init.approval_id,
+backend/packages/harness/evoflow/proactive/repositories.py:742:                init.execution_result,
+backend/packages/harness/evoflow/proactive/repositories.py:743:                init.round_id,
+backend/packages/harness/evoflow/proactive/repositories.py:762:        execution_result: str | None = None,
+backend/packages/harness/evoflow/proactive/repositories.py:769:        if execution_result:
+backend/packages/harness/evoflow/proactive/repositories.py:770:            sets.append("execution_result = ?")
+backend/packages/harness/evoflow/proactive/repositories.py:771:            params.append(execution_result)
+backend/packages/harness/evoflow/proactive/repositories.py:774:            f"UPDATE evoflow_proactive_initiatives SET {', '.join(sets)} WHERE id = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:807:        sql = f"SELECT {_APPROVAL_COLS.strip()} FROM evoflow_proactive_approvals WHERE 1=1"
+backend/packages/harness/evoflow/proactive/repositories.py:818:    def get_approval(approval_id: str) -> Approval | None:
+backend/packages/harness/evoflow/proactive/repositories.py:822:                f"SELECT {_APPROVAL_COLS.strip()} FROM evoflow_proactive_approvals WHERE id = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:823:                (approval_id.strip(),),
+backend/packages/harness/evoflow/proactive/repositories.py:834:                f"SELECT {_APPROVAL_COLS.strip()} FROM evoflow_proactive_approvals "
+backend/packages/harness/evoflow/proactive/repositories.py:847:            INSERT INTO evoflow_proactive_approvals ({_APPROVAL_COLS.strip()})
+backend/packages/harness/evoflow/proactive/repositories.py:888:                f"SELECT {_APPROVAL_COLS.strip()} FROM evoflow_proactive_approvals "
+backend/packages/harness/evoflow/proactive/repositories.py:897:    def new_approval_id() -> str:
+backend/packages/harness/evoflow/proactive/repositories.py:928:                f"SELECT {_INIT_COLS.strip()} FROM evoflow_proactive_initiatives "
+backend/packages/harness/evoflow/proactive/repositories.py:1062:        round_id: str = "",
+backend/packages/harness/evoflow/proactive/repositories.py:1082:                    (role_agent_code, round_id, thread_id, model_name,
+backend/packages/harness/evoflow/proactive/repositories.py:1089:                    round_id,
+backend/packages/harness/evoflow/proactive/repositories.py:1105:                    (role_agent_code, round_id, thread_id, model_name,
+backend/packages/harness/evoflow/proactive/repositories.py:1112:                    round_id,
+backend/packages/harness/evoflow/proactive/repositories.py:1128:        round_id: str = "",
+backend/packages/harness/evoflow/proactive/repositories.py:1142:                round_id=round_id,
+backend/packages/harness/evoflow/proactive/repositories.py:1205:    def get_round_cost(agent_code: str, round_id: str) -> dict[str, Any]:
+backend/packages/harness/evoflow/proactive/repositories.py:1208:        rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/proactive/repositories.py:1212:                "round_id": rid,
+backend/packages/harness/evoflow/proactive/repositories.py:1225:            WHERE role_agent_code = ? AND round_id = ?
+backend/packages/harness/evoflow/proactive/repositories.py:1231:            "round_id": rid,
+backend/packages/harness/evoflow/proactive/execution_bridge.py:74:            round_id = str(initiative.round_id or "").strip() or f"exec:{initiative.id}"
+backend/packages/harness/evoflow/proactive/execution_bridge.py:79:                round_id=round_id,
+backend/packages/harness/evoflow/proactive/execution_bridge.py:89:            from evoflow.proactive.run_errors import humanize_execution_result
+backend/packages/harness/evoflow/proactive/execution_bridge.py:91:            msg = humanize_execution_result(str(exc)) or f"执行失败：{exc}"
+backend/packages/harness/evoflow/proactive/execution_bridge.py:106:                    execution_result=msg,
+backend/packages/harness/evoflow/proactive/execution_bridge.py:116:        round_id: str | None = None,
+backend/packages/harness/evoflow/proactive/execution_bridge.py:134:        rid = str(round_id or "").strip() or f"exec:{initiative_id}"
+backend/packages/harness/evoflow/proactive/execution_bridge.py:144:            round_id=rid,
+backend/packages/harness/evoflow/proactive/execution_bridge.py:161:                "round_id": rid,
+backend/packages/harness/evoflow/proactive/execution_bridge.py:203:            round_id=rid,
+backend/packages/harness/evoflow/proactive/execution_bridge.py:230:            "round_id": rid,
+backend/packages/harness/evoflow/admin/verification.py:3:One ``round_id`` covers a full verification cycle; steps accumulate under it
+backend/packages/harness/evoflow/admin/verification.py:89:def _new_round_id() -> str:
+backend/packages/harness/evoflow/admin/verification.py:270:def _fetch_round(db, round_id: str) -> dict[str, Any]:
+backend/packages/harness/evoflow/admin/verification.py:272:        """SELECT round_id, title, scenario, status, progress, conclusion,
+backend/packages/harness/evoflow/admin/verification.py:275:           FROM evoflow_verification_rounds WHERE round_id = ?""",
+backend/packages/harness/evoflow/admin/verification.py:276:        (round_id,),
+backend/packages/harness/evoflow/admin/verification.py:279:        raise NotFoundError(f"Verification round '{round_id}' not found")
+backend/packages/harness/evoflow/admin/verification.py:283:def _list_steps(db, round_id: str) -> list[dict[str, Any]]:
+backend/packages/harness/evoflow/admin/verification.py:285:        """SELECT id, round_id, seq, feature, api, status,
+backend/packages/harness/evoflow/admin/verification.py:289:           WHERE round_id = ?
+backend/packages/harness/evoflow/admin/verification.py:291:        (round_id,),
+backend/packages/harness/evoflow/admin/verification.py:323:    round_id: str = "",
+backend/packages/harness/evoflow/admin/verification.py:333:    """Create a verification round, or reuse an existing ``round_id``.
+backend/packages/harness/evoflow/admin/verification.py:335:    When ``round_id`` already exists and ``resume=True`` (default), returns the
+backend/packages/harness/evoflow/admin/verification.py:343:    rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/admin/verification.py:347:            "SELECT round_id FROM evoflow_verification_rounds WHERE round_id = ?",
+backend/packages/harness/evoflow/admin/verification.py:369:                   (round_id, title, scenario, status, progress, conclusion,
+backend/packages/harness/evoflow/admin/verification.py:385:        rid = _new_round_id()
+backend/packages/harness/evoflow/admin/verification.py:398:               (round_id, title, scenario, status, progress, conclusion,
+backend/packages/harness/evoflow/admin/verification.py:417:            round_id=rid,
+backend/packages/harness/evoflow/admin/verification.py:438:    round_id: str,
+backend/packages/harness/evoflow/admin/verification.py:446:    rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/admin/verification.py:479:            "SELECT api FROM evoflow_verification_steps WHERE round_id = ?",
+backend/packages/harness/evoflow/admin/verification.py:485:        "SELECT COALESCE(MAX(seq), 0) FROM evoflow_verification_steps WHERE round_id = ?",
+backend/packages/harness/evoflow/admin/verification.py:501:               (round_id, seq, feature, api, status,
+backend/packages/harness/evoflow/admin/verification.py:535:           WHERE round_id = ?""",
+backend/packages/harness/evoflow/admin/verification.py:572:        f"""SELECT round_id, title, scenario, status, progress, conclusion,
+backend/packages/harness/evoflow/admin/verification.py:585:def get_round(round_id: str, *, include_steps: bool = True) -> dict[str, Any]:
+backend/packages/harness/evoflow/admin/verification.py:586:    rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/admin/verification.py:601:    round_id: str,
+backend/packages/harness/evoflow/admin/verification.py:616:    rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/admin/verification.py:651:               WHERE round_id = ? AND api = ? AND status = 'pending'
+backend/packages/harness/evoflow/admin/verification.py:658:                   WHERE round_id = ? AND api = ?
+backend/packages/harness/evoflow/admin/verification.py:705:               WHERE round_id = ? AND api = ? AND id != ?""",
+backend/packages/harness/evoflow/admin/verification.py:712:                "SELECT COALESCE(MAX(seq), 0) FROM evoflow_verification_steps WHERE round_id = ?",
+backend/packages/harness/evoflow/admin/verification.py:721:               (round_id, seq, feature, api, status,
+backend/packages/harness/evoflow/admin/verification.py:757:           WHERE round_id = ?""",
+backend/packages/harness/evoflow/admin/verification.py:773:    round_id: str,
+backend/packages/harness/evoflow/admin/verification.py:782:    rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/admin/verification.py:833:           WHERE round_id = ?""",
+backend/packages/harness/evoflow/admin/verification.py:860:    round_id: str,
+backend/packages/harness/evoflow/admin/verification.py:868:    rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/admin/verification.py:916:        round_id=rid,
+backend/packages/harness/evoflow/admin/verification.py:925:def delete_round(round_id: str) -> dict[str, Any]:
+backend/packages/harness/evoflow/admin/verification.py:926:    rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/admin/verification.py:931:    db.execute("DELETE FROM evoflow_verification_steps WHERE round_id = ?", (rid,))
+backend/packages/harness/evoflow/admin/verification.py:932:    db.execute("DELETE FROM evoflow_verification_rounds WHERE round_id = ?", (rid,))
+backend/packages/harness/evoflow/admin/platform_actions.py:351:        _A("employees.hire", "employees", "雇佣智能体为值班员工", "write", "agent_code, role_name?, heartbeat_rrule?…", H.employees_hire, "把文案助手雇成员工"),
+backend/packages/harness/evoflow/admin/platform_actions.py:371:            "agent_code, round_id?, max_steps?",
+backend/packages/harness/evoflow/admin/platform_ui_feedback.py:107:        result.get("round_id"),
+backend/packages/harness/evoflow/admin/platform_ui_feedback.py:150:        result.get("round_id"),
+backend/packages/harness/evoflow/proactive/engine.py:179:        round_id: str | None = None,
+backend/packages/harness/evoflow/proactive/engine.py:186:        ``round_id`` (e.g. human dispatch ``dispatch:…``) stamps chat
+backend/packages/harness/evoflow/proactive/engine.py:195:                round_id=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:201:            round_id=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:228:            execution_result=result,
+backend/packages/harness/evoflow/proactive/engine.py:246:        round_id: str | None = None,
+backend/packages/harness/evoflow/proactive/engine.py:276:        round_id = str(round_id or "").strip() or f"round:{utc_now_iso_z()}"
+backend/packages/harness/evoflow/proactive/engine.py:303:            round_id=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:325:            round_id=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:335:            if str(i.round_id or "") == round_id
+backend/packages/harness/evoflow/proactive/engine.py:344:                round_id,
+backend/packages/harness/evoflow/proactive/engine.py:400:        pending_tasks = list_pending_work_items_for_round(role, round_id)
+backend/packages/harness/evoflow/proactive/engine.py:408:            round_id=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:470:                            round_id,
+backend/packages/harness/evoflow/proactive/engine.py:490:                        round_id,
+backend/packages/harness/evoflow/proactive/engine.py:507:            round_tasks = list_role_tasks_for_round(role, round_id)
+backend/packages/harness/evoflow/proactive/engine.py:517:                    round_id=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:544:                    round_id=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:557:                        round_id,
+backend/packages/harness/evoflow/proactive/engine.py:576:                round_id,
+backend/packages/harness/evoflow/proactive/engine.py:583:            round_id,
+backend/packages/harness/evoflow/proactive/engine.py:598:        round_id: str,
+backend/packages/harness/evoflow/proactive/engine.py:630:                "round_id": round_id,
+backend/packages/harness/evoflow/proactive/engine.py:653:            round_id=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:687:            "round_id": round_id,
+backend/packages/harness/evoflow/proactive/engine.py:752:                    round_id,
+backend/packages/harness/evoflow/proactive/engine.py:763:                        round_id,
+backend/packages/harness/evoflow/proactive/engine.py:771:                        round_id,
+backend/packages/harness/evoflow/proactive/engine.py:778:                        round_id,
+backend/packages/harness/evoflow/proactive/engine.py:789:                        round_id,
+backend/packages/harness/evoflow/proactive/engine.py:807:                    round_id,
+backend/packages/harness/evoflow/proactive/engine.py:824:        round_id: str,
+backend/packages/harness/evoflow/proactive/engine.py:896:                    round_id=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:909:                    round_id=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:922:                    round_id,
+backend/packages/harness/evoflow/proactive/engine.py:939:        round_id: str | None = None,
+backend/packages/harness/evoflow/proactive/engine.py:995:        round_id = str(round_id or "").strip() or f"round:{utc_now_iso_z()}"
+backend/packages/harness/evoflow/proactive/engine.py:1009:                round_id=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:1013:                source_ref=round_id,
+backend/packages/harness/evoflow/proactive/engine.py:1024:        result.round_id = round_id
+backend/packages/harness/evoflow/proactive/engine.py:1036:            round_id,
+backend/packages/harness/evoflow/proactive/engine.py:1070:            if init.execution_result:
+backend/packages/harness/evoflow/proactive/engine.py:1071:                summary = init.execution_result[:200].replace("\n", " ")
+backend/packages/harness/evoflow/proactive/DESIGN.md:162:| `execution_result` | 执行结果 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:216:### 4.1 evoflow_proactive_roles
+backend/packages/harness/evoflow/proactive/DESIGN.md:218:CREATE TABLE evoflow_proactive_roles (
+backend/packages/harness/evoflow/proactive/DESIGN.md:223:    heartbeat_rrule TEXT NOT NULL DEFAULT 'FREQ=HOURLY;INTERVAL=2',
+backend/packages/harness/evoflow/proactive/DESIGN.md:226:    next_heartbeat_at TEXT,
+backend/packages/harness/evoflow/proactive/DESIGN.md:232:### 4.2 evoflow_proactive_initiatives
+backend/packages/harness/evoflow/proactive/DESIGN.md:234:CREATE TABLE evoflow_proactive_initiatives (
+backend/packages/harness/evoflow/proactive/DESIGN.md:245:    approval_id TEXT,
+backend/packages/harness/evoflow/proactive/DESIGN.md:250:    execution_result TEXT,
+backend/packages/harness/evoflow/proactive/DESIGN.md:253:    FOREIGN KEY (role_agent_code) REFERENCES evoflow_proactive_roles(agent_code)
+backend/packages/harness/evoflow/proactive/DESIGN.md:257:### 4.3 evoflow_proactive_approvals
+backend/packages/harness/evoflow/proactive/DESIGN.md:259:CREATE TABLE evoflow_proactive_approvals (
+backend/packages/harness/evoflow/proactive/DESIGN.md:272:    FOREIGN KEY (initiative_id) REFERENCES evoflow_proactive_initiatives(id)
+backend/packages/harness/evoflow/admin/platform_handlers.py:858:            round_id=_arg_str(args, "round_id", "roundId") or None,
+backend/packages/harness/evoflow/admin/platform_handlers.py:1178:    item_id = _arg_str(args, "id", "item_id", "task_id", "approval_id")
+backend/packages/harness/evoflow/admin/platform_handlers.py:1194:    item_id = _arg_str(args, "id", "item_id", "task_id", "approval_id")
+backend/packages/harness/evoflow/admin/platform_handlers.py:1662:            round_id=_arg_str(args, "roundId", "round_id", "id"),
+backend/packages/harness/evoflow/admin/platform_handlers.py:1685:    rid = _arg_str(args, "roundId", "round_id", "id")
+backend/packages/harness/evoflow/admin/platform_handlers.py:1691:        round_id=rid,
+backend/packages/harness/evoflow/admin/platform_handlers.py:1726:    rid = _arg_str(args, "roundId", "round_id", "id")
+backend/packages/harness/evoflow/admin/platform_handlers.py:1740:    rid = _arg_str(args, "roundId", "round_id", "id")
+backend/packages/harness/evoflow/admin/platform_handlers.py:1749:            round_id=rid,
+backend/packages/harness/evoflow/admin/platform_handlers.py:1770:    rid = _arg_str(args, "roundId", "round_id", "id")
+backend/packages/harness/evoflow/admin/platform_handlers.py:1777:            round_id=rid,
+backend/packages/harness/evoflow/admin/platform_handlers.py:1792:    rid = _arg_str(args, "roundId", "round_id", "id")
+backend/packages/harness/evoflow/admin/platform_handlers.py:1799:            round_id=rid,
+backend/packages/harness/evoflow/admin/platform_handlers.py:1812:    rid = _arg_str(args, "roundId", "round_id", "id")
+backend/packages/harness/evoflow/proactive/USAGE.md:39:    "heartbeat_rrule": "FREQ=HOURLY;INTERVAL=2",
+backend/packages/harness/evoflow/proactive/USAGE.md:183:3. 角色 next_heartbeat_at 到期 → 触发心跳
+backend/packages/harness/evoflow/proactive/USAGE.md:236:| `evoflow_proactive_roles` | 智能体员工角色定义 |
+backend/packages/harness/evoflow/proactive/USAGE.md:237:| `evoflow_proactive_initiatives` | AI 发起的倡议 |
+backend/packages/harness/evoflow/proactive/USAGE.md:238:| `evoflow_proactive_approvals` | 人类审批记录 |
+backend/packages/harness/evoflow/proactive/submit_work.py:132:        exec_result = str(raw.get("execution_result") or raw.get("outcome") or "").strip()
+backend/packages/harness/evoflow/proactive/submit_work.py:146:            # Append progress into description / execution_result trail
+backend/packages/harness/evoflow/proactive/submit_work.py:150:                target.execution_result = ((target.execution_result or "") + blob + f"\n结果：{exec_result}")[
+backend/packages/harness/evoflow/proactive/submit_work.py:154:                target.execution_result = ((target.execution_result or "") + blob)[-8000:]
+backend/packages/harness/evoflow/proactive/submit_work.py:157:            target.execution_result = exec_result[:8000]
+backend/packages/harness/evoflow/proactive/submit_work.py:192:    round_id: str,
+backend/packages/harness/evoflow/proactive/submit_work.py:203:        (i for i in recent if str(i.round_id or "") == round_id and _is_journal(i)),
+backend/packages/harness/evoflow/proactive/submit_work.py:261:            if str(prev.round_id or "") == round_id or not _is_journal(prev):
+backend/packages/harness/evoflow/proactive/submit_work.py:267:                prev.execution_result = "上一轮 check_in 未收尾，已被新一轮自动关闭。"
+backend/packages/harness/evoflow/proactive/submit_work.py:273:                    prev.round_id,
+backend/packages/harness/evoflow/proactive/submit_work.py:311:        round_id=round_id,
+backend/packages/harness/evoflow/proactive/submit_work.py:314:        execution_result="",
+backend/packages/harness/evoflow/proactive/submit_work.py:341:    round_id: str,
+backend/packages/harness/evoflow/proactive/submit_work.py:363:    rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/proactive/submit_work.py:367:        return {"ok": False, "error": "missing round_id"}
+backend/packages/harness/evoflow/proactive/submit_work.py:469:            round_id=rid,
+backend/packages/harness/evoflow/proactive/submit_work.py:508:                    round_id=rid,
+backend/packages/harness/evoflow/proactive/submit_work.py:539:        if str(i.round_id or "") == rid
+backend/packages/harness/evoflow/proactive/submit_work.py:561:        "round_id": rid,
+backend/packages/harness/evoflow/proactive/submit_work.py:609:    round_id: str,
+backend/packages/harness/evoflow/proactive/submit_work.py:657:        round_id=round_id,
+backend/packages/harness/evoflow/admin/tasks.py:15:                risk_level=, action_type=, round_id=, parent_task_id=)
+backend/packages/harness/evoflow/admin/tasks.py:75:        "execution_result",
+backend/packages/harness/evoflow/admin/tasks.py:207:    rid = str(row.get("round_id") or "").strip()
+backend/packages/harness/evoflow/admin/tasks.py:209:        out["round_id"] = rid
+backend/packages/harness/evoflow/admin/tasks.py:772:    approval_id = ProactiveRepository.new_approval_id()
+backend/packages/harness/evoflow/admin/tasks.py:786:        id=approval_id,
+backend/packages/harness/evoflow/admin/tasks.py:797:    synthetic.approval_id = approval_id
+backend/packages/harness/evoflow/admin/tasks.py:819:    return {"id": approval_id, "already_pending": False}
+backend/packages/harness/evoflow/admin/tasks.py:1388:    round_id: str | None = None,
+backend/packages/harness/evoflow/admin/tasks.py:1422:    round_norm = str(round_id or "").strip() or None
+backend/packages/harness/evoflow/admin/tasks.py:1449:            row["round_id"] = round_norm
+backend/packages/harness/evoflow/admin/tasks.py:1512:            "round_id": round_norm,
+backend/packages/harness/evoflow/admin/tasks.py:1547:        "round_id": round_norm,
+backend/packages/harness/evoflow/proactive/runner.py:5:  1. Find roles whose next_heartbeat_at is due
+backend/packages/harness/evoflow/proactive/runner.py:102:        nxt = str(getattr(role, "next_heartbeat_at", "") or "").strip()
+backend/packages/harness/evoflow/proactive/runner.py:127:            getattr(role, "heartbeat_rrule", "") or ""
+backend/packages/harness/evoflow/proactive/runner.py:142:        f"下次排班={getattr(role, 'next_heartbeat_at', None) or '—'}",
+backend/packages/harness/evoflow/proactive/runner.py:383:def resolve_dispatch_round_id(
+backend/packages/harness/evoflow/proactive/runner.py:385:    round_id: str = "",
+backend/packages/harness/evoflow/proactive/runner.py:390:    """Pick duty ``round_id`` for a dispatch.
+backend/packages/harness/evoflow/proactive/runner.py:392:    Returns ``(round_id, resumed)``. Explicit ``round_id`` always wins.
+backend/packages/harness/evoflow/proactive/runner.py:394:    ``round_id`` / ``source_ref`` so work trail continues in the same bucket.
+backend/packages/harness/evoflow/proactive/runner.py:396:    explicit = str(round_id or "").strip()
+backend/packages/harness/evoflow/proactive/runner.py:403:            related_task.get("round_id") or related_task.get("source_ref") or ""
+backend/packages/harness/evoflow/proactive/runner.py:498:                next_heartbeat_at=retry_at,
+backend/packages/harness/evoflow/proactive/runner.py:956:                    role.next_heartbeat_at or "—",
+backend/packages/harness/evoflow/proactive/runner.py:972:                        next_heartbeat_at=next_duty,
+backend/packages/harness/evoflow/proactive/runner.py:987:                        f"定时心跳到期（next_heartbeat_at={role.next_heartbeat_at or '已到期'}）"
+backend/packages/harness/evoflow/proactive/runner.py:1217:        round_id: str = "",
+backend/packages/harness/evoflow/proactive/runner.py:1233:            "round_id": str(round_id or "").strip(),
+backend/packages/harness/evoflow/proactive/runner.py:1310:                round_id=str(entry.get("round_id") or ""),
+backend/packages/harness/evoflow/proactive/runner.py:1509:        round_id: str | None = None,
+backend/packages/harness/evoflow/proactive/runner.py:1510:        round_id_prefix: str = "round",
+backend/packages/harness/evoflow/proactive/runner.py:1525:        ``round_id`` pins the duty / transcript stamp (human dispatch). When
+backend/packages/harness/evoflow/proactive/runner.py:1526:        omitted, ``round_id_prefix`` only documents the default ``round:`` stamp
+backend/packages/harness/evoflow/proactive/runner.py:1557:            extra=f"round_id={round_id or '（本轮将新建）'}",
+backend/packages/harness/evoflow/proactive/runner.py:1624:                    next_heartbeat_at=next_hb,
+backend/packages/harness/evoflow/proactive/runner.py:1638:                "next_heartbeat_at": next_hb,
+backend/packages/harness/evoflow/proactive/runner.py:1650:                    next_heartbeat_at=next_hb,
+backend/packages/harness/evoflow/proactive/runner.py:1666:                pinned_round = str(round_id or "").strip() or None
+backend/packages/harness/evoflow/proactive/runner.py:1667:                if pinned_round is None and str(round_id_prefix or "").strip() not in ("", "round"):
+backend/packages/harness/evoflow/proactive/runner.py:1669:                    pinned_round = f"{str(round_id_prefix).strip()}:{utc_now_iso_z()}"
+backend/packages/harness/evoflow/proactive/runner.py:1674:                    round_id=pinned_round,
+backend/packages/harness/evoflow/proactive/runner.py:1691:                        next_heartbeat_at=next_hb,
+backend/packages/harness/evoflow/proactive/runner.py:1708:                    next_heartbeat_at=next_hb,
+backend/packages/harness/evoflow/proactive/runner.py:1787:                        "next_heartbeat_at": retry_at,
+backend/packages/harness/evoflow/proactive/runner.py:1800:        rid = str(getattr(result, "round_id", "") or "").strip()
+backend/packages/harness/evoflow/proactive/runner.py:1838:        next_heartbeat_at: str | None,
+backend/packages/harness/evoflow/proactive/runner.py:1841:        round_id = str(getattr(result, "round_id", "") or "")
+backend/packages/harness/evoflow/proactive/runner.py:1847:        if round_id:
+backend/packages/harness/evoflow/proactive/runner.py:1854:                if str(i.round_id or "") == round_id
+backend/packages/harness/evoflow/proactive/runner.py:1862:        # Also count collab tasks created in this round (source_ref == round_id)
+backend/packages/harness/evoflow/proactive/runner.py:1865:        if round_id:
+backend/packages/harness/evoflow/proactive/runner.py:1872:                    if str(t.get("source_ref") or "") == round_id
+backend/packages/harness/evoflow/proactive/runner.py:1873:                    or str(t.get("round_id") or "") == round_id
+backend/packages/harness/evoflow/proactive/runner.py:2044:            "round_id": round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2049:            "next_heartbeat_at": next_heartbeat_at,
+backend/packages/harness/evoflow/proactive/runner.py:2153:                    execution_result=(
+backend/packages/harness/evoflow/proactive/runner.py:2287:            init.approval_id = appr.id
+backend/packages/harness/evoflow/proactive/runner.py:2437:        round_id: str = "",
+backend/packages/harness/evoflow/proactive/runner.py:2459:        ``round_id`` / ``resume_round``: continue the same work-trail stamp
+backend/packages/harness/evoflow/proactive/runner.py:2478:        round_id_s = str(round_id or "").strip()
+backend/packages/harness/evoflow/proactive/runner.py:2524:        dispatch_round_id, resumed_round = resolve_dispatch_round_id(
+backend/packages/harness/evoflow/proactive/runner.py:2525:            round_id=round_id_s,
+backend/packages/harness/evoflow/proactive/runner.py:2548:                "last_dispatch_round_id": dispatch_round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2581:                        patch_fields["source_ref"] = dispatch_round_id
+backend/packages/harness/evoflow/proactive/runner.py:2582:                        patch_fields["round_id"] = dispatch_round_id
+backend/packages/harness/evoflow/proactive/runner.py:2599:                        dispatch_round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2640:                            "source_ref": dispatch_round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2641:                            "round_id": dispatch_round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2673:                    round_id=dispatch_round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2676:                    source_ref=dispatch_round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2715:                f"**续跑：** 沿用同一轮工作轨迹 `{dispatch_round_id}`。"
+backend/packages/harness/evoflow/proactive/runner.py:2728:            round_id=dispatch_round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2729:            round_id_prefix="dispatch",
+backend/packages/harness/evoflow/proactive/runner.py:2743:        round_id = str(report.get("round_id") or "")
+backend/packages/harness/evoflow/proactive/runner.py:2744:        if round_id and not dispatch_task_id:
+backend/packages/harness/evoflow/proactive/runner.py:2751:            round_tasks = list_pending_work_items_for_round(role, round_id)
+backend/packages/harness/evoflow/proactive/runner.py:2767:                    round_id=round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2775:                    source_ref=round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2791:                    round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2798:        report["dispatch_round_id"] = dispatch_round_id
+backend/packages/harness/evoflow/proactive/runner.py:2808:            dispatch_round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2823:        round_id: str = "",
+backend/packages/harness/evoflow/proactive/runner.py:2844:                round_id=round_id,
+backend/packages/harness/evoflow/proactive/runner.py:2898:        round_id: str = "",
+backend/packages/harness/evoflow/proactive/runner.py:2928:        round_id_s = str(round_id or "").strip()
+backend/packages/harness/evoflow/proactive/runner.py:3019:                        round_id=round_id_s,
+backend/packages/harness/evoflow/proactive/runner.py:3040:                    round_id=round_id_s,
+backend/packages/harness/evoflow/proactive/runner.py:3056:                round_id=round_id_s,
+backend/packages/harness/evoflow/proactive/runner.py:3074:        preview_round, resumed = resolve_dispatch_round_id(
+backend/packages/harness/evoflow/proactive/runner.py:3075:            round_id=round_id_s,
+backend/packages/harness/evoflow/proactive/runner.py:3124:            "round_id": preview_round,
+backend/packages/harness/evoflow/proactive/runner.py:3146:        round_id: str = "",
+backend/packages/harness/evoflow/proactive/runner.py:3183:            round_id=round_id,
+backend/packages/harness/evoflow/proactive/models.py:291:    heartbeat_rrule: str = "FREQ=HOURLY;INTERVAL=2"
+backend/packages/harness/evoflow/proactive/models.py:296:    next_heartbeat_at: str | None = None
+backend/packages/harness/evoflow/proactive/models.py:315:    approval_id: str | None = None
+backend/packages/harness/evoflow/proactive/models.py:320:    execution_result: str | None = None
+backend/packages/harness/evoflow/proactive/models.py:322:    round_id: str | None = None
+backend/packages/harness/evoflow/proactive/models.py:457:    round_id: str = ""
+backend/packages/harness/evoflow/proactive/work_items.py:278:    round_id: str = "",
+backend/packages/harness/evoflow/proactive/work_items.py:310:    ref = str(source_ref if source_ref is not None else round_id or "").strip() or None
+backend/packages/harness/evoflow/proactive/work_items.py:336:        round_id=str(round_id or "").strip() or None,
+backend/packages/harness/evoflow/proactive/work_items.py:406:    round_id: str,
+backend/packages/harness/evoflow/proactive/work_items.py:410:    Matches ``source_ref`` or ``round_id`` to the duty stamp. Used for Person
+backend/packages/harness/evoflow/proactive/work_items.py:413:    rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/proactive/work_items.py:443:            rround = str(task.get("round_id") or "").strip()
+backend/packages/harness/evoflow/proactive/work_items.py:458:    round_id: str,
+backend/packages/harness/evoflow/proactive/work_items.py:460:    """Pending role-stamped tasks whose source_ref/round_id matches this duty round."""
+backend/packages/harness/evoflow/proactive/work_items.py:461:    rid = str(round_id or "").strip()
+backend/packages/harness/evoflow/proactive/work_items.py:488:            rround = str(task.get("round_id") or "").strip()
+backend/packages/harness/evoflow/proactive/work_items.py:565:                "round_id": str(task.get("round_id") or "").strip() or None,
+backend/packages/harness/evoflow/proactive/work_items.py:875:        round_id=str(task.get("round_id") or task.get("source_ref") or "").strip() or None,
+backend/packages/harness/evoflow/proactive/work_items.py:953:            from evoflow.proactive.run_errors import humanize_execution_result
+backend/packages/harness/evoflow/proactive/work_items.py:956:            text = humanize_execution_result(str(result)) or str(result)[:8000]
+backend/packages/harness/evoflow/proactive/schedule.py:125:    rrule = str(role.heartbeat_rrule or "").strip()
+backend/packages/harness/evoflow/proactive/schedule.py:138:    role.heartbeat_rrule = str(derived.get("rrule") or cron)
+backend/packages/harness/evoflow/proactive/schedule.py:148:    before_r = str(role.heartbeat_rrule or "").strip()
+backend/packages/harness/evoflow/proactive/schedule.py:151:    after_r = str(role.heartbeat_rrule or "").strip()
+backend/packages/harness/evoflow/proactive/schedule.py:159:    heartbeat_rrule: str | None = None,
+backend/packages/harness/evoflow/proactive/schedule.py:163:    rrule_in = str(heartbeat_rrule or "").strip()
+backend/packages/harness/evoflow/proactive/schedule.py:231:    stored_raw = str(role.next_heartbeat_at or "").strip()
+backend/packages/harness/evoflow/proactive/decision_gate.py:114:        approval_id = ProactiveRepository.new_approval_id()
+backend/packages/harness/evoflow/proactive/decision_gate.py:119:            id=approval_id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:131:        initiative.approval_id = approval_id
+backend/packages/harness/evoflow/proactive/decision_gate.py:168:        approval_id = ProactiveRepository.new_approval_id()
+backend/packages/harness/evoflow/proactive/decision_gate.py:184:            id=approval_id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:195:        synthetic.approval_id = approval_id
+backend/packages/harness/evoflow/proactive/decision_gate.py:214:        approval_id: str,
+backend/packages/harness/evoflow/proactive/decision_gate.py:222:        approval = ProactiveRepository.get_approval(approval_id)
+backend/packages/harness/evoflow/proactive/decision_gate.py:224:            logger.warning("proactive.approval not found: %s", approval_id)
+backend/packages/harness/evoflow/proactive/decision_gate.py:229:                approval_id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:258:                    approval_id=approval.id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:300:            synthetic.approval_id = approval.id
+backend/packages/harness/evoflow/proactive/decision_gate.py:609:                    approval_id=approval.id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:630:                    approval_id=approval.id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:662:                        approval_id=approval.id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:769:                approval_id=approval.id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:806:                        approval_id=approval.id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:849:                    approval_id=approval.id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:900:                                approval_id=approval.id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:932:                            approval_id=approval.id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:953:                    approval_id=approval.id,
+backend/packages/harness/evoflow/proactive/decision_gate.py:975:                approval_id=getattr(approval, "id", "") or "",
+backend/packages/harness/evoflow/proactive/decision_gate.py:1001:                "approval_id": approval.id,
+backend/packages/harness/evoflow/proactive/run_errors.py:80:def humanize_execution_result(raw: str | None) -> str:
