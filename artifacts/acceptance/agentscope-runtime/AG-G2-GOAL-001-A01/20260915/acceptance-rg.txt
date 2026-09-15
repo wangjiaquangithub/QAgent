@@ -1,0 +1,173 @@
+backend/packages/harness/evoflow/persistence/schema.py:322:            approval_id TEXT NOT NULL DEFAULT '',
+backend/packages/harness/evoflow/persistence/schema.py:411:        , run_status TEXT NOT NULL DEFAULT 'idle', current_run_id TEXT, input_tokens INTEGER NOT NULL DEFAULT 0, output_tokens INTEGER NOT NULL DEFAULT 0, total_tokens INTEGER NOT NULL DEFAULT 0, is_pinned INTEGER NOT NULL DEFAULT 0, pin_order INTEGER NOT NULL DEFAULT 0, tool_approval_policy TEXT, cache_read_tokens INTEGER NOT NULL DEFAULT 0, cache_creation_tokens INTEGER NOT NULL DEFAULT 0, cache_miss_tokens INTEGER NOT NULL DEFAULT 0, current_turn_started_at TEXT, current_turn_ended_at TEXT, active_tools_json TEXT NOT NULL DEFAULT '[]', pending_tools_json TEXT NOT NULL DEFAULT '[]', hidden_from_list INTEGER NOT NULL DEFAULT 0, permission_preset TEXT, org_id TEXT, scope_id TEXT, created_by TEXT);
+backend/packages/harness/evoflow/persistence/schema.py:447:CREATE TABLE IF NOT EXISTS evoflow_collab_peer_messages (
+backend/packages/harness/evoflow/persistence/schema.py:466:CREATE TABLE IF NOT EXISTS evoflow_collab_subtask_deps (
+backend/packages/harness/evoflow/persistence/schema.py:476:CREATE TABLE IF NOT EXISTS evoflow_collab_subtask_expected_outputs (
+backend/packages/harness/evoflow/persistence/schema.py:485:CREATE TABLE IF NOT EXISTS evoflow_collab_subtask_skills (
+backend/packages/harness/evoflow/persistence/schema.py:494:CREATE TABLE IF NOT EXISTS evoflow_collab_subtask_tools (
+backend/packages/harness/evoflow/persistence/schema.py:503:CREATE TABLE IF NOT EXISTS evoflow_collab_subtasks (
+backend/packages/harness/evoflow/persistence/schema.py:536:CREATE TABLE IF NOT EXISTS evoflow_collab_task_deps (
+backend/packages/harness/evoflow/persistence/schema.py:544:CREATE TABLE IF NOT EXISTS evoflow_collab_task_execution_history (
+backend/packages/harness/evoflow/persistence/schema.py:553:CREATE TABLE IF NOT EXISTS evoflow_collab_tasks (
+backend/packages/harness/evoflow/persistence/schema.py:895:            attempts INTEGER NOT NULL DEFAULT 0,
+backend/packages/harness/evoflow/persistence/schema.py:1117:CREATE TABLE IF NOT EXISTS evoflow_proactive_approvals (
+backend/packages/harness/evoflow/persistence/schema.py:1158:    approval_id TEXT,
+backend/packages/harness/evoflow/persistence/schema.py:1161:    approval_timeout_minutes INTEGER NOT NULL DEFAULT 30,
+backend/packages/harness/evoflow/persistence/schema.py:1165:    updated_at TEXT NOT NULL, round_id TEXT, goal TEXT NOT NULL DEFAULT '', outcome TEXT NOT NULL DEFAULT '', config_autonomy_level TEXT NOT NULL DEFAULT 'approval_for_risky',
+backend/packages/harness/evoflow/persistence/schema.py:1387:CREATE TABLE IF NOT EXISTS evoflow_tool_approval_audit (
+backend/packages/harness/evoflow/persistence/schema.py:1399:CREATE TABLE IF NOT EXISTS evoflow_tool_approval_grants (
+backend/packages/harness/evoflow/persistence/schema.py:1407:CREATE TABLE IF NOT EXISTS evoflow_tool_approvals (
+backend/packages/harness/evoflow/persistence/schema.py:1544:CREATE INDEX IF NOT EXISTS idx_audit_session ON evoflow_tool_approval_audit(session_key);
+backend/packages/harness/evoflow/persistence/schema.py:1546:CREATE INDEX IF NOT EXISTS idx_audit_thread ON evoflow_tool_approval_audit(thread_id);
+backend/packages/harness/evoflow/persistence/schema.py:1548:CREATE INDEX IF NOT EXISTS idx_channel_push_approval_created
+backend/packages/harness/evoflow/persistence/schema.py:1549:            ON evoflow_channel_push_log(approval_id, created_at);
+backend/packages/harness/evoflow/persistence/schema.py:1561:        ON evoflow_collab_peer_messages(main_task_id, thread_key, created_at);
+backend/packages/harness/evoflow/persistence/schema.py:1564:        ON evoflow_collab_peer_messages(main_task_id, to_subtask_id, status);
+backend/packages/harness/evoflow/persistence/schema.py:1695:    ON evoflow_collab_task_execution_history(main_task_id, parent_task_id, subtask_id);
+backend/packages/harness/evoflow/persistence/schema.py:1697:CREATE INDEX IF NOT EXISTS idx_evo_collab_subtasks_main ON evoflow_collab_subtasks(main_task_id);
+backend/packages/harness/evoflow/persistence/schema.py:1699:CREATE INDEX IF NOT EXISTS idx_evo_collab_tasks_main ON evoflow_collab_tasks(main_task_id);
+backend/packages/harness/evoflow/persistence/schema.py:1810:CREATE INDEX IF NOT EXISTS idx_evo_tool_approval_grants_thread
+backend/packages/harness/evoflow/persistence/schema.py:1811:            ON evoflow_tool_approval_grants(thread_id);
+backend/packages/harness/evoflow/persistence/schema.py:1813:CREATE INDEX IF NOT EXISTS idx_evo_tool_approvals_session_status
+backend/packages/harness/evoflow/persistence/schema.py:1814:            ON evoflow_tool_approvals(session_key, status);
+backend/packages/harness/evoflow/persistence/schema.py:1816:CREATE INDEX IF NOT EXISTS idx_evo_tool_approvals_thread_status
+backend/packages/harness/evoflow/persistence/schema.py:1817:            ON evoflow_tool_approvals(thread_id, status);
+backend/packages/harness/evoflow/persistence/schema.py:1874:CREATE INDEX IF NOT EXISTS idx_proactive_approval_status
+backend/packages/harness/evoflow/persistence/schema.py:1875:    ON evoflow_proactive_approvals(status, created_at);
+backend/packages/harness/evoflow/persistence/schema.py:1877:CREATE INDEX IF NOT EXISTS idx_proactive_approval_task
+backend/packages/harness/evoflow/persistence/schema.py:1878:            ON evoflow_proactive_approvals(task_id);
+backend/app/gateway/routers/collab.py:10:from evoflow.agents.tool_approval_trace_log import log_tool_approval_trace
+backend/app/gateway/routers/collab.py:26:def _resume_tool_approval_blocking(
+backend/app/gateway/routers/collab.py:40:    from evoflow.agents.tool_approval_resume import (
+backend/app/gateway/routers/collab.py:41:        build_tool_approval_resume_payload,
+backend/app/gateway/routers/collab.py:42:        trigger_tool_approval_resume_inplace,
+backend/app/gateway/routers/collab.py:50:    log_tool_approval_trace("resume阻塞函数·开始", thread_id=tid, side="resume",
+backend/app/gateway/routers/collab.py:64:            resume_payload = build_tool_approval_resume_payload(
+backend/app/gateway/routers/collab.py:70:            resume_payload = build_tool_approval_resume_payload(
+backend/app/gateway/routers/collab.py:76:            resume_payload = build_tool_approval_resume_payload(action="await_next")
+backend/app/gateway/routers/collab.py:83:            resume_payload = build_tool_approval_resume_payload(
+backend/app/gateway/routers/collab.py:95:            trigger_tool_approval_resume_inplace(
+backend/app/gateway/routers/collab.py:116:            from app.gateway.streaming.tool_approval_stream_push import push_pending_approvals_to_live_stream
+backend/app/gateway/routers/collab.py:118:            # push_pending_approvals_to_live_stream 是 async 的，需要 asyncio.run
+backend/app/gateway/routers/collab.py:120:                push_pending_approvals_to_live_stream(
+backend/app/gateway/routers/collab.py:129:        log_tool_approval_trace("resume阻塞函数·完成", thread_id=tid, side="resume",
+backend/app/gateway/routers/collab.py:138:        log_tool_approval_trace("resume阻塞函数·异常", thread_id=tid, side="resume",
+backend/app/gateway/routers/collab.py:162:        from evoflow.agents.tool_approval_resume import trigger_tool_approval_replay_run
+backend/app/gateway/routers/collab.py:163:        from evoflow.agents.tool_approval_service import pop_replay_queue
+backend/app/gateway/routers/collab.py:166:            log_tool_approval_trace(
+backend/app/gateway/routers/collab.py:175:            log_tool_approval_trace(
+backend/app/gateway/routers/collab.py:182:        log_tool_approval_trace(
+backend/app/gateway/routers/collab.py:193:        await trigger_tool_approval_replay_run(
+backend/app/gateway/routers/collab.py:203:async def _resume_tool_approval_background(
+backend/app/gateway/routers/collab.py:222:    from evoflow.agents.tool_approval_resume import (
+backend/app/gateway/routers/collab.py:223:        build_tool_approval_resume_payload,
+backend/app/gateway/routers/collab.py:224:        trigger_tool_approval_resume_inplace,
+backend/app/gateway/routers/collab.py:242:            resume_payload = build_tool_approval_resume_payload(
+backend/app/gateway/routers/collab.py:248:            resume_payload = build_tool_approval_resume_payload(
+backend/app/gateway/routers/collab.py:254:            resume_payload = build_tool_approval_resume_payload(action="await_next")
+backend/app/gateway/routers/collab.py:264:            resume_payload = build_tool_approval_resume_payload(
+backend/app/gateway/routers/collab.py:274:        out = await trigger_tool_approval_resume_inplace(
+backend/app/gateway/routers/collab.py:294:            from app.gateway.streaming.tool_approval_stream_push import push_pending_approvals_to_live_stream
+backend/app/gateway/routers/collab.py:296:            n = await push_pending_approvals_to_live_stream(
+backend/app/gateway/routers/collab.py:314:        from app.gateway.streaming.post_stream_ui_normalize import clear_thread_tool_approval_pause
+backend/app/gateway/routers/collab.py:316:        from app.gateway.streaming.tool_approval_stream_push import push_tool_approval_decision
+backend/app/gateway/routers/collab.py:319:        await push_tool_approval_decision(
+backend/app/gateway/routers/collab.py:327:        log_tool_approval_trace("resume失败·SSE错误通知已推送", thread_id=tid, side="resume",
+backend/app/gateway/routers/collab.py:330:        clear_thread_tool_approval_pause(tid)
+backend/app/gateway/routers/collab.py:380:    pending_approvals: list[dict[str, Any]] = Field(default_factory=list)
+backend/app/gateway/routers/collab.py:382:    effective_tool_approval_policy: str = "grant_all"
+backend/app/gateway/routers/collab.py:385:@router.get("/threads/{thread_id}/tool-approval/pending", response_model=ToolApprovalPendingListResponse)
+backend/app/gateway/routers/collab.py:386:async def list_thread_tool_approval_pending(request: Request, thread_id: str) -> ToolApprovalPendingListResponse:
+backend/app/gateway/routers/collab.py:389:    from evoflow.agents.tool_approval_service import list_pending_approvals
+backend/app/gateway/routers/collab.py:390:    from evoflow.persistence.tool_approval_policy import effective_policy_for_thread
+backend/app/gateway/routers/collab.py:395:    pending = await run_db(list_pending_approvals, tid)
+backend/app/gateway/routers/collab.py:399:        pending_approvals=pending,
+backend/app/gateway/routers/collab.py:401:        effective_tool_approval_policy=policy,
+backend/app/gateway/routers/collab.py:405:@router.post("/threads/{thread_id}/tool-approval", response_model=ToolApprovalActionResponse)
+backend/app/gateway/routers/collab.py:406:async def post_thread_tool_approval(
+backend/app/gateway/routers/collab.py:413:    from evoflow.agents.tool_approval_service import apply_user_approval_with_session
+backend/app/gateway/routers/collab.py:440:    log_tool_approval_trace("API收到审批请求", thread_id=tid, side="API",
+backend/app/gateway/routers/collab.py:442:    logger.info("tool approval API trace logged thread=%s ms=%.1f", tid, (time.perf_counter() - t0) * 1000.0)
+backend/app/gateway/routers/collab.py:448:            run_db(apply_user_approval_with_session, tid, data, workspace_root=ws),
+backend/app/gateway/routers/collab.py:453:            "tool approval DB timed out thread=%s tool_call_id=%s waited_ms=%.1f",
+backend/app/gateway/routers/collab.py:471:    log_tool_approval_trace("API·DB操作完成", thread_id=tid, side="API",
+backend/app/gateway/routers/collab.py:486:            clear_thread_tool_approval_pause,
+backend/app/gateway/routers/collab.py:488:            thread_in_tool_approval_pause,
+backend/app/gateway/routers/collab.py:494:            clear_thread_tool_approval_pause(tid)
+backend/app/gateway/routers/collab.py:503:            from app.gateway.streaming.tool_approval_stream_push import (
+backend/app/gateway/routers/collab.py:504:                push_pending_approvals_to_live_stream,
+backend/app/gateway/routers/collab.py:505:                push_tool_approval_decision,
+backend/app/gateway/routers/collab.py:509:                await push_tool_approval_decision(
+backend/app/gateway/routers/collab.py:518:                    n = await push_pending_approvals_to_live_stream(
+backend/app/gateway/routers/collab.py:529:                    await push_tool_approval_decision(
+backend/app/gateway/routers/collab.py:537:                    n = await push_pending_approvals_to_live_stream(
+backend/app/gateway/routers/collab.py:555:                        await push_tool_approval_decision(
+backend/app/gateway/routers/collab.py:569:            thread_in_tool_approval_pause(tid),
+backend/app/gateway/routers/collab.py:574:        logger.exception("tool approval post-db wake failed thread=%s", tid)
+backend/app/gateway/routers/collab.py:577:    log_tool_approval_trace("API·SSE决策已推送", thread_id=tid, side="API",
+backend/app/gateway/routers/collab.py:596:            log_tool_approval_trace(
+backend/app/gateway/routers/collab.py:614:                _resume_tool_approval_background(
+backend/app/gateway/routers/collab.py:655:            from evoflow.agents.tool_approval_service import build_replay_message
+backend/app/gateway/routers/collab.py:660:            log_tool_approval_trace(
+backend/app/gateway/routers/collab.py:681:            log_tool_approval_trace(
+backend/app/gateway/routers/collab.py:693:                _resume_tool_approval_background(
+backend/app/gateway/routers/collab.py:735:@router.post("/threads/{thread_id}/tool-approval/cancel")
+backend/app/gateway/routers/collab.py:736:async def cancel_thread_tool_approval(request: Request, thread_id: str) -> dict[str, Any]:
+backend/app/gateway/routers/collab.py:738:    from evoflow.agents.tool_approval_service import cancel_all_pending_approvals
+backend/app/gateway/routers/collab.py:745:    n = await run_db(cancel_all_pending_approvals, tid, reason="user_cancel")
+backend/app/gateway/routers/collab.py:750:            clear_thread_tool_approval_pause,
+backend/app/gateway/routers/collab.py:754:        from app.gateway.streaming.tool_approval_stream_push import push_tool_approval_decision
+backend/app/gateway/routers/collab.py:757:        clear_thread_tool_approval_pause(tid)
+backend/app/gateway/routers/collab.py:759:        await push_tool_approval_decision(
+backend/app/gateway/routers/collab.py:771:    log_tool_approval_trace("API·取消审批", thread_id=tid, side="API",
+backend/app/channels/services/goal_service.py:853:        for attempt in range(PUSH_RETRY_TIMES + 1):
+backend/app/channels/services/goal_service.py:858:                logger.warning(f"托管回调调用失败 (attempt {attempt + 1}/{PUSH_RETRY_TIMES + 1})：{e}")
+backend/app/channels/services/goal_service.py:859:                if attempt < PUSH_RETRY_TIMES:
+backend/app/channels/services/goal_service.py:1775:                    logger.warning("hosted recover: giving up sk=%s after %d attempts: %s", sk, cur_cnt + 1, e)
+backend/app/channels/services/goal_service.py:1777:                    logger.warning("hosted recover: failed sk=%s (attempt %d/%d): %s", sk, cur_cnt + 1, _RECOVER_MAX_RETRIES, e)
+backend/packages/harness/evoflow/collab/app_schema.py:13:        └─► evoflow_collab_tasks ← 执行实例：plan_goal / plan_steps_json …
+backend/packages/harness/evoflow/collab/app_schema.py:15:                    └─► evoflow_collab_subtasks  ← 步骤实例（DAG 调度单元）
+backend/packages/harness/evoflow/collab/plan_subtasks_sync.py:965:        "attempted": False,
+backend/packages/harness/evoflow/collab/plan_subtasks_sync.py:996:    out["attempted"] = True
+backend/packages/harness/evoflow/collab/plan_subtasks_sync.py:1005:    out["reason"] = "synced_from_bound_plan" if subs_after else "sync_attempted_still_empty"
+backend/packages/harness/evoflow/collab/storage.py:125:    """Storage for task bundles (SQLite ``evoflow_collab_tasks`` root rows + children)."""
+backend/packages/harness/evoflow/collab/state_transitions.py:97:    """Raised when an invalid state transition is attempted."""
+backend/packages/harness/evoflow/collab/task_noise.py:82:    :mod:`evoflow.collab.task_reclaim`.
+backend/packages/harness/evoflow/collab/task_noise.py:114:    # Stuck executing@100% is owned by task_reclaim (→ completed), not noise cancel.
+backend/packages/harness/evoflow/collab/plan_session_task.py:560:    """Persist structured plan on the thread-bound main task row (``evoflow_collab_tasks``)."""
+backend/packages/harness/evoflow/collab/task_reclaim.py:1:"""Auto-reclaim zombie board tasks: stuck executing@100% and stale awaiting_close.
+backend/packages/harness/evoflow/collab/task_reclaim.py:75:def classify_zombie_reclaim(
+backend/packages/harness/evoflow/collab/task_reclaim.py:82:    """Return reclaim action dict or None if task is healthy.
+backend/packages/harness/evoflow/collab/task_reclaim.py:139:def list_zombie_reclaim_candidates(
+backend/packages/harness/evoflow/collab/task_reclaim.py:156:            action = classify_zombie_reclaim(
+backend/packages/harness/evoflow/collab/task_reclaim.py:168:def _apply_reclaim_row(row: dict[str, Any]) -> None:
+backend/packages/harness/evoflow/collab/task_reclaim.py:179:    reason = str(row.get("reason") or "zombie_reclaim")
+backend/packages/harness/evoflow/collab/task_reclaim.py:180:    summary = f"auto reclaim: {reason}"
+backend/packages/harness/evoflow/collab/task_reclaim.py:198:            raise ValidationError(f"failed to force-reclaim {tid}")
+backend/packages/harness/evoflow/collab/task_reclaim.py:201:def reclaim_zombie_tasks(
+backend/packages/harness/evoflow/collab/task_reclaim.py:209:    candidates = list_zombie_reclaim_candidates(
+backend/packages/harness/evoflow/collab/task_reclaim.py:221:            "reclaimed": [],
+backend/packages/harness/evoflow/collab/task_reclaim.py:225:    reclaimed: list[dict[str, Any]] = []
+backend/packages/harness/evoflow/collab/task_reclaim.py:230:            _apply_reclaim_row(row)
+backend/packages/harness/evoflow/collab/task_reclaim.py:231:            reclaimed.append(row)
+backend/packages/harness/evoflow/collab/task_reclaim.py:233:                "task_reclaim: %s %s -> %s (%s)",
+backend/packages/harness/evoflow/collab/task_reclaim.py:241:            logger.warning("task_reclaim failed task=%s err=%s", tid, e, exc_info=True)
+backend/packages/harness/evoflow/collab/task_reclaim.py:247:        "reclaimed": reclaimed,
+backend/packages/harness/evoflow/collab/task_outputs.py:735:# Source / binary code — never push these on Feishu approval cards.
+backend/packages/harness/evoflow/collab/task_outputs.py:840:def shareable_approval_outputs(raw: Any, *, max_items: int = 12) -> list[dict[str, str]]:
+backend/packages/harness/evoflow/collab/task_outputs.py:841:    """Filter task ``outputs`` for Feishu approval: docs/media/urls, never code."""
+backend/packages/harness/evoflow/collab/task_outputs.py:885:    "shareable_approval_outputs",
+backend/packages/harness/evoflow/collab/app_runner.py:476:    for attempt in range(3):
+backend/packages/harness/evoflow/collab/app_runner.py:490:            if attempt < 2:
+backend/packages/harness/evoflow/collab/app_runner.py:491:                time.sleep(0.5 * (attempt + 1))  # 0.5s, 1.0s backoff
+backend/packages/harness/evoflow/collab/plan_on_task.py:1:"""Structured plan fields on the bound main task row only (``evoflow_collab_tasks`` / bundle)."""
+backend/packages/harness/evoflow/collab/sse_notify.py:275:async def _broadcast_tool_approval_pending_sse(
+backend/packages/harness/evoflow/collab/sse_notify.py:283:    """Broadcast ``tool_approval:pending`` to panel SSE subscribers for a thread.
+backend/packages/harness/evoflow/collab/sse_notify.py:300:            await EventBroadcaster.get_instance().broadcast(tid, "tool_approval:pending", data)
+backend/packages/harness/evoflow/collab/sse_notify.py:303:            logger.debug("tool_approval SSE direct broadcast failed", exc_info=True)
+backend/packages/harness/evoflow/collab/sse_notify.py:307:        logger.debug("tool_approval SSE relay skipped (no INTERNAL_EVENTS_SECRET)")
+backend/packages/harness/evoflow/collab/sse_notify.py:317:                json={"event_type": "tool_approval:pending", "thread_id": tid, "data": data},
+backend/packages/harness/evoflow/collab/sse_notify.py:322:        logger.debug("tool_approval SSE HTTP relay failed", exc_info=True)
+backend/packages/harness/evoflow/collab/sse_notify.py:326:def schedule_tool_approval_pending_sse(
+backend/packages/harness/evoflow/collab/sse_notify.py:334:    """Fire-and-forget: push a ``tool_approval:pending`` panel SSE event.
+backend/packages/harness/evoflow/collab/sse_notify.py:339:        await _broadcast_tool_approval_pending_sse(
