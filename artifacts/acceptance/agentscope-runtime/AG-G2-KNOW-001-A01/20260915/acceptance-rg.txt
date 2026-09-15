@@ -1,0 +1,525 @@
+backend/app/gateway/routers/mcp_server.py:1:"""FastAPI router exposing the MCP Server endpoint at ``/mcp``.
+backend/app/gateway/routers/mcp_server.py:4::mod:`evoflow.mcp.server` to HTTP, implementing the MCP Streamable-HTTP
+backend/app/gateway/routers/mcp_server.py:7:* ``POST /mcp`` — receives a JSON-RPC 2.0 request (or batch). When the client
+backend/app/gateway/routers/mcp_server.py:11:* ``GET /mcp`` — opens a long-lived SSE connection (optional long-connection
+backend/app/gateway/routers/mcp_server.py:13:  ``POST /mcp`` so the client knows where to send requests.
+backend/app/gateway/routers/mcp_server.py:29:from evoflow.mcp.server import handle_mcp_batch, handle_mcp_request
+backend/app/gateway/routers/mcp_server.py:34:router = APIRouter(tags=["mcp-server"])
+backend/app/gateway/routers/mcp_server.py:89:            detail="App API keys cannot access /mcp; use POST /v1/chat/completions.",
+backend/app/gateway/routers/mcp_server.py:148:@router.post("/mcp")
+backend/app/gateway/routers/mcp_server.py:149:async def mcp_post(
+backend/app/gateway/routers/mcp_server.py:158:    :func:`handle_mcp_request` / :func:`handle_mcp_batch`, and returns either a
+backend/app/gateway/routers/mcp_server.py:189:        responses = handle_mcp_batch(body, caller_ctx)
+backend/app/gateway/routers/mcp_server.py:200:    response = handle_mcp_request(body, caller_ctx)
+backend/app/gateway/routers/mcp_server.py:214:@router.get("/mcp")
+backend/app/gateway/routers/mcp_server.py:215:async def mcp_get(
+backend/app/gateway/routers/mcp_server.py:221:    ``endpoint`` event advertising ``POST /mcp`` as the request target, followed
+backend/app/gateway/routers/mcp_server.py:223:    connection. This satisfies clients that prefer a persistent SSE channel.
+backend/app/gateway/routers/mcp_server.py:240:        yield "event: endpoint\ndata: /mcp\n\n"
+backend/app/gateway/routers/channels.py:1:"""Gateway router for IM channel management."""
+backend/app/gateway/routers/channels.py:16:router = APIRouter(prefix="/api/channels", tags=["channels"])
+backend/app/gateway/routers/channels.py:21:    channels: dict[str, dict]
+backend/app/gateway/routers/channels.py:81:    channel_running: bool = False
+backend/app/gateway/routers/channels.py:85:    enabled: bool = Field(default=True, description="Whether to enable the Feishu channel after applying credentials")
+backend/app/gateway/routers/channels.py:109:    enabled: bool = Field(default=True, description="Whether to enable the Weixin channel after applying credentials")
+backend/app/gateway/routers/channels.py:115:    channel_running: bool = False
+backend/app/gateway/routers/channels.py:118:def _channels_section_from_app_config(cfg: Any) -> dict[str, Any] | None:
+backend/app/gateway/routers/channels.py:119:    """Resolve ``channels`` from AppConfig (extras may live on ``model_extra``, as attributes, or in ``model_dump()``)."""
+backend/app/gateway/routers/channels.py:120:    ch = getattr(cfg, "channels", None)
+backend/app/gateway/routers/channels.py:125:        nested = extra.get("channels")
+backend/app/gateway/routers/channels.py:131:            nested = dumped.get("channels")
+backend/app/gateway/routers/channels.py:138:    """Return configured secret for POST /api/channels/feishu/push, or None if disabled."""
+backend/app/gateway/routers/channels.py:142:    channels = _channels_section_from_app_config(cfg)
+backend/app/gateway/routers/channels.py:143:    if isinstance(channels, dict):
+backend/app/gateway/routers/channels.py:144:        feishu = channels.get("feishu")
+backend/app/gateway/routers/channels.py:158:    1. ``channels.feishu.automation_push_chat_id`` in ``config.yaml`` if set (optional admin override).
+backend/app/gateway/routers/channels.py:160:       :mod:`app.channels.feishu_automation_learned_chat`), updated when inbound ``chat_id`` changes.
+backend/app/gateway/routers/channels.py:165:    channels = _channels_section_from_app_config(cfg)
+backend/app/gateway/routers/channels.py:166:    if isinstance(channels, dict):
+backend/app/gateway/routers/channels.py:167:        feishu = channels.get("feishu")
+backend/app/gateway/routers/channels.py:173:        from app.channels.feishu_automation_learned_chat import read_learned_feishu_automation_chat_id
+backend/app/gateway/routers/channels.py:204:async def get_channels_status() -> ChannelStatusResponse:
+backend/app/gateway/routers/channels.py:205:    """Get the status of all IM channels."""
+backend/app/gateway/routers/channels.py:206:    from app.channels.service import (
+backend/app/gateway/routers/channels.py:207:        get_channel_service,
+backend/app/gateway/routers/channels.py:208:        registry_channel_status,
+backend/app/gateway/routers/channels.py:209:        start_channel_service,
+backend/app/gateway/routers/channels.py:212:    service = get_channel_service()
+backend/app/gateway/routers/channels.py:215:            service = await start_channel_service()
+backend/app/gateway/routers/channels.py:218:            return ChannelStatusResponse(**registry_channel_status(service_running=False))
+backend/app/gateway/routers/channels.py:224:async def list_channel_push_targets(request: Request, limit: int = 200) -> dict[str, Any]:
+backend/app/gateway/routers/channels.py:227:    from app.gateway.channel_result_push import list_push_targets
+backend/app/gateway/routers/channels.py:233:async def restart_channel(request: Request, name: str) -> ChannelRestartResponse:
+backend/app/gateway/routers/channels.py:234:    """Restart a specific IM channel."""
+backend/app/gateway/routers/channels.py:236:    from app.channels.service import get_channel_service
+backend/app/gateway/routers/channels.py:238:    service = get_channel_service()
+backend/app/gateway/routers/channels.py:242:    success = await service.restart_channel(name)
+backend/app/gateway/routers/channels.py:247:        logger.warning("Failed to restart channel %s", name)
+backend/app/gateway/routers/channels.py:248:        return ChannelRestartResponse(success=False, message=f"Failed to restart channel {name}")
+backend/app/gateway/routers/channels.py:252:async def enable_channel(http_request: Request, name: str, request: ChannelEnableRequest) -> ChannelEnableResponse:
+backend/app/gateway/routers/channels.py:253:    """Enable or disable a specific IM channel."""
+backend/app/gateway/routers/channels.py:255:    from app.channels.service import get_channel_service
+backend/app/gateway/routers/channels.py:257:    service = get_channel_service()
+backend/app/gateway/routers/channels.py:261:    success = await service.set_channel_enabled(name, request.enabled)
+backend/app/gateway/routers/channels.py:268:        logger.warning("Failed to %s channel %s", action, name)
+backend/app/gateway/routers/channels.py:269:        return ChannelEnableResponse(success=False, message=f"Failed to {action} channel {name}", enabled=request.enabled)
+backend/app/gateway/routers/channels.py:273:async def get_channel_config(request: Request, name: str) -> ChannelConfigResponse:
+backend/app/gateway/routers/channels.py:274:    """Get the configuration of a specific IM channel."""
+backend/app/gateway/routers/channels.py:276:    from app.channels.service import get_channel_service
+backend/app/gateway/routers/channels.py:278:    service = get_channel_service()
+backend/app/gateway/routers/channels.py:282:    config, enabled, running = service.get_channel_config(name)
+backend/app/gateway/routers/channels.py:287:async def update_channel_config(request: Request, name: str, config: dict[str, Any]) -> ChannelRestartResponse:
+backend/app/gateway/routers/channels.py:288:    """Update the configuration of a specific IM channel."""
+backend/app/gateway/routers/channels.py:290:    from app.channels.service import get_channel_service
+backend/app/gateway/routers/channels.py:292:    service = get_channel_service()
+backend/app/gateway/routers/channels.py:296:    success = await service.update_channel_config(name, config)
+backend/app/gateway/routers/channels.py:301:        logger.warning("Failed to update channel %s config", name)
+backend/app/gateway/routers/channels.py:302:        return ChannelRestartResponse(success=False, message=f"Failed to update channel {name} config")
+backend/app/gateway/routers/channels.py:309:    Configure ``channels.feishu.push_secret`` in ``config.yaml`` or set ``EVOFLOW_FEISHU_PUSH_SECRET``.
+backend/app/gateway/routers/channels.py:311:    Requires the Feishu channel to be enabled and running (Gateway started with channel service).
+backend/app/gateway/routers/channels.py:317:            detail="Feishu push is not configured. Set channels.feishu.push_secret or EVOFLOW_FEISHU_PUSH_SECRET.",
+backend/app/gateway/routers/channels.py:322:    from app.channels.service import get_channel_service
+backend/app/gateway/routers/channels.py:324:    service = get_channel_service()
+backend/app/gateway/routers/channels.py:353:    and start the channel automatically.
+backend/app/gateway/routers/channels.py:356:    from app.channels.feishu_registration import FeishuRegistrationError, get_registration_client
+backend/app/gateway/routers/channels.py:382:    from app.channels.feishu_registration import FeishuRegistrationError, get_registration_client
+backend/app/gateway/routers/channels.py:411:    (or restarts) the Feishu channel.  Intended to be called after ``/poll``
+backend/app/gateway/routers/channels.py:414:    from app.channels.feishu_registration import get_registration_client
+backend/app/gateway/routers/channels.py:415:    from app.channels.service import get_channel_service
+backend/app/gateway/routers/channels.py:432:    # Save credentials and start the channel
+backend/app/gateway/routers/channels.py:433:    service = get_channel_service()
+backend/app/gateway/routers/channels.py:435:        success = await service.update_channel_config(
+backend/app/gateway/routers/channels.py:442:        # Check if channel is now running
+backend/app/gateway/routers/channels.py:443:        _, _, running = service.get_channel_config("feishu")
+backend/app/gateway/routers/channels.py:446:            message="Feishu credentials saved and channel started",
+backend/app/gateway/routers/channels.py:447:            channel_running=running,
+backend/app/gateway/routers/channels.py:451:        from evoflow.config.app_config import get_app_config, update_channels_section_and_save
+backend/app/gateway/routers/channels.py:454:        channels = _channels_section_from_app_config(cfg) or {}
+backend/app/gateway/routers/channels.py:455:        feishu_cfg = dict(channels.get("feishu", {}))
+backend/app/gateway/routers/channels.py:457:        channels["feishu"] = feishu_cfg
+backend/app/gateway/routers/channels.py:458:        update_channels_section_and_save(channels)
+backend/app/gateway/routers/channels.py:462:            message="Feishu credentials saved. Restart the Gateway to activate the channel.",
+backend/app/gateway/routers/channels.py:463:            channel_running=False,
+backend/app/gateway/routers/channels.py:474:    from app.channels.weixin_registration import WeixinRegistrationError, get_weixin_registration_client
+backend/app/gateway/routers/channels.py:498:    from app.channels.weixin_registration import WeixinRegistrationError, get_weixin_registration_client
+backend/app/gateway/routers/channels.py:529:    """Save Weixin credentials to disk and ``config.yaml``, then start or restart the channel."""
+backend/app/gateway/routers/channels.py:530:    from app.channels.service import get_channel_service
+backend/app/gateway/routers/channels.py:531:    from app.channels.weixin_registration import get_weixin_registration_client
+backend/app/gateway/routers/channels.py:532:    from app.channels.weixin_setup import save_weixin_credentials
+backend/app/gateway/routers/channels.py:564:    service = get_channel_service()
+backend/app/gateway/routers/channels.py:566:        success = await service.update_channel_config("weixin", payload)
+backend/app/gateway/routers/channels.py:570:        # Also persist to SQLite database (evoflow_channel_configs) for settings API
+backend/app/gateway/routers/channels.py:574:            cfg_repo.upsert_channel_config("weixin", payload)
+backend/app/gateway/routers/channels.py:578:        _, _, running = service.get_channel_config("weixin")
+backend/app/gateway/routers/channels.py:581:            message="Weixin credentials saved and channel started",
+backend/app/gateway/routers/channels.py:582:            channel_running=running,
+backend/app/gateway/routers/channels.py:585:    from evoflow.config.app_config import get_app_config, update_channels_section_and_save
+backend/app/gateway/routers/channels.py:588:    channels = _channels_section_from_app_config(cfg) or {}
+backend/app/gateway/routers/channels.py:589:    weixin_cfg = dict(channels.get("weixin", {}))
+backend/app/gateway/routers/channels.py:591:    channels["weixin"] = weixin_cfg
+backend/app/gateway/routers/channels.py:592:    update_channels_section_and_save(channels)
+backend/app/gateway/routers/channels.py:596:        message="Weixin credentials saved. Restart the Gateway to activate the channel.",
+backend/app/gateway/routers/channels.py:597:        channel_running=False,
+backend/app/gateway/routers/knowledge.py:3:Provides CRUD for knowledge bases, file upload, chunk listing, semantic
+backend/app/gateway/routers/knowledge.py:16:from evoflow.knowledge import service as kb_service
+backend/app/gateway/routers/knowledge.py:28:    prefix="/api/knowledge",
+backend/app/gateway/routers/knowledge.py:29:    tags=["knowledge"],
+backend/app/gateway/routers/knowledge.py:89:async def list_knowledge_bases():
+backend/app/gateway/routers/knowledge.py:90:    """List all knowledge bases."""
+backend/app/gateway/routers/knowledge.py:96:async def create_knowledge_base(req: CreateDatasetRequest, background_tasks: BackgroundTasks):
+backend/app/gateway/routers/knowledge.py:97:    """Create a new knowledge base."""
+backend/app/gateway/routers/knowledge.py:122:async def get_knowledge_base(dataset_id: str):
+backend/app/gateway/routers/knowledge.py:123:    """Get knowledge base details."""
+backend/app/gateway/routers/knowledge.py:131:async def update_knowledge_base(dataset_id: str, req: UpdateDatasetRequest):
+backend/app/gateway/routers/knowledge.py:132:    """Update knowledge base settings."""
+backend/app/gateway/routers/knowledge.py:150:async def delete_knowledge_base(dataset_id: str):
+backend/app/gateway/routers/knowledge.py:151:    """Delete a knowledge base and all its files, chunks, and vectors."""
+backend/app/gateway/routers/knowledge.py:186:    """Upload a file to a knowledge base folder for automatic indexing."""
+backend/app/gateway/routers/knowledge.py:262:    """List source files in a knowledge base, optionally scoped to a folder."""
+backend/app/gateway/routers/knowledge.py:288:    """List chunks in a knowledge base (paginated)."""
+backend/app/gateway/routers/knowledge.py:300:    """Semantic search across a knowledge base."""
+backend/app/gateway/routers/knowledge.py:324:    """Get processing status for a knowledge base."""
+backend/app/gateway/routers/knowledge.py:336:    knowledge_base: str | None = Field(default=None, description="Optional: limit to one KB by name or id")
+backend/app/gateway/routers/knowledge.py:343:    """Semantic search across all knowledge bases (or a specific one)."""
+backend/app/gateway/routers/knowledge.py:345:        results = await kb_service.search_knowledge_bases(
+backend/app/gateway/routers/knowledge.py:347:            knowledge_base=req.knowledge_base,
+backend/app/gateway/routers/knowledge.py:371:        from evoflow.knowledge.embedding import get_embedding, resolve_embedding_model_config
+backend/app/gateway/routers/knowledge.py:391:            from evoflow.knowledge.vector.sqlite_vec import VectorStore
+backend/app/gateway/routers/mcp.py:12:router = APIRouter(prefix="/api", tags=["mcp"])
+backend/app/gateway/routers/mcp.py:59:    tool_count: int = 0
+backend/app/gateway/routers/mcp.py:60:    tools: list[McpToolInfo] = Field(default_factory=list)
+backend/app/gateway/routers/mcp.py:66:    mcp_servers: dict[str, McpServerConfigResponse] = Field(
+backend/app/gateway/routers/mcp.py:70:    tool_counts: dict[str, int] = Field(
+backend/app/gateway/routers/mcp.py:72:        description="Map of MCP server name to loaded tool count",
+backend/app/gateway/routers/mcp.py:81:    total_tools: int = 0
+backend/app/gateway/routers/mcp.py:87:    mcp_servers: dict[str, McpServerConfigResponse] = Field(
+backend/app/gateway/routers/mcp.py:125:    "/mcp/config",
+backend/app/gateway/routers/mcp.py:130:async def get_mcp_configuration(request: Request) -> McpConfigResponse:
+backend/app/gateway/routers/mcp.py:134:    from evoflow.mcp.status import build_mcp_status_snapshot
+backend/app/gateway/routers/mcp.py:137:        # May import ~/.cursor/mcp.json into SQLite when DB is empty or corrupt
+backend/app/gateway/routers/mcp.py:138:        snap = await asyncio.to_thread(build_mcp_status_snapshot)
+backend/app/gateway/routers/mcp.py:143:            "tool_counts": {},
+backend/app/gateway/routers/mcp.py:147:            "total_tools": 0,
+backend/app/gateway/routers/mcp.py:160:            tool_count=int(s.get("tool_count") or 0),
+backend/app/gateway/routers/mcp.py:161:            tools=[
+backend/app/gateway/routers/mcp.py:167:                for t in (s.get("tools") or [])
+backend/app/gateway/routers/mcp.py:174:        mcp_servers={name: McpServerConfigResponse(**server.model_dump()) for name, server in config.mcp_servers.items()},
+backend/app/gateway/routers/mcp.py:175:        tool_counts=snap.get("tool_counts") or {},
+backend/app/gateway/routers/mcp.py:180:        total_tools=int(snap.get("total_tools") or 0),
+backend/app/gateway/routers/mcp.py:185:    "/mcp/config",
+backend/app/gateway/routers/mcp.py:190:async def update_mcp_configuration(
+backend/app/gateway/routers/mcp.py:196:    1. Save the new configuration to the mcp_config.json file
+backend/app/gateway/routers/mcp.py:198:    3. Reset MCP tools cache to trigger reinitialization
+backend/app/gateway/routers/mcp.py:212:            "mcp_servers": {
+backend/app/gateway/routers/mcp.py:226:        from evoflow.mcp.cache import reset_mcp_tools_cache
+backend/app/gateway/routers/mcp.py:227:        from evoflow.mcp.config_io import unwrap_mcp_servers_dict
+backend/app/gateway/routers/mcp.py:230:        raw = {name: server.model_dump() for name, server in request.mcp_servers.items()}
+backend/app/gateway/routers/mcp.py:231:        # UI may paste full IDE mcp.json: {"mcpServers": {...}}
+backend/app/gateway/routers/mcp.py:232:        unwrapped = unwrap_mcp_servers_dict(raw)
+backend/app/gateway/routers/mcp.py:236:        cfg_repo.replace_mcp_servers(unwrapped)
+backend/app/gateway/routers/mcp.py:238:        reset_mcp_tools_cache()
+backend/app/gateway/routers/mcp.py:240:        return await get_mcp_configuration(http_request)
+backend/app/gateway/routers/mcp.py:248:    "/mcp/market/search",
+backend/app/gateway/routers/mcp.py:253:async def search_mcp_marketplace(
+backend/app/gateway/routers/mcp.py:258:    from evoflow.mcp.market import search_mcp_market
+backend/app/gateway/routers/mcp.py:261:        data = await search_mcp_market(query=query, cursor=cursor, limit=max(1, min(limit, 50)))
+backend/app/gateway/routers/mcp.py:269:    "/mcp/market/install",
+backend/app/gateway/routers/mcp.py:274:async def resolve_mcp_market_install(
+backend/app/gateway/routers/mcp.py:281:    from evoflow.mcp.market import resolve_mcp_install_config
+backend/app/gateway/routers/mcp.py:284:        data = await resolve_mcp_install_config(
+backend/app/gateway/routers/memory.py:1:"""Memory API router for retrieving and managing global memory data."""
+backend/app/gateway/routers/memory.py:8:from evoflow.agents.memory.updater import (
+backend/app/gateway/routers/memory.py:9:    clear_memory_data,
+backend/app/gateway/routers/memory.py:10:    delete_memory_fact,
+backend/app/gateway/routers/memory.py:11:    get_memory_data,
+backend/app/gateway/routers/memory.py:12:    list_memory_agent_slots,
+backend/app/gateway/routers/memory.py:13:    reload_memory_data,
+backend/app/gateway/routers/memory.py:16:from evoflow.config.memory_config import get_memory_config
+backend/app/gateway/routers/memory.py:20:router = APIRouter(prefix="/api", tags=["memory"])
+backend/app/gateway/routers/memory.py:47:    """Model for a memory fact."""
+backend/app/gateway/routers/memory.py:58:    """Response model for memory data."""
+backend/app/gateway/routers/memory.py:68:    """Response model for memory configuration."""
+backend/app/gateway/routers/memory.py:70:    enabled: bool = Field(..., description="Whether memory is enabled")
+backend/app/gateway/routers/memory.py:71:    storage_path: str = Field(..., description="Path to memory storage file")
+backend/app/gateway/routers/memory.py:72:    debounce_seconds: int = Field(..., description="Debounce time for memory updates")
+backend/app/gateway/routers/memory.py:75:    injection_enabled: bool = Field(..., description="Whether memory injection is enabled")
+backend/app/gateway/routers/memory.py:76:    max_injection_tokens: int = Field(..., description="Maximum tokens for memory injection")
+backend/app/gateway/routers/memory.py:80:    """Response model for memory status."""
+backend/app/gateway/routers/memory.py:87:    """One memory scope (global or per-agent file)."""
+backend/app/gateway/routers/memory.py:89:    id: str | None = Field(None, description="Agent id; null means global / default lead memory")
+backend/app/gateway/routers/memory.py:92:    has_memory_file: bool = Field(False, description="Whether a JSON file already exists on disk")
+backend/app/gateway/routers/memory.py:96:    """List of memory scopes for dashboard / settings UI."""
+backend/app/gateway/routers/memory.py:112:def _require_legacy_memory_scope(request: Request, agent: str | None) -> None:
+backend/app/gateway/routers/memory.py:113:    """Gate legacy JSON memory: global = org_admin; agent = memory namespace visible."""
+backend/app/gateway/routers/memory.py:114:    from evoflow.authz.http_guard import require_memory_namespace_visible, require_org_admin
+backend/app/gateway/routers/memory.py:115:    from evoflow.memory.document_codec import namespace_for_agent_key
+backend/app/gateway/routers/memory.py:121:    require_memory_namespace_visible(request, namespace_for_agent_key(agent_name))
+backend/app/gateway/routers/memory.py:125:    "/memory/agents",
+backend/app/gateway/routers/memory.py:128:    description="List global memory plus each agent that has config and/or SQLite chat memory.",
+backend/app/gateway/routers/memory.py:130:async def list_memory_agents(request: Request) -> MemoryAgentsListResponse:
+backend/app/gateway/routers/memory.py:131:    from evoflow.authz.http_guard import require_memory_namespace_visible, resolve_authz_from_request
+backend/app/gateway/routers/memory.py:132:    from evoflow.memory.document_codec import namespace_for_agent_key
+backend/app/gateway/routers/memory.py:134:    raw = list_memory_agent_slots()
+backend/app/gateway/routers/memory.py:144:            require_memory_namespace_visible(request, namespace_for_agent_key(str(aid)))
+backend/app/gateway/routers/memory.py:152:    "/memory/namespaces",
+backend/app/gateway/routers/memory.py:153:    summary="List memory hub namespaces (agent / workspace / person)",
+backend/app/gateway/routers/memory.py:155:async def list_memory_namespaces_api(request: Request) -> dict:
+backend/app/gateway/routers/memory.py:156:    from evoflow.memory.migrate_legacy import ensure_legacy_migrated
+backend/app/gateway/routers/memory.py:157:    from evoflow.memory.namespaces_api import list_memory_namespaces
+backend/app/gateway/routers/memory.py:160:    return list_memory_namespaces(request)
+backend/app/gateway/routers/memory.py:168:    "/memory/namespace/clear",
+backend/app/gateway/routers/memory.py:171:async def clear_memory_namespace(request: Request, body: MemoryNamespaceClearRequest) -> dict:
+backend/app/gateway/routers/memory.py:172:    from evoflow.authz.http_guard import require_memory_namespace_visible
+backend/app/gateway/routers/memory.py:173:    from evoflow.memory.store import clear_namespace
+backend/app/gateway/routers/memory.py:178:    require_memory_namespace_visible(request, ns)
+backend/app/gateway/routers/memory.py:184:    "/memory",
+backend/app/gateway/routers/memory.py:187:    description="Retrieve memory data for the global store or a specific agent (agents/{id}/memory.json).",
+backend/app/gateway/routers/memory.py:189:async def get_memory(
+backend/app/gateway/routers/memory.py:191:    agent: str | None = Query(None, description="Agent id; omit for global memory"),
+backend/app/gateway/routers/memory.py:193:    """Get the current global memory data.
+backend/app/gateway/routers/memory.py:196:        The current memory data with user context, history, and facts.
+backend/app/gateway/routers/memory.py:206:                "topOfMind": {"summary": "Building memory API", "updatedAt": "..."}
+backend/app/gateway/routers/memory.py:226:    _require_legacy_memory_scope(request, agent)
+backend/app/gateway/routers/memory.py:228:    memory_data = get_memory_data(agent_name)
+backend/app/gateway/routers/memory.py:229:    return MemoryResponse(**memory_data)
+backend/app/gateway/routers/memory.py:233:    "/memory/reload",
+backend/app/gateway/routers/memory.py:236:    description="Reload memory data from the storage file, refreshing the in-memory cache.",
+backend/app/gateway/routers/memory.py:238:async def reload_memory(
+backend/app/gateway/routers/memory.py:240:    agent: str | None = Query(None, description="Agent id; omit for global memory"),
+backend/app/gateway/routers/memory.py:242:    """Reload memory data from file.
+backend/app/gateway/routers/memory.py:244:    This forces a reload of the memory data from the storage file,
+backend/app/gateway/routers/memory.py:248:        The reloaded memory data.
+backend/app/gateway/routers/memory.py:250:    _require_legacy_memory_scope(request, agent)
+backend/app/gateway/routers/memory.py:252:    memory_data = reload_memory_data(agent_name)
+backend/app/gateway/routers/memory.py:253:    return MemoryResponse(**memory_data)
+backend/app/gateway/routers/memory.py:257:    "/memory",
+backend/app/gateway/routers/memory.py:260:    description="Delete all saved memory for the global store or one agent and reset to an empty structure.",
+backend/app/gateway/routers/memory.py:262:async def clear_memory(
+backend/app/gateway/routers/memory.py:264:    agent: str | None = Query(None, description="Agent id; omit to clear global memory"),
+backend/app/gateway/routers/memory.py:266:    """Clear all persisted memory data."""
+backend/app/gateway/routers/memory.py:267:    _require_legacy_memory_scope(request, agent)
+backend/app/gateway/routers/memory.py:270:        memory_data = clear_memory_data(agent_name)
+backend/app/gateway/routers/memory.py:272:        raise HTTPException(status_code=500, detail="Failed to clear memory data.") from exc
+backend/app/gateway/routers/memory.py:274:    return MemoryResponse(**memory_data)
+backend/app/gateway/routers/memory.py:278:    "/memory/facts/{fact_id}",
+backend/app/gateway/routers/memory.py:281:    description="Delete a single saved memory fact by its fact id (global or agent scope).",
+backend/app/gateway/routers/memory.py:283:async def delete_memory_fact_endpoint(
+backend/app/gateway/routers/memory.py:286:    agent: str | None = Query(None, description="Agent id; omit for global memory"),
+backend/app/gateway/routers/memory.py:288:    """Delete a single fact from memory by fact id."""
+backend/app/gateway/routers/memory.py:289:    _require_legacy_memory_scope(request, agent)
+backend/app/gateway/routers/memory.py:292:        memory_data = delete_memory_fact(fact_id, agent_name)
+backend/app/gateway/routers/memory.py:296:        raise HTTPException(status_code=500, detail="Failed to delete memory fact.") from exc
+backend/app/gateway/routers/memory.py:298:    return MemoryResponse(**memory_data)
+backend/app/gateway/routers/memory.py:302:    "/memory/config",
+backend/app/gateway/routers/memory.py:305:    description="Retrieve the current memory system configuration.",
+backend/app/gateway/routers/memory.py:307:async def get_memory_config_endpoint() -> MemoryConfigResponse:
+backend/app/gateway/routers/memory.py:308:    """Get the memory system configuration.
+backend/app/gateway/routers/memory.py:311:        The current memory configuration settings.
+backend/app/gateway/routers/memory.py:317:            "storage_path": ".evoflow/memory.json",
+backend/app/gateway/routers/memory.py:326:    config = get_memory_config()
+backend/app/gateway/routers/memory.py:339:    "/memory/status",
+backend/app/gateway/routers/memory.py:342:    description="Retrieve both memory configuration and current data in a single request.",
+backend/app/gateway/routers/memory.py:344:async def get_memory_status(
+backend/app/gateway/routers/memory.py:346:    agent: str | None = Query(None, description="Agent id; omit for global memory in `data`"),
+backend/app/gateway/routers/memory.py:348:    """Get the memory system status including configuration and data.
+backend/app/gateway/routers/memory.py:351:        Combined memory configuration and current data.
+backend/app/gateway/routers/memory.py:353:    _require_legacy_memory_scope(request, agent)
+backend/app/gateway/routers/memory.py:354:    config = get_memory_config()
+backend/app/gateway/routers/memory.py:356:    memory_data = get_memory_data(agent_name)
+backend/app/gateway/routers/memory.py:368:        data=MemoryResponse(**memory_data),
+backend/app/gateway/routers/memory.py:450:    from evoflow.memory.document_codec import namespace_for_agent_key
+backend/app/gateway/routers/memory.py:460:    from evoflow.authz.http_guard import require_memory_namespace_visible
+backend/app/gateway/routers/memory.py:463:    require_memory_namespace_visible(request, ns)
+backend/app/gateway/routers/memory.py:468:    "/memory/atoms",
+backend/app/gateway/routers/memory.py:470:    summary="List memory atoms",
+backend/app/gateway/routers/memory.py:472:async def list_memory_atoms(
+backend/app/gateway/routers/memory.py:480:    from evoflow.memory.facade import list_atoms
+backend/app/gateway/routers/memory.py:481:    from evoflow.memory.migrate_legacy import ensure_legacy_migrated
+backend/app/gateway/routers/memory.py:491:    "/memory/atoms",
+backend/app/gateway/routers/memory.py:493:    summary="Create memory atom",
+backend/app/gateway/routers/memory.py:495:async def create_memory_atom(
+backend/app/gateway/routers/memory.py:500:    from evoflow.authz.http_guard import require_memory_namespace_visible
+backend/app/gateway/routers/memory.py:501:    from evoflow.memory.document_codec import namespace_for_agent_key
+backend/app/gateway/routers/memory.py:502:    from evoflow.memory.facade import list_atoms, remember
+backend/app/gateway/routers/memory.py:503:    from evoflow.memory.migrate_legacy import ensure_legacy_migrated
+backend/app/gateway/routers/memory.py:508:    require_memory_namespace_visible(request, ns)
+backend/app/gateway/routers/memory.py:527:    from evoflow.memory.store import get_atom
+backend/app/gateway/routers/memory.py:536:    "/memory/atoms/{atom_id}",
+backend/app/gateway/routers/memory.py:538:    summary="Patch memory atom (pin / content)",
+backend/app/gateway/routers/memory.py:540:async def patch_memory_atom(request: Request, atom_id: str, body: MemoryAtomPatchRequest) -> MemoryAtomOut:
+backend/app/gateway/routers/memory.py:541:    from evoflow.authz.http_guard import require_memory_namespace_visible
+backend/app/gateway/routers/memory.py:542:    from evoflow.memory.facade import pin_atom, remember
+backend/app/gateway/routers/memory.py:543:    from evoflow.memory.store import get_atom
+backend/app/gateway/routers/memory.py:548:    require_memory_namespace_visible(request, str(atom.get("namespace_id") or ""))
+backend/app/gateway/routers/memory.py:572:    "/memory/atoms/{atom_id}",
+backend/app/gateway/routers/memory.py:573:    summary="Forget memory atom",
+backend/app/gateway/routers/memory.py:575:async def delete_memory_atom(request: Request, atom_id: str) -> dict:
+backend/app/gateway/routers/memory.py:576:    from evoflow.authz.http_guard import require_memory_namespace_visible
+backend/app/gateway/routers/memory.py:577:    from evoflow.memory.facade import forget
+backend/app/gateway/routers/memory.py:578:    from evoflow.memory.store import get_atom
+backend/app/gateway/routers/memory.py:583:    require_memory_namespace_visible(request, str(atom.get("namespace_id") or ""))
+backend/app/gateway/routers/memory.py:590:    "/memory/recall",
+backend/app/gateway/routers/memory.py:594:async def trial_memory_recall(
+backend/app/gateway/routers/memory.py:600:    from evoflow.memory.facade import recall
+backend/app/gateway/routers/memory.py:601:    from evoflow.memory.migrate_legacy import ensure_legacy_migrated
+backend/app/gateway/routers/memory.py:627:    "/memory/consolidate",
+backend/app/gateway/routers/memory.py:628:    summary="Consolidate memory namespace",
+backend/app/gateway/routers/memory.py:630:async def consolidate_memory(request: Request, body: MemoryConsolidateRequest) -> dict:
+backend/app/gateway/routers/memory.py:631:    from evoflow.authz.http_guard import require_memory_namespace_visible
+backend/app/gateway/routers/memory.py:632:    from evoflow.memory.document_codec import namespace_for_agent_key
+backend/app/gateway/routers/memory.py:633:    from evoflow.memory.facade import consolidate
+backend/app/gateway/routers/memory.py:634:    from evoflow.memory.migrate_legacy import ensure_legacy_migrated
+backend/app/gateway/routers/memory.py:643:    require_memory_namespace_visible(request, ns)
+backend/app/gateway/routers/memory.py:649:    "/memory/graph",
+backend/app/gateway/routers/memory.py:652:async def get_memory_graph(
+backend/app/gateway/routers/memory.py:659:    from evoflow.memory.graph import get_graph
+backend/app/gateway/routers/memory.py:660:    from evoflow.memory.migrate_legacy import ensure_legacy_migrated
+backend/app/gateway/routers/memory.py:668:    "/memory/graph/nodes/{node_id}/atoms",
+backend/app/gateway/routers/memory.py:669:    summary="Atoms linked to a memory graph node",
+backend/app/gateway/routers/memory.py:671:async def get_memory_graph_node_atoms(
+backend/app/gateway/routers/memory.py:676:    from evoflow.authz.http_guard import require_memory_namespace_visible, require_org_admin
+backend/app/gateway/routers/memory.py:677:    from evoflow.memory.graph import atoms_for_node
+backend/app/gateway/routers/memory.py:690:            require_memory_namespace_visible(request, ns)
+backend/app/gateway/routers/memory.py:699:    "/memory/graph/rebuild",
+backend/app/gateway/routers/memory.py:700:    summary="Rebuild memory graph (LLM extract enqueue)",
+backend/app/gateway/routers/memory.py:702:async def rebuild_memory_graph(
+backend/app/gateway/routers/memory.py:708:    from evoflow.memory.graph import rebuild_graph
+backend/app/gateway/routers/memory.py:709:    from evoflow.memory.migrate_legacy import ensure_legacy_migrated
+backend/app/gateway/routers/memory.py:718:    "/memory/assets-sync",
+backend/app/gateway/routers/memory.py:719:    summary="Sync Asset Hub memory files to graph namespace",
+backend/app/gateway/routers/memory.py:727:    """Sync Asset Hub memory files to the memory graph system.
+backend/app/gateway/routers/memory.py:735:    from evoflow.memory.assets_to_graph import (
+backend/app/gateway/routers/memory.py:736:        sync_user_memory_to_graph,
+backend/app/gateway/routers/memory.py:737:        sync_workspace_memory_to_graph,
+backend/app/gateway/routers/memory.py:741:        result = sync_user_memory_to_graph("user:default")
+backend/app/gateway/routers/memory.py:743:        result = sync_workspace_memory_to_graph(entity_id)
+backend/app/gateway/routers/memory.py:751:    "/memory/recall-snapshot",
+backend/app/gateway/routers/memory.py:752:    summary="Last-turn memory injection snapshot for a thread",
+backend/app/gateway/routers/memory.py:754:async def get_memory_recall_snapshot(
+backend/app/gateway/routers/memory.py:759:    from evoflow.memory.recall_snapshot import get_thread_recall
+backend/app/gateway/routers/knowledge_owned.py:1:"""Owned knowledge base Gateway API — local-first RAG (spec: owned-knowledge-base-spec.md)."""
+backend/app/gateway/routers/knowledge_owned.py:20:from evoflow.knowledge.owned import service as owned_service
+backend/app/gateway/routers/knowledge_owned.py:21:from evoflow.knowledge.owned.assets import get_asset
+backend/app/gateway/routers/knowledge_owned.py:22:from evoflow.knowledge.owned import blob_store
+backend/app/gateway/routers/knowledge_owned.py:23:from evoflow.knowledge.owned.worker import ensure_owned_kb_worker_started
+backend/app/gateway/routers/knowledge_owned.py:27:router = APIRouter(prefix="/api/knowledge/owned", tags=["knowledge-owned"])
+backend/app/gateway/routers/knowledge_owned.py:181:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:243:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:254:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:262:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:280:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:295:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:311:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:328:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:344:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:362:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:382:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:392:    from evoflow.knowledge.owned import settings as owned_settings
+backend/app/gateway/routers/knowledge_owned.py:400:    from evoflow.knowledge.owned import settings as owned_settings
+backend/app/gateway/routers/knowledge_owned.py:537:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:547:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:595:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:607:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:617:    from evoflow.knowledge.owned.assets import get_asset as _get_asset
+backend/app/gateway/routers/knowledge_owned.py:657:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:658:    from evoflow.knowledge.owned import wiki as wiki_mod
+backend/app/gateway/routers/knowledge_owned.py:667:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:668:    from evoflow.knowledge.owned import wiki as wiki_mod
+backend/app/gateway/routers/knowledge_owned.py:682:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:683:    from evoflow.knowledge.owned import wiki as wiki_mod
+backend/app/gateway/routers/knowledge_owned.py:709:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:710:    from evoflow.knowledge.owned import wiki as wiki_mod
+backend/app/gateway/routers/knowledge_owned.py:719:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:720:    from evoflow.knowledge.owned import wiki as wiki_mod
+backend/app/gateway/routers/knowledge_owned.py:729:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:730:    from evoflow.knowledge.owned import activity as owned_activity
+backend/app/gateway/routers/knowledge_owned.py:731:    from evoflow.knowledge.owned.wiki_pipeline import enqueue_wiki_rebuild
+backend/app/gateway/routers/knowledge_owned.py:732:    from evoflow.knowledge.owned.worker import ensure_owned_kb_worker_started
+backend/app/gateway/routers/knowledge_owned.py:744:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:745:    from evoflow.knowledge.owned import kg as kg_mod
+backend/app/gateway/routers/knowledge_owned.py:754:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:755:    from evoflow.knowledge.owned import kg as kg_mod
+backend/app/gateway/routers/knowledge_owned.py:764:        raise HTTPException(404, "knowledge base not found")
+backend/app/gateway/routers/knowledge_owned.py:765:    from evoflow.knowledge.owned import activity as owned_activity
+backend/app/gateway/routers/knowledge_owned.py:766:    from evoflow.knowledge.owned.kg_pipeline import enqueue_kg_extract
+backend/app/gateway/routers/knowledge_owned.py:767:    from evoflow.knowledge.owned.worker import ensure_owned_kb_worker_started
+backend/app/gateway/routers/task_memory.py:6:from app.gateway.routers.events import emit_task_memory_updated, emit_task_progress
+backend/app/gateway/routers/task_memory.py:20:def _aggregate_main_task_memory(main_task_id: str, task: dict, memory_storage) -> dict:
+backend/app/gateway/routers/task_memory.py:24:    memory = memory_storage.load_task_memory(main_task_id, agent_id, task_id)
+backend/app/gateway/routers/task_memory.py:35:        st_mem = memory_storage.load_task_memory(main_task_id, st_agent, st_id)
+backend/app/gateway/routers/task_memory.py:56:        current_step = str(memory.get("current_step") or "").strip() or ("All subtasks completed" if main_row_status == "completed" else memory.get("current_step") or "")
+backend/app/gateway/routers/task_memory.py:67:        status = memory.get("status") or "pending"
+backend/app/gateway/routers/task_memory.py:69:        current_step = memory.get("current_step") or ""
+backend/app/gateway/routers/task_memory.py:71:    memory["task_id"] = task_id
+backend/app/gateway/routers/task_memory.py:72:    memory["main_task_id"] = main_task_id
+backend/app/gateway/routers/task_memory.py:73:    memory["agent_id"] = agent_id
+backend/app/gateway/routers/task_memory.py:74:    memory["status"] = status
+backend/app/gateway/routers/task_memory.py:75:    memory["progress"] = progress
+backend/app/gateway/routers/task_memory.py:76:    memory["current_step"] = current_step
+backend/app/gateway/routers/task_memory.py:77:    memory["facts"] = facts
+backend/app/gateway/routers/task_memory.py:79:        memory["output_summary"] = "\n".join(summary_parts)[:8000]
+backend/app/gateway/routers/task_memory.py:80:    memory.setdefault("created_at", utc_now_iso_z())
+backend/app/gateway/routers/task_memory.py:82:        memory["completed_at"] = memory.get("completed_at") or utc_now_iso_z()
+backend/app/gateway/routers/task_memory.py:83:    memory_storage.save_task_memory(memory)
+backend/app/gateway/routers/task_memory.py:84:    return memory
+backend/app/gateway/routers/task_memory.py:88:    """Response model for task memory."""
+backend/app/gateway/routers/task_memory.py:121:    """Response model for agent memory."""
+backend/app/gateway/routers/task_memory.py:151:    description="Get memory for a main task id or a subtask id (matched in subtasks[]).",
+backend/app/gateway/routers/task_memory.py:153:async def get_task_memory(http_request: Request, task_id: str) -> TaskMemoryResponse:
+backend/app/gateway/routers/task_memory.py:154:    """Get task memory by main task ID or subtask ID."""
+backend/app/gateway/routers/task_memory.py:157:    memory_storage = get_task_detail_storage()
+backend/app/gateway/routers/task_memory.py:174:                memory = memory_storage.load_task_memory(task_id, agent_id, task_id)
+backend/app/gateway/routers/task_memory.py:176:                    memory = _aggregate_main_task_memory(task_id, task, memory_storage)
+backend/app/gateway/routers/task_memory.py:178:                    task_id=memory.get("task_id", task_id),
+backend/app/gateway/routers/task_memory.py:179:                    agent_id=memory.get("agent_id", agent_id),
+backend/app/gateway/routers/task_memory.py:180:                    status=memory.get("status", "unknown"),
+backend/app/gateway/routers/task_memory.py:181:                    facts=memory.get("facts", []),
+backend/app/gateway/routers/task_memory.py:182:                    output_summary=memory.get("output_summary", ""),
+backend/app/gateway/routers/task_memory.py:183:                    current_step=memory.get("current_step", ""),
+backend/app/gateway/routers/task_memory.py:184:                    progress=memory.get("progress", 0),
+backend/app/gateway/routers/task_memory.py:185:                    created_at=memory.get("created_at", ""),
+backend/app/gateway/routers/task_memory.py:186:                    updated_at=memory.get("updated_at", ""),
+backend/app/gateway/routers/task_memory.py:187:                    completed_at=memory.get("completed_at"),
+backend/app/gateway/routers/task_memory.py:198:                memory = memory_storage.load_task_memory(str(parent_main_task_id), agent_id, task_id)
+backend/app/gateway/routers/task_memory.py:200:                # status/result while task-memory file is still empty or lagging.
+backend/app/gateway/routers/task_memory.py:209:                mem_status = str(memory.get("status") or "").strip()
+backend/app/gateway/routers/task_memory.py:210:                mem_summary = str(memory.get("output_summary") or "").strip()
+backend/app/gateway/routers/task_memory.py:211:                mem_step = str(memory.get("current_step") or "").strip()
+backend/app/gateway/routers/task_memory.py:212:                mem_progress = memory.get("progress")
+backend/app/gateway/routers/task_memory.py:215:                    memory["status"] = sub_status
+backend/app/gateway/routers/task_memory.py:217:                    memory["progress"] = sub_progress
+backend/app/gateway/routers/task_memory.py:223:                        memory["output_summary"] = report
+backend/app/gateway/routers/task_memory.py:225:                        memory["output_summary"] = sub_error
+backend/app/gateway/routers/task_memory.py:227:                    memory["current_step"] = f"Subtask {sub_status}"
+backend/app/gateway/routers/task_memory.py:230:                memory_storage.save_task_memory(memory)
+backend/app/gateway/routers/task_memory.py:233:                    task_id=memory.get("task_id", task_id),
+backend/app/gateway/routers/task_memory.py:234:                    agent_id=memory.get("agent_id", agent_id),
+backend/app/gateway/routers/task_memory.py:235:                    status=memory.get("status", "unknown"),
+backend/app/gateway/routers/task_memory.py:236:                    facts=memory.get("facts", []),
+backend/app/gateway/routers/task_memory.py:237:                    output_summary=memory.get("output_summary", ""),
+backend/app/gateway/routers/task_memory.py:238:                    current_step=memory.get("current_step", ""),
+backend/app/gateway/routers/task_memory.py:239:                    progress=memory.get("progress", 0),
+backend/app/gateway/routers/task_memory.py:240:                    created_at=memory.get("created_at", ""),
+backend/app/gateway/routers/task_memory.py:241:                    updated_at=memory.get("updated_at", ""),
+backend/app/gateway/routers/task_memory.py:242:                    completed_at=memory.get("completed_at"),
+backend/app/gateway/routers/task_memory.py:247:    raise HTTPException(status_code=404, detail=f"Task memory for '{task_id}' not found")
+backend/app/gateway/routers/task_memory.py:250:@router.post("/tasks/{task_id}/facts", response_model=dict, summary="Add Task Fact", description="Add a fact to task memory.")
+backend/app/gateway/routers/task_memory.py:253:    """Add a fact to task memory."""
+backend/app/gateway/routers/task_memory.py:255:    memory_storage = get_task_detail_storage()
+backend/app/gateway/routers/task_memory.py:265:                    memory = memory_storage.load_task_memory(task_id, agent_id, task_id)
+backend/app/gateway/routers/task_memory.py:275:                    memory.setdefault("facts", []).append(fact)
+backend/app/gateway/routers/task_memory.py:276:                    memory_storage.save_task_memory(memory)
+backend/app/gateway/routers/task_memory.py:278:                    memory_storage.add_fact_to_project(task_id, fact)
+backend/app/gateway/routers/task_memory.py:280:                    await emit_task_memory_updated(task_id, task_id, len(memory.get("facts", [])))
+backend/app/gateway/routers/task_memory.py:292:    memory_storage = get_task_detail_storage()
+backend/app/gateway/routers/task_memory.py:302:                    memory = memory_storage.load_task_memory(task_id, agent_id, task_id)
+backend/app/gateway/routers/task_memory.py:304:                    memory["progress"] = body.progress
+backend/app/gateway/routers/task_memory.py:305:                    memory["current_step"] = body.current_step
+backend/app/gateway/routers/task_memory.py:306:                    memory["updated_at"] = utc_now_iso_z()
+backend/app/gateway/routers/task_memory.py:308:                    memory_storage.save_task_memory(memory)
+backend/app/gateway/routers/task_memory.py:314:                    await emit_task_memory_updated(task_id, task_id, len(memory.get("facts", [])))
+backend/app/gateway/routers/task_memory.py:326:    memory_storage = get_task_detail_storage()
+backend/app/gateway/routers/task_memory.py:341:                    memory = memory_storage.load_task_memory(str(task.get("id") or ""), agent_id, str(task.get("id") or ""))
+backend/app/gateway/routers/task_memory.py:345:                            "memory": memory,
+backend/app/gateway/routers/task_memory.py:371:    memory_storage = get_task_detail_storage()
+backend/app/gateway/routers/task_memory.py:372:    facts_data = memory_storage.load_project_facts(main_task_id)
+backend/app/gateway/routers/task_memory.py:386:    memory_storage = get_task_detail_storage()
+backend/app/gateway/routers/task_memory.py:401:            memory = memory_storage.load_task_memory(main_task_id, agent_id, task["id"])
+backend/app/gateway/routers/task_memory.py:415:                        "progress": memory.get("progress", 0),
+backend/app/gateway/routers/task_memory.py:434:    memory_storage = get_task_detail_storage()
+backend/app/gateway/routers/task_memory.py:435:    facts_data = memory_storage.load_project_facts(main_task_id)
+backend/app/gateway/routers/knowledge_vaults.py:13:from evoflow.knowledge.vault import service as vault_service
+backend/app/gateway/routers/knowledge_vaults.py:14:from evoflow.knowledge.vault.errors import KnowledgeError, VaultNotFoundError, map_exception
+backend/app/gateway/routers/knowledge_vaults.py:18:router = APIRouter(prefix="/api/knowledge/vaults", tags=["knowledge-vault"])
+backend/app/gateway/routers/tools.py:10:* ``GET  /v1/tools``                   — list Remote-surface capabilities + schemas
+backend/app/gateway/routers/tools.py:11:* ``GET  /v1/tools?profile=agent|full`` — ``agent`` returns a curated do-work subset
+backend/app/gateway/routers/tools.py:12:* ``POST /v1/tools/{name}``            — invoke a capability (body = its JSON args)
+backend/app/gateway/routers/tools.py:13:* ``POST /v1/tools/{name}/stream``     — SSE stream of a capability call
+backend/app/gateway/routers/tools.py:101:    """Resolve a profile name to the matching Remote-surface tool specs.
+backend/app/gateway/routers/tools.py:107:    specs = _registry().tool_specs(Surface.Remote)
+backend/app/gateway/routers/tools.py:115:    """Extract the set of capability names from a list of tool specs."""
+backend/app/gateway/routers/tools.py:143:@router.get("/tools", summary="List Remote-surface capabilities")
+backend/app/gateway/routers/tools.py:144:async def list_tools(
+backend/app/gateway/routers/tools.py:153:    Each entry mirrors the MCP ``tools/list`` descriptor. ``?profile=agent``
+backend/app/gateway/routers/tools.py:158:        ``{"count": <int>, "tools": [{name, domain, description, input_schema}]}``
+backend/app/gateway/routers/tools.py:161:    tools = [
+backend/app/gateway/routers/tools.py:170:    return {"count": len(tools), "tools": tools}
+backend/app/gateway/routers/tools.py:174:    "/tools/{name}",
+backend/app/gateway/routers/tools.py:178:async def call_tool(
+backend/app/gateway/routers/tools.py:194:    * ``422`` — the tool returned an ``error`` (or is outside the REST scope).
+backend/app/gateway/routers/tools.py:195:    * ``404`` — unknown tool name.
+backend/app/gateway/routers/tools.py:197:    # Lenient body parsing: a no-arg tool may be POSTed with an empty body.
+backend/app/gateway/routers/tools.py:204:    # Scope check: the tool must be visible on the Remote surface for this profile.
+backend/app/gateway/routers/tools.py:222:            detail={"error": f"Unknown tool: {name}"},
+backend/app/gateway/routers/tools.py:241:    ``{"type": "__result__", "data": <final>}`` frame. Non-streaming tools emit
+backend/app/gateway/routers/tools.py:242:    only the terminal frame. A scope violation or unknown tool yields a terminal
+backend/app/gateway/routers/tools.py:270:                    final = {"error": f"Unknown tool: {name}"}
+backend/app/gateway/routers/tools.py:304:    "/tools/{name}/stream",
+backend/app/gateway/routers/tools.py:307:async def stream_tool(
+backend/app/gateway/routers/tools.py:315:    Each SSE ``data:`` frame is a JSON event. Streaming tools emit incremental
+backend/app/gateway/routers/tools.py:317:    ``{"type": "__result__", "data": <final>}`` frame. Non-streaming tools emit
+backend/app/gateway/routers/tools.py:318:    only that terminal frame. A scope violation or unknown tool yields a
+backend/app/gateway/routers/tools.py:344:    One ``POST /v1/tools/{name}`` operation is emitted per Remote-surface
+backend/app/gateway/routers/tools.py:352:        paths[f"/v1/tools/{s.name}"] = {
+backend/app/gateway/routers/tools.py:364:                        "description": "tool result",
+backend/app/gateway/routers/tools.py:374:                    "422": {"description": "tool returned an error"},
