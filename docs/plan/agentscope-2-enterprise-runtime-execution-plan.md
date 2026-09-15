@@ -374,7 +374,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 
 #### AG-G2-AUTO-001-A01：Automation / Task Center 真实入口与旧状态机盘点
 
-- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-001` / `Not Started` / Domain Migration / 60m。
+- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-001` / `Done`（2026-09-15，提交 `fc8bbf8`，证据 `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-001-A01/20260915/`）/ Domain Migration / 60m。
 - **单一目标**：只读确认一个或多个真实入口、旧业务事实源、调用链、状态机和 Runtime bridge 的实际边界，产出入口清单与缺口清单。
 - **真实入口**：`backend/app/gateway/routers/automation_scheduler.py`、`backend/app/gateway/routers/tasks.py`、`backend/app/gateway/routers/events.py`；同时核对 App Runner 绑定工作流自动化、prompt-only 默认 LangGraph、scheduler 定时触发和无人值守身份传播路径。
 - **旧业务事实源 / 写路径**：`backend/app/gateway/events/task_events.py`、`backend/app/gateway/automation_runner.py`、`backend/app/gateway/task_queue_runner.py`、`backend/app/gateway/task_runtime_optin.py`、`backend/app/gateway/task_runtime_projection.py`；登记 Task Center 状态、事件与重启后回投影的现有写点，不新增状态源。
@@ -386,7 +386,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 
 #### AG-G2-AUTO-002-A01：Automation / Task Center 对象与 Runtime 字段级映射
 
-- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-002` / `Not Started` / Domain Migration + Runtime / 75m。
+- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-002` / `Done`（2026-09-15，提交 `4f27a91`，证据 `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-002-A01/20260915/`）/ Domain Migration + Runtime / 75m。
 - **单一目标**：在 `AG-G2-AUTO-001-A01` 产物基础上，建立 Task Center 对象、状态、事件、取消、终态与 Runtime Run / Event / Result / Cancel 的字段级对照；未知项必须标为 `Blocked`，不得补猜。
 - **真实入口 / 旧事实源**：沿用 A01 已核实的 scheduler、task、event 入口与 `task_events.py`、`automation_runner.py`、`task_queue_runner.py` 写路径；不得扩展扫描范围。
 - **Runtime 调用点 / 边界**：沿用已存在的 `task_runtime_optin.py`、`task_runtime_projection.py` 及 A01 登记的 bridge；只记录可从源码证明的调用点和字段。
@@ -398,7 +398,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 
 #### AG-G2-AUTO-003-A01：最小真实入口 Runtime 首闭环（终态回写与既有读取出口）
 
-- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-003` / `Not Started` / Domain Migration + Runtime / 120m。
+- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-003` / `Done`（2026-09-15，提交 `327d2b0`，证据 `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-003-A01/20260915/`）/ Domain Migration + Runtime / 120m。
 - **单一目标**：在**既有** unattended 收敛点，把**已关联** Runtime Run 的状态与终态投影回既有 Task Center 任务记录，使既有 API 能读到 Runtime 结果；不新建 Run 建立路径、不改读取出口。
 - **不重派声明**：Run 建立与关联（`433a9df`，`AG-G2-AUTO-003-B01`）已完成且不可重派；本卡只补 `AG-G2-AUTO-001-A01` 已核实的「已实现但零生产调用点」缺口。
 - **真实入口**：`backend/app/gateway/unattended_task_pipeline.py:599 _maybe_run_via_runtime`（既有收敛点，已接线）、`backend/app/gateway/task_queue_runner.py:71 task_queue_tick`（队列 tick）、`backend/app/gateway/routers/tasks.py:2674 GET /api/tasks/{task_id}/runtime` 与既有 `GET /api/tasks/{task_id}`、`GET /api/tasks/{task_id}/execution-history`。
@@ -412,7 +412,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 
 #### AG-G2-AUTO-004-A01：终态回写路径的幂等、失败与终态不倒退定向测试
 
-- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-004` / `Not Started` / Domain Migration / 90m。
+- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-004` / `Done`（2026-09-15，提交 `cf57d5f`，证据 `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-004-A01/20260915/`）/ Domain Migration / 90m。
 - **单一目标**：只针对 `AG-G2-AUTO-003-A01` 接线的回写路径补定向负例，不新增功能。
 - **必须覆盖**：同一 Run 重复 tick 与重复投影不产生第二条终态记录；乱序 / 迟到状态不覆盖已写入终态；`failed` 与 `timed_out` 的错误摘要经既有脱敏函数处理；`runtime_run_linkage` 不可解码时不得被当作「无 Run」而重复推进；开关关闭时不产生任何 Runtime 调用。
 - **允许修改范围**：只**新增** `backend/app/tests/test_task_runtime_writeback_boundaries.py`；只读复用 `backend/app/tests/_runtime_flow_support.py`，不修改既有测试。
@@ -437,7 +437,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 
 #### AG-G2-AGENT-001-A01：数字员工 / Agent 真实入口与事实源盘点
 
-- **母任务 / 状态 / Owner / 时间盒**：`G2-AGENT-001` / `Not Started` / Domain Migration / 60m。
+- **母任务 / 状态 / Owner / 时间盒**：`G2-AGENT-001` / `Done`（2026-09-15，提交 `a740e5d`，证据 `artifacts/acceptance/agentscope-runtime/AG-G2-AGENT-001-A01/20260915/`）/ Domain Migration / 60m。
 - **单一目标**：只读定位数字员工 / Agent 的真实用户入口、旧事实源、状态 / 会话写路径、旧执行链与可证明的 Runtime 接入边界。
 - **真实入口（2026-09-15 已核实，需在产物中登记为证据）**：`backend/packages/harness/evoflow/proactive/router.py`（`APIRouter(prefix="/api/proactive")`，含 `POST /{agent_code}/dispatch`、`/{agent_code}/heartbeat`、`/{agent_code}/pause|resume|stop`、`/{agent_code}/work-board`、`/{agent_code}/performance`），经 `backend/app/gateway/router_registry.py:126-128` 挂载；`/api/platform` 动作入口 `backend/packages/harness/evoflow/admin/platform_actions.py:349-368` 的 `employees.list|get|hire|update|pause|resume|stop|archive|worklog|trail`，处理函数在 `backend/packages/harness/evoflow/admin/platform_handlers.py:747-842`，实现在 `backend/packages/harness/evoflow/admin/employees.py`（`hire:441`、`update_role:572`、`pause_role:706`、`stop_role:725`、`resume_role:754`、`archive_role:789`、`worklog:961`、`round_trail:1142`、`dispatch:1245`、`wake:1402`）；后台心跳循环 `backend/app/gateway/background_startup.py:1030-1033` `start_proactive_runner`（`evoflow/proactive/runner.py`）；`backend/app/gateway/routers/agents.py`（`list_agents:502`、`create_agent_endpoint:739`、`update_agent:848`、`delete_agent:1137`）为角色配置 CRUD，需登记为「配置入口」而非「执行入口」。
 - **旧事实源 / 状态机**：`evoflow_proactive_roles`（`status` = active/paused/stopped/archived、`heartbeat_rrule`、`next_heartbeat_at`、`reports_to`）、`evoflow_proactive_initiatives`（`status`、`round_id`、`goal`、`outcome`、`approval_id`、`execution_thread_id`、`execution_result`）、`evoflow_proactive_approvals`（`status`、`decided_by`、`escalation_level`、`task_id`）、`evoflow_agents`、`evoflow_agent_runtime`（`status`、`current_task_id`、`progress`、`last_heartbeat`）、工作项落点为 `evoflow_collab_tasks`；schema 见 `backend/packages/harness/evoflow/persistence/schema.py:174`、`:162`、`:1175`、`:1147`、`:1117`、`:553`。
@@ -449,7 +449,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 
 #### AG-G2-AGENT-002-A01：数字员工 / Agent 对象与 Runtime Run / Event / Result / Cancel 字段级映射
 
-- **母任务 / 状态 / Owner / 时间盒**：`G2-AGENT-002` / `Not Started` / Domain Migration + Runtime / 90m。
+- **母任务 / 状态 / Owner / 时间盒**：`G2-AGENT-002` / `Done`（2026-09-15，提交 `ad08d20`，证据 `artifacts/acceptance/agentscope-runtime/AG-G2-AGENT-002-A01/20260915/`；映射完成，实现侧仍 `Blocked by G0-DEC-001～004`）/ Domain Migration + Runtime / 90m。
 - **单一目标**：在 `AG-G2-AGENT-001-A01` 产物基础上，把数字员工旧对象、状态、审批、取消与终态逐字段对照到 Runtime Run / Event / Result / Cancel；未知项与 G0 依赖项必须显式标 `Blocked`，不得补猜。
 - **真实入口 / 旧事实源**：沿用 A01 已核实的 `/api/proactive`、`/api/platform` `employees.*`、`start_proactive_runner` 与 `evoflow_proactive_roles` / `_initiatives` / `_approvals`、`evoflow_agents`、`evoflow_agent_runtime`、`evoflow_collab_tasks`；不得扩展扫描范围。
 - **可复用的 Runtime 公开契约（只登记，不修改）**：`backend/app/qagent_runtime/service.py` 的 `create_run`(70)、`start_run`(85)、`get_run_status`(301)、`stream_events`(304)、`request_cancel`(324)、`resume_run`(337)、`get_result`(374)；事件词汇 `backend/app/qagent_runtime/events.py:13 EventType` 与 `:29 TERMINAL_STATUSES`；注意 `backend/app/qagent_runtime/contract.py:32 RuntimeContract.create_run` **未声明 `org_id`**，而 `service.create_run` 接受该关键字 —— 该差异只登记为缺口，本卡不改契约。
@@ -463,7 +463,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 
 #### AG-G2-GOAL-001-A01：Goal / 协同入口与 G0 依赖确认
 
-- **母任务 / 状态 / Owner / 时间盒**：`G2-GOAL-001` / `Blocked by G0-DEC-001～004` / Domain Migration + Release / 60m（仅只读盘点 / 依赖确认）。
+- **母任务 / 状态 / Owner / 时间盒**：`G2-GOAL-001` / `Done`（只读盘点 / 依赖确认已完成，2026-09-15，提交 `5823188`，证据 `artifacts/acceptance/agentscope-runtime/AG-G2-GOAL-001-A01/20260915/`；实现侧仍 `Blocked by G0-DEC-001～004`）/ Domain Migration + Release / 60m。
 - **单一目标**：只读盘点 Goal / 协同真实入口、旧事实源、状态 / 审批 / 协同写路径，并逐项确认是否依赖四项未冻结 G0 决策；不设计替代语义。
 - **真实入口 / 旧事实源**：2026-09-15 已核实的真实 HTTP 入口为 `backend/app/gateway/routers/goal.py:13`（`APIRouter(prefix="/api/goal")`：`POST /start:160`、`POST /{session_id}/stop:205`、`/pause:230`、`/resume:251`、`/end:272`、`/after-chat-turn:293`、`POST /feedback:457`、`GET /{session_key}/status`、`GET /{session_key}/history`）与 `backend/app/gateway/routers/collab.py:23`（`APIRouter(prefix="/api/collab")`：`GET /threads/{thread_id}/tool-approval/pending:385`、`POST /threads/{thread_id}/tool-approval:405`、`POST /threads/{thread_id}/tool-approval/cancel:735`、`GET|PUT /threads/{thread_id}:776,825`、`GET /tasks/{main_task_id}/subtasks/{subtask_id}/history:880`）；服务实现在 `backend/app/channels/services/goal_service.py`（`_sync_session_from_goal_state:537`、`_run_goal_graph:608`、`ensure_goal_stream_loop:808`、`cancel_current_run:1344`、`pause_goal:1369`、`resume_goal:1389`、`end_goal:1411`、`stop_goal:1434`、`_persist_session_snapshot:1547`、`recover_persisted_sessions:1654`、`apply_user_steering:1923`、`submit_feedback:1965`）。事实源为 `evoflow_goal_sessions`（`goal_status`、`status`、`goal_revision`、`continuation_suppressed`、`step_count`、`last_run_id`、`pending_feedback`、`completion_outcome`，schema `:676`）与 `evoflow_collab_tasks`、`evoflow_collab_subtasks`、`evoflow_collab_peer_messages`、`evoflow_collab_task_execution_history`（schema `:553`、`:503`、`:447`、`:544`），协同唤醒调度在 `backend/packages/harness/evoflow/collab/peer/scheduler.py`（`schedule_peer_wake`、`enqueue_peer_wake_if_busy`、`drain_peer_wake_queue`）；旧状态机为 `backend/packages/harness/evoflow/collab/state_transitions.py`（`can_transition:102`、`validate_transition:116`、`get_allowed_transitions:130`）与 `backend/packages/harness/evoflow/collab/models.py:59 TaskStatus`、`:23 CollabPhase`；审批侧核对 `evoflow_proactive_approvals`、`evoflow_tool_approvals`、`evoflow_tool_approval_grants`、`evoflow_tool_approval_audit`（schema `:1117`、`:1407`、`:1399`、`:1387`）。
 - **Runtime 调用点 / 边界**：只读登记真实入口与现有调用点。2026-09-15 已核实：`backend/packages/harness` 全目录**没有任何** `qagent_runtime` 或 `agentscope` 引用，`backend/app/channels/services/goal_service.py` 旧执行链为 `LangGraphClient` / `_run_goal_graph`，本域现存 Runtime 接点为 0；`cancel` 后 approval、claim / 执行所有权、Event v1 / sequence / cursor / gap、Recovery Point / attempt 分别标记 `G0-DEC-001`～`004`，不得生成实现方案。
@@ -474,7 +474,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 
 #### AG-G2-GOAL-002-A01：Goal / 协同对象与 Runtime Run / Event / Result / Cancel 字段级映射（G0 阻塞项只登记）
 
-- **母任务 / 状态 / Owner / 时间盒**：`G2-GOAL-002` / `Not Started（映射本身可执行，实现部分 Blocked by G0-DEC-001～004）` / Domain Migration + Runtime / 90m。
+- **母任务 / 状态 / Owner / 时间盒**：`G2-GOAL-002` / `Done`（映射已完成，2026-09-15，提交 `78fa156`，证据 `artifacts/acceptance/agentscope-runtime/AG-G2-GOAL-002-A01/20260915/`；实现部分仍 `Blocked by G0-DEC-001～004`）/ Domain Migration + Runtime / 90m。
 - **单一目标**：在 `AG-G2-GOAL-001-A01` 产物基础上，把 Goal 会话、协同任务 / 子任务、协同消息、审批逐字段对照到 Runtime Run / Event / Result / Cancel；受 G0 影响的列只登记依赖与缺口，不给方案。
 - **真实入口 / 旧事实源**：沿用 A01 已核实的 `/api/goal`、`/api/collab`、`goal_service.py` 与 `evoflow_goal_sessions`、`evoflow_collab_tasks` / `_subtasks` / `_peer_messages` / `_task_execution_history`、`evoflow_proactive_approvals`、`evoflow_tool_approvals`；不得扩展扫描范围。
 - **可复用的 Runtime 公开契约（只登记，不修改）**：`backend/app/qagent_runtime/service.py` 的 `create_run`(70)、`start_run`(85)、`get_run_status`(301)、`stream_events`(304)、`request_cancel`(324)、`resume_run`(337)、`get_result`(374)；事件词汇 `backend/app/qagent_runtime/events.py:13 EventType`、`:29 TERMINAL_STATUSES`。
@@ -488,7 +488,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 
 #### AG-G2-ASSET-001-A01：Workspace / 文件 / 资产入口与事实源盘点
 
-- **母任务 / 状态 / Owner / 时间盒**：`G2-ASSET-001` / `Not Started` / Domain Migration / 60m。
+- **母任务 / 状态 / Owner / 时间盒**：`G2-ASSET-001` / `Done`（2026-09-15，提交 `5a2b8ca`，证据 `artifacts/acceptance/agentscope-runtime/AG-G2-ASSET-001-A01/20260915/`；产物结论为**不建议实例化 A02**）/ Domain Migration / 60m。
 - **单一目标**：只读定位真实用户入口、资产引用 / 版本 / 权限写路径及 Runtime 接入边界，不扩展到存储运维或历史迁移。
 - **真实入口 / 旧事实源**：以源码实际命中为准；已确认事实源包括 `evoflow_artifacts`、`evoflow_media_assets`、`evoflow_org_artifacts`，对应 schema 证据为 `backend/packages/harness/evoflow/persistence/schema.py:247-255`、`:807-823`、`:986-993`。
 - **Runtime 调用点 / 边界**：只读确认资产被哪个真实业务入口引用、是否产生 Run / Result / 外部回执；当前未确认统一设备命令实体、命令表、回执协议或设备身份模型，均必须保持未知。
@@ -499,7 +499,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 
 #### AG-G2-KNOW-001-A01：Knowledge / Memory / Tools / MCP / Channels 入口边界盘点
 
-- **母任务 / 状态 / Owner / 时间盒**：`G2-KNOW-001` / `Not Started` / Domain Migration / 75m。
+- **母任务 / 状态 / Owner / 时间盒**：`G2-KNOW-001` / `Done`（2026-09-15，提交 `2f08523`，证据 `artifacts/acceptance/agentscope-runtime/AG-G2-KNOW-001-A01/20260915/`；产物结论为**不建议实例化 A02**）/ Domain Migration / 75m。
 - **单一目标**：只读确认真实用户业务入口、旧事实源、外部副作用边界及其可证明的 Runtime 接入边界；不重构底层基础设施。
 - **真实入口 / 旧事实源**：只记录源码和既有业务证据实际证明的 Knowledge、Memory、Tools、MCP、Channels 入口与记录；当前尚无统一入口 / 事实源 / Runtime 接点的完整证据，未知项不能补写成设计。
 - **Runtime 调用点 / 边界**：分别记录检索、记忆读写、工具 / MCP 调用、渠道发送等真实入口是否已通过既有 Runtime bridge；不得假设共享 Adapter、Event、Result 或副作用语义。
@@ -518,6 +518,10 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 | 数字员工 / Agent、Goal / 协同的旧执行链 | 未迁移（无 Runtime 接点） | 本批 A01 / A02 为只读证据卡；harness 内 `qagent_runtime` / `agentscope` 引用为 0 | 不得把 A01 / A02 当作已接入；A03～A05 未实例化 |
 | Automation / Task Center 终态回写链（`AG-G2-AUTO-001-A01`～`004-A01`） | 已完成 | `fc8bbf8`（A01 入口与旧状态机盘点）、`4f27a91`（A02 字段级映射）、`327d2b0`（A03 终态/结果投影回 Task Center）、`cf57d5f`（A04 回写边界定向测试）；证据见 `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-00{1,2,3,4}-A01/20260915/`；A03 回归 `app/tests/test_task_runtime_*.py` + `app/tests/test_qagent_runtime*.py` 735 passed | 不得重派这四张卡；不得重做 Run 建立与关联（`433a9df` / `AG-G2-AUTO-003-B01`）。A03 的 reuse-only 投影边界（创建分支不投影）与 A04 登记的 `error_code` / `result_summary` 未透传缺口（`task_runtime_reconcile` 只传 `runtime_status` / `expected_run_id`）为已知边界，修它们属新卡 |
 | Automation / Task Center 真实 HTTP 手工验收（`AG-G2-AUTO-005-A01`） | 部分通过后 `Blocked` | `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-005-A01/20260915/{runbook.md,verdict.md,raw/}`；取消终态闭环、开关回退基线、Runtime 读失败 fail-safe 均已真实通过 | 不得把"取消路径通过"当成"三种终态全部验收"；成功/失败终态须在 §2.6.4 的解除条件满足后重派 |
+| 数字员工 / Agent 盘点与映射（`AG-G2-AGENT-001-A01`、`AG-G2-AGENT-002-A01`） | 已完成（只读证据卡） | `a740e5d`（A01 入口与旧事实源盘点）、`ad08d20`（A02 字段级映射）；证据见 `artifacts/acceptance/agentscope-runtime/AG-G2-AGENT-00{1,2}-A01/20260915/` | 不得重派这两张卡。A01 已把 `ROLE_STATUSES` 更正为 `active/paused/archived/draft`（`proactive/models.py:267`），并核实 `backend/packages/harness` 内 `qagent_runtime` / `agentscope` 引用为 **0**；A02 已登记 `Pending → requested`、`approved → granted`、`timeout` / `escalated` 无对应（转 `G0-DEC-001`）。A03～A05 仍不实例化 |
+| Goal / 协同盘点与映射（`AG-G2-GOAL-001-A01`、`AG-G2-GOAL-002-A01`） | 已完成（只读证据卡） | `5823188`（A01 入口与 G0 依赖盘点）、`78fa156`（A02 字段级映射）；证据见 `artifacts/acceptance/agentscope-runtime/AG-G2-GOAL-00{1,2}-A01/20260915/` | 不得重派这两张卡。A01 已核实三套并存状态机（`GoalStatus` / `TaskStatus` / `CollabPhase`）且四项 G0 决策全部命中；A02 已把 `goal_status` 全集收敛为 `active / paused / completed / cleared`（`app/channels/models/goal.py:68`），并指出 schema `step_count` 与模型层 `current_step` 同义不同名。A03～A05 仍不实例化 |
+| Workspace / 资产入口盘点（`AG-G2-ASSET-001-A01`） | 已完成（只读证据卡） | `5a2b8ca`；证据见 `artifacts/acceptance/agentscope-runtime/AG-G2-ASSET-001-A01/20260915/` | 不得重派该卡。已登记 4 个 HTTP 面 47 端点，并澄清 `/api/assets` 是 Entity Asset Hub（`assets.py:31`，`entityType = user\|agent\|employee\|workspace`），与 `evoflow_artifacts`（会话产物）不是同一对象；产物结论为**不建议实例化 A02** |
+| Knowledge / Memory / Tools / MCP / Channels 入口盘点（`AG-G2-KNOW-001-A01`） | 已完成（只读证据卡） | `2f08523`；证据见 `artifacts/acceptance/agentscope-runtime/AG-G2-KNOW-001-A01/20260915/` | 不得重派该卡。已登记 10 个路由模块 149 端点、3 类外部副作用（渠道外发 / MCP 子进程 / 工具执行与审批），并核实知识库**不走 SQLite 主库**（vault 文件系统 + `.obsidian-hybrid-search.db`）；本域不是"bridge 存在但未接线"，而是**没有 bridge**；产物结论为**不建议实例化 A02** |
 
 ### 2.6.4 被 G0 决策阻塞的卡片 / 后续事项
 
@@ -775,3 +779,4 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 | 2026-09-15 | 以 `3c7aa5d4c0c1c7ed263d7cf285a03441f7da8a4a` 为基线，确认 Chat / Live Run 与 Apps / Workflow 真实首闭环已完成且不可重派；新增 Automation A01/A02、Agent A01、Goal A01、Workspace / Asset A01、Knowledge / Memory / Tools / MCP / Channels A01 原子盘点 / 映射卡；明确 G0-DEC-001～004 阻塞项和未实例化母任务；未修改代码、测试、schema、migration。 |
 | 2026-09-15 | 剩余业务迁移第一批拆分（Automation / Task Center、数字员工 / Agent、Goal / 协同）：补齐三个域的 A01 已核实锚点；新增 `AG-G2-AGENT-002-A01`、`AG-G2-GOAL-002-A01` 映射卡；对 Automation 新增 `AG-G2-AUTO-003-A01`～`AG-G2-AUTO-005-A01`（只补已实现但零生产调用点的终态回写与既有读取出口，不重派 Run 建立）；Agent / Goal 的 A03～A05 明确不实例化；同步 §2.6.3～§2.6.5 与路线图 §5。侦察证据见 [G2 第一批拆卡侦察与实例化记录](./agentscope-2-g2-batch1-reconnaissance-notes.md)（非权威）。未修改任何代码、测试、schema、migration。 |
 | 2026-09-15 | Automation 终态回写链推进：`AG-G2-AUTO-001-A01`～`004-A01` 完成并登记为不可重派（`fc8bbf8`、`4f27a91`、`327d2b0`、`cf57d5f`）；`AG-G2-AUTO-005-A01` 真实 HTTP 手工验收**部分通过后 Blocked**——取消终态回写、开关关闭回退基线、Runtime 读失败 fail-safe 三组已真实通过，成功/失败终态因缺真实 Provider 凭据、且无人值守路径无 `start_run` 驱动、且既有执行驱动入口因 `org_id` 不匹配无法作用于该 Run 而不可达；Blocked 原因与最小解除条件登记于 §2.6.4 | 验收产物 `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-005-A01/20260915/{runbook.md,verdict.md,raw/}`（29 个原始 HTTP 响应 + PostgreSQL 事实源导出）；A03 回归 `app/tests/test_task_runtime_*.py` + `app/tests/test_qagent_runtime*.py` 735 passed；未修改生产代码、测试、schema、migration |
+| 2026-09-15 | 跨域只读证据卡批量完成并登记为不可重派：`AG-G2-AGENT-001-A01`（`a740e5d`）、`AG-G2-AGENT-002-A01`（`ad08d20`）、`AG-G2-GOAL-001-A01`（`5823188`）、`AG-G2-GOAL-002-A01`（`78fa156`）、`AG-G2-ASSET-001-A01`（`5a2b8ca`）、`AG-G2-KNOW-001-A01`（`2f08523`）；同时把 `AG-G2-AUTO-001-A01`～`004-A01` 的卡片状态行由 `Not Started` 同步为 `Done` | 登记内容仅限各卡产物已证明的事实：Agent 域 `ROLE_STATUSES` 更正为 `active/paused/archived/draft`、harness 内 Runtime 接点为 0；Goal 域三套状态机并存、四项 G0 决策全部命中、`goal_status` 全集为 `active/paused/completed/cleared`；Asset 域 `/api/assets` 与 `evoflow_artifacts` 非同一对象；Knowledge 域知识库不走 SQLite 主库、本域**没有** bridge。四域的 A03～A05 一律不实例化（不满足路线图 §5.1「已存在的 Runtime 调用点」门槛）；Asset / Knowledge 产物明确给出「不建议实例化 A02」。未修改任何生产代码、测试、schema、migration |
