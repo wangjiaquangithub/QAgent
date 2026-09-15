@@ -1,0 +1,5 @@
+$ rg -n "qagent_runtime|agentscope" backend/packages/harness | wc -l
+0
+
+$ rg -n "qagent_runtime|agentscope" backend/packages/harness | head
+(no output above = zero references)

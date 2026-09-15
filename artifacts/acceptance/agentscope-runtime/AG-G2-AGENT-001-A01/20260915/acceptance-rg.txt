@@ -1,0 +1,130 @@
+backend/app/gateway/background_startup.py:1030:        from evoflow.proactive.runner import start_proactive_runner
+backend/app/gateway/background_startup.py:1033:            start_proactive_runner()
+backend/packages/harness/evoflow/proactive/router.py:30:router = APIRouter(prefix="/api/proactive", tags=["proactive"])
+backend/packages/harness/evoflow/proactive/router.py:934:    """O5.3: detect duty/domain overlap with existing employees."""
+backend/packages/harness/evoflow/proactive/router.py:1502:    from evoflow.proactive.engine import ProactiveEngine
+backend/packages/harness/evoflow/proactive/router.py:1507:        engine = ProactiveEngine()
+backend/packages/harness/evoflow/proactive/router.py:1767:            from evoflow.proactive.engine import ProactiveEngine
+backend/packages/harness/evoflow/proactive/router.py:1769:            engine = ProactiveEngine()
+backend/packages/harness/evoflow/proactive/__init__.py:11:        ProactiveEngine, DecisionGate, ProactiveRunner,
+backend/packages/harness/evoflow/proactive/__init__.py:16:from evoflow.proactive.engine import ProactiveEngine
+backend/packages/harness/evoflow/proactive/__init__.py:47:    "ProactiveEngine",
+backend/packages/harness/evoflow/proactive/execution_bridge.py:1:"""ExecutionBridge - connects approved initiatives to existing execution infrastructure.
+backend/packages/harness/evoflow/proactive/execution_bridge.py:28:class ExecutionBridge:
+backend/packages/harness/evoflow/proactive/org.py:1:"""Organization boundaries and reporting lines for proactive employees.
+backend/packages/harness/evoflow/proactive/DESIGN.md:32:│  │ Proactive    │───>│  ProactiveEngine │  (LLM 思考引擎)   │
+backend/packages/harness/evoflow/proactive/DESIGN.md:56:│  │              API Router (/api/proactive)              │   │
+backend/packages/harness/evoflow/proactive/DESIGN.md:113:### 3.2 ProactiveEngine（主动思考引擎）
+backend/packages/harness/evoflow/proactive/DESIGN.md:135:   - 通过 ExecutionBridge 执行（LangGraph / Supervisor / Goal）
+backend/packages/harness/evoflow/proactive/DESIGN.md:181:   - 飞书回调 → `POST /api/proactive/approval/callback`
+backend/packages/harness/evoflow/proactive/DESIGN.md:182:   - 桌面操作 → `POST /api/proactive/approval/{initiative_id}`
+backend/packages/harness/evoflow/proactive/DESIGN.md:216:### 4.1 evoflow_proactive_roles
+backend/packages/harness/evoflow/proactive/DESIGN.md:218:CREATE TABLE evoflow_proactive_roles (
+backend/packages/harness/evoflow/proactive/DESIGN.md:232:### 4.2 evoflow_proactive_initiatives
+backend/packages/harness/evoflow/proactive/DESIGN.md:234:CREATE TABLE evoflow_proactive_initiatives (
+backend/packages/harness/evoflow/proactive/DESIGN.md:253:    FOREIGN KEY (role_agent_code) REFERENCES evoflow_proactive_roles(agent_code)
+backend/packages/harness/evoflow/proactive/DESIGN.md:257:### 4.3 evoflow_proactive_approvals
+backend/packages/harness/evoflow/proactive/DESIGN.md:259:CREATE TABLE evoflow_proactive_approvals (
+backend/packages/harness/evoflow/proactive/DESIGN.md:272:    FOREIGN KEY (initiative_id) REFERENCES evoflow_proactive_initiatives(id)
+backend/packages/harness/evoflow/proactive/DESIGN.md:334:| GET | `/api/proactive/roles` | 列出所有智能体员工角色 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:335:| POST | `/api/proactive/roles` | 创建智能体员工角色 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:336:| PUT | `/api/proactive/roles/{agent_code}` | 更新角色配置 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:337:| DELETE | `/api/proactive/roles/{agent_code}` | 归档角色 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:338:| POST | `/api/proactive/roles/{agent_code}/heartbeat` | 手动触发心跳 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:339:| GET | `/api/proactive/initiatives` | 列出倡议（支持过滤角色/状态） |
+backend/packages/harness/evoflow/proactive/DESIGN.md:340:| GET | `/api/proactive/initiatives/{id}` | 倡议详情 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:341:| POST | `/api/proactive/approval/{initiative_id}` | 审批操作 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:342:| POST | `/api/proactive/approval/callback` | 飞书审批回调 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:343:| GET | `/api/proactive/memory/{agent_code}` | 查看角色记忆 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:344:| PUT | `/api/proactive/memory/{agent_code}` | 更新角色记忆 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:345:| GET | `/api/proactive/status` | 引擎运行状态 |
+backend/packages/harness/evoflow/proactive/DESIGN.md:392:- [x] ProactiveEngine 思考引擎
+backend/packages/harness/evoflow/admin/tasks.py:835:    # Clear gate before create+wake so employees.wake does not reject the child.
+backend/packages/harness/evoflow/proactive/feishu_notify.py:1:"""Proactive Feishu notifications for all smart employees.
+backend/packages/harness/evoflow/admin/platform_ui_feedback.py:180:        "employees.hire": f"已添加智能体员工「{name}」",
+backend/packages/harness/evoflow/admin/platform_ui_feedback.py:181:        "employees.update": f"已更新员工「{name}」配置",
+backend/packages/harness/evoflow/admin/platform_ui_feedback.py:182:        "employees.pause": f"已暂停员工「{name}」值班",
+backend/packages/harness/evoflow/admin/platform_ui_feedback.py:183:        "employees.resume": f"已恢复员工「{name}」值班",
+backend/packages/harness/evoflow/admin/platform_ui_feedback.py:184:        "employees.stop": f"已停止员工「{name}」当前轮次",
+backend/packages/harness/evoflow/admin/platform_ui_feedback.py:185:        "employees.archive": f"已归档员工岗位「{name}」",
+backend/packages/harness/evoflow/admin/platform_ui_feedback.py:282:    if action.startswith("employees."):
+backend/packages/harness/evoflow/admin/platform_actions.py:349:        _A("employees.list", "employees", "列出智能体员工岗位", "read", "status?, include_archived?", H.employees_list, "现在有哪些员工"),
+backend/packages/harness/evoflow/admin/platform_actions.py:350:        _A("employees.get", "employees", "查看员工详情", "read", "agent_code, recent_limit?", H.employees_get, "拆解岗近况"),
+backend/packages/harness/evoflow/admin/platform_actions.py:351:        _A("employees.hire", "employees", "雇佣智能体为值班员工", "write", "agent_code, role_name?, heartbeat_rrule?…", H.employees_hire, "把文案助手雇成员工"),
+backend/packages/harness/evoflow/admin/platform_actions.py:352:        _A("employees.update", "employees", "更新员工岗位配置", "write", "agent_code + 字段", H.employees_update, "改拆解岗心跳"),
+backend/packages/harness/evoflow/admin/platform_actions.py:353:        _A("employees.pause", "employees", "暂停员工值班", "write", "agent_code", H.employees_pause, "让拆解岗先休息"),
+backend/packages/harness/evoflow/admin/platform_actions.py:354:        _A("employees.resume", "employees", "恢复员工值班", "write", "agent_code", H.employees_resume, "恢复拆解岗"),
+backend/packages/harness/evoflow/admin/platform_actions.py:355:        _A("employees.stop", "employees", "停止员工当前轮次", "write", "agent_code", H.employees_stop, "停掉他手头这轮"),
+backend/packages/harness/evoflow/admin/platform_actions.py:356:        _A("employees.archive", "employees", "归档员工岗位", "destructive", "agent_code", H.employees_archive, "归档测试岗"),
+backend/packages/harness/evoflow/admin/platform_actions.py:358:            "employees.worklog",
+backend/packages/harness/evoflow/admin/platform_actions.py:367:            "employees.trail",
+backend/packages/harness/evoflow/proactive/runner.py:6:  2. For each due role, run the ProactiveEngine.think() cycle
+backend/packages/harness/evoflow/proactive/runner.py:8:  4. For auto-executable initiatives, run ExecutionBridge
+backend/packages/harness/evoflow/proactive/runner.py:21:from evoflow.proactive.engine import ProactiveEngine
+backend/packages/harness/evoflow/proactive/runner.py:417:        engine: ProactiveEngine | None = None,
+backend/packages/harness/evoflow/proactive/runner.py:421:        self._engine = engine or ProactiveEngine()
+backend/packages/harness/evoflow/proactive/runner.py:3262:def start_proactive_runner() -> None:
+backend/packages/harness/evoflow/admin/employees.py:155:        return lg[: -len("/api/langgraph")] + "/api/proactive"
+backend/packages/harness/evoflow/admin/employees.py:156:    if lg.endswith("/api/proactive"):
+backend/packages/harness/evoflow/admin/employees.py:158:    # Derive /api/proactive from the custom base URL instead of falling back to
+backend/packages/harness/evoflow/admin/employees.py:160:    return lg.rstrip("/") + "/api/proactive"
+backend/packages/harness/evoflow/admin/employees.py:1354:                        "employees.dispatch in-process failed agent=%s", code
+backend/packages/harness/evoflow/proactive/USAGE.md:15:curl -X POST http://localhost:8080/api/proactive/roles \
+backend/packages/harness/evoflow/proactive/USAGE.md:67:curl http://localhost:8080/api/proactive/roles
+backend/packages/harness/evoflow/proactive/USAGE.md:70:curl http://localhost:8080/api/proactive/roles/frontend_architect
+backend/packages/harness/evoflow/proactive/USAGE.md:73:curl http://localhost:8080/api/proactive/status
+backend/packages/harness/evoflow/proactive/USAGE.md:83:curl -X POST http://localhost:8080/api/proactive/roles/frontend_architect/heartbeat
+backend/packages/harness/evoflow/proactive/USAGE.md:94:curl http://localhost:8080/api/proactive/initiatives
+backend/packages/harness/evoflow/proactive/USAGE.md:97:curl "http://localhost:8080/api/proactive/initiatives?role_agent_code=frontend_architect"
+backend/packages/harness/evoflow/proactive/USAGE.md:100:curl "http://localhost:8080/api/proactive/initiatives?status=pending_approval"
+backend/packages/harness/evoflow/proactive/USAGE.md:103:curl http://localhost:8080/api/proactive/initiatives/init_abc123def456
+backend/packages/harness/evoflow/proactive/USAGE.md:118:curl -X POST http://localhost:8080/api/proactive/approval/init_abc123def456 \
+backend/packages/harness/evoflow/proactive/USAGE.md:123:curl -X POST http://localhost:8080/api/proactive/approval/init_abc123def456 \
+backend/packages/harness/evoflow/proactive/USAGE.md:130:飞书交互卡片的按钮回调走 `/api/proactive/approval/callback`，系统自动解析卡片 action value 中的 `initiative_id` 和 `decision`。
+backend/packages/harness/evoflow/proactive/USAGE.md:144:curl http://localhost:8080/api/proactive/memory/frontend_architect
+backend/packages/harness/evoflow/proactive/USAGE.md:179:1. 创建角色（POST /api/proactive/roles）
+backend/packages/harness/evoflow/proactive/USAGE.md:185:4. ProactiveEngine.think()
+backend/packages/harness/evoflow/proactive/USAGE.md:192:   ├── 风险低 + 自主权允许 → 自动执行（ExecutionBridge → LangGraph）
+backend/packages/harness/evoflow/proactive/USAGE.md:217:├── engine.py            # ProactiveEngine（LLM 思考循环）
+backend/packages/harness/evoflow/proactive/USAGE.md:219:├── execution_bridge.py  # ExecutionBridge（LangGraph 执行桥）
+backend/packages/harness/evoflow/proactive/USAGE.md:236:| `evoflow_proactive_roles` | 智能体员工角色定义 |
+backend/packages/harness/evoflow/proactive/USAGE.md:237:| `evoflow_proactive_initiatives` | AI 发起的倡议 |
+backend/packages/harness/evoflow/proactive/USAGE.md:238:| `evoflow_proactive_approvals` | 人类审批记录 |
+backend/packages/harness/evoflow/admin/approvals.py:26:        return lg[: -len("/api/langgraph")] + "/api/proactive"
+backend/packages/harness/evoflow/admin/approvals.py:27:    return "http://127.0.0.1:8070/api/proactive"
+backend/packages/harness/evoflow/proactive/work_items.py:4:initiatives). ExecutionBridge still speaks Initiative shapes via a thin adapter.
+backend/packages/harness/evoflow/proactive/work_items.py:859:    """Thin adapter: Task → Initiative shape for ExecutionBridge (no DB write)."""
+backend/packages/harness/evoflow/proactive/work_items.py:975:    """Execute an approved work-item Task via ExecutionBridge adapter."""
+backend/packages/harness/evoflow/proactive/work_items.py:976:    from evoflow.proactive.execution_bridge import ExecutionBridge
+backend/packages/harness/evoflow/proactive/work_items.py:995:    bridge = ExecutionBridge()
+backend/packages/harness/evoflow/proactive/decision_gate.py:9:  → wait for callback (POST /api/proactive/approval/{id})
+backend/packages/harness/evoflow/proactive/engine.py:1:"""ProactiveEngine - the LLM-driven think cycle.
+backend/packages/harness/evoflow/proactive/engine.py:140:class ProactiveEngine:
+backend/packages/harness/evoflow/proactive/engine.py:210:        from evoflow.proactive.execution_bridge import ExecutionBridge
+backend/packages/harness/evoflow/proactive/engine.py:212:        bridge = ExecutionBridge()
+backend/packages/harness/evoflow/proactive/repositories.py:162:        sql = f"SELECT {_ROLE_COLS.strip()} FROM evoflow_proactive_roles"
+backend/packages/harness/evoflow/proactive/repositories.py:184:                f"SELECT {_ROLE_COLS.strip()} FROM evoflow_proactive_roles WHERE agent_code = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:217:            INSERT INTO evoflow_proactive_roles ({_ROLE_COLS.strip()})
+backend/packages/harness/evoflow/proactive/repositories.py:269:                "SELECT agent_code, role_name FROM evoflow_proactive_roles "
+backend/packages/harness/evoflow/proactive/repositories.py:321:                DELETE FROM evoflow_proactive_approvals
+backend/packages/harness/evoflow/proactive/repositories.py:324:                        SELECT id FROM evoflow_proactive_initiatives
+backend/packages/harness/evoflow/proactive/repositories.py:334:            "evoflow_proactive_initiatives",
+backend/packages/harness/evoflow/proactive/repositories.py:406:            "DELETE FROM evoflow_proactive_roles WHERE agent_code = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:448:            INSERT INTO evoflow_proactive_roles ({_ROLE_COLS.strip()})
+backend/packages/harness/evoflow/proactive/repositories.py:468:            "evoflow_proactive_initiatives",
+backend/packages/harness/evoflow/proactive/repositories.py:469:            "evoflow_proactive_approvals",
+backend/packages/harness/evoflow/proactive/repositories.py:507:            "SELECT agent_code, config_json FROM evoflow_proactive_roles "
+backend/packages/harness/evoflow/proactive/repositories.py:521:                "UPDATE evoflow_proactive_roles "
+backend/packages/harness/evoflow/proactive/repositories.py:526:            "DELETE FROM evoflow_proactive_roles WHERE agent_code = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:560:                SELECT {_ROLE_COLS.strip()} FROM evoflow_proactive_roles
+backend/packages/harness/evoflow/proactive/repositories.py:609:            UPDATE evoflow_proactive_roles
+backend/packages/harness/evoflow/proactive/repositories.py:672:        sql = f"SELECT {_INIT_COLS.strip()} FROM evoflow_proactive_initiatives WHERE 1=1"
+backend/packages/harness/evoflow/proactive/repositories.py:690:                f"SELECT {_INIT_COLS.strip()} FROM evoflow_proactive_initiatives WHERE id = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:703:            INSERT INTO evoflow_proactive_initiatives ({_INIT_COLS.strip()})
+backend/packages/harness/evoflow/proactive/repositories.py:774:            f"UPDATE evoflow_proactive_initiatives SET {', '.join(sets)} WHERE id = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:807:        sql = f"SELECT {_APPROVAL_COLS.strip()} FROM evoflow_proactive_approvals WHERE 1=1"
+backend/packages/harness/evoflow/proactive/repositories.py:822:                f"SELECT {_APPROVAL_COLS.strip()} FROM evoflow_proactive_approvals WHERE id = ?",
+backend/packages/harness/evoflow/proactive/repositories.py:834:                f"SELECT {_APPROVAL_COLS.strip()} FROM evoflow_proactive_approvals "
+backend/packages/harness/evoflow/proactive/repositories.py:847:            INSERT INTO evoflow_proactive_approvals ({_APPROVAL_COLS.strip()})
+backend/packages/harness/evoflow/proactive/repositories.py:888:                f"SELECT {_APPROVAL_COLS.strip()} FROM evoflow_proactive_approvals "
+backend/packages/harness/evoflow/proactive/repositories.py:928:                f"SELECT {_INIT_COLS.strip()} FROM evoflow_proactive_initiatives "
