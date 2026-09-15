@@ -6,6 +6,7 @@ import asyncio
 import json
 import logging
 import os
+from collections.abc import Mapping
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -191,6 +192,12 @@ def _patch_task(task_id: str, mutator) -> dict[str, Any] | None:
     if not _save_task_row(project, idx, updated):
         return None
     return updated
+
+
+def _current_task_row(task_id: str) -> dict[str, Any] | None:
+    """Re-read one main task row, so a projection never writes over a stale copy."""
+    row = find_main_task(get_project_storage(), task_id)
+    return dict(row[1]) if row else None
 
 
 def _has_active_subtasks(task: dict[str, Any]) -> bool:
@@ -624,13 +631,156 @@ async def _maybe_run_via_runtime(task_id: str, task: dict[str, Any]) -> dict[str
     if result.updated_task is not None:
         _patch_task(task_id, lambda _t: dict(result.updated_task or {}))
 
-    return {
+    step: dict[str, Any] = {
         "task_id": task_id,
         "ok": True,
         "action": "runtime",
         "runtime_run_id": result.run_id,
         "runtime_action": result.action,
     }
+
+    if result.reason in _REUSE_REASONS:
+        # This attempt already had the run and the Runtime is driving it, so what
+        # the user reads back has to follow the run rather than the task's own
+        # untouched status. The row is re-read so the projection sees what was
+        # just persisted, and the run is only ever read.
+        projected = await project_linked_runtime_state(_current_task_row(task_id))
+        if projected is not None:
+            step["runtime_projection"] = projected.get("runtime_projection") or projected.get(
+                "reason"
+            )
+
+    return step
+
+
+# The opt-in reasons that mean "this attempt already had a run and we are looking
+# at it again", as opposed to "a run was created for this trigger just now". Only
+# the first kind may be projected back: on creation the run has just been made and
+# the task's own status is still the one the existing authorization left it in,
+# which is exactly what the existing behaviour and its tests assert.
+_REUSE_REASONS = frozenset({"reused", "linked_run_terminal"})
+
+
+async def project_linked_runtime_state(task: Mapping[str, Any] | None) -> dict[str, Any] | None:
+    """Project an already-linked Runtime run's state back onto the task row.
+
+    AG-G2-AUTO-003-A01. The run is the source of truth and it already exists; this
+    only *reads* it (``get_run_status``) and writes the projection through the
+    existing task save path. It never creates, starts, resumes or cancels a run,
+    and it never invents a state the Runtime did not report.
+
+    Fail-safe by construction: the reconciliation it calls is the domain's own
+    read-only, org-gated one, wrapped so a broken linkage or an unreadable Runtime
+    degrades into a reported outcome instead of raising or, worse, into a
+    fabricated ``completed``. With the opt-in switch off this returns ``None``
+    without reading anything, so a deployment that never opted in is unchanged.
+
+    Returns ``None`` when there is nothing to do (switch off, no row, no trusted
+    identity, or the trusted preconditions do not hold); otherwise a small report
+    for the caller's tick result.
+    """
+    from app.gateway import task_runtime_optin as optin
+    from app.gateway.task_runtime_context import (
+        TaskRuntimeContextError,
+        build_task_runtime_context,
+    )
+    from app.gateway.task_runtime_degrade import reconcile_task_runtime_safely
+
+    if not optin.runtime_unattended_enabled():
+        return None
+    if not isinstance(task, Mapping):
+        return None
+    task_id = str(task.get("id") or "").strip()
+    if not task_id:
+        return None
+
+    # Trusted identity, resolved server-side from the task's own persisted ACL
+    # columns. Nothing is taken from a client payload, and an incomplete identity
+    # is a refusal rather than a guessed default.
+    identity = optin.resolve_server_task_runtime_identity(task_id)
+    if identity is None:
+        return {
+            "task_id": task_id,
+            "ok": True,
+            "action": "runtime_projection_skipped",
+            "reason": "trusted_identity_unavailable",
+        }
+
+    storage = get_project_storage()
+    try:
+        context = build_task_runtime_context(
+            task=task,
+            authz=identity,
+            # The real, server-observed consent — never assumed. The projection
+            # path reads it as the same precondition the creation path does, so a
+            # task whose consent was withdrawn is left alone rather than having a
+            # run state attributed to it.
+            authorized=is_task_execution_authorized(storage, task_id),
+        )
+    except TaskRuntimeContextError:
+        return {
+            "task_id": task_id,
+            "ok": True,
+            "action": "runtime_projection_skipped",
+            "reason": "preconditions_not_met",
+        }
+
+    outcome = await reconcile_task_runtime_safely(
+        task, context=context, contract=optin.default_runtime_contract()
+    )
+    if outcome.updated_task is not None:
+        _patch_task(task_id, lambda _t: dict(outcome.updated_task or {}))
+
+    return {
+        "task_id": task_id,
+        "ok": True,
+        "action": "runtime_projected",
+        "runtime_run_id": outcome.runtime_run_id,
+        "runtime_projection": outcome.action,
+        "runtime_projection_reason": outcome.reason,
+    }
+
+
+def list_unattended_runtime_linked() -> list[dict[str, Any]]:
+    """Unattended tasks whose current attempt already has a Runtime run.
+
+    The queue's candidate and in-progress lists are keyed on the task's *status*,
+    and while a run is linked the Runtime owns that status: a task can therefore
+    sit in neither list while its run has already moved on or finished. Nothing
+    else would ever ask the Runtime what happened to it, so this answers that one
+    question from the persisted linkage alone.
+
+    Read-only and advisory: it classifies rows, it does not authorise anything.
+    A row whose linkage cannot even be decoded is still listed, so the projection
+    can report it as a degraded link instead of the row going silent. With the
+    opt-in switch off it returns an empty list without scanning, which keeps a
+    deployment that never opted in byte-identical.
+    """
+    from app.gateway import task_runtime_optin as optin
+    from app.gateway.task_runtime_linkage import LINKAGE_TASK_KEY
+
+    if not optin.runtime_unattended_enabled():
+        return []
+
+    storage = get_project_storage()
+    out: list[dict[str, Any]] = []
+    for summary in storage.list_projects():
+        project = storage.load_project(summary["id"])
+        if not project:
+            continue
+        for task in project.get("tasks") or []:
+            if not isinstance(task, dict) or not is_unattended_task(task):
+                continue
+            status = str(task.get("status") or "").strip().lower()
+            # A settled or paused task is not driven by the queue any more, and the
+            # projection would refuse it anyway.
+            if status in _TERMINAL or status == "paused":
+                continue
+            if not task.get(LINKAGE_TASK_KEY):
+                continue
+            out.append(task)
+    out.sort(key=lambda t: str(t.get("unattended_enqueued_at") or t.get("created_at") or ""))
+    return out
 
 
 async def _advance_unattended_task_impl(task_id: str) -> dict[str, Any]:

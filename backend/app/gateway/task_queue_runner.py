@@ -13,6 +13,8 @@ from app.gateway.unattended_task_pipeline import (
     count_active_unattended_tasks,
     list_unattended_candidates,
     list_unattended_in_progress,
+    list_unattended_runtime_linked,
+    project_linked_runtime_state,
 )
 
 logger = logging.getLogger(__name__)
@@ -140,6 +142,34 @@ async def task_queue_tick() -> dict[str, Any]:
         except Exception:
             logger.exception("task_queue_tick: advance failed task_id=%s", task_id)
             results.append({"task_id": task_id, "ok": False, "error": "exception"})
+
+    # A task whose attempt already has a Runtime run is driven by the Runtime, not
+    # by the queue: the two loops above pick by task *status*, and while a run is
+    # linked that status is the Runtime's to move. A task can therefore be in
+    # neither list while its run has already finished, and nothing would ever
+    # settle it. This projects the run's own state back onto the row it is linked
+    # to, through the existing read-only reconciliation — it creates, starts,
+    # resumes and cancels nothing, and with the opt-in switch off the lister is
+    # empty so the tick does exactly what it did before (AG-G2-AUTO-003-A01).
+    for task in await asyncio.to_thread(list_unattended_runtime_linked):
+        task_id = str(task.get("id") or "").strip()
+        if not task_id:
+            continue
+        try:
+            projected = await project_linked_runtime_state(task)
+        except Exception:
+            logger.exception("task_queue_tick: runtime projection failed task_id=%s", task_id)
+            results.append({"task_id": task_id, "ok": False, "error": "runtime_projection_exception"})
+            continue
+        if projected is None:
+            continue
+        results.append(projected)
+        logger.info(
+            "task_queue_tick: projected task_id=%s projection=%s reason=%s",
+            task_id,
+            projected.get("runtime_projection"),
+            projected.get("runtime_projection_reason") or projected.get("reason"),
+        )
 
     info = {
         "active": active,

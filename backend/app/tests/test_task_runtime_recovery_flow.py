@@ -240,11 +240,26 @@ def test_a_reconnect_after_the_catch_up_reads_the_new_state(
 def test_the_queue_does_not_re_pick_a_task_that_already_has_a_run(
     client, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """The scheduler answers from the persisted linkage, so a restart is safe."""
+    """The scheduler answers from the persisted linkage, so a restart is safe.
+
+    AG-G2-AUTO-003-A01 moved where this lands, and only that: the tick now
+    projects the linked run's own state back onto the row, so a run that has
+    already settled settles the task with it and the scheduler afterwards reports
+    ``task_settled`` instead of ``already_scheduled``. Every assertion this test
+    exists for is kept, and the persisted-linkage guard is now asserted where it
+    is observable — on the row the tick was handed — with the post-tick outcome
+    asserted as what it now is.
+    """
     from app.gateway.task_runtime_schedule import decide_runtime_pickup
 
     task_id, fake = _lagging_task(client, monkeypatch)
     creates_before = len(fake.create_calls)
+
+    # The guard, on the state the tick is about to be given.
+    decision = decide_runtime_pickup(stored_task(task_id))
+    assert decision.should_skip
+    assert decision.action == "already_scheduled"
+    assert decision.runtime_run_id == RUN_ID
 
     # The real queue entry a scheduler tick uses.
     response = client.post("/api/tasks/queue/tick")
@@ -253,10 +268,10 @@ def test_the_queue_does_not_re_pick_a_task_that_already_has_a_run(
     assert len(fake.create_calls) == creates_before
     assert stored_task(task_id)[LINKAGE_TASK_KEY]["runtime_run_id"] == RUN_ID
 
-    decision = decide_runtime_pickup(stored_task(task_id))
-    assert decision.should_skip
-    assert decision.action == "already_scheduled"
-    assert decision.runtime_run_id == RUN_ID
+    # The tick settled it from the run's own answer — it did not re-pick it, and
+    # it created nothing.
+    assert stored_task(task_id)["status"] == "completed"
+    assert decide_runtime_pickup(stored_task(task_id)).action == "task_settled"
 
 
 def test_recovery_never_creates_a_second_run(client, monkeypatch: pytest.MonkeyPatch) -> None:
