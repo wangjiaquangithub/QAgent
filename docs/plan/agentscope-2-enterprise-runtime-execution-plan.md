@@ -424,7 +424,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 
 #### AG-G2-AUTO-005-A01：真实 HTTP / 页面手工验收 Runbook
 
-- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-005` / `Not Started` / Domain Migration + Release / 90m。
+- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-005` / `Blocked`（2026-09-15 attempt `20260915`；取消终态闭环已通过，成功/失败终态因缺真实 Provider 与既有执行驱动入口而不可达，见 §2.6.4）/ Domain Migration + Release / 90m。
 - **单一目标**：用**既有** HTTP 入口完成一次成功、一次失败、一次取消的端到端手工验收，产出 Runbook 与证据；不做代码改动。
 - **真实入口（全部为既有 API，不得新增）**：`POST /api/tasks`（`run_mode=unattended`）、`POST /api/tasks/{task_id}/start`、`POST /api/tasks/queue/tick`、`GET /api/tasks/{task_id}`、`GET /api/tasks/{task_id}/execution-history`、`GET /api/tasks/{task_id}/runtime`、`POST /api/tasks/{task_id}/cancel`。
 - **开关**：`EVOFLOW_AUTOMATION_UNATTENDED_RUNTIME=1`；回退为取消该变量，不删除任何历史数据。
@@ -516,6 +516,8 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 | Chat / Live Run 真实入口 Runtime → AgentScope → SSE / 消息写回 | 已完成 | `3c7aa5d4c0c1c7ed263d7cf285a03441f7da8a4a`；`docs/plan/agentscope-2-g2-chat-entry-map.md`；`docs/plan/agentscope-2-g2-chat-manual-acceptance.md` | 不得重复派 Chat / Live Run A01～A05；不得修改或回退该提交 |
 | Automation / Task Center 既有 bridge / opt-in | 已集成但非整域完成 | `433a9df`；三份 Automation 证据文档 | 只保留其作为 A01/A02 盘点输入，不宣称整域迁移完成；不得重派已完成 bridge。其中 **Run 建立与关联（`AG-G2-AUTO-003-B01`）已完成**，`AG-G2-AUTO-003-A01` 只补其未接线的终态回写，不是重派 |
 | 数字员工 / Agent、Goal / 协同的旧执行链 | 未迁移（无 Runtime 接点） | 本批 A01 / A02 为只读证据卡；harness 内 `qagent_runtime` / `agentscope` 引用为 0 | 不得把 A01 / A02 当作已接入；A03～A05 未实例化 |
+| Automation / Task Center 终态回写链（`AG-G2-AUTO-001-A01`～`004-A01`） | 已完成 | `fc8bbf8`（A01 入口与旧状态机盘点）、`4f27a91`（A02 字段级映射）、`327d2b0`（A03 终态/结果投影回 Task Center）、`cf57d5f`（A04 回写边界定向测试）；证据见 `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-00{1,2,3,4}-A01/20260915/`；A03 回归 `app/tests/test_task_runtime_*.py` + `app/tests/test_qagent_runtime*.py` 735 passed | 不得重派这四张卡；不得重做 Run 建立与关联（`433a9df` / `AG-G2-AUTO-003-B01`）。A03 的 reuse-only 投影边界（创建分支不投影）与 A04 登记的 `error_code` / `result_summary` 未透传缺口（`task_runtime_reconcile` 只传 `runtime_status` / `expected_run_id`）为已知边界，修它们属新卡 |
+| Automation / Task Center 真实 HTTP 手工验收（`AG-G2-AUTO-005-A01`） | 部分通过后 `Blocked` | `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-005-A01/20260915/{runbook.md,verdict.md,raw/}`；取消终态闭环、开关回退基线、Runtime 读失败 fail-safe 均已真实通过 | 不得把"取消路径通过"当成"三种终态全部验收"；成功/失败终态须在 §2.6.4 的解除条件满足后重派 |
 
 ### 2.6.4 被 G0 决策阻塞的卡片 / 后续事项
 
@@ -531,6 +533,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 | Agent / 数字员工 A03～A05 | `G0-DEC-001～004` 且本域 Runtime 接点为 0 | 等 `AG-G2-AGENT-001-A01` / `AG-G2-AGENT-002-A01` 证据与负责人决策冻结后再实例化 |
 | Automation A03～A05 中的 Event 流式 / cursor / gap、跨实例幂等、cancel 与 approval 耦合部分 | `G0-DEC-001～003` | `AG-G2-AUTO-003-A01` 只做状态投影与终态回写；其余部分等决策冻结后再实例化 |
 | 其他域（Workspace / Asset、Knowledge / Memory / Tools / MCP / Channels）的 A02～A05 | `G0-DEC-001～004`（按具体字段） | 等 A01 证据与负责人决策冻结后再实例化 |
+| Automation A05 的**成功 / 失败终态**验收（`AG-G2-AUTO-005-A01` 未通过部分） | 不是 G0 决策，而是环境 + 契约阻塞：(1) `AGENTSCOPE_PROVIDER/MODEL/API_KEY/ENDPOINT` 全未设置，`backend/app/qagent_runtime/provider_factory.py` 明确无 fake provider 回退；(2) `backend/app/gateway/unattended_task_pipeline.py` 只有 `establish_runtime_run`（`create_run`）三处调用，**无 `start_run`**，Run 建立后停在 `queued`；(3) 唯一既有执行驱动入口 `POST /api/qagent/runtime/runs/{run_id}/start` 需要 bearer token，且其 principal `org_id` 为 `identity:<type>:<id>`，与 Run 的 `org_id="local"` 不匹配（`service._require_run` 拒绝）—— 该缺口即 `agentscope-2-g2-automation-manual-acceptance.md` §9 登记的 P1 | 只保留已通过的取消终态、开关回退、fail-safe 三组证据（见 A05 `verdict.md`）；解除条件：由部署环境注入真实 provider 凭据，并在 `RuntimeRunContract` 协议中声明 `org_id` 后传入可信组织值（契约 / 状态机级改动，须负责人拍板）。**未解除前不得自行实现、不得用 fake provider 或 mock 结果替代原始输出** |
 
 ### 2.6.5 未实例化且未擅自拆分的母任务
 
@@ -771,3 +774,4 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 | 2026-09-14 | §2.6 状态同步：G2.1-B App Runner 由"未开始"更正为"已实现 / 已集成（TEST GO，PROD NO-GO）"，登记 `b8cf3e0`～`bec812e` 验收链与 `bffbf5c` / `e8a0d13` / `f290af9` 三笔后续修复；`G0-DB-003`、`G0-DEC-001～004` 状态不变（仍待负责人验收 / 冻结） | 同步只覆盖可由提交直接证明的事实；派工通道、放行结论与未验证项以 `AG-G2-APP-009-A01` 交接索引为准 |
 | 2026-09-15 | 以 `3c7aa5d4c0c1c7ed263d7cf285a03441f7da8a4a` 为基线，确认 Chat / Live Run 与 Apps / Workflow 真实首闭环已完成且不可重派；新增 Automation A01/A02、Agent A01、Goal A01、Workspace / Asset A01、Knowledge / Memory / Tools / MCP / Channels A01 原子盘点 / 映射卡；明确 G0-DEC-001～004 阻塞项和未实例化母任务；未修改代码、测试、schema、migration。 |
 | 2026-09-15 | 剩余业务迁移第一批拆分（Automation / Task Center、数字员工 / Agent、Goal / 协同）：补齐三个域的 A01 已核实锚点；新增 `AG-G2-AGENT-002-A01`、`AG-G2-GOAL-002-A01` 映射卡；对 Automation 新增 `AG-G2-AUTO-003-A01`～`AG-G2-AUTO-005-A01`（只补已实现但零生产调用点的终态回写与既有读取出口，不重派 Run 建立）；Agent / Goal 的 A03～A05 明确不实例化；同步 §2.6.3～§2.6.5 与路线图 §5。侦察证据见 [G2 第一批拆卡侦察与实例化记录](./agentscope-2-g2-batch1-reconnaissance-notes.md)（非权威）。未修改任何代码、测试、schema、migration。 |
+| 2026-09-15 | Automation 终态回写链推进：`AG-G2-AUTO-001-A01`～`004-A01` 完成并登记为不可重派（`fc8bbf8`、`4f27a91`、`327d2b0`、`cf57d5f`）；`AG-G2-AUTO-005-A01` 真实 HTTP 手工验收**部分通过后 Blocked**——取消终态回写、开关关闭回退基线、Runtime 读失败 fail-safe 三组已真实通过，成功/失败终态因缺真实 Provider 凭据、且无人值守路径无 `start_run` 驱动、且既有执行驱动入口因 `org_id` 不匹配无法作用于该 Run 而不可达；Blocked 原因与最小解除条件登记于 §2.6.4 | 验收产物 `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-005-A01/20260915/{runbook.md,verdict.md,raw/}`（29 个原始 HTTP 响应 + PostgreSQL 事实源导出）；A03 回归 `app/tests/test_task_runtime_*.py` + `app/tests/test_qagent_runtime*.py` 735 passed；未修改生产代码、测试、schema、migration |

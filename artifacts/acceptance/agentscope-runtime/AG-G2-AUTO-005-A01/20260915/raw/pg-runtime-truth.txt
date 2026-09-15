@@ -1,0 +1,22 @@
+### DB: postgresql://127.0.0.1:5432/qagent_runtime_acceptance_20260915
+### server_version:
+17.9 (Homebrew)
+
+### qagent_runs (task-center runs, idempotency_key like 'tc:%')
+                run_id                | org_id |           task_id           |  status   |           idempotency_key           |        executor_key        |          created_at           |         completed_at          
+--------------------------------------+--------+-----------------------------+-----------+-------------------------------------+----------------------------+-------------------------------+-------------------------------
+ run_3ef3edfc07c94b1f88be7f49cbfbcd8e | local  | tc-fe3607557b935eec37ce33a3 | cancelled | tc:587dfda4bcee531014e6003e6ea0d891 | qagent.server.no_device.v1 | 2026-09-15 23:24:27.43214+08  | 2026-09-15 23:26:27.639208+08
+ run_11485c43a1ba4317a0ce4dfebecaf2c2 | local  | tc-64c4f03326cba78ffffd6382 | queued    | tc:0249e642fdb94ce0a7bf9a98be742239 | qagent.server.no_device.v1 | 2026-09-15 23:29:55.68976+08  | 
+ run_ffc16a9e6d38486e9e7341e0ce23e9a9 | local  | tc-d20f02ad9fedcbd0931f7dd7 | queued    | tc:94ce2795ae3f82c6baa1bff2576f85bd | qagent.server.no_device.v1 | 2026-09-15 23:30:33.237729+08 | 
+(3 行记录)
+
+### qagent_run_events for run_3ef3edfc07c94b1f88be7f49cbfbcd8e
+ sequence |     type      |          occurred_at          
+----------+---------------+-------------------------------
+        1 | run.created   | 2026-09-15 23:24:27.43214+08
+        2 | run.queued    | 2026-09-15 23:24:27.43214+08
+        3 | run.cancelled | 2026-09-15 23:26:27.639208+08
+(3 行记录)
+
+### qagent_runs total count (flag-off baseline was 8)
+10

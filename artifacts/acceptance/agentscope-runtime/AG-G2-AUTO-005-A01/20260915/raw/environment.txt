@@ -1,0 +1,45 @@
+### 验收环境记录（AG-G2-AUTO-005-A01）
+
+worktree        : /Users/wangjiaquan/project/QAgent-agentscope-runtime
+branch          : codex/agentscope-runtime
+starting HEAD   : cf57d5f1363c4f5df9c8729fb5e4f67ef896f0a7
+                  (= origin/codex/agentscope-runtime at task start)
+git status      : clean except the artifacts/ directories this card writes
+
+### 本轮真实进程
+
+Gateway         : backend/.venv/bin/python -m uvicorn app.gateway.app:app --host 127.0.0.1 --port 8099
+启动次数        : 4（flag-on / flag-off / flag-on / flag-on+bad-PG），每次启动后经 GET /health 确认
+EVOFLOW_HOME    : /tmp/qagent-a05-20260915/data
+                  （base_dir 归一化后 = /tmp/qagent-a05-20260915）
+DEER_FLOW_CONFIG_PATH : <worktree>/config.yaml
+Task Center 存储: SQLite /tmp/qagent-a05-20260915/data/app/evoflow.db（storage.sqlite_path）
+Runtime 事实源  : PostgreSQL 17.9 (Homebrew) @ 127.0.0.1:5432
+                  db = qagent_runtime_acceptance_20260915
+                  QAGENT_POSTGRES_URL=postgresql+psycopg://wangjiaquan@127.0.0.1:5432/qagent_runtime_acceptance_20260915
+                  alembic_version = 0005_qagent_runtime_execution_claim
+
+### 开关
+
+EVOFLOW_AUTOMATION_UNATTENDED_RUNTIME
+  flag-on  轮次：=1
+  flag-off 轮次：env -u EVOFLOW_AUTOMATION_UNATTENDED_RUNTIME
+
+### Provider
+
+AGENTSCOPE_PROVIDER / AGENTSCOPE_MODEL / AGENTSCOPE_API_KEY / AGENTSCOPE_ENDPOINT
+  四个变量在本环境**全部未设置**（env | grep -i agentscope 无输出）。
+  Runtime 侧 model factory（backend/app/qagent_runtime/provider_factory.py:38-41）
+  在缺 AGENTSCOPE_MODEL / AGENTSCOPE_API_KEY 时抛 ProviderConfigurationError，
+  且该文件第 3 行显式声明 "The runtime never silently falls back to a fake or
+  deterministic provider" —— 即不存在可用的离线 provider 回退。
+
+### 未使用的入口（记录以免误读）
+
+POST /api/qagent/runtime/runs/{run_id}/start
+  真实存在（backend/app/qagent_runtime/router.py:64），但需要 Authorization:
+  Bearer <token>，本环境无有效 token（401 见 raw/step09-start-run.json）。
+  即便有 token 也无法驱动本卡建立的 Run：该入口的 principal.org_id 为
+  "identity:<type>:<id>"（auth.py:34-36），而无人值守路径建立的 Run
+  org_id = "local"（service.create_run 默认值，见 raw/pg-runtime-truth.txt），
+  service._require_run(run_id, org_id=...) 会因 org 不匹配而拒绝。
