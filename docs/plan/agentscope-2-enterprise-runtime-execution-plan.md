@@ -1,12 +1,12 @@
 # AgentScope 2.0 Runtime 执行计划
 
 - 文档角色：唯一实时执行进度来源；**唯一** `AG-*` 可派工卡片来源
-- 更新日期：2026 年 9 月 14 日
+- 更新日期：2026 年 9 月 15 日
 - 适用路线图：[AgentScope 2.0 企业 Runtime 路线图](./agentscope-2-enterprise-runtime-roadmap.md)
 - 关联 ADR：[ADR-003：QAgent Agent Runtime 与正式运行底座决策](../adr/003-agent-runtime-and-agentscope-2-adoption.md)
 - 归并记录：[Plan 归并说明（G0–G4 拆卡成果 → 唯一权威结构）](./agentscope-2-plan-consolidation-notes.md)
 - 当前分支：`codex/agentscope-runtime`
-- 当前基线提交：`bdafb35 merge(chat): fix idempotent message append`
+- 当前基线提交：`3c7aa5d4c0c1c7ed263d7cf285a03441f7da8a4a feat(chat): route live entry through runtime`
 
 > 本计划按可直接派工的任务维护。状态以代码、测试和验收证据为准，不以旧计划中的“已完成”描述为准。本次只重写计划和引用，不修改 Runtime 代码、数据库 schema 或公共 API。
 >
@@ -346,19 +346,125 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 【Git】commit / push 状态；不得夹带其他 worktree 修改
 ```
 
-## 2.6 已集成入口与阶段状态（截至 2026-09-14）
+## 2.6 已集成入口与剩余业务迁移原子卡（截至 2026-09-15）
 
-下表用于防止已完成工作被重新派工。状态以集成分支实际提交为准；如与验收记录不一致，由负责人修正。
+本节是当前剩余业务迁移的派工边界。已完成事项仅用于防止重复派工；新卡只覆盖真实证据已经定位、且不需要修改生产代码、测试、schema 或 migration 才能完成的盘点 / 映射工作。
 
-| 范围 | 状态 | 集成分支证据 | 对应归并项 |
+### 2.6.1 业务迁移现状矩阵
+
+| 业务域 | 当前状态 | 已核实证据 | 本轮结论 |
 | --- | --- | --- | --- |
-| G0.7 PostgreSQL 真实并发验收 | 已完成 / 已集成 | `fadddd0 merge(g0): integrate PostgreSQL concurrency acceptance` | 来源 G0.7；母任务 `G0-DB-003` 已登记该提交（该母任务的 `AG-*-A01`～`A06` 不得重复派工） |
-| G2.1-A 聊天 / Live Run 首次接入 | 已完成 / 已集成 | `0679886 merge(chat): integrate Live Run runtime bridge`；消息幂等修复 `bdafb35` | 来源 G2.1-A；证据文档 `agentscope-2-g2-chat-entry-map.md`、`agentscope-2-g2-chat-manual-acceptance.md` |
-| G2.1-C 无人值守 / Task Center 首次接入 | 已完成 / 已集成 | `433a9df merge(automation): integrate Task Center runtime opt-in` | 来源 G2.1-C；证据文档 `agentscope-2-g2-automation-entry-map.md`、`agentscope-2-g2-automation-completion-checklist.md`、`agentscope-2-g2-automation-manual-acceptance.md` |
-| G2.5 用户可测业务包（聊天、自动化） | 已完成 | `agentscope-2-g2-chat-manual-acceptance.md`、`agentscope-2-g2-automation-manual-acceptance.md` | 来源 G2.5-A / G2.5-C；不再派工 |
-| G2.1-B App Runner 首次接入 | 已实现 / 已集成（TEST GO，PROD NO-GO） | 盘点→映射→bridge→验收链 `b8cf3e0`、`5f5571c`、`12fdeb9`、`842f160`、`59f36c3`、`f0a1de0`、`30bea77`、`5d287e2`、`bec812e`；后续修复 `bffbf5c`（存量 revision 级联缺陷）、`e8a0d13`（cancel 传播到 Runtime）、`f290af9`（auto-grant 记录 decided_by）；证据 `artifacts/acceptance/agentscope-runtime/AG-G2-APP-009-A01/20260914/handoff-index.md`。未验证：多实例、长任务、真实并发、HA、压测、真实 Provider（§2.5.4 派工通道保留；PROD NO-GO 维持） | 见 §2.5.4 新增卡片 |
-| G2.2 / G2.3（聊天、自动化） | 部分已完成 / 已集成 | 聊天 `chat_runtime_result.py`、`chat_runtime_stream_bridge.py`；自动化 `task_runtime_projection.py`、`task_runtime_event_bridge.py`、`task_runtime_cursor.py` | 余项范围以既有 G2 文档为准，不新造卡 |
-| G0-DEC-001～004 四项契约 | Blocked（未变） | 无负责人签署记录 | 见 [归并记录](./agentscope-2-plan-consolidation-notes.md) 第 4 节 |
+| Apps / Workflow | 真实新链首闭环已完成；TEST GO，PROD NO-GO | 提交 `12fdeb9`、`b8cf3e0`、`bec812e`、`f0a1de0`、`bffbf5c`、`e8a0d13`、`f290af9`；`artifacts/acceptance/agentscope-runtime/AG-G2-APP-009-A01/20260914/handoff-index.md` | 已完成、不可重派 A01～A05；生产放行仍受既有 G0/G3 证据约束，不在本轮补派业务实现卡 |
+| Chat / Live Run | 真实新链首闭环已完成 | 提交 `3c7aa5d4c0c1c7ed263d7cf285a03441f7da8a4a`；`docs/plan/agentscope-2-g2-chat-entry-map.md`；`docs/plan/agentscope-2-g2-chat-manual-acceptance.md`；flag-on 旧 LangGraph checkpoint=0，flag-off 保持旧链 | 已完成、不可重派 A01～A05 |
+| Automation / Task Center | 部分接入 / bridge，整域未完成 | 提交 `433a9df merge(automation): integrate Task Center runtime opt-in`；`docs/plan/agentscope-2-g2-automation-entry-map.md`、`docs/plan/agentscope-2-g2-automation-completion-checklist.md`、`docs/plan/agentscope-2-g2-automation-manual-acceptance.md` | 仅新增 A01 盘点与 A02 映射；A03 不实例化 |
+| Agent / 数字员工 | 尚未接入；已有业务状态 / 会话执行线索 | `backend/app/channels/services/goal_service.py`：`_sync_session_from_goal_state`、`_run_goal_graph`、`ensure_goal_stream_loop`、`_persist_session_snapshot`、`recover_persisted_sessions`、`apply_user_steering`、`submit_feedback` | 仅新增 A01；入口与 Runtime 接点证据不足，不新增 A02/A03 |
+| Goal / 协同 | 尚未接入；旧任务 / 审批 / 协同事实源已定位 | `evoflow_collab_tasks`、`evoflow_collab_subtasks`、`evoflow_collab_peer_messages` 等协同表；`evoflow_proactive_approvals`、`evoflow_tool_approvals` 等审批表 | 仅新增带 G0 依赖确认的 A01；不得猜测 cancel、claim、Event 或 recovery 语义 |
+| Workspace / 文件 / 资产 | 尚未接入；资产事实源已定位 | `evoflow_artifacts`、`evoflow_media_assets`、`evoflow_org_artifacts`；`backend/packages/harness/evoflow/persistence/schema.py:247-255, 807-823, 986-993` | 仅新增 A01；不扩展到存储 HA、灾备或历史迁移 |
+| Knowledge / Memory / Tools / MCP / Channels | 尚无足够统一入口证据 | 目前只确认需从真实用户业务入口、旧事实源和外部副作用边界开始；未确认统一 Runtime 接点 | 仅新增 A01；A02～A05 不实例化 |
+
+### 2.6.2 新增可执行 `AG-*` 卡片
+
+卡片的“允许修改”是执行该卡时的写域，不授权修改本执行计划之外的生产文件。A01 / A02 均为只读盘点或映射卡，不做实现；证据目录只有在实际执行卡片时按卡片约定创建。
+
+#### AG-G2-AUTO-001-A01：Automation / Task Center 真实入口与旧状态机盘点
+
+- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-001` / `Not Started` / Domain Migration / 60m。
+- **单一目标**：只读确认一个或多个真实入口、旧业务事实源、调用链、状态机和 Runtime bridge 的实际边界，产出入口清单与缺口清单。
+- **真实入口**：`backend/app/gateway/routers/automation_scheduler.py`、`backend/app/gateway/routers/tasks.py`、`backend/app/gateway/routers/events.py`；同时核对 App Runner 绑定工作流自动化、prompt-only 默认 LangGraph、scheduler 定时触发和无人值守身份传播路径。
+- **旧业务事实源 / 写路径**：`backend/app/gateway/events/task_events.py`、`backend/app/gateway/automation_runner.py`、`backend/app/gateway/task_queue_runner.py`、`backend/app/gateway/task_runtime_optin.py`、`backend/app/gateway/task_runtime_projection.py`；登记 Task Center 状态、事件与重启后回投影的现有写点，不新增状态源。
+- **Runtime 调用点 / 边界**：只读记录现有 `task_runtime_*` bridge / projection 的调用关系；无人值守 Run 创建若出现默认 `org_id="local"` 只登记为缺口，不修正语义。
+- **允许修改范围**：只写 `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-001-A01/<attempt>/inventory.md`；不超过 1 个证据文件。
+- **禁止触碰**：所有 backend 生产代码、测试、schema、migration、配置、Runtime 内核、Gateway 主干重构、前端、Chat、App Runner、HA / 多实例 / 备份 / 灾备 / 压测 / 历史迁移。
+- **验收命令 / 产物**：`rg -n "automation_scheduler|task_runtime_|TaskAuthorizedEvent|TaskExecutionStartedEvent|TaskExecutionFailedEvent|TaskCancelEvent|TaskCancelledEvent|TaskResumeEvent" backend/app/gateway`；命中点、真实入口、旧事实源、写域、bridge 边界和缺口全部写入 `inventory.md`。
+- **停止条件**：入口无法唯一定位；需要修改 Runtime 内核、schema、migration 或第二状态源；发现与正在进行的 Chat 实现重叠；或需要处理 HA / 多实例 / 运维事项。
+
+#### AG-G2-AUTO-002-A01：Automation / Task Center 对象与 Runtime 字段级映射
+
+- **母任务 / 状态 / Owner / 时间盒**：`G2-AUTO-002` / `Not Started` / Domain Migration + Runtime / 75m。
+- **单一目标**：在 `AG-G2-AUTO-001-A01` 产物基础上，建立 Task Center 对象、状态、事件、取消、终态与 Runtime Run / Event / Result / Cancel 的字段级对照；未知项必须标为 `Blocked`，不得补猜。
+- **真实入口 / 旧事实源**：沿用 A01 已核实的 scheduler、task、event 入口与 `task_events.py`、`automation_runner.py`、`task_queue_runner.py` 写路径；不得扩展扫描范围。
+- **Runtime 调用点 / 边界**：沿用已存在的 `task_runtime_optin.py`、`task_runtime_projection.py` 及 A01 登记的 bridge；只记录可从源码证明的调用点和字段。
+- **映射范围**：至少覆盖 `TaskAuthorizedEvent`、`TaskExecutionStartedEvent`、`TaskExecutionFailedEvent`、`TaskCancelEvent`、`TaskCancelledEvent`、`TaskResumeEvent`，以及 Task Center 终态、错误 / 结果引用和幂等键；`cancel` 后 approval、claim 所有权、Event v1 / cursor / gap、Recovery Point / attempt 受 G0 决策影响的列标记阻塞。
+- **允许修改范围**：只写 `artifacts/acceptance/agentscope-runtime/AG-G2-AUTO-002-A01/<attempt>/mapping.md`；不修改任何源代码或计划外文档。
+- **禁止触碰**：不得新增字段、接口、schema、状态机或 fallback；不得实现 cancel / recovery / claim / cursor；不得触碰 HA、备份、灾备、压测、历史迁移或其他业务域。
+- **验收命令 / 产物**：`rg -n "TaskAuthorizedEvent|TaskExecutionStartedEvent|TaskExecutionFailedEvent|TaskCancelEvent|TaskCancelledEvent|TaskResumeEvent|task_runtime_" backend/app/gateway`；`mapping.md` 逐字段列出证据文件 / 符号、确定值、未知值、G0 决策依赖和 A03 是否可创建。
+- **停止条件**：A01 未完成；任一字段需要臆造；发现必须修改 Runtime / schema / migration 才能闭合；或 G0 语义未冻结导致只能选择实现方案。
+
+#### AG-G2-AGENT-001-A01：数字员工 / Agent 真实入口与事实源盘点
+
+- **母任务 / 状态 / Owner / 时间盒**：`G2-AGENT-001` / `Not Started` / Domain Migration / 60m。
+- **单一目标**：只读定位数字员工 / Agent 的真实用户入口、旧事实源、状态 / 会话写路径、旧执行链与可证明的 Runtime 接入边界。
+- **真实入口 / 旧事实源**：从 `backend/app/channels/services/goal_service.py` 的 `__init__`、`_sync_session_from_goal_state`、`_run_goal_graph`、`ensure_goal_stream_loop`、`_persist_session_snapshot`、`recover_persisted_sessions`、`apply_user_steering`、`submit_feedback` 追溯入口与写回；未确认的入口、表或字段保持未知。
+- **Runtime 调用点 / 边界**：只记录源码中已经存在且可读取的 Runtime / bridge 接点；不得把 AgentScope 类型、私有事件或猜测的 Adapter API 写成事实。
+- **允许修改范围**：只写 `artifacts/acceptance/agentscope-runtime/AG-G2-AGENT-001-A01/<attempt>/inventory.md`。
+- **禁止触碰**：不得修改 `goal_service.py` 或任何 backend 代码、测试、schema、migration、配置；不得触碰 Goal / Chat 实现、Gateway 主干、Runtime 内核或非业务运维范围。
+- **验收命令 / 产物**：`rg -n "_sync_session_from_goal_state|_run_goal_graph|ensure_goal_stream_loop|_persist_session_snapshot|recover_persisted_sessions|apply_user_steering|submit_feedback" backend/app/channels/services/goal_service.py`；`inventory.md` 必须列真实入口、事实源、写点、Runtime 接点和 A02/A03 是否有证据。
+- **停止条件**：只能靠臆造入口 / 字段 / Runtime 语义；需要生产代码或 schema 变更；或发现与正在进行的 Chat 任务冲突。
+
+#### AG-G2-GOAL-001-A01：Goal / 协同入口与 G0 依赖确认
+
+- **母任务 / 状态 / Owner / 时间盒**：`G2-GOAL-001` / `Blocked by G0-DEC-001～004` / Domain Migration + Release / 60m（仅只读盘点 / 依赖确认）。
+- **单一目标**：只读盘点 Goal / 协同真实入口、旧事实源、状态 / 审批 / 协同写路径，并逐项确认是否依赖四项未冻结 G0 决策；不设计替代语义。
+- **真实入口 / 旧事实源**：以已定位的 `evoflow_collab_tasks`、`evoflow_collab_subtasks`、`evoflow_collab_peer_messages`、`evoflow_collab_subtask_deps`、`evoflow_collab_subtask_expected_outputs`、`evoflow_collab_subtask_skills`、`evoflow_collab_subtask_tools`、`evoflow_collab_task_deps`、`evoflow_collab_task_execution_history` 为事实源；审批侧核对 `evoflow_proactive_approvals`、`evoflow_tool_approvals`、`evoflow_tool_approval_grants`、`evoflow_tool_approval_audit`。
+- **Runtime 调用点 / 边界**：只读登记真实入口与现有调用点；`cancel` 后 approval、claim / 执行所有权、Event v1 / sequence / cursor / gap、Recovery Point / attempt 分别标记 `G0-DEC-001`～`004`，不得生成实现方案。
+- **允许修改范围**：只写 `artifacts/acceptance/agentscope-runtime/AG-G2-GOAL-001-A01/<attempt>/dependency-inventory.md`。
+- **禁止触碰**：不得实现任务 / 审批 / 协同 Runtime 接入，不改 schema、migration、Runtime、Gateway、前端或 Chat；不纳入 HA、备份恢复、灾备、压测、历史迁移。
+- **验收命令 / 产物**：`rg -n "evoflow_collab_|evoflow_(proactive|tool)_approvals|approval|claim|cursor|recovery|attempt" backend`（仅在已定位目录内核对）；产物须给出入口、事实源、写点、G0 依赖和“可继续 / Blocked”结论。
+- **停止条件**：任何人要求猜测 G0 语义或创建绕过决策的实现卡；发现必须改 schema / Runtime；或入口 / 事实源无法由源码和现有证据证明。
+
+#### AG-G2-ASSET-001-A01：Workspace / 文件 / 资产入口与事实源盘点
+
+- **母任务 / 状态 / Owner / 时间盒**：`G2-ASSET-001` / `Not Started` / Domain Migration / 60m。
+- **单一目标**：只读定位真实用户入口、资产引用 / 版本 / 权限写路径及 Runtime 接入边界，不扩展到存储运维或历史迁移。
+- **真实入口 / 旧事实源**：以源码实际命中为准；已确认事实源包括 `evoflow_artifacts`、`evoflow_media_assets`、`evoflow_org_artifacts`，对应 schema 证据为 `backend/packages/harness/evoflow/persistence/schema.py:247-255`、`:807-823`、`:986-993`。
+- **Runtime 调用点 / 边界**：只读确认资产被哪个真实业务入口引用、是否产生 Run / Result / 外部回执；当前未确认统一设备命令实体、命令表、回执协议或设备身份模型，均必须保持未知。
+- **允许修改范围**：只写 `artifacts/acceptance/agentscope-runtime/AG-G2-ASSET-001-A01/<attempt>/inventory.md`。
+- **禁止触碰**：不得修改资产 / 存储代码、schema、migration、Runtime、文件上传协议、设备基础设施、前端重构；不得纳入存储 HA、文件灾备、备份恢复、压测、容量或迁移演练。
+- **验收命令 / 产物**：`rg -n "evoflow_artifacts|evoflow_media_assets|evoflow_org_artifacts" backend/packages/harness/evoflow/persistence/schema.py backend`；产物须列真实入口、事实源字段（仅引用源码可见字段）、Run / Result 边界和未知项。
+- **停止条件**：需要设计统一设备命令 / 回执协议；需要 schema / migration / Runtime 代码；或检索结果不足以证明真实入口。
+
+#### AG-G2-KNOW-001-A01：Knowledge / Memory / Tools / MCP / Channels 入口边界盘点
+
+- **母任务 / 状态 / Owner / 时间盒**：`G2-KNOW-001` / `Not Started` / Domain Migration / 75m。
+- **单一目标**：只读确认真实用户业务入口、旧事实源、外部副作用边界及其可证明的 Runtime 接入边界；不重构底层基础设施。
+- **真实入口 / 旧事实源**：只记录源码和既有业务证据实际证明的 Knowledge、Memory、Tools、MCP、Channels 入口与记录；当前尚无统一入口 / 事实源 / Runtime 接点的完整证据，未知项不能补写成设计。
+- **Runtime 调用点 / 边界**：分别记录检索、记忆读写、工具 / MCP 调用、渠道发送等真实入口是否已通过既有 Runtime bridge；不得假设共享 Adapter、Event、Result 或副作用语义。
+- **允许修改范围**：只写 `artifacts/acceptance/agentscope-runtime/AG-G2-KNOW-001-A01/<attempt>/inventory.md`。
+- **禁止触碰**：不得修改工具 / MCP / channel adapter、Runtime、schema、migration、凭据、Gateway、前端或其他业务域；不得纳入 HA、备份恢复、灾备、压测、容量、历史迁移。
+- **验收命令 / 产物**：使用已定位业务目录执行受控 `rg -n "knowledge|memory|tool|mcp|channel" <已定位目录>`，并在 `inventory.md` 记录实际命中路径、入口、事实源、副作用、权限和 Runtime 边界；禁止全库无界扫描替代证据。
+- **停止条件**：没有可证实的真实入口；需要发明统一 Runtime API / 事件语义；需要改底层基础设施；或发现 G0 决策依赖却无法只读标记。
+
+### 2.6.3 已完成不可重派卡片
+
+| 范围 | 状态 | 证据 | 不可重派结论 |
+| --- | --- | --- | --- |
+| Apps / Workflow 真实入口 Runtime → AgentScope 首闭环及其 A01～A05 验收链 | 已完成；TEST GO，PROD NO-GO | `12fdeb9`、`b8cf3e0`、`bec812e`、`f0a1de0`、`bffbf5c`、`e8a0d13`、`f290af9`；`artifacts/acceptance/agentscope-runtime/AG-G2-APP-009-A01/20260914/handoff-index.md` | 不得重复派 Apps / Workflow A01～A05；PROD NO-GO 不是新增业务实现卡 |
+| Chat / Live Run 真实入口 Runtime → AgentScope → SSE / 消息写回 | 已完成 | `3c7aa5d4c0c1c7ed263d7cf285a03441f7da8a4a`；`docs/plan/agentscope-2-g2-chat-entry-map.md`；`docs/plan/agentscope-2-g2-chat-manual-acceptance.md` | 不得重复派 Chat / Live Run A01～A05；不得修改或回退该提交 |
+| Automation / Task Center 既有 bridge / opt-in | 已集成但非整域完成 | `433a9df`；三份 Automation 证据文档 | 只保留其作为 A01/A02 盘点输入，不宣称整域迁移完成；不得重派已完成 bridge |
+
+### 2.6.4 被 G0 决策阻塞的卡片 / 后续事项
+
+下列事项受未冻结语义直接影响，本次不实例化实现卡，也不假设方案：
+
+| 事项 | 阻塞决策 | 允许的当前动作 |
+| --- | --- | --- |
+| Task Center cancel 后 approval 状态与终态回写 | `G0-DEC-001` | 只在 `AG-G2-AUTO-002-A01` 记录字段缺口；不得实现 |
+| Task Center / Goal 执行 claim 与所有权持久化 | `G0-DEC-002` | 只读盘点现有 claim 线索；不得实现持久化 claim / lease / fencing |
+| Event v1、sequence、cursor、gap 的业务映射 | `G0-DEC-003` | 只记录现有事件证据；不得实现协议或补偿语义 |
+| Recovery Point / attempt 与重启恢复 | `G0-DEC-004` | 只记录恢复入口和缺口；不得实现恢复或历史迁移 |
+| Goal / 协同 A02～A05、Automation A03～A05 及其他域的 A03～A05 | `G0-DEC-001～004`（按具体字段） | 等 A01/A02 证据与负责人决策冻结后再实例化 |
+
+### 2.6.5 未实例化且未擅自拆分的母任务
+
+以下母任务仍保留在第 5 节的总体登记中，但不是可直接派工卡；本次只实例化了 §2.6.2 明确列出的证据盘点 / 映射卡：
+
+- `G2-AGENT-002`～`G2-AGENT-006`：Agent 入口、事实源和 Runtime 接点证据不足，未擅自拆 A02/A03。
+- `G2-GOAL-002`～`G2-GOAL-006`：需先完成 G0 依赖确认；不绕开 cancel / claim / Event / recovery 决策。
+- `G2-ASSET-002`～`G2-ASSET-006`：真实文件入口、字段和 Runtime 接点未形成证据，不混入存储运维。
+- `G2-KNOW-002`～`G2-KNOW-006`：统一真实入口、事实源和外部副作用边界尚无证据。
+- `G2-AUTO-003`～`G2-AUTO-006`：Automation A01/A02 尚未完成；且 A03 可能触及 G0 未冻结语义。
+- 第 5 节中 Apps / Workflow、Chat / 会话的旧母任务行：实际完成状态以本节不可重派清单为准，不得重新派发同一首闭环工作。
+- G3/G4 的 HA、多实例、备份恢复、灾备、压测、容量、历史迁移、PG 运维和迁移演练母任务：不属于本轮剩余业务迁移拆卡，保持原阶段登记，不在本节实例化。
 
 ## 3. G0：生产正确性底座
 
@@ -451,7 +557,7 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 5. 完成域测试、回滚测试和数据对账；
 6. 灰度切换并完成观察期验收，验证旧链路停止写入。
 
-所有 G2 任务当前为 `Not Started`；以下 Owner 以角色占位，开始后必须补具体负责人和批次号。
+未被 §2.6 新卡覆盖的 G2 条目仍是未实例化母任务，保持 `Not Started`，不得直接派工；Apps / Workflow 与 Chat / Live Run 的实际状态以 §2.6 的已完成不可重派清单为准。以下 Owner 以角色占位，开始后必须补具体负责人和批次号。
 
 ### 5.2 Agent / 数字员工
 
@@ -585,3 +691,4 @@ Owner 随母任务；三张卡按“先盘点、再映射、最后接入”串�
 | 2026-09-13 | 将原 foundation plan 拆分为路线图与执行计划；登记 G0～G4 任务、状态、Owner、依赖、工作量、修改范围和验收证据 | 基线 Runtime 回归：27 passed；未修改 Runtime 代码、schema 或公共 API |
 | 2026-09-14 | 归并 `origin/codex/g2-execution-workbreakdown`（`0d73a1f`）的 G0–G4 拆卡成果：新增 §2.5 G2 波次化拆卡与执行约束、§2.5.4 三张 App 入口 `AG-*` 卡、§2.5.6 G1 验收场景集、§2.5.7 统一回报格式、§2.6 已集成入口状态；更新文档头与 `G0-DB-003` 登记 | 逐项映射见 `agentscope-2-plan-consolidation-notes.md`；未使用 git merge / cherry-pick；未修改任何代码、schema、ADR；未恢复 foundation-plan.md |
 | 2026-09-14 | §2.6 状态同步：G2.1-B App Runner 由"未开始"更正为"已实现 / 已集成（TEST GO，PROD NO-GO）"，登记 `b8cf3e0`～`bec812e` 验收链与 `bffbf5c` / `e8a0d13` / `f290af9` 三笔后续修复；`G0-DB-003`、`G0-DEC-001～004` 状态不变（仍待负责人验收 / 冻结） | 同步只覆盖可由提交直接证明的事实；派工通道、放行结论与未验证项以 `AG-G2-APP-009-A01` 交接索引为准 |
+| 2026-09-15 | 以 `3c7aa5d4c0c1c7ed263d7cf285a03441f7da8a4a` 为基线，确认 Chat / Live Run 与 Apps / Workflow 真实首闭环已完成且不可重派；新增 Automation A01/A02、Agent A01、Goal A01、Workspace / Asset A01、Knowledge / Memory / Tools / MCP / Channels A01 原子盘点 / 映射卡；明确 G0-DEC-001～004 阻塞项和未实例化母任务；未修改代码、测试、schema、migration。 |
