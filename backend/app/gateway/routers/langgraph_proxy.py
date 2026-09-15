@@ -864,3 +864,12 @@ def _fast_thread_state_enabled() -> bool:
 #   - GET /active-sessions  (active sessions list)
 # Client-side trace endpoints moved to routers/client_trace.py at /api/trace/*
 
+# Chat → Runtime takeover (AG-G2-CHAT-REAL-ENTRY-RUNTIME-001): registers
+# POST /threads/{thread_id}/runs/stream + POST /runs/cancel on this router,
+# which the Gateway includes BEFORE LazyLangGraphMount, so the opt-in Runtime
+# path intercepts the real chat entry and everything else still reaches the
+# mounted LangGraph app unchanged. See app/gateway/chat_runtime_entry.py.
+from app.gateway.chat_runtime_entry import register_chat_runtime_entry_routes  # noqa: E402
+
+register_chat_runtime_entry_routes(router)
+
